@@ -76,6 +76,74 @@
                     This function is called trillions of times, so the faster I can make it the better.
                 </p>
                 <h2>
+                    Requiements and Decision Decisions
+                </h2>
+                <p>
+                    The STRING struct will be used to capture incoming search
+                    strings as well as the representation of any strings
+                    registered in the table (or more accurately, in the
+                    corresponding StringArray structure associated with the
+                    strin table.
+                </p>
+                <p>
+                    The design should optimize for string lengths less than or
+                    equal to 16.  Lengths greater to 16 are permitted, up to
+                    128, but it will incur overhead during the prefix lookup.
+                </p>
+                <p>
+                    The design should prioritize the fast-path code where
+                    there is no match for a given search string.  Being able
+                    to terminate the search as early as possible is ideal.
+                </p>
+                <p>
+                    The performance hits taken by unaligned data access are
+                    non-nelgible, especially when dealing with XMM/YMM loads.
+                    Pay special care to alignment constrants and make sure
+                    that everything under our control is aligned on a suiable
+                    boundary.
+
+                    (The only thing we can't really control is the alignment
+                    of the incoming search string buffer, which will often be
+                    at undesirable alignments like 2, 4, 6, etc.)
+                </p>
+                <p>
+                    The string table is geared toward a single-shot build.
+                    Once you've created it with a given string array or used
+                    a delimited environment variable, that's it, you can't
+                    then mutate the contents in any way.  Nor will the
+                    creation routine re-order your strings in anyway.  For
+                    prefix matching purposes, if two strings share a common
+                    prefix, the longer one should go first, as the prefix
+                    search routine will check it first.
+                </p>
+                <p>
+                    Only single matches are performed; the first match that
+                    qualifies as a prefix match (target string in table had
+                    length less than or equal to the search string, and all
+                    of its characters matched.  There is no support for
+                    obtaining multiple matches -- and if you're constructed
+                    your string tables properly (no duplicate or incorrectly-
+                    ordered overlapping fields), you should need to.
+                </p>
+                <p>
+                So, to summarise, design guidelines as follows.
+
+                    - Priotize fast-path exit in the non-matched case.
+                    - Optimize for up to 16 string slots, where each slot
+                      has up to 16 characters, ideally.  It can have up to
+                      128 in total, however, any bytes outside of the first
+                      sixten live in the string array structure supporting
+                      the string table (accessible via pStringArray)
+                    - Don't prioritize the latency of checking for prefix
+                      matches against long slots (those longer than 16), this
+                      is not a priority.
+                </p>
+
+                <p>
+                Placeholder.
+                </p>
+
+                <h2>
                     Simple Approach
                 </h2>
                 <p>
