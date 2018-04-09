@@ -17,15 +17,22 @@ function setupSmoothAnchorScolling() {
 function initTabBox(selector) {
     var tabBox = $(selector);
     tabBox.find('.tabs').children().click(function() {
-        showTab($(this).data('content'));
+        var contentId = $(this).data('content');
+        //showTab($(this).data('content'));
+        showTab(contentId);
     });
     function showTab(contentId) {
         var allContent = tabBox.find('.content').children(),
             allTabs = tabBox.find('.tabs').children();
         allContent.hide();
         allTabs.removeClass('tab-active');
-        var content = allContent.filter('.' + contentId),
-            tab = allTabs.filter(function(i, el) { return $(el).data('content') === contentId; });
+        var content = allContent.filter('.' + contentId);
+        var tabFilter = function(i, el) {
+            var innerContent = $(el).data('content');
+            return (innerContent === contentId);
+            //return $(el).data('content') === contentId;
+        };
+        tab = allTabs.filter(tabFilter);
         if (!content.length) {
             content = allContent.first();
             tab = allTabs.first();
@@ -53,5 +60,6 @@ $(function() {
     initTabBox('.tab-box.language.box-simple');
     initTabBox('.tab-box.language.box-string-table');
     initTabBox('.tab-box.language.box-is-prefix-v1');
+    initTabBox('.tab-box.language.box-is-prefix-asm-v1');    
     //beginLanguageTicker();
 });
