@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html>
+    <!-- vim: set tw=0 ts=8 sw=4 et -->
+    <head>
+        <title>Trent Nelson</title>
+        <meta name="msvalidate.01" content="E828541C73A98C315E3D6B8C88EF6057" />
+        <!-- https://www.google.com/fonts#UsePlace:use/Collection:Lato:200,300,300italic -->
+        <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:200,300,300italic">
+        <link rel="stylesheet" href="//oss.maxcdn.com/normalize/3.0.1/normalize.min.css">
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css">
+        <link rel="stylesheet" href="../prism.css">
+        <link rel="stylesheet" href="../home.css">
+        <script src="//oss.maxcdn.com/jquery/2.1.1/jquery.min.js"></script>
+        <script src="../prism.js"></script>
+        <script src="../home.js"></script>
+    </head>
+    <body>
+
+        <header class="header">
+            <div class="header-logo" href="#">
+                <strong>T</strong>rent <strong>N</strong>elson
+            </div>
+            <ul class="header-links">
+                <li><a href="#home"><i class="fa fa-home"></i>About</a></li>
+                <li><a href="https://github.com/tpn" target="_blank"><i class="fa fa-github"></i> GitHub</a></li>
+                <li><a href="https://twitter.com/trentnelson" class="twitter-follow-button" data-show-count="false">Follow @trentnelson</a></li>
+            </ul>
+        </header>
+
+        <a class="xref" name="home"></a>
+        <section class="section section-hero">
+            <div class="container">
+                <h1>
+                    Is Prefix Of String In Table?
+                </h1>
+                <h3>
+                    A Journey Into AVX SIMD String Processing.
+                </h3>
+            </div>
+        </section>
+
+        <section class="section section-summary">
+            <div class="container">
+                <h2>
+                    Background
+                </h2>
+                <p>
+                    Picture this, you've successfully hijacked at python.exe process, by injecting some
+                    position-independent x64 assembly and then setting up an environment for your tracing
+                    glue to configure itself prior to resuming execution.
+                </p>
+                <p>
+                    You've enabled line, call, return, and exception tracing.   You've provided a C function
+                    to the Python interpreter, and it's agreed to call you every time a line is executed, a
+                    function is called or returned from, or an exception occurs.
+                <p>
+                    Now, here's the problem: your function is getting called a lot.  Every XXX cycles your
+                    Python interpreter will call back into you with a bit of information about the current
+                    line.  At the time of writing in 2018, with my CPU overclocked to 5GHz, this meant getting
+                    called as frequently as YYY times per second, or every ZZZ nanoseconds, on average.
+                </p>
+                <p>
+                    Also, the whole point of the exercise was to try and pin-point performance problems with
+                    your code.  So, really, you only need to record trace information about your modules and
+                    maybe some common 3rd party libraries your code interfaces with.  You don't really care
+                    about the vast majority of incoming frames.  Ideally, you'd like to be able to trace all
+                    of the frames that belong to modules myproject1, myproject2, myproject3, numpy, pandas
+                    and scipy, but ignore everything.
+                </p>
+                <p>
+                    So, you need to build something that can detect whether or not, for a given incoming module
+                    name, whether or not there are any names in your list of module names that prefix match.
+                    Or rather, is there a prefix of the module name string in my table.
+                </p>
+                <p>
+                    This function is called trillions of times, so the faster I can make it the better.
+                </p>
+                <h2>
+                    Simple Approach
+                </h2>
+                <p>
+                    The simplest way of solving this in C is to have an array of C strings (i.e. NULL terminated
+                    byte arrays), then for each string, loop through byte by byte and see if it prefix matches
+                    the search string.
+                </p>
+                <div class="tab-box language">
+                    <ul class="tabs">
+                        <li data-content="content-simple-cnf">Simple (Cutler Normal Form)</li>
+                        <li data-content="content-simple-knf">Simple (Kernel Normal Form)</li>
+                    </ul>
+                    <div class="content">
+<pre class="code content-simple-cnf"><code class="language-c">
+
+//
+// Declare a set of module names to be used as a string array.
+//
+
+CONST PCSZ ModuleNames[] = {
+    "myproject1",
+    "myproject2",
+    "numpy",
+    "pandas",
+    "pyparallel",
+    "scipy",
+    NULL,
+};
+
+//
+// Define the function pointer typedef.
+//
+
+typedef
+STRING_TABLE_INDEX
+(IS_PREFIX_OF_CSTR_IN_ARRAY)(
+    _In_ PCSZ *StringArray,
+    _In_ PCSZ String,
+    _Out_opt_ PSTRING_MATCH Match
+    );
+typedef IS_PREFIX_OF_CSTR_IN_ARRAY *PIS_PREFIX_OF_CSTR_IN_ARRAY;
+
+//
+// Forward declaration.
+//
+
+IS_PREFIX_OF_CSTR_IN_ARRAY IsPrefixOfCStrInArray;
+
+_Use_decl_annotations_
+STRING_TABLE_INDEX
+IsPrefixOfCStrInArray(
+    PCSZ *StringArray,
+    PCSZ String,
+    PSTRING_MATCH Match
+    )
+{
+    PCSZ Left;
+    PCSZ Right;
+    PCSZ *Target;
+    ULONG Index = 0;
+    ULONG Count;
+
+    for (Target = StringArray; *Target != NULL; Target++, Index++) {
+        Count = 0;
+        Left = String;
+        Right = *Target;
+
+        while (*Left &amp;&amp; *Right &amp;&amp; *Left++ == *Right++) {
+            Count++;
+        }
+
+        if (Count > 0 &amp;&amp; !*Right) {
+            if (ARGUMENT_PRESENT(Match)) {
+                Match->Index = (BYTE)Index;
+                Match->NumberOfMatchedCharacters = (BYTE)Count;
+                Match->String = NULL;
+            }
+            return (STRING_TABLE_INDEX)Index;
+        }
+    }
+
+    return NO_MATCH_FOUND;
+}
+
+</code></pre>
+<pre class="code content-simple-knf"><code class="language-c">
+
+const char *module_names[] = {
+    "myproject1",
+    "myproject2",
+    "numpy",
+    "pandas",
+    "pyparallel",
+    "scipy",
+    0,
+};
+
+struct string_match {
+    /* Index of the match. */
+    unsigned char index;
+
+    /* Number of characters matched. */
+    unsigned char number_of_chars_matched;
+
+    /* Pad out to an 8-byte boundary. */
+    unsigned short padding[3];
+
+    /* Pointer to the string that was matched. */
+    char *str;
+};
+
+unsigned char
+is_prefix_of_c_str_in_array(const char **array,
+                            const char *str,
+                            struct string_match *match)
+{
+    char *left, *right, **target;
+    unsigned int c, i = 0;
+
+    for (target = array; target; target++, i++) {
+        c = 0;
+        left = str;
+        right *target;
+        while (*left &amp;&amp; *right &amp;&amp; *left++ == *right) {
+            c++;
+        }
+        if (c > 0 &amp;&amp; !*right) {
+            if (match) {
+                match->index = i;
+                match->chars_matched = c;
+                match->str = target[i];
+            }
+            return i;
+        }
+    }
+
+    return -1;
+}
+</code></pre>
+                    </div>
+                </div>
+
+                <h2>
+                    Custom Data Structures
+                </h2>
+                <p>
+                    STRING_ARRAY, STRING_TABLE etc.
+                </p>
+                <div class="tab-box language">
+                    <ul class="tabs">
+                        <li data-content="content-string-table-cnf">String Table Structures (Cutler Normal Form)</li>
+                        <li data-content="content-string-table-knf">String Table Structures (Kernel Normal Form)</li>
+                    </ul>
+                    <div class="content">
+<pre class="code content-string-table-cnf"><code class="language-c">
+
+#define MAX_STRING_TABLE_ENTRIES 16
+#define STRING_TABLE_ALIGNMENT 512
+
+////////////////////////////////////////////////////////////////////////////////
+// Structures
+////////////////////////////////////////////////////////////////////////////////
+
+typedef struct _Struct_size_bytes_(SizeInQuadwords>>3) _STRING_ARRAY {
+
+    //
+    // Size of the structure, in quadwords.  Why quadwords?  It allows us to
+    // keep this size field to a USHORT, which helps with the rest of the
+    // alignment in this struct (we want the STRING Strings[] array to start
+    // on an 8-byte boundary).
+    //
+    // N.B.: We can't express the exact field size in the SAL annotation
+    //       below, because the array of buffer sizes are inexpressible;
+    //       however, we know the maximum length, so we can use the implicit
+    //       invariant that the total buffer size can't exceed whatever num
+    //       elements * max size is.
+    //
+
+    _Field_range_(<=, (
+        sizeof(struct _STRING_ARRAY) +
+        ((NumberOfElements - 1) * sizeof(STRING)) +
+        (MaximumLength * NumberOfElements)
+    ) >> 3)
+    USHORT SizeInQuadwords;
+
+    //
+    // Number of elements in the array.
+    //
+
+    USHORT NumberOfElements;
+
+    //
+    // Minimum and maximum lengths for the String->Length fields.  Optional.
+    //
+
+    USHORT MinimumLength;
+    USHORT MaximumLength;
+
+    //
+    // A pointer to the STRING_TABLE structure that "owns" us.
+    //
+
+    struct _STRING_TABLE *StringTable;
+
+    //
+    // The string array.  Number of elements in the array is governed by the
+    // NumberOfElements field above.
+    //
+
+    STRING Strings[ANYSIZE_ARRAY];
+
+} STRING_ARRAY;
+typedef STRING_ARRAY *PSTRING_ARRAY;
+typedef STRING_ARRAY **PPSTRING_ARRAY;
+
+
+//
+// String tables are composed of a 16 element array of 16 byte string "slots",
+// which represent a unique character (with respect to other strings in the
+// table) for a string in a given slot index.  The STRING_SLOT structure
+// provides a convenient wrapper around this construct.
+//
+
+typedef union DECLSPEC_ALIGN(16) _STRING_SLOT {
+    XMMWORD CharsXmm;
+    CHAR Char[16];
+} STRING_SLOT, *PSTRING_SLOT, **PPSTRING_SLOT;
+C_ASSERT(sizeof(STRING_SLOT) == 16);
+
+//
+// An array of 1 byte unsigned integers used to indicate the 0-based index of
+// a given unique character in the corresponding string.
+//
+
+typedef union DECLSPEC_ALIGN(16) _SLOT_INDEX {
+    XMMWORD IndexXmm;
+    BYTE Index[16];
+} SLOT_INDEX, *PSLOT_INDEX, **PPSLOT_INDEX;
+C_ASSERT(sizeof(SLOT_INDEX) == 16);
+
+//
+// A 16 element array of 1 byte unsigned integers, used to capture the length
+// of each string slot in a single XMM 128-bit register.
+//
+
+typedef union DECLSPEC_ALIGN(16) _SLOT_LENGTHS {
+    XMMWORD SlotsXmm;
+    BYTE Slots[16];
+} SLOT_LENGTHS, *PSLOT_LENGTHS, **PPSLOT_LENGTHS;
+C_ASSERT(sizeof(SLOT_LENGTHS) == 16);
+
+typedef struct _LENGTH_INDEX_ENTRY {
+    BYTE Length;
+    BYTE Index;
+} LENGTH_INDEX_ENTRY;
+typedef LENGTH_INDEX_ENTRY *PLENGTH_INDEX_ENTRY;
+
+typedef struct _LENGTH_INDEX_TABLE {
+    LENGTH_INDEX_ENTRY Entry[16];
+} LENGTH_INDEX_TABLE;
+typedef LENGTH_INDEX_TABLE *PLENGTH_INDEX_TABLE;
+
+typedef CHAR STRING_TABLE_INDEX;
+#define NO_MATCH_FOUND -1
+
+typedef union DECLSPEC_ALIGN(32) _CHARACTER_BITMAP {
+    YMMWORD Ymm;
+    XMMWORD Xmm[2];
+    LONG Bits[(256 / (4 << 3))];
+} CHARACTER_BITMAP;
+C_ASSERT(sizeof(CHARACTER_BITMAP) == 32);
+typedef CHARACTER_BITMAP *PCHARACTER_BITMAP;
+
+typedef struct _SLOT_BITMAPS {
+    CHARACTER_BITMAP Bitmap[16];
+} SLOT_BITMAPS;
+typedef SLOT_BITMAPS *PSLOT_BITMAPS;
+
+//
+// Define the string table flags structure.
+//
+
+typedef struct _Struct_size_bytes_(sizeof(ULONG)) _STRING_TABLE_FLAGS {
+
+    //
+    // When set, indicates that the CopyArray flag was set to TRUE when the
+    // STRING_TABLE was created with CreateStringTable().  This implies the
+    // STRING_TABLE owns the STRING_ARRAY, and is responsible for its
+    // destruction.
+    //
+    // If the table does own the array, the destruction routine should still
+    // verify a separate allocation was performed for the string array by
+    // checking StringTable->pStringArray against &amp;tringTable->StringArray;
+    // If the pointers point to the same location, the string array was able
+    // to fit in the trailing space of the STRING_TABLE structure, and thus,
+    // doesn't need to be deallocated separately (i.e. no separate call to
+    // Allocator->Free() is required).
+    //
+
+    ULONG CopiedArray:1;
+
+    //
+    // Remaining space.
+    //
+
+    ULONG Unused:31;
+
+} STRING_TABLE_FLAGS, *PSTRING_TABLE_FLAGS, **PPSTRING_TABLE_FLAGS;
+C_ASSERT(sizeof(STRING_TABLE_FLAGS) == sizeof(ULONG));
+
+//
+// The STRING_TABLE struct is an optimized structure for testing whether a
+// prefix entry for a string is in a table, with the expectation that the
+// strings being compared will be relatively short (ideally <= 16 characters),
+// and the table of string prefixes to compare to will be relatively small
+// (ideally <= 16 strings).
+//
+// The overall goal is to be able to prefix match a string with the lowest
+// possible (amortized) latency.  Fixed-size, memory-aligned character arrays,
+// and SIMD instructions are used to try and achieve this.
+//
+
+typedef struct _STRING_TABLE {
+
+    //
+    // A slot where each individual element contains a uniquely-identifying
+    // letter, with respect to the other strings in the table, of each string
+    // in an occupied slot.
+    //
+
+    STRING_SLOT UniqueChars;
+
+    //
+    // (16-bytes aligned.)
+    //
+
+    //
+    // For each unique character identified above, the following structure
+    // captures the 0-based index of that character in the underlying string.
+    //
+
+    SLOT_INDEX UniqueIndex;
+
+    //
+    // (32-bytes aligned.)
+    //
+
+    //
+    // Length of the underlying string in each slot.
+    //
+
+    SLOT_LENGTHS Lengths;
+
+    //
+    // (48-bytes aligned.)
+    //
+
+    //
+    // Pointer to the STRING_ARRAY associated with this table, which we own
+    // (we create it and copy the caller's contents at creation time and
+    // deallocate it when we get destroyed).
+    //
+    // N.B.: we use pStringArray here instead of StringArray because the
+    //       latter is a field name at the end of the struct.
+    //
+    //
+
+    PSTRING_ARRAY pStringArray;
+
+    //
+    // (56-bytes aligned.)
+    //
+
+    //
+    // String table flags.
+    //
+
+    STRING_TABLE_FLAGS Flags;
+
+    //
+    // (60-bytes aligned.)
+    //
+
+    //
+    // A 16-bit bitmap indicating which slots are occupied.
+    //
+
+    USHORT OccupiedBitmap;
+
+    //
+    // A 16-bit bitmap indicating which slots have strings longer than 16 chars.
+    //
+
+    USHORT ContinuationBitmap;
+
+    //
+    // (64-bytes aligned.)
+    //
+
+    //
+    // The 16-element array of STRING_SLOT structs.  We want this to be aligned
+    // on a 64-byte boundary, and it consumes 256-bytes of memory.
+    //
+
+    STRING_SLOT Slots[16];
+
+    //
+    // (320-bytes consumed, aligned at 64-bytes.)
+    //
+
+    //
+    // We want the structure size to be a power of 2 such that an even number
+    // can fit into a 4KB page (and reducing the likelihood of crossing page
+    // boundaries, which complicates SIMD boundary handling), so we have an
+    // extra 184-bytes to play with here.  The CopyStringArray() routine is
+    // special-cased to allocate the backing STRING_ARRAY structure plus the
+    // accommodating buffers in this space if it can fit.
+    //
+    // (You can test whether or not this occurred by checking the invariant
+    //  `StringTable->pStringArray == &amp;StringTable->StringArray`, if this
+    //  is true, the array was allocated within this remaining padding space.)
+    //
+
+    union {
+        STRING_ARRAY StringArray;
+        CHAR Padding[184];
+    };
+
+} STRING_TABLE, *PSTRING_TABLE, **PPSTRING_TABLE;
+
+//
+// Assert critical size and alignment invariants at compile time.
+//
+
+C_ASSERT(FIELD_OFFSET(STRING_TABLE, UniqueIndex) == 16);
+C_ASSERT(FIELD_OFFSET(STRING_TABLE, Lengths) == 32);
+C_ASSERT(FIELD_OFFSET(STRING_TABLE, pStringArray) == 48);
+C_ASSERT(FIELD_OFFSET(STRING_TABLE, Slots)   == 64);
+C_ASSERT(FIELD_OFFSET(STRING_TABLE, Padding) == 320);
+C_ASSERT(sizeof(STRING_TABLE) == 512);
+
+//
+// This structure is used to communicate matches back to the caller.
+//
+
+typedef struct _STRING_MATCH {
+
+    //
+    // Index of the match.
+    //
+
+    BYTE Index;
+
+    //
+    // Number of characters matched.
+    //
+
+    BYTE NumberOfMatchedCharacters;
+
+    //
+    // Pad out to 8-bytes.
+    //
+
+    USHORT Padding[3];
+
+    //
+    // Pointer to the string that was matched.  The underlying buffer will
+    // stay valid for as long as the STRING_TABLE struct persists.
+    //
+
+    PSTRING String;
+
+} STRING_MATCH, *PSTRING_MATCH, **PPSTRING_MATCH;
+C_ASSERT(sizeof(STRING_MATCH) == 16);
+
+
+</code></pre>
+<pre class="code content-simple-knf"><code class="language-c">
+xxx todo
+</code></pre>
+                    </div>
+                </div>
+
+                <h2>
+                    Is Prefix Of String In Table?  Version 1.
+                </h2>
+                <p>
+                    First take.
+                </p>
+                <div class="tab-box language">
+                    <ul class="tabs">
+                        <li data-content="content-is-prefix-v1-cnf">IsPrefixOfStringInTable_v1 (Cutler Normal Form)</li>
+                        <li data-content="content-is-prefix-v1-knf">IsPrefixOfStringInTable_v1 (Kernel Normal Form)</li>
+                    </ul>
+                    <div class="content">
+<pre class="code content-is-prefix-v1-cnf"><code class="language-c">
+
+_Use_decl_annotations_
+STRING_TABLE_INDEX
+IsPrefixOfStringInTable_1(
+    PSTRING_TABLE StringTable,
+    PSTRING String,
+    PSTRING_MATCH Match
+    )
+/*++
+
+Routine Description:
+
+    Searches a string table to see if any strings "prefix match" the given
+    search string.  That is, whether any string in the table "starts with
+    or is equal to" the search string.
+
+Arguments:
+
+    StringTable - Supplies a pointer to a STRING_TABLE struct.
+
+    String - Supplies a pointer to a STRING struct that contains the string to
+        search for.
+
+    Match - Optionally supplies a pointer to a variable that contains the
+        address of a STRING_MATCH structure.  This will be populated with
+        additional details about the match if a non-NULL pointer is supplied.
+
+Return Value:
+
+    Index of the prefix match if one was found, NO_MATCH_FOUND if not.
+
+--*/
+{
+    ULONG Bitmap;
+    ULONG Mask;
+    ULONG Count;
+    ULONG Length;
+    ULONG Index;
+    ULONG Shift = 0;
+    ULONG CharactersMatched;
+    ULONG NumberOfTrailingZeros;
+    ULONG SearchLength;
+    PSTRING TargetString;
+    PSTRING_ARRAY StringArray;
+    STRING_SLOT Slot;
+    STRING_SLOT Search;
+    STRING_SLOT Compare;
+    SLOT_LENGTHS Lengths;
+    XMMWORD LengthXmm;
+    XMMWORD UniqueChar;
+    XMMWORD TableUniqueChars;
+    XMMWORD IncludeSlotsByUniqueChar;
+    XMMWORD IgnoreSlotsByLength;
+    XMMWORD IncludeSlotsByLength;
+    XMMWORD IncludeSlots;
+    const XMMWORD AllOnesXmm = _mm_set1_epi8(0xff);
+
+    StringArray = StringTable->pStringArray;
+
+    //
+    // If the minimum length of the string array is greater than the length of
+    // our search string, there can't be a prefix match.
+    //
+
+    if (StringArray->MinimumLength > String->Length) {
+        goto NoMatch;
+    }
+
+    //
+    // Unconditionally do the following five operations before checking any of
+    // the results and determining how the search should proceed:
+    //
+    //  1. Load the search string into an Xmm register, and broadcast the
+    //     character indicated by the unique character index (relative to
+    //     other strings in the table) across a second Xmm register.
+    //
+    //  2. Load the string table's unique character array into an Xmm register.
+    //
+    //  3. Broadcast the search string's length into a Xmm register.
+    //
+    //  3. Load the string table's slot lengths array into a Xmm register.
+    //
+    //  4. Compare the unique character from step 1 to the string table's unique
+    //     character array set up in step 2.  The result of this comparison
+    //     will produce an XMM register with each byte set to either 0xff if
+    //     the unique character was found, or 0x0 if it wasn't.
+    //
+    //  5. Compare the search string's length from step 3 to the string table's
+    //     slot length array set up in step 3.  This allows us to identify the
+    //     slots that have strings that are of lesser or equal length to our
+    //     search string.  As we're doing a prefix search, we can ignore any
+    //     slots longer than our incoming search string.
+    //
+    // We do all five of these operations up front regardless of whether or not
+    // they're strictly necessary.  That is, if the unique character isn't in
+    // the unique character array, we don't need to load array lengths -- and
+    // vice versa.  However, we assume the benefits afforded by giving the CPU
+    // a bunch of independent things to do unconditionally up-front outweigh
+    // the cost of putting in branches and conditionally loading things if
+    // necessary.
+    //
+
+    //
+    // Load the first 16-bytes of the search string into an XMM register.
+    //
+
+    LoadSearchStringIntoXmmRegister(Search, String, SearchLength);
+
+    //
+    // Broadcast the search string's unique characters according to the string
+    // table's unique character index.
+    //
+
+    UniqueChar = _mm_shuffle_epi8(Search.CharsXmm,
+                                  StringTable->UniqueIndex.IndexXmm);
+
+    //
+    // Load the slot length array into a XMM register.
+    //
+
+    Lengths.SlotsXmm = _mm_load_si128(&amp;StringTable->Lengths.SlotsXmm);
+
+    //
+    // Load the string table's unique character array into an XMM register.
+    //
+
+    TableUniqueChars = _mm_load_si128(&amp;StringTable->UniqueChars.CharsXmm);
+
+    //
+    // Broadcast the search string's length into a XMM register.
+    //
+
+    LengthXmm.m128i_u8[0] = (BYTE)String->Length;
+    LengthXmm = _mm_broadcastb_epi8(LengthXmm);
+
+    //
+    // Compare the search string's unique character with all of the unique
+    // characters of strings in the table, saving the results into an XMM
+    // register.  This comparison will indicate which slots we can ignore
+    // because the characters at a given index don't match.  Matched slots
+    // will be 0xff, unmatched slots will be 0x0.
+    //
+
+    IncludeSlotsByUniqueChar = _mm_cmpeq_epi8(UniqueChar, TableUniqueChars);
+
+    //
+    // Find all slots that are longer than the incoming string length, as these
+    // are the ones we're going to exclude from any prefix match.
+    //
+    // N.B. Because we default the length of empty slots to 0x7f, they will
+    //      handily be included in the ignored set (i.e. their words will also
+    //      be set to 0xff), which means they'll also get filtered out when
+    //      we invert the mask shortly after.
+    //
+
+    IgnoreSlotsByLength = _mm_cmpgt_epi8(Lengths.SlotsXmm, LengthXmm);
+
+    //
+    // Invert the result of the comparison; we want 0xff for slots to include
+    // and 0x0 for slots to ignore (it's currently the other way around).  We
+    // can achieve this by XOR'ing the result against our all-ones XMM register.
+    //
+
+    IncludeSlotsByLength = _mm_xor_si128(IgnoreSlotsByLength, AllOnesXmm);
+
+    //
+    // We're now ready to intersect the two XMM registers to determine which
+    // slots should still be included in the comparison (i.e. which slots have
+    // the exact same first character as the string and a length less than or
+    // equal to the length of the search string).
+    //
+
+    IncludeSlots = _mm_and_si128(IncludeSlotsByUniqueChar,
+                                 IncludeSlotsByLength);
+
+    //
+    // Generate a mask.
+    //
+
+    Bitmap = _mm_movemask_epi8(IncludeSlots);
+
+    if (!Bitmap) {
+
+        //
+        // No bits were set, so there are no strings in this table starting
+        // with the same character and of a lesser or equal length as the
+        // search string.
+        //
+
+        goto NoMatch;
+    }
+
+    //
+    // A popcount against the mask will tell us how many slots we matched, and
+    // thus, need to compare.
+    //
+
+    Count = __popcnt(Bitmap);
+
+    do {
+
+        //
+        // Extract the next index by counting the number of trailing zeros left
+        // in the bitmap and adding the amount we've already shifted by.
+        //
+
+        NumberOfTrailingZeros = _tzcnt_u32(Bitmap);
+        Index = NumberOfTrailingZeros + Shift;
+
+        //
+        // Shift the bitmap right, past the zeros and the 1 that was just found,
+        // such that it's positioned correctly for the next loop's tzcnt. Update
+        // the shift count accordingly.
+        //
+
+        Bitmap >>= (NumberOfTrailingZeros + 1);
+        Shift = Index + 1;
+
+        //
+        // Load the slot and its length.
+        //
+
+        Slot.CharsXmm = _mm_load_si128(&amp;StringTable->Slots[Index].CharsXmm);
+        Length = Lengths.Slots[Index];
+
+        //
+        // Compare the slot to the search string.
+        //
+
+        Compare.CharsXmm = _mm_cmpeq_epi8(Slot.CharsXmm, Search.CharsXmm);
+
+        //
+        // Create a mask of the comparison, then filter out high bits from the
+        // search string's length (which is capped at 16).  (This shouldn't be
+        // technically necessary as the string array buffers should have been
+        // calloc'd and zeroed, but optimizing compilers can often ignore the
+        // zeroing request -- which can produce some bizarre results where the
+        // debug build is correct (because the buffers were zeroed) but the
+        // release build fails because the zeroing got ignored and there are
+        // junk bytes past the NULL terminator, which get picked up in our
+        // 128-bit loads.)
+        //
+
+        Mask = _bzhi_u32(_mm_movemask_epi8(Compare.CharsXmm), SearchLength);
+
+        //
+        // Count how many characters matched.
+        //
+
+        CharactersMatched = __popcnt(Mask);
+
+        if ((USHORT)CharactersMatched == 16 &amp;&amp; Length > 16) {
+
+            //
+            // The first 16 characters in the string matched against this
+            // slot, and the slot is oversized (longer than 16 characters),
+            // so do a direct comparison between the remaining buffers.
+            //
+
+            TargetString = &amp;StringTable->pStringArray->Strings[Index];
+
+            CharactersMatched = IsPrefixMatchAvx2(String, TargetString, 16);
+
+            if (CharactersMatched == NO_MATCH_FOUND) {
+
+                //
+                // The prefix match failed, continue our search.
+                //
+
+                continue;
+
+            } else {
+
+                //
+                // We successfully prefix matched the search string against
+                // this slot.  The code immediately following us deals with
+                // handling a successful prefix match at the initial slot
+                // level; let's avoid an unnecessary branch and just jump
+                // directly into it.
+                //
+
+                goto FoundMatch;
+            }
+        }
+
+        if ((USHORT)CharactersMatched == Length) {
+
+FoundMatch:
+
+            //
+            // This slot is a prefix match.  Fill out the Match structure if the
+            // caller provided a non-NULL pointer, then return the index of the
+            // match.
+            //
+
+
+            if (ARGUMENT_PRESENT(Match)) {
+
+                Match->Index = (BYTE)Index;
+                Match->NumberOfMatchedCharacters = (BYTE)CharactersMatched;
+                Match->String = &amp;StringTable->pStringArray->Strings[Index];
+
+            }
+
+            return (STRING_TABLE_INDEX)Index;
+        }
+
+        //
+        // Not enough characters matched, so continue the loop.
+        //
+
+    } while (--Count);
+
+    //
+    // If we get here, we didn't find a match.
+    //
+
+NoMatch:
+
+    //IACA_VC_END();
+
+    return NO_MATCH_FOUND;
+}
+
+</code></pre>
+<pre class="code content-is-prefix-v1-cnf"><code class="language-c">
+ xxx todo
+
+</code></pre>
+                    </div>
+                </div>
+
+
+            </div>
+
+        </section>
+
+        <section class="section section-footer">
+            <div class="container">
+                <small>
+                    <p>
+                        <!-- WHY ARE YOU SLIGHTLY NOT CENTERED?! Someone plz help, kthnx. -->
+                        <a href="https://twitter.com/trentnelson" class="twitter-follow-button" data-show-count="false">Follow @trentnelson</a>
+                        <iframe src="https://ghbtns.com/github-btn.html?user=tpn&type=follow" frameborder="0" scrolling="0" width="170px" height="20px"></iframe>
+                    </p>
+                </small>
+            </div>
+        </section>
+
+        <!-- Twitter/Analytics -->
+        <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+
+        <script type="text/javascript">
+            // Google Analytics
+            (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+            })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+            ga('create', 'UA-24686252-1', 'auto');
+            ga('send', 'pageview');
+        </script>
+
+    </body>
+</html>

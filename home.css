@@ -179,7 +179,7 @@ h3 {
 }
 .section {
     padding: 50px;
-    text-align: center;
+    /*text-align: center;*/
 }
 .section-hero {
     background-color: #3d566f;

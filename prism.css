@@ -8,13 +8,14 @@ code[class*="language-"],
 pre[class*="language-"] {
 	color: white;
 	direction: ltr;
-	font-family: Consolas, Monaco, 'Andale Mono', monospace;
+	font-family: Monaco, Consolas, 'Andale Mono', monospace;
 	text-align: left;
 	text-shadow: 0 -.1em .2em black;
 	white-space: pre;
 	word-spacing: normal;
 	word-break: normal;
 	line-height: 1.5;
+	font-size: 90%;
 
 	-moz-tab-size: 4;
 	-o-tab-size: 4;
