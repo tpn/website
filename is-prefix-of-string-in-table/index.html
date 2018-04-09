@@ -21,7 +21,7 @@
                 <strong>T</strong>rent <strong>N</strong>elson
             </div>
             <ul class="header-links">
-                <li><a href="#home"><i class="fa fa-home"></i>About</a></li>
+                <li><a href="#home"><i class="fa fa-home"></i>Is Prefix Of String In Table?</a></li>
                 <li><a href="https://github.com/tpn" target="_blank"><i class="fa fa-github"></i> GitHub</a></li>
                 <li><a href="https://twitter.com/trentnelson" class="twitter-follow-button" data-show-count="false">Follow @trentnelson</a></li>
             </ul>
@@ -151,7 +151,7 @@
                     byte arrays), then for each string, loop through byte by byte and see if it prefix matches
                     the search string.
                 </p>
-                <div class="tab-box language">
+                <div class="tab-box language box-simple">
                     <ul class="tabs">
                         <li data-content="content-simple-cnf">Simple (Cutler Normal Form)</li>
                         <li data-content="content-simple-knf">Simple (Kernel Normal Form)</li>
@@ -292,7 +292,7 @@ is_prefix_of_c_str_in_array(const char **array,
                 <p>
                     STRING_ARRAY, STRING_TABLE etc.
                 </p>
-                <div class="tab-box language">
+                <div class="tab-box language box-string-table">
                     <ul class="tabs">
                         <li data-content="content-string-table-cnf">String Table Structures (Cutler Normal Form)</li>
                         <li data-content="content-string-table-knf">String Table Structures (Kernel Normal Form)</li>
@@ -621,8 +621,23 @@ C_ASSERT(sizeof(STRING_MATCH) == 16);
 
 
 </code></pre>
-<pre class="code content-simple-knf"><code class="language-c">
-xxx todo
+<pre class="code content-string-table-knf"><code class="language-c">
+
+struct string_table {
+    char                       unique_chars[16];
+    unsigned char              unique_index[16];
+    unsigned char              slot_lengths[16];
+    struct string_array       *string_array_ptr;
+    struct string_table_flags  flags;
+    unsigned short             occupied_bitmap;
+    unsigned short             continuation_bitmap;
+    char                       slots[16][16];
+    union {
+        struct string_array    string_array;
+        char                   padding[184];
+    } u;
+};
+
 </code></pre>
                     </div>
                 </div>
@@ -633,7 +648,7 @@ xxx todo
                 <p>
                     First take.
                 </p>
-                <div class="tab-box language">
+                <div class="tab-box language box-is-prefix-v1">
                     <ul class="tabs">
                         <li data-content="content-is-prefix-v1-cnf">IsPrefixOfStringInTable_v1 (Cutler Normal Form)</li>
                         <li data-content="content-is-prefix-v1-knf">IsPrefixOfStringInTable_v1 (Kernel Normal Form)</li>

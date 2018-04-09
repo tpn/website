@@ -50,7 +50,8 @@ function beginLanguageTicker() {
 
 $(function() {
     setupSmoothAnchorScolling();
-    initTabBox('.tab-box.pkgmgr');
-    initTabBox('.tab-box.language');
-    beginLanguageTicker();
+    initTabBox('.tab-box.language.box-simple');
+    initTabBox('.tab-box.language.box-string-table');
+    initTabBox('.tab-box.language.box-is-prefix-v1');
+    //beginLanguageTicker();
 });
