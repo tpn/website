@@ -14,7 +14,7 @@ dark 2 #7f8c8d
     margin: auto;
 }
 body {
-    font-family: Lato, sans-serif;
+    font-family: Open Sans, Merriweather, sans-serif;
     margin-top: 100px;
     padding: 0;
 }
@@ -209,7 +209,9 @@ h3 {
     margin-bottom: 50px;
 }
 .section-summary {
-    background-color: #ecf0f1;
+    /*background-color: #ecf0f1;*/
+    /*background-color: #fcfcfc;*/
+    background-color: #ffffff;
     color: #333;
 }
 .section-benchmarks {

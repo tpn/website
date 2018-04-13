@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html>
-    <!-- vim: set tw=0 ts=8 sw=4 et -->
+    <!-- vim:set tw=0 ts=8 sw=4 et -->
     <head>
         <title>Trent Nelson</title>
         <meta name="msvalidate.01" content="E828541C73A98C315E3D6B8C88EF6057" />
         <!-- https://www.google.com/fonts#UsePlace:use/Collection:Lato:200,300,300italic -->
         <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:200,300,300italic">
+        <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Merriweather:300,300i,400,400i">
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400" rel="stylesheet">
         <link rel="stylesheet" href="//oss.maxcdn.com/normalize/3.0.1/normalize.min.css">
         <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css">
         <link rel="stylesheet" href="../prism.css">
@@ -41,40 +43,197 @@
 
         <section class="section section-summary">
             <div class="container">
+                <h2>TL;DR</h2>
+                <p>
+                    Goal: given a string, determine if it prefix-matches a set of known strings as
+                    fast as possible.  That is, in a set of known strings, do any of them prefix
+                    match the incoming search string?
+                </p>
+                <p>
+                    A reference implementation was written in C as a baseline, which simply looped
+                    through an array of strings, comparing each one, byte-by-byte, looking for a
+                    prefix match.  Prefix match performance ranged from 28 CPU cycles to 130, and
+                    negative match performance was around 74 cycles.
+                </p>
+                <p>
+                    A SIMD-friendly C structure called STRING_TABLE was derived.  Ten iterations
+                    of a function named IsPrefixOfStringInTable were authored.  The tenth and final
+                    iteration was the fastest, prefix matching in as little as 19 cycles &mdash; a
+                    4x improvement over the baseline.  Negative matching took 11 cycles &mdash; a
+                    6.7x improvement.
+                </p>
+                <p>
+                    An assembly version of the algorithm was authored specifically to optimize
+                    for the negative match case, and was able to do so in as little as 8 cycles,
+                    representing a 9x improvement over the baseline.
+                </p>
+                <h2>Background</h2>
+                <p>
+                    One of the frustrations I had with existing Python profilers was that there was
+                    no easy or efficient to filter or exclude trace information based on the module
+                    name of the code being executed.  I tackled this in my
+                    <a href="https://github.com/tpn/tracer">tracer</a> project, which allows you to
+                    set an environment variable named TRACER_MODULE_NAMES to restrict which modules
+                    should be traced, e.g.:
+                    <pre>set TRACER_MODULE_NAMES=myproject1;myproject2;myproject3.subproject;numpy;pandas;scipy</pre>
+                </p>
+                <p>
+                    If the code being executed is coming from the module myproject3.subproject.foo,
+                    then we need to trace it, as that string prefix matches the third entry on our
+                    list.
+                </p>
                 <h2>
-                    Background
+                    Simple Approach
                 </h2>
                 <p>
-                    Picture this, you've successfully hijacked at python.exe process, by injecting some
-                    position-independent x64 assembly and then setting up an environment for your tracing
-                    glue to configure itself prior to resuming execution.
+                    The simplest way of solving this in C is to have an array of C strings (i.e. NULL terminated
+                    byte arrays), then for each string, loop through byte by byte and see if it prefix matches
+                    the search string.
                 </p>
+                <div class="tab-box language box-simple">
+                    <ul class="tabs">
+                        <li data-content="content-simple-cnf">Simple (Cutler Normal Form)</li>
+                        <li data-content="content-simple-knf">Simple (Kernel Normal Form)</li>
+                    </ul>
+                    <div class="content">
+<pre class="code content-simple-cnf"><code class="language-c">
+
+//
+// Declare a set of module names to be used as a string array.
+//
+
+CONST PCSZ ModuleNames[] = {
+    "myproject1",
+    "myproject2",
+    "myproject3.subproject",
+    "numpy",
+    "pandas",
+    "scipy",
+    NULL,
+};
+
+//
+// Define the function pointer typedef.
+//
+
+typedef
+STRING_TABLE_INDEX
+(IS_PREFIX_OF_CSTR_IN_ARRAY)(
+    _In_ PCSZ *StringArray,
+    _In_ PCSZ String,
+    _Out_opt_ PSTRING_MATCH Match
+    );
+typedef IS_PREFIX_OF_CSTR_IN_ARRAY *PIS_PREFIX_OF_CSTR_IN_ARRAY;
+
+//
+// Forward declaration.
+//
+
+IS_PREFIX_OF_CSTR_IN_ARRAY IsPrefixOfCStrInArray;
+
+_Use_decl_annotations_
+STRING_TABLE_INDEX
+IsPrefixOfCStrInArray(
+    PCSZ *StringArray,
+    PCSZ String,
+    PSTRING_MATCH Match
+    )
+{
+    PCSZ Left;
+    PCSZ Right;
+    PCSZ *Target;
+    ULONG Index = 0;
+    ULONG Count;
+
+    for (Target = StringArray; *Target != NULL; Target++, Index++) {
+        Count = 0;
+        Left = String;
+        Right = *Target;
+
+        while (*Left &amp;&amp; *Right &amp;&amp; *Left++ == *Right++) {
+            Count++;
+        }
+
+        if (Count > 0 &amp;&amp; !*Right) {
+            if (ARGUMENT_PRESENT(Match)) {
+                Match->Index = (BYTE)Index;
+                Match->NumberOfMatchedCharacters = (BYTE)Count;
+                Match->String = NULL;
+            }
+            return (STRING_TABLE_INDEX)Index;
+        }
+    }
+
+    return NO_MATCH_FOUND;
+}
+
+</code></pre>
+<pre class="code content-simple-knf"><code class="language-c">
+
+const char *module_names[] = {
+    "myproject1",
+    "myproject2",
+    "myproject3.subproject",
+    "numpy",
+    "pandas",
+    "scipy",
+    0,
+};
+
+struct string_match {
+    /* Index of the match. */
+    unsigned char index;
+
+    /* Number of characters matched. */
+    unsigned char number_of_chars_matched;
+
+    /* Pad out to an 8-byte boundary. */
+    unsigned short padding[3];
+
+    /* Pointer to the string that was matched. */
+    char *str;
+};
+
+unsigned char
+is_prefix_of_c_str_in_array(const char **array,
+                            const char *str,
+                            struct string_match *match)
+{
+    char *left, *right, **target;
+    unsigned int c, i = 0;
+
+    for (target = array; target; target++, i++) {
+        c = 0;
+        left = str;
+        right *target;
+        while (*left &amp;&amp; *right &amp;&amp; *left++ == *right) {
+            c++;
+        }
+        if (c > 0 &amp;&amp; !*right) {
+            if (match) {
+                match->index = i;
+                match->chars_matched = c;
+                match->str = target[i];
+            }
+            return i;
+        }
+    }
+
+    return -1;
+}
+</code></pre>
+                    </div>
+                </div>
+
+                <h3>NTFS Reserved Names</h3>
                 <p>
-                    You've enabled line, call, return, and exception tracing.   You've provided a C function
-                    to the Python interpreter, and it's agreed to call you every time a line is executed, a
-                    function is called or returned from, or an exception occurs.
-                <p>
-                    Now, here's the problem: your function is getting called a lot.  Every XXX cycles your
-                    Python interpreter will call back into you with a bit of information about the current
-                    line.  At the time of writing in 2018, with my CPU overclocked to 5GHz, this meant getting
-                    called as frequently as YYY times per second, or every ZZZ nanoseconds, on average.
+                    <ul>
+                        <li>$AttrDef</li>
+                        <li>$BadClus</li>
+                        <li>$Bitmap</li>
+                    </ul>
                 </p>
-                <p>
-                    Also, the whole point of the exercise was to try and pin-point performance problems with
-                    your code.  So, really, you only need to record trace information about your modules and
-                    maybe some common 3rd party libraries your code interfaces with.  You don't really care
-                    about the vast majority of incoming frames.  Ideally, you'd like to be able to trace all
-                    of the frames that belong to modules myproject1, myproject2, myproject3, numpy, pandas
-                    and scipy, but ignore everything.
-                </p>
-                <p>
-                    So, you need to build something that can detect whether or not, for a given incoming module
-                    name, whether or not there are any names in your list of module names that prefix match.
-                    Or rather, is there a prefix of the module name string in my table.
-                </p>
-                <p>
-                    This function is called trillions of times, so the faster I can make it the better.
-                </p>
+
                 <h2>
                     Requirements and Design Decisions
                 </h2>
@@ -145,155 +304,24 @@
                             i.e. assume a string of length 18 bytes is more common
                             than 120 bytes.
                         </li>
-                    </ul>              
+                    </ul>
                </p>
 
+                <h2>STRING_TABLE Structure</h2>
                 <p>
-                Placeholder.
+                    The following diagram depicts an in-memory representation of the STRING_TABLE
+                    structure using our NTFS reserved prefix names.
                 </p>
 
-                <h2>
-                    Simple Approach
-                </h2>
-                <p>
-                    The simplest way of solving this in C is to have an array of C strings (i.e. NULL terminated
-                    byte arrays), then for each string, loop through byte by byte and see if it prefix matches
-                    the search string.
-                </p>
-                <div class="tab-box language box-simple">
-                    <ul class="tabs">
-                        <li data-content="content-simple-cnf">Simple (Cutler Normal Form)</li>
-                        <li data-content="content-simple-knf">Simple (Kernel Normal Form)</li>
-                    </ul>
-                    <div class="content">
-<pre class="code content-simple-cnf"><code class="language-c">
+                <picture>
+                    <source srcset="StringTableLayout2.png"/>
+                    <img width="1042px" height="675px" srcset="StringTableLayout2.png"/>
+                    <!--
+                    <source srcset="StringTableLayout2.png"/>
+                    <img width="1641px" height="1020px" srcset="StringTableLayout2.png"/>
+                    -->
+                </picture>
 
-//
-// Declare a set of module names to be used as a string array.
-//
-
-CONST PCSZ ModuleNames[] = {
-    "myproject1",
-    "myproject2",
-    "numpy",
-    "pandas",
-    "pyparallel",
-    "scipy",
-    NULL,
-};
-
-//
-// Define the function pointer typedef.
-//
-
-typedef
-STRING_TABLE_INDEX
-(IS_PREFIX_OF_CSTR_IN_ARRAY)(
-    _In_ PCSZ *StringArray,
-    _In_ PCSZ String,
-    _Out_opt_ PSTRING_MATCH Match
-    );
-typedef IS_PREFIX_OF_CSTR_IN_ARRAY *PIS_PREFIX_OF_CSTR_IN_ARRAY;
-
-//
-// Forward declaration.
-//
-
-IS_PREFIX_OF_CSTR_IN_ARRAY IsPrefixOfCStrInArray;
-
-_Use_decl_annotations_
-STRING_TABLE_INDEX
-IsPrefixOfCStrInArray(
-    PCSZ *StringArray,
-    PCSZ String,
-    PSTRING_MATCH Match
-    )
-{
-    PCSZ Left;
-    PCSZ Right;
-    PCSZ *Target;
-    ULONG Index = 0;
-    ULONG Count;
-
-    for (Target = StringArray; *Target != NULL; Target++, Index++) {
-        Count = 0;
-        Left = String;
-        Right = *Target;
-
-        while (*Left &amp;&amp; *Right &amp;&amp; *Left++ == *Right++) {
-            Count++;
-        }
-
-        if (Count > 0 &amp;&amp; !*Right) {
-            if (ARGUMENT_PRESENT(Match)) {
-                Match->Index = (BYTE)Index;
-                Match->NumberOfMatchedCharacters = (BYTE)Count;
-                Match->String = NULL;
-            }
-            return (STRING_TABLE_INDEX)Index;
-        }
-    }
-
-    return NO_MATCH_FOUND;
-}
-
-</code></pre>
-<pre class="code content-simple-knf"><code class="language-c">
-
-const char *module_names[] = {
-    "myproject1",
-    "myproject2",
-    "numpy",
-    "pandas",
-    "pyparallel",
-    "scipy",
-    0,
-};
-
-struct string_match {
-    /* Index of the match. */
-    unsigned char index;
-
-    /* Number of characters matched. */
-    unsigned char number_of_chars_matched;
-
-    /* Pad out to an 8-byte boundary. */
-    unsigned short padding[3];
-
-    /* Pointer to the string that was matched. */
-    char *str;
-};
-
-unsigned char
-is_prefix_of_c_str_in_array(const char **array,
-                            const char *str,
-                            struct string_match *match)
-{
-    char *left, *right, **target;
-    unsigned int c, i = 0;
-
-    for (target = array; target; target++, i++) {
-        c = 0;
-        left = str;
-        right *target;
-        while (*left &amp;&amp; *right &amp;&amp; *left++ == *right) {
-            c++;
-        }
-        if (c > 0 &amp;&amp; !*right) {
-            if (match) {
-                match->index = i;
-                match->chars_matched = c;
-                match->str = target[i];
-            }
-            return i;
-        }
-    }
-
-    return -1;
-}
-</code></pre>
-                    </div>
-                </div>
 
                 <h2>
                     Custom Data Structures
@@ -1122,7 +1150,7 @@ NoMatch:
 
 </code></pre>
                     </div>
-                </div>                
+                </div>
 
                 <h2>
                     Assembly Version, take 2.
@@ -1589,7 +1617,7 @@ Pfx60:  vpextrb     rcx, xmm4, 2                ; Restore rcx counter.
 
 </code></pre>
                     </div>
-                </div>                
+                </div>
 
 
 
