@@ -154,11 +154,11 @@ IsPrefixOfCStrInArray(
             Count++;
         }
 
-        if (Count > 0 &amp;&amp; !*Right) {
+        if (Count &gt; 0 &amp;&amp; !*Right) {
             if (ARGUMENT_PRESENT(Match)) {
-                Match->Index = (BYTE)Index;
-                Match->NumberOfMatchedCharacters = (BYTE)Count;
-                Match->String = NULL;
+                Match-&gt;Index = (BYTE)Index;
+                Match-&gt;NumberOfMatchedCharacters = (BYTE)Count;
+                Match-&gt;String = NULL;
             }
             return (STRING_TABLE_INDEX)Index;
         }
@@ -209,11 +209,11 @@ is_prefix_of_c_str_in_array(const char **array,
         while (*left &amp;&amp; *right &amp;&amp; *left++ == *right) {
             c++;
         }
-        if (c > 0 &amp;&amp; !*right) {
+        if (c &gt; 0 &amp;&amp; !*right) {
             if (match) {
-                match->index = i;
-                match->chars_matched = c;
-                match->str = target[i];
+                match-&gt;index = i;
+                match-&gt;chars_matched = c;
+                match-&gt;str = target[i];
             }
             return i;
         }
@@ -224,6 +224,31 @@ is_prefix_of_c_str_in_array(const char **array,
 </code></pre>
                     </div>
                 </div>
+                <p>
+                    For the purposes of this article though, we're going to
+                    focused on a set of 16 names known as the NTFS reserved
+                    names, based on the earliest releases of Windows NT.
+                </p>
+                <p>
+                    This list is desirable as it has good distribution of
+                    characters, almost all characters lead with a $ dollar
+                    sign, there are some very short entries, and an oversized
+                    entry: $INDEX_ALLOCATION, that clocks in at 16 characters.
+                </p>
+                <p>
+                    The idea, in this case, is that we've been passed a
+                    filename string for creation, which requires us to ensure
+                    that none of the prefixes in our reserved name table will
+                    match the incoming string.
+                </p>
+                <p>
+                    Here's the full list of NTFS names we'll be using.  We're
+                    assuming 8-bit ANSI encoding (not 16-bit wide char like what
+                    would actually be used if this were a kernel component),
+                    and that the strings are all case sensitive.  (Again, this
+                    is probably not desirable by the NTFS component, who would
+                    generally need to perform case-insensitive matches.
+                </p>
 
                 <h3>NTFS Reserved Names</h3>
                 <p>
@@ -231,7 +256,32 @@ is_prefix_of_c_str_in_array(const char **array,
                         <li>$AttrDef</li>
                         <li>$BadClus</li>
                         <li>$Bitmap</li>
+                        <li>$Boot</li>
+                        <li>$Extend</li>
+                        <li>$LogFile</li>
+                        <li>$MftMirr</li>
+                        <li>$Mft</li>
+                        <li>$Secure</li>
+                        <li>$UpCase</li>
+                        <li>$Volume</li>
+                        <li>$Cairo</li>
+                        <li>$INDEX_ALLOCATION</li>
+                        <li>$DATA</li>
+                        <li>????</li>
+                        <li>.</li>
                     </ul>
+                </p>
+                    The ordering is important in certain cases.  For example,
+                    when you have overlapping strings, such as $MftMirr, and
+                    $Mft, you should put the longest strings first.  They will
+                    be matched first, and as our routine terminates upon the
+                    first successful prefix match &mdash; if a longer string
+                    resided after a shorter one, it would never get detected.
+                </p>
+                <p>
+                    Let's review some guiding design requirements and cover
+                    some of the design decisions I made, which should help
+                    shape your understanding of the implementation.
                 </p>
 
                 <h2>
