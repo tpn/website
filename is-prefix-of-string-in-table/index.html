@@ -1382,7 +1382,7 @@ StringTable2!IsPrefixOfStringInTable_x64_1:
                     The reason behind all of these constraints is that LEAF_ENTRY routines do not
                     have any unwind information generated for them in their runtime function
                     entries.  Unwind information is used by the kernel to do just that, unwind
-                    the non-volatile modifications made to registers whilst traversing back up
+                    the modifications made to non-volatile registers whilst traversing back up
                     through the call stack looking for an exception handler in the case of an
                     exception.
 
