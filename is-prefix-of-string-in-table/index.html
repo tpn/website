@@ -1370,7 +1370,7 @@ StringTable2!IsPrefixOfStringInTable_x64_1:
 
                     A LEAF_ENTRY can only be implemented in assembly.  It is constrained in that it
                     may not manipulate any of the non-volatile x64 registers (rbx, rdi, rsi, rsp,
-                    rbp, r12, r13, r14, r15, xmm6-14), nor may it call any other functions (because
+                    rbp, r12, r13, r14, r15, xmm6-15), nor may it call any other functions (because
                     call implicitly modifies the stack pointer), nor may it have a structured
                     exception handler (because that also manipulates the stack pointer).
 
