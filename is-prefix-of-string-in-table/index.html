@@ -108,7 +108,7 @@
                 <p>
 
                     An <a
-                    href="IsPrefixOfStringInTable_x64_2">assembly</a>
+                    href="#IsPrefixOfStringInTable_x64_2">assembly</a>
                     version of the algorithm was authored specifically to optimize for the negative
                     match case, and was able to do so in as little as 8 cycles, representing a 9x
                     improvement over the baseline.  (It was a little bit slower than the fastest
@@ -843,7 +843,7 @@ typedef STRING_ARRAY **PPSTRING_ARRAY;
 
                 <small>
 
-                    <a class="xref" name="#SAL"></a>
+                    <a class="xref" name="SAL"></a>
                     <p>
 
                         Note: the odd-looking macros _Struct_size_bytes_ and _Field_range_ are
@@ -866,7 +866,7 @@ typedef STRING_ARRAY **PPSTRING_ARRAY;
 
                 </p>
 
-                <a class="xref" name="#STRING_SLOT"></a>
+                <a class="xref" name="STRING_SLOT"></a>
                 <h3>STRING_SLOT</h3>
 
 <pre class="code content-string-slot"><code class="language-c">
@@ -884,7 +884,7 @@ typedef union DECLSPEC_ALIGN(16) _STRING_SLOT {
 C_ASSERT(sizeof(STRING_SLOT) == 16);
 </code></pre>
 
-                <a class="xref" name="#SLOT_INDEX"></a>
+                <a class="xref" name="SLOT_INDEX"></a>
                 <h3>SLOT_INDEX</h3>
 <pre class="code content-slot-index"><code class="language-c">
 //
@@ -899,7 +899,7 @@ typedef union DECLSPEC_ALIGN(16) _SLOT_INDEX {
 C_ASSERT(sizeof(SLOT_INDEX) == 16);
 </code></pre>
 
-                <a class="xref" name="#SLOT_LENGTHS"></a>
+                <a class="xref" name="SLOT_LENGTHS"></a>
                 <h3>SLOT_LENGTHS</h3>
 <pre class="code content-slot-lengths"><code class="language-c">
 //
@@ -914,7 +914,7 @@ typedef union DECLSPEC_ALIGN(16) _SLOT_LENGTHS {
 C_ASSERT(sizeof(SLOT_LENGTHS) == 16);
 </code></pre>
 
-                <a class="xref" name="#STRING_TABLE_INDEX"></a>
+                <a class="xref" name="STRING_TABLE_INDEX"></a>
                 <h3>STRING_TABLE_INDEX</h3>
 <pre class="code content-string-table-index"><code class="language-c">
 //
@@ -936,7 +936,7 @@ typedef CHAR STRING_TABLE_INDEX;
 
                 </p>
 
-                <a class="xref" name="#STRING_MATCH"></a>
+                <a class="xref" name="STRING_MATCH"></a>
                 <h3>STRING_MATCH</h3>
 <pre class="code content-string-match"><code class="language-c">
 //
@@ -989,7 +989,7 @@ C_ASSERT(sizeof(STRING_MATCH) == 16);
 
                 </p>
 
-                <a class="xref" name="#IsPrefixOfStringInTable_10"></a>
+                <a class="xref" name="IsPrefixOfStringInTable_10"></a>
                 <h2>IsPrefixOfStringInTable_10</h2>
 
 <pre class="code content-is-prefix-v10"><code class="language-c">
