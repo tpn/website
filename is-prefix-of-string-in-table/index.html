@@ -415,9 +415,24 @@ is_prefix_of_c_str_in_array(const char **array,
 
                     The STRING struct will be used to capture incoming search strings as well as the
                     representation of any strings registered in the table (or more accurately, in
-                    the corresponding StringArray structure associated with the strin table.
+                    the corresponding StringArray structure associated with the string table.
 
                 </p>
+<pre class="code content-string-struct"><code class="language-c">
+//
+// The STRING structure used by the NT kernel.  Our STRING_ARRAY structure
+// relies on an array of these structures.  We never pass raw 'char *'s
+// around, only STRING/PSTRING structs/pointers.
+//
+
+typedef struct _STRING {
+    USHORT Length;
+    USHORT MaximumLength;
+    ULONG  Padding;
+    PCHAR Buffer;
+} STRING, *PSTRING;
+typedef const STRING *PCSTRING;
+</code></pre>
 
                 <p>
 
