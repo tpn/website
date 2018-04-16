@@ -162,7 +162,7 @@ h3 {
         height: 99px;
         line-height: 90px;
         margin: 0 0 0 30px;
-        font-size: 70px;
+        font-size: 50px;
         right: auto;
     }
     .header-links {
@@ -207,6 +207,12 @@ h3 {
 }
 .section-benefits h3 {
     margin-bottom: 50px;
+}
+.section-body {
+    /*background-color: #ecf0f1;*/
+    /*background-color: #fcfcfc;*/
+    background-color: #ffffff;
+    color: #333;
 }
 .section-summary {
     /*background-color: #ecf0f1;*/
@@ -270,11 +276,21 @@ h3 {
 .section-footer a {
     color: #fff;
 }
+.code {
+    font-size: 90%;
+}
 pre.code {
     text-align: left;
     max-width: 750px;
     margin: auto;
 }
+
+.view-on-github {
+    text-align: left;
+    max-width: 750px;
+    margin: auto;
+}
+
 .tab-box {
     text-align: left;
     max-width: 770px;
