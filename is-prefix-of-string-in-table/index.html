@@ -47,7 +47,20 @@
 
         <section class="section section-summary">
             <div class="container">
-                <small>Current status: draft.  Last update: 16th April, 2018.</small>
+
+                <small>
+                    Current status: draft.  Last update: 17th April, 2018.
+                    Target publish date: 20th April, 2018.
+                    Thanks to <a href="https://twitter.com/rygorous">Fabian Giesen</a>,
+                    <a href="https://twitter.com/pshufb">Wojciech Mu&#322;a</a>,
+                    <a href="https://twitter.com/geofflangdale">Geoff Langdale</a>,
+                    <a href="https://twitter.com/lemire">Daniel Lemire</a>, and
+                    <a href="https://twitter.com/KendallWillets">Kendall Willets</a>
+                    for their valuable
+                    <a href="https://twitter.com/trentnelson/status/985715037934440448">feedback</a>
+                    on an early draft of this article.
+                </small>
+
                 <hr/>
                 <h2>TL;DR</h2>
                 <p>
@@ -124,6 +137,148 @@
             </div>
         </section>
         <hr/>
+
+        <section class="section section-toc">
+            <div class="container">
+
+                <h2>Contents</h2>
+
+                <small><em>(Work In Progress)</em></small></h2>
+
+                <p>
+
+                    <ul class="toc-list">
+
+                        <li>
+
+                            <a href="#background">Background</a>
+
+                            <ul class="toc-list-2">
+
+                                <li><a href="#tracer-project">The Tracer Project</a></li>
+                                <li><a href="#baseline">Baseline C Implementation</a></li>
+                                <li><a href="#test-data">The Test Data</a></li>
+
+                            </ul>
+
+                        </li>
+
+                        <li>
+
+                            <a href="#data-structures">The Data Structures</a>
+
+                            <ul class="toc-list-2">
+
+                                <li>
+                                    <a href="#STRING_TABLE">STRING_TABLE</a>
+                                    (See also <a href="#CreateStringTable">CreateStringTable</a>.)
+                                </li>
+
+                                <li><a href="#STRING_ARRAY">STRING_ARRAY</a></li>
+                                <li><a href="#STRING_SLOT">STRING_SLOT</a></li>
+                                <li><a href="#SLOT_INDEX">SLOT_INDEX</a></li>
+                                <li><a href="#SLOT_LENGTHS">SLOT_LENGTHS</a></li>
+                                <li><a href="#STRING_MATCH">STRING_MATCH</a></li>
+
+                            </ul>
+
+                        </li>
+
+                        <li>
+
+                            <a href="#data-structures">The Algorithm</a>
+
+
+                            <ul class="toc-list-2">
+
+
+                                <li>
+                                    The <a href="#IsPrefixOfStringInTable">IsPrefixOfStringInTable</a> function signature.
+                                    (TODO)
+                                </li>
+
+                                <li><a href="#how-it-works">How It Works</a> (TODO)</li>
+
+                                <li>
+
+                                    First round.
+
+                                    <ul class="toc-list-3">
+
+                                        <li>
+
+                                            Fastest C version: <a href="#IsPrefixOfStringInTable_10">IsPrefixOfStringInTable_10</a>.
+
+                                        </li>
+
+                                        <li>
+
+                                            Fastest assembly version: <a
+                                            href="#IsPrefixOfStringInTable_x64_2">IsPrefixOfStringInTable_x64_2</a>.
+
+                                        </li>
+
+
+                                    </ul>
+
+                                </li>
+
+                                <li>
+
+                                    Second round, after internet feedback.
+
+                                    <ul class="toc-list-3">
+
+                                        <li>
+
+                                            Fastest C version: <a href="#IsPrefixOfStringInTable_10">IsPrefixOfStringInTable_10</a>.
+
+                                        </li>
+
+                                        <li>
+
+                                            Fastest assembly version: <a
+                                            href="#IsPrefixOfStringInTable_x64_2">IsPrefixOfStringInTable_x64_2</a>.
+
+                                        </li>
+
+                                    </ul>
+
+                                </li>
+
+                            </ul>
+
+                        </li>
+
+                        <li>
+
+                            <a href="#benchmark">The Benchmark</a> (TODO)
+
+                        </li>
+
+                        <li>
+
+                            <a href="#other-applications">Other Applications</a>
+
+                        </li>
+
+                        <li>
+
+                            <a href="#appendix">Appendix</a>
+
+                            <ul class="toc-list-2">
+
+                                <li>The <a href="#CreateStringTable">CreateStringTable</a> implementation.</li>
+                                <li>A list of all C <a href="#typedefs">typedefs</a> referenced in the article.</li>
+
+                            </ul>
+                        </li>
+                    </ul>
+                </p>
+            </div>
+        </section>
+        <hr/>
+
         <section class="section section-body">
             <div class="container">
 
@@ -193,7 +348,7 @@
                     NULL terminated byte arrays), then for each string, loop through byte by byte
                     and see if it prefix matches the search string.
 
-                </p>
+                </p>c
 
                 <div class="tab-box language box-simple">
                     <ul class="tabs">
@@ -480,7 +635,7 @@ typedef const STRING *PCSTRING;
                     Only single matches are performed; the first match that qualifies as a prefix
                     match (target string in table had length less than or equal to the search
                     string, and all of its characters matched).  There is no support for obtaining
-                    multiple matches &mdash; if you're constructed your string tables properly
+                    multiple matches &mdash; if you've constructed your string tables properly
                     (no duplicate or incorrectly-ordered overlapping fields), you shouldn't need to.
 
                 </p>
@@ -491,7 +646,10 @@ typedef const STRING *PCSTRING;
                     <ul>
 
                         <li>
-                            Prioritize fast-path exit in the non-matched case.
+
+                            Prioritize fast-path exit in the non-matched case.  (I refer to this as
+                            <strong>negative matching</strong> in a lot of places.)
+
                         </li>
 
                         <li>
@@ -868,7 +1026,10 @@ typedef STRING_ARRAY **PPSTRING_ARRAY;
                         <a
                         href="https://github.com/tpn/pdfs/blob/master/Program%20Analysis%20with%20PREfast%20and%20SAL%20-%20Erik%20Poll%20-%20Slides%20(3_StaticAnalysisPREfast).pdf"
                         >Engineering Better Software at Microsoft</a> that captures some interesting
-                        details about SAL, for those interested in reading more.
+                        details about SAL, for those wanting to read more.  The Code Analysis engine
+                        that uses the annotations is built upon the <a
+                        href="https://github.com/Z3Prover/z3">Z3 Theorem Prover</a>, which is a
+                        fascinating little project in its own right.
 
                     </p>
 
