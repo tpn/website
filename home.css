@@ -214,6 +214,12 @@ h3 {
     background-color: #ffffff;
     color: #333;
 }
+.section-toc {
+    /*background-color: #ecf0f1;*/
+    /*background-color: #fcfcfc;*/
+    background-color: #ffffff;
+    color: #333;
+}
 .section-comments {
     /*background-color: #ecf0f1;*/
     /*background-color: #fcfcfc;*/
@@ -368,6 +374,20 @@ pre[class*="language-"] {
         width: 400px;
         height: 300px;
     }
+}
+
+a:link {
+    color: #5081be;
+    text-decoration: none;
+}
+
+a:visited {
+    text-decoration: none;
+}
+
+a:hover {
+    color: #5081be;
+    text-decoration: underline;
 }
 
 /* vim: set ts=8 sw=4 sts=4 tw=0 */
