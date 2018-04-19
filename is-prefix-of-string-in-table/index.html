@@ -20,6 +20,29 @@
         <script src="../home.js"></script>
         <script src="page.js"></script>
     </head>
+    <!--
+
+        TODO:
+
+            - Syntax highlighting
+                - Review asm keywords.
+                - Tweak/extend colorscheme.
+            - Add screenshots of stepping through the routine for:
+                - C version
+                - Asm version
+            - Zip up everything and provide a download for it on github.
+            - Add a section on release build vs PGO.
+            - Benchmark section.
+                - How it works.
+                - How to build/download perhaps.
+            - Add comparison section of all the various iterations
+                - Diagram depicting sequence of events things were written in.
+                - Updated graphs of performance.
+                - Diffs to previous version of the various changes to code
+            - Embed a speakerdeck deck graphically depicting how the algorithm works.
+            - Interface section.
+
+    -->
     <body>
 
         <header class="header">
@@ -49,7 +72,7 @@
             <div class="container">
 
                 <small>
-                    Current status: draft.  Last update: 17th April, 2018.
+                    Current status: <strong>draft</strong>.  Updated: 18th April, 2018.
                     Target publish date: 20th April, 2018.
                     Thanks to <a href="https://twitter.com/rygorous">Fabian Giesen</a>,
                     <a href="https://twitter.com/pshufb">Wojciech Mu&#322;a</a>,
@@ -97,7 +120,7 @@
                 </p>
                 <p>
 
-                    The SIMD-friendly layout of STRING_TABLE allows for the detection of a possible
+                    The layout of the STRING_TABLE structure allows for the detection of a possible
                     prefix match against all 16 strings at once using about 12 instructions.  The
                     first part of the lookup functions similar to a bloom filter, in that we are
                     able to quickly determine if an incoming string is definitely <strong>not</strong>
@@ -113,7 +136,7 @@
 
                 </p>
 
-                <picture style="text-align: center;">
+                <picture>
                     <source srcset="PrefixMatchPerformance.png"/>
                     <img width="815px" height="660px" srcset="PrefixMatchPerformance.png"/>
                 </picture>
@@ -129,10 +152,45 @@
 
                 </p>
 
-                <picture style="center">
+                <picture>
                     <source srcset="NegativeMatchPerformance.png"/>
                     <img width="817px" height="657px" srcset="NegativeMatchPerformance.png"/>
                 </picture>
+
+                <p>
+
+                    <small>
+                    (Feedback for an early draft of this article was then solicited on <a
+                    href="https://twitter.com/trentnelson/status/985715037934440448">Twitter</a>,
+                    resulting in three more iterations of the C version, and two more iterations
+                    of the assembly version.  The PGO build of the fastest C version (thirteenth
+                    attempt) prefix matched in about 16 cycles (and also had the best "worst case
+                    input string" performance (where three slots needed comparison), negative
+                    matching in about 26 cycles).  The fifth iteration of the assembly version
+                    negative matched in about 6 cycles, a 3 and 1 cycle improvement, respectively.
+                    Now, I could re-do these intro graphs, or you could just picture the ones above
+                    with a few more bars, slightly shorter in length than their nearest counterparts,
+                    and then I won't have to.)
+                    </small>
+
+                </p>
+
+                <!--
+                <div class="cols-2">
+                    <div>
+                        <script async class="speakerdeck-embed" data-id="feadc0a06e770130c56622000a9f1084" src="//speakerdeck.com/assets/embed.js"></script>
+                    </div>
+                    <div>
+                        <script async class="speakerdeck-embed" data-id="606aa4e02d30013103c12a5f68b843a3" src="//speakerdeck.com/assets/embed.js"></script>
+                    </div>
+                    <div>
+                        <script async class="speakerdeck-embed" data-id="feadc0a06e770130c56622000a9f1084" data-ratio="1.33333333333333" src="//speakerdeck.com/assets/embed.js"></script>
+                    </div>
+                    <div>
+                        <script async class="speakerdeck-embed" data-id="606aa4e02d30013103c12a5f68b843a3" data-ratio="1.33333333333333" src="//speakerdeck.com/assets/embed.js"></script>
+                    </div>
+                </div>
+                -->
 
             </div>
         </section>
@@ -146,131 +204,96 @@
                 <small><em>(Work In Progress)</em></small></h2>
 
                 <p>
-
                     <ul class="toc-list">
-
                         <li>
-
                             <a href="#background">Background</a>
-
                             <ul class="toc-list-2">
-
                                 <li><a href="#tracer-project">The Tracer Project</a></li>
                                 <li><a href="#baseline">Baseline C Implementation</a></li>
+                                <li>
+                                    <a href="#proposed-interface">Proposed Interface</a>
+                                    <ul>
+                                        <li>
+                                            The <a href="#IsPrefixOfStringInTable">
+                                            IsPrefixOfStringInTable</a> function.
+                                        </li>
+                                        <li>
+                                            The <a href="#STRING_MATCH">STRING_MATCH</a> structure.
+                                        </li>
+                                    </ul>
+                                </li>
                                 <li><a href="#test-data">The Test Data</a></li>
-
+                                <li>
+                                    <a href="#requirements-and-design-decisions">
+                                        Requirements and Design Decisions
+                                    </a>
+                                </li>
                             </ul>
-
                         </li>
-
                         <li>
-
                             <a href="#data-structures">The Data Structures</a>
-
                             <ul class="toc-list-2">
-
                                 <li>
                                     <a href="#STRING_TABLE">STRING_TABLE</a>
                                     (See also <a href="#CreateStringTable">CreateStringTable</a>.)
                                 </li>
-
-                                <li><a href="#STRING_ARRAY">STRING_ARRAY</a></li>
-                                <li><a href="#STRING_SLOT">STRING_SLOT</a></li>
-                                <li><a href="#SLOT_INDEX">SLOT_INDEX</a></li>
-                                <li><a href="#SLOT_LENGTHS">SLOT_LENGTHS</a></li>
-                                <li><a href="#STRING_MATCH">STRING_MATCH</a></li>
-
+                                    <li><a href="#STRING_ARRAY">STRING_ARRAY</a></li>
+                                    <li><a href="#STRING_SLOT">STRING_SLOT</a></li>
+                                    <li><a href="#SLOT_INDEX">SLOT_INDEX</a></li>
+                                    <li><a href="#SLOT_LENGTHS">SLOT_LENGTHS</a></li>
                             </ul>
-
+                        </li>
+                        <li>
+                            <a href="#algorithm">The Algorithm</a>
                         </li>
 
                         <li>
-
-                            <a href="#data-structures">The Algorithm</a>
-
-
+                            <a href="#implementation">The Implementation(s)</a>
+                            <!--
                             <ul class="toc-list-2">
-
-
                                 <li>
                                     The <a href="#IsPrefixOfStringInTable">IsPrefixOfStringInTable</a> function signature.
                                     (TODO)
                                 </li>
-
                                 <li><a href="#how-it-works">How It Works</a> (TODO)</li>
-
                                 <li>
-
                                     First round.
-
                                     <ul class="toc-list-3">
-
                                         <li>
-
                                             Fastest C version: <a href="#IsPrefixOfStringInTable_10">IsPrefixOfStringInTable_10</a>.
-
                                         </li>
-
                                         <li>
-
                                             Fastest assembly version: <a
                                             href="#IsPrefixOfStringInTable_x64_2">IsPrefixOfStringInTable_x64_2</a>.
-
                                         </li>
-
-
                                     </ul>
-
                                 </li>
-
                                 <li>
-
                                     Second round, after internet feedback.
-
                                     <ul class="toc-list-3">
-
                                         <li>
-
                                             Fastest C version: <a href="#IsPrefixOfStringInTable_10">IsPrefixOfStringInTable_10</a>.
-
                                         </li>
-
                                         <li>
-
                                             Fastest assembly version: <a
                                             href="#IsPrefixOfStringInTable_x64_2">IsPrefixOfStringInTable_x64_2</a>.
-
                                         </li>
-
                                     </ul>
-
                                 </li>
-
                             </ul>
-
+                            -->
                         </li>
-
                         <li>
-
                             <a href="#benchmark">The Benchmark</a> (TODO)
-
                         </li>
-
                         <li>
-
                             <a href="#other-applications">Other Applications</a>
-
                         </li>
-
                         <li>
-
                             <a href="#appendix">Appendix</a>
-
                             <ul class="toc-list-2">
-
                                 <li>The <a href="#CreateStringTable">CreateStringTable</a> implementation.</li>
                                 <li>A list of all C <a href="#typedefs">typedefs</a> referenced in the article.</li>
-
                             </ul>
                         </li>
                     </ul>
@@ -348,7 +371,7 @@
                     NULL terminated byte arrays), then for each string, loop through byte by byte
                     and see if it prefix matches the search string.
 
-                </p>c
+                </p>
 
                 <div class="tab-box language box-simple">
                     <ul class="tabs">
@@ -357,7 +380,6 @@
                     </ul>
                     <div class="content">
 <pre class="code content-simple-cnf"><code class="language-c">
-
 //
 // Declare a set of module names to be used as a string array.
 //
@@ -429,7 +451,6 @@ IsPrefixOfCStrInArray(
 
 </code></pre>
 <pre class="code content-simple-knf"><code class="language-c">
-
 const char *module_names[] = {
     "myproject1",
     "myproject2",
@@ -485,6 +506,192 @@ is_prefix_of_c_str_in_array(const char **array,
                     </div>
                 </div>
 
+                <p>
+
+                    Another type of code pattern that the string table attempts to replace is
+                    anything that does a lot of if/else if/else if-type string comparisons to
+                    look for keywords.  For example, in the
+                    <a href="https://github.com/id-Software/Quake-III-Arena/blob/dbe4ddb10315479fc00086f08e25d968b4b43c49/q3asm/q3asm.c#L609">
+                    Quake III</a> source, there's some symbol/string processing logic that looks
+                    like this:
+
+                </p>
+
+<pre class="code content-q3"><code class="language-c">
+	// call instructions reset currentArgOffset
+	if ( !strncmp( token, "CALL", 4 ) ) {
+		EmitByte( &amp;segment[CODESEG], OP_CALL );
+		instructionCount++;
+		currentArgOffset = 0;
+		return;
+	}
+
+	// arg is converted to a reversed store
+	if ( !strncmp( token, "ARG", 3 ) ) {
+		EmitByte( &amp;segment[CODESEG], OP_ARG );
+		instructionCount++;
+		if ( 8 + currentArgOffset >= 256 ) {
+			CodeError( "currentArgOffset >= 256" );
+			return;
+		}
+		EmitByte( &amp;segment[CODESEG], 8 + currentArgOffset );
+		currentArgOffset += 4;
+		return;
+	}
+
+	// ret just leaves something on the op stack
+	if ( !strncmp( token, "RET", 3 ) ) {
+		EmitByte( &amp;segment[CODESEG], OP_LEAVE );
+		instructionCount++;
+		EmitInt( &amp;segment[CODESEG], 8 + currentLocals + currentArgs );
+		return;
+	}
+
+	// pop is needed to discard the return value of
+	// a function
+	if ( !strncmp( token, "pop", 3 ) ) {
+		EmitByte( &amp;segment[CODESEG], OP_POP );
+		instructionCount++;
+		return;
+	}
+
+        ...
+</code></pre>
+
+                <p>
+
+                    An example of using the string table approach for this problem is discussed
+                    in the <a href="#other-applications">Other Applications</a> section.
+
+                </p>
+
+                <a class="xref" name="proposed-interface"></a>
+
+                <h3>The Proposed Interface</h3>
+
+                <p>
+
+                    Let's take a look at the interface we're proposing, the
+                    <strong>IsPrefixOfStringInTable</strong> function, that this article is based upon:
+
+                </p>
+
+                <a class="xref" name="IsPrefixOfStringInTable"></a>
+
+<pre class="code content-proposed-interface-cnf"><code class="language-c">
+//
+// Our string table index is simply a char, with -1 indicating no match found.
+//
+
+typedef CHAR STRING_TABLE_INDEX;
+#define NO_MATCH_FOUND -1
+
+typedef
+STRING_TABLE_INDEX
+(IS_PREFIX_OF_STRING_IN_TABLE)(
+    _In_ PSTRING_TABLE StringTable,
+    _In_ PSTRING String,
+    _Out_opt_ PSTRING_MATCH StringMatch
+    );
+typedef IS_PREFIX_OF_STRING_IN_TABLE *PIS_PREFIX_OF_STRING_IN_TABLE;
+
+IS_PREFIX_OF_STRING_IN_TABLE IsPrefixOfStringInTable;
+
+_Use_decl_annotations_
+STRING_TABLE_INDEX
+IsPrefixOfStringInTable(
+    PSTRING_TABLE StringTable,
+    PSTRING String,
+    PSTRING_MATCH Match
+    )
+/*++
+
+Routine Description:
+
+    Searches a string table to see if any strings "prefix match" the given
+    search string.  That is, whether any string in the table "starts with
+    or is equal to" the search string.
+
+Arguments:
+
+    StringTable - Supplies a pointer to a STRING_TABLE struct.
+
+    String - Supplies a pointer to a STRING struct that contains the string to
+        search for.
+
+    Match - Optionally supplies a pointer to a variable that contains the
+        address of a STRING_MATCH structure.  This will be populated with
+        additional details about the match if a non-NULL pointer is supplied.
+
+Return Value:
+
+    Index of the prefix match if one was found, NO_MATCH_FOUND if not.
+
+--*/
+</code></pre>
+
+                <p>
+
+                    All implementations discussed in this article adhere to that function signature.
+                    The <a href="#STRING_TABLE">STRING_TABLE</a> STRING_TABLE structure will be
+                    discussed shortly.
+
+                </p>
+
+                <p>
+
+                    The STRING_MATCH structure is used to optionally communicate information about
+                    the prefix match back to the caller.  The index and characters matched fields
+                    are often very useful when using the string table for text parsing; see the <a
+                    href="#other-applications">other applications</a> section below for an example.
+
+                </p>
+
+                <p>
+
+                    The structure is defined as follows:
+
+                </p>
+
+                <a class="xref" name="STRING_MATCH"></a>
+
+<pre class="code content-string-match"><code class="language-c">
+//
+// This structure is used to communicate matches back to the caller.
+//
+
+typedef struct _STRING_MATCH {
+
+    //
+    // Index of the match.
+    //
+
+    BYTE Index;
+
+    //
+    // Number of characters matched.
+    //
+
+    BYTE NumberOfMatchedCharacters;
+
+    //
+    // Pad out to 8-bytes.
+    //
+
+    USHORT Padding[3];
+
+    //
+    // Pointer to the string that was matched.  The underlying buffer will
+    // stay valid for as long as the STRING_TABLE struct persists.
+    //
+
+    PSTRING String;
+
+} STRING_MATCH, *PSTRING_MATCH, **PPSTRING_MATCH;
+C_ASSERT(sizeof(STRING_MATCH) == 16);
+</code></pre>
+
+                <a class="xref" name="test-data"></a>
                 <h2>The Test Data</h2>
 
                 <p>
@@ -564,6 +771,7 @@ is_prefix_of_c_str_in_array(const char **array,
 
                 </p>
 
+                <a class="xref" name="requirements-and-design-decisions"></a>
                 <h2>Requirements and Design Decisions</h2>
 
                 <p>
@@ -592,8 +800,8 @@ typedef const STRING *PCSTRING;
                 <p>
 
                     The design should optimize for string lengths less than or equal to 16.  Lengths
-                    greater to 16 are permitted, up to 128, but it will incur overhead during the
-                    prefix lookup.
+                    greater than 16 are permitted, up to 128 bytes, but they incur more overhead during
+                    the prefix lookup.
 
                 </p>
 
@@ -686,7 +894,7 @@ typedef const STRING *PCSTRING;
                 <p>
 
                     Let's review the STRING_TABLE <small>
-                    <a href="https://github.com/tpn/tracer/blob/2018-04-18.1/StringTable2/StringTable.h#L194">
+                    <a href="https://github.com/tpn/tracer/blob/2018-04-18.2/StringTable2/StringTable.h#L194">
                     (view on GitHub)</a></small> structure first and then touch on the supporting
                     structures.
 
@@ -838,6 +1046,7 @@ C_ASSERT(FIELD_OFFSET(STRING_TABLE, Padding) == 320);
 C_ASSERT(sizeof(STRING_TABLE) == 512);
 
 </code></pre>
+
 <pre class="code content-string-table-knf"><code class="language-c">
 struct string_table {
     char                       unique_chars[16];
@@ -886,7 +1095,8 @@ STRING_TABLE ends
 PSTRING_TABLE typedef ptr STRING_TABLE
 
 ;
-; Helper typedefs.
+; CamelCase typedefs that are nicer to work with in assembly
+; than their uppercase counterparts.
 ;
 
 StringTable typedef STRING_TABLE
@@ -945,21 +1155,29 @@ StringTable typedef STRING_TABLE
                 </p>
 
 
+                <a class="xref" name="supporting-structures"></a>
                 <h2>Supporting Structures</h2>
 
                 The string array captures a raw array representation of the underlying strings
                 making up the string table.  It is either embedded within the padding area at the
                 end of the string table, or a separate allocation is made during string table
                 creation.  The main interface to creating a string table is via a STRING_ARRAY
-                structure.  The helper functions, CreateStringTableFromDelimitedString() and
-                CreateStringTableFromDelimitedEnvironmentVariable() simply break down their input
-                into a STRING_ARRAY representation first before calling CreateStringTable().
+                structure.  The helper functions,
+                <a href="https://github.com/tpn/tracer/blob/2018-04-18.2/StringTable2/CreateStringTable.c#L471">
+                    CreateStringTableFromDelimitedString
+                </a> and
+                <a href="https://github.com/tpn/tracer/blob/2018-04-18.2/StringTable2/CreateStringTable.c#L595">
+                    CreateStringTableFromDelimitedEnvironmentVariable
+                </a> simply break down their input into a STRING_ARRAY representation first
+                before calling
+                <a href="https://github.com/tpn/tracer/blob/2018-04-18.2/StringTable2/CreateStringTable.c#L51">
+                    CreateStringTable
+                </a>.
 
                 <a class="xref" name="STRING_ARRAY"></a>
                 <h3>STRING_ARRAY</h3>
 
 <pre class="code content-string-array"><code class="language-c">
-
 typedef struct _Struct_size_bytes_(SizeInQuadwords&gt;&gt;3) _STRING_ARRAY {
 
     //
@@ -1008,10 +1226,7 @@ typedef struct _Struct_size_bytes_(SizeInQuadwords&gt;&gt;3) _STRING_ARRAY {
 
     STRING Strings[ANYSIZE_ARRAY];
 
-} STRING_ARRAY;
-typedef STRING_ARRAY *PSTRING_ARRAY;
-typedef STRING_ARRAY **PPSTRING_ARRAY;
-
+} STRING_ARRAY, *PSTRING_ARRAY, **PPSTRING_ARRAY;
 </code></pre>
 
                 <small>
@@ -1025,7 +1240,7 @@ typedef STRING_ARRAY **PPSTRING_ARRAY;
                         SAL Annotations</a>.  There's a neat deck called
                         <a
                         href="https://github.com/tpn/pdfs/blob/master/Program%20Analysis%20with%20PREfast%20and%20SAL%20-%20Erik%20Poll%20-%20Slides%20(3_StaticAnalysisPREfast).pdf"
-                        >Engineering Better Software at Microsoft</a> that captures some interesting
+                        >Engineering Better Software at Microsoft</a> which captures some interesting
                         details about SAL, for those wanting to read more.  The Code Analysis engine
                         that uses the annotations is built upon the <a
                         href="https://github.com/Z3Prover/z3">Z3 Theorem Prover</a>, which is a
@@ -1038,7 +1253,10 @@ typedef STRING_ARRAY **PPSTRING_ARRAY;
                 <p>
 
                     And finally, we're left with the smaller helper structs that we use to
-                    encapsulate the various innards of the string table.
+                    encapsulate the various innards of the string table.  (I use unions that
+                    feature XMMWORD representations (which is a typedef of __m128i, representing
+                    an XMM register) as well as underlying byte/character representations as I
+                    personally find it makes the resulting C code a bit nicer.)
 
                 </p>
 
@@ -1090,81 +1308,29 @@ typedef union DECLSPEC_ALIGN(16) _SLOT_LENGTHS {
 C_ASSERT(sizeof(SLOT_LENGTHS) == 16);
 </code></pre>
 
-                <a class="xref" name="STRING_TABLE_INDEX"></a>
-                <h3>STRING_TABLE_INDEX</h3>
-<pre class="code content-string-table-index"><code class="language-c">
-//
-// Our string table index is simply a char, with -1 indicating no match found.
-//
-
-typedef CHAR STRING_TABLE_INDEX;
-#define NO_MATCH_FOUND -1
-</code></pre>
-
-                <p>
-
-                    And finally, we employ a custom structure for optionally encapsulating more
-                    details about a given prefix match.  This is filled out by the prefix match
-                    function if requested by the caller.  The index and characters matched fields
-                    are often very useful when using the string tables for text parsing; see the
-                    <a href="#other-applications">other applications</a> section below for an
-                    example.
-
-                </p>
-
-                <a class="xref" name="STRING_MATCH"></a>
-                <h3>STRING_MATCH</h3>
-<pre class="code content-string-match"><code class="language-c">
-//
-// This structure is used to communicate matches back to the caller.
-//
-
-typedef struct _STRING_MATCH {
-
-    //
-    // Index of the match.
-    //
-
-    BYTE Index;
-
-    //
-    // Number of characters matched.
-    //
-
-    BYTE NumberOfMatchedCharacters;
-
-    //
-    // Pad out to 8-bytes.
-    //
-
-    USHORT Padding[3];
-
-    //
-    // Pointer to the string that was matched.  The underlying buffer will
-    // stay valid for as long as the STRING_TABLE struct persists.
-    //
-
-    PSTRING String;
-
-} STRING_MATCH, *PSTRING_MATCH, **PPSTRING_MATCH;
-C_ASSERT(sizeof(STRING_MATCH) == 16);
-</code></pre>
-
+                <a class="xref" name="algorithm"></a>
                 <h1>The Algorithm</h1>
 
                 <p>
+                    <!--
+                    <div>
+                        <script async class="speakerdeck-embed" data-id="feadc0a06e770130c56622000a9f1084" data-ratio="1.33333333333333" src="//speakerdeck.com/assets/embed.js"></script>
+                    </div>
+                    -->
 
                     The source code is verbosely commented, so without further ado, here is the
                     implementation of our fastest C version of the prefix match function
                     <small>
                         <a
-                        href="https://github.com/tpn/tracer/blob/2018-04-18.1/StringTable2/IsPrefixOfStringInTable_10.c#L21">
+                        href="https://github.com/tpn/tracer/blob/2018-04-18.2/StringTable2/IsPrefixOfStringInTable_10.c#L21">
                             (view on GitHub)
                         </a>
                     </small>:
 
                 </p>
 
+                <a class="xref" name="implementation"></a>
+                <h1>The Implementation(s)</h1>
                 <a class="xref" name="IsPrefixOfStringInTable_10"></a>
                 <h2>IsPrefixOfStringInTable_10</h2>
 
@@ -1478,7 +1644,7 @@ Return Value:
                     Looking at the output of the assembly of the C version, I suspected a faster
                     version could be written in assembly specifically for the negative match case.
                     This led to a proof-of-concept LEAF_ENTRY named <a
-                    href="https://github.com/tpn/tracer/blob/2018-04-18.1/StringTable2/IsPrefixOfStringInTable_x64_1.asm#L25">
+                    href="https://github.com/tpn/tracer/blob/2018-04-18.2/StringTable2/IsPrefixOfStringInTable_x64_1.asm#L25">
                     IsPrefixOfStringInTable_x64_1</a> that simply dealt with the negative match
                     fast-path.  That is, it correctly returned NO_MATCH_FOUND if the unique
                     character and length vectors did not corroborate with the incoming search
@@ -1537,8 +1703,14 @@ StringTable2!IsPrefixOfStringInTable_x64_1:
                 <p>
 
                     A bit of background information first.  The Windows x64 ABI and calling
-                    convention dictates there are two types of functions: NESTED_ENTRY and
-                    LEAF_ENTRY.
+                    convention dictates there are two types of functions:
+                    <a
+                    href="https://github.com/tpn/winsdk-10/blob/master/Include/10.0.16299.0/shared/macamd64.inc#L524">
+                    NESTED_ENTRY</a> and
+                    <a href="https://github.com/tpn/winsdk-10/blob/master/Include/10.0.16299.0/shared/macamd64.inc#L353">
+                    LEAF_ENTRY</a>.  NESTED_ENTRY is by far the most common; C and C++ functions are
+                    all implicitly NESTED_ENTRY functions.  (The LEAF_ENTRY and NESTED_ENTRY symbols
+                    are MASM (ml64.exe) macro names, but the concept applies to all languages.)
 
                 </p>
 
@@ -1549,7 +1721,6 @@ StringTable2!IsPrefixOfStringInTable_x64_1:
                     rbp, r12, r13, r14, r15, xmm6-15), nor may it call any other functions (because
                     call implicitly modifies the stack pointer), nor may it have a structured
                     exception handler (because that also manipulates the stack pointer).
-
 
                 </p>
 
@@ -1675,11 +1846,11 @@ Unwind info at 00007ffd`15594468, 4 bytes
 
                 </p>
 
-<pre class="code content-is-prefix-asm-v2"><code class="language-nasm">
+<pre class="code content-is-prefix-asm-v4"><code class="language-nasm">
 ;++
 ;
 ; BOOL
-; IsPrefixOfStringInTable_x64_2(
+; IsPrefixOfStringInTable_x64_4(
 ;     _In_ PSTRING_TABLE StringTable,
 ;     _In_ PSTRING String,
 ;     _Out_ PSTRING_MATCH StringMatch
@@ -2136,7 +2307,7 @@ Pfx60:  vpextrb     rcx, xmm4, 2                ; Restore rcx counter.
                 <p>
 
                     See <a
-                    href="https://github.com/tpn/tracer/blob/2018-04-18.1/StringTable2BenchmarkExe">StringTable2BenchmarkExe</a>.
+                    href="https://github.com/tpn/tracer/blob/2018-04-18.2/StringTable2BenchmarkExe">StringTable2BenchmarkExe</a>.
 
                 </p>
 
@@ -2157,10 +2328,14 @@ Pfx60:  vpextrb     rcx, xmm4, 2                ; Restore rcx counter.
                     hammer for all of my string-related problems!  My favorite example of this is
                     the code I wrote for parsing the output of Windows debug engine's 'examine
                     symbols' command.
+
                 </p>
 
                 <p>
-                    Here's an example of a few lines of output from the cdb command `x /v /t Rtl!*`:
+
+                    Here's an example of a few lines of output from the cdb command
+                    <small><code>x /v /t Rtl!*</code></small>:
+
                 </p>
 
 <small>
@@ -2180,7 +2355,7 @@ prv func   00007ffd`157093b0   1e <CLR type> Rtl!UnregisterRtlAtExitEntry$fin$0 
 ...
 prv func   00007ffd`157061f0   48 <function> Rtl!RtlCryptGenRandom (struct _RTL *, unsigned long, unsigned char *)
 prv func   00007ffd`15707500   b2 <function> Rtl!AppendTailGuardedListTsx (struct _GUARDED_LIST *, struct _LIST_ENTRY *)
-prv func   00007ffd`157075c0    d <function> Rtl!DummyVectorCall1 (union __m128i *, union __m128i *, union __m128i *, union __m128i *)
+prv func   00007ffd`157075c0    d <function> Rtl!DummyVectorCall1 (union __m128i *, union __m128i *, ...
 prv func   00007ffd`157025c0   4f <function> Rtl!RtlHeapAllocatorAlignedMalloc (void *, unsigned int64, unsigned int64)
 prv func   00007ffd`15703cc0   9e <function> Rtl!DisableCreateSymbolicLinkPrivilege (void)
 </pre>
@@ -2193,10 +2368,8 @@ prv func   00007ffd`15703cc0   9e <function> Rtl!DisableCreateSymbolicLinkPrivil
                     ExamineSymbolsParseLine</a> is called for each line of output and is responsible
                     for parsing it into a <a
                     href="https://github.com/tpn/tracer/blob/c2f36bcc686ce6633c91671650f58b62bffb126e/DebugEngine/DebugEngine.h#L1655">
-                    DEBUG_ENGINE_EXAMINED_SYMBOL</a> structure.  It makes me laugh every time I look
-                    over it as it's basically attempting elaborate string matching in C with nothing
-                    but pointer arithmetic and a bunch of string tables.  Just flying in the face of
-                    contemporary software engineering practices!
+                    DEBUG_ENGINE_EXAMINED_SYMBOL</a> structure.  It's some good ol' fashioned string
+                    processing using nothing but pointer arithmetic and a bunch of string tables.
 
                 </p>
 
@@ -2438,9 +2611,9 @@ RetryBasicTypeMatch:
                 <p>
 
                     Otherwise, bump the StringTable pointer (which relies on the fact that the
-                    underlying string table pointers in the session structure are contiguous),
-                    bump the match offset by number of entries per string table, and try the match
-                    again.
+                    underlying string table pointers in the session structure are contiguous &mdash;
+                    a handy implementation detail), bump the match offset by number of entries per
+                    string table, and try the match again.
 
                 </p>
 
@@ -2448,7 +2621,10 @@ RetryBasicTypeMatch:
 
                     If we found a match, we can obtain the SymbolType enum representation of the
                     underlying match by simply adding the match index to the match offset.  I like
-                    that.  It's simple and fast.
+                    that.  It's simple and fast.  It also plays nicely with switch statements; do
+                    your lookup, resolve the underlying enum value, and process each possible path
+                    in a case statement like you'd do with any other integer representation of an
+                    option.
 
                 </p>
 
@@ -2456,8 +2632,8 @@ RetryBasicTypeMatch:
 
                     The other nice side-effect is that it forces you to pick which table a given
                     string should go in.  I made this decision by looking at which types occurred
-                    most frequently, and simply put those in table 1.  Less frequent types go in
-                    subsequent tables.
+                    most frequently, and simply put those in the first table.  Less frequent types
+                    go in subsequent tables.
 
                 </p>
                 <p>
@@ -2809,7 +2985,7 @@ Return Value:
                 <p>
 
                     The <a
-                    href="https://github.com/tpn/tracer/blob/2018-04-18.1/StringTable2/CreateStringTable.c#L147">
+                    href="https://github.com/tpn/tracer/blob/2018-04-18.2/StringTable2/CreateStringTable.c#L147">
                     CreateSingleStringTable</a> routine is responsible for construction of a new
                     STRING_TABLE.  It is here we identify the unique set of characters (and their
                     indices) to store in the first two fields of the string table.  The code is
