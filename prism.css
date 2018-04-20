@@ -10,7 +10,7 @@ code[class*="language-"],
 pre[class*="language-"] {
 	color: #ccc;
 	background: none;
-	font-family: Monaco, Consolas, 'Andale Mono', 'Ubuntu Mono', monospace;
+	font-family: Monaco, Consolas, Menlo, 'Andale Mono', 'Ubuntu Mono', monospace;
 	font-size: 90%;
 	text-align: left;
 	white-space: pre;
@@ -29,6 +29,28 @@ pre[class*="language-"] {
 	hyphens: none;
 
 }
+
+/* Portrait */
+@media only screen and (min-device-width: 414px)
+                   and (max-device-width: 736px)
+                   and (-webkit-min-device-pixel-ratio: 3)
+                   and (orientation: portrait) {
+
+    code[class*="language-"],
+    pre[class*="language-"] {
+        font-size: 80%;
+    }
+}
+
+
+/*
+@media only screen and (device-width: 1000px) {
+    code[class*="language-"],
+    pre[class*="language-"] {
+        font-size: 60%;
+    }
+}
+*/
 
 /* Code blocks */
 pre[class*="language-"] {

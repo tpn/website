@@ -4,8 +4,11 @@
     <head>
         <title>Is Prefix Of String In Table?  A Journey Into SIMD String Processing.</title>
         <meta name="msvalidate.01" content="E828541C73A98C315E3D6B8C88EF6057" />
+        <meta name="viewport" content="width=device-width, initial-scale=0.65, maximum-scale=1.0" />
+
         <!-- https://www.google.com/fonts#UsePlace:use/Collection:Lato:200,300,300italic -->
         <!--
+        <meta name="viewport" content="width=device-width, min-width=1100px, initial-scale=0.7, maximum-scale=1.0, shrint-to-fit=no" />
         <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:200,300,300italic">
         <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Merriweather:300,300i,400,400i">
         -->
@@ -41,6 +44,7 @@
                 - Diffs to previous version of the various changes to code
             - Embed a speakerdeck deck graphically depicting how the algorithm works.
             - Interface section.
+            - Fix the image alignment issues on high DPI/Retina/font-scaling resolutions.
 
     -->
     <body>
@@ -126,10 +130,16 @@
 
                 </p>
 
+                <a href="StringTable.svg" target="_blank">
+                    <img class="svg-image" src="StringTable.svg"/>
+                </a>
+
+                <!--
                 <picture>
                     <source srcset="StringTableLayout2.png"/>
                     <img width="1042px" height="675px" srcset="StringTableLayout2.png"/>
                 </picture>
+                -->
 
                 <p>
                     The layout of the STRING_TABLE structure allows us to determine if a given
@@ -213,10 +223,12 @@ Total Num Of &#181;ops: 18
 
                 </p>
 
+                <!--
                 <picture>
                     <source srcset="PrefixMatchPerformance.png"/>
                     <img width="815px" height="660px" srcset="PrefixMatchPerformance.png"/>
                 </picture>
+                -->
 
                 <p>
 
@@ -229,10 +241,12 @@ Total Num Of &#181;ops: 18
 
                 </p>
 
+                <!--
                 <picture>
                     <source srcset="NegativeMatchPerformance.png"/>
                     <img width="817px" height="657px" srcset="NegativeMatchPerformance.png"/>
                 </picture>
+                -->
 
                 <p>
 
@@ -3450,10 +3464,12 @@ Return Value:
 
                 </p>
 
+                <!--
                 <picture>
                     <source srcset="IsPrefixOfStringInTable_13-Release-vs-PGO.png"/>
                     <img width="1664px" height="3224px" srcset="PrefixOfStringInTable_13-Release-vs-PGO.png"/>
                 </picture>
+                -->
 
 
                 <a class="xref" name="typedefs"></a>
