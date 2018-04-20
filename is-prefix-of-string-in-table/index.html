@@ -111,22 +111,99 @@
                     regards to other characters at the same byte offset) is then extracted, along
                     with its index.  A 16 byte character array, <a
                     href="#STRING_SLOT">STRING_SLOT</a>, is used to capture the unique characters.
-                    A 16 byte unsigned character array, SLOT_INDEX, is used to capture the 0-based
-                    index for which that unique character was found.  A 16 byte unsigned character
-                    array, SLOT_LENGTH, is used to capture the length of each string in the table.
-                    Finally, a 16-element array of STRING_SLOTs is used to capture up to the first
+                    A 16 element array of unsigned characters, SLOT_INDEX, is used to capture the
+                    index.  Similarly, lengths are stored in the same fashion via SLOT_LENGTHS.
+                    Finally, a 16 element array of STRING_SLOTs is used to capture up to the first
                     16 bytes of each string in the set.
 
                 </p>
+
                 <p>
 
-                    The layout of the STRING_TABLE structure allows for the detection of a possible
-                    prefix match against all 16 strings at once using about 12 instructions.  The
-                    first part of the lookup functions similar to a bloom filter, in that we are
-                    able to quickly determine if an incoming string is definitely <strong>not</strong>
-                    a prefix match.
+                    An example of the memory layout of the STRING_TABLE structure at run time using
+                    sample <a href="#ntfs-reserved-names">test data</a>, is depicted below.  Note
+                    the width of each row is 16 bytes (128 bits), which is the size of an XMM register.
 
                 </p>
+
+                <picture>
+                    <source srcset="StringTableLayout2.png"/>
+                    <img width="1042px" height="675px" srcset="StringTableLayout2.png"/>
+                </picture>
+
+                <p>
+                    The layout of the STRING_TABLE structure allows us to determine if a given
+                    search string <strong>does not</strong> prefix match all 16 strings at once
+                    in 12 assembly instructions.  This breaks down into 18 &#181;ops, with a
+                    block throughput of 3.48 cycles on Intel's Skylake architecture:
+                </p>
+
+                <div class="tab-box language box-intro">
+                    <ul class="tabs">
+                        <li data-content="content-intro-nasm">Assembly</li>
+                        <li data-content="content-intro-iaca">IACA</li>
+                    </ul>
+                    <div class="content">
+<pre class="code content-intro-nasm"><code class="language-nasm">
+mov      rax,  String.Buffer[rdx]           ; Load address of string buffer.
+vpbroadcastb xmm4, String.Length[rdx]       ; Broadcast string length.
+vmovdqa  xmm3, StringTable.Lengths[rcx]     ; Load table lengths.
+vmovdqu  xmm0, String.Buffer[rdx]           ; Load search buffer.
+vpcmpgtb xmm1, xmm3, xmm4                   ; Identify slots &gt; string length.
+vpshufb  xmm5, xmm0, StringTable.UniqueIndex[rcx] ; Rearrange string by unique index.
+vpcmpeqb xmm5, xmm5, StringTable.UniqueChars[rcx] ; Compare rearranged to unique chars.
+vptest   xmm1, xmm5                         ; Unique slots AND (!long slots).
+jnc      Short Pfx10                        ; CY=0, continue with routine.
+xor      eax, eax                           ; CY=1, no match.
+not      al                                 ; al = -1 (NO_MATCH_FOUND).
+ret                                         ; Return NO_MATCH_FOUND.
+</code></pre>
+
+<pre class="code content-intro-iaca"><code class="language-nasm">
+S:\Source\tracer>iaca x64\Release\StringTable2.dll
+Intel(R) Architecture Code Analyzer Version -  v3.0-28-g1ba2cbb build date: 2017-10-23;17:30:24
+Analyzed File -  x64\Release\StringTable2.dll
+Binary Format - 64Bit
+Architecture  -  SKL
+Analysis Type - Throughput
+
+Throughput Analysis Report
+--------------------------
+Block Throughput: 3.48 Cycles       Throughput Bottleneck: FrontEnd
+Loop Count:  24
+Port Binding In Cycles Per Iteration:
+----------------------------------------------------------------------------
+| Port   |  0  - DV  |  1  |  2  - D   |  3  - D   |  4  |  5  |  6  |  7  |
+----------------------------------------------------------------------------
+| Cycles | 2.0   0.0 | 1.0 | 3.5   3.5 | 3.5   3.5 | 0.0 | 3.0 | 2.0 | 0.0 |
+----------------------------------------------------------------------------
+
+DV - Divider pipe (on port 0)
+D - Data fetch pipe (on ports 2 and 3)
+* - instruction micro-ops not bound to a port
+^ - Micro Fusion occurred
+
+|    | Ports pressure in cycles        | |
+|&#181;ops|0DV| 1 | 2 - D | 3 - D |4| 5 | 6 |7|
+-------------------------------------------
+| 1  |   |   |0.5 0.5|0.5 0.5| |   |   | | mov rax, qword ptr [rdx+0x8]
+| 2  |   |   |0.5 0.5|0.5 0.5| |1.0|   | | vpbroadcastb xmm4, byte ptr [rdx]
+| 1  |   |   |0.5 0.5|0.5 0.5| |   |   | | vmovdqa xmm3, xmmword ptr [rcx+0x20]
+| 1  |   |   |0.5 0.5|0.5 0.5| |   |   | | vmovdqu xmm0, xmmword ptr [rax]
+| 1  |1.0|   |       |       | |   |   | | vpcmpgtb xmm1, xmm3, xmm4
+| 2^ |   |   |0.5 0.5|0.5 0.5| |1.0|   | | vpshufb xmm5, xmm0, xmmword ptr [rcx+0x10]
+| 2^ |   |1.0|0.5 0.5|0.5 0.5| |   |   | | vpcmpeqb xmm5, xmm5, xmmword ptr [rcx]
+| 2  |1.0|   |       |       | |1.0|   | | vptest xmm1, xmm5
+| 1  |   |   |       |       | |   |1.0| | jnb 0x10
+| 1* |   |   |       |       | |   |   | | xor eax, eax
+| 1  |   |   |       |       | |   |1.0| | not al
+| 3^ |   |   |0.5 0.5|0.5 0.5| |   |   | | ret
+Total Num Of &#181;ops: 18
+</code></pre>
+
+                    </div>
+                </div>
+
                 <p>
 
                     Ten iterations of a function named IsPrefixOfStringInTable were authored.  The
@@ -247,9 +324,9 @@
                             <a href="#algorithm">The Algorithm</a>
                         </li>
 
+                        <!--
                         <li>
                             <a href="#implementation">The Implementation(s)</a>
-                            <!--
                             <ul class="toc-list-2">
                                 <li>
                                     The <a href="#IsPrefixOfStringInTable">IsPrefixOfStringInTable</a> function signature.
@@ -281,11 +358,11 @@
                                     </ul>
                                 </li>
                             </ul>
-                            -->
                         </li>
                         <li>
                             <a href="#benchmark">The Benchmark</a> (TODO)
                         </li>
+                        -->
                         <li>
                             <a href="#other-applications">Other Applications</a>
                         </li>
@@ -729,6 +806,7 @@ C_ASSERT(sizeof(STRING_MATCH) == 16);
 
                 </p>
 
+                <a class="xref" name="ntfs-reserved-names"></a>
                 <h3>NTFS Reserved Names</h3>
 
                 <p>
@@ -1323,7 +1401,7 @@ C_ASSERT(sizeof(SLOT_LENGTHS) == 16);
                     -->
 
                     The source code is verbosely commented, so without further ado, here is the
-                    implementation of our fastest C version of the prefix match function
+                    implementation of our (initially) fastest C version of the prefix match function
                     <small>
                         <a
                         href="https://github.com/tpn/tracer/blob/2018-04-18.2/StringTable2/IsPrefixOfStringInTable_10.c#L21">
@@ -1333,8 +1411,11 @@ C_ASSERT(sizeof(SLOT_LENGTHS) == 16);
 
                 </p>
 
+                <!--
                 <a class="xref" name="implementation"></a>
                 <h1>The Implementation(s)</h1>
+
+                -->
                 <a class="xref" name="IsPrefixOfStringInTable_10"></a>
                 <h2>IsPrefixOfStringInTable_10</h2>
 
