@@ -1813,7 +1813,7 @@
 						x="4" dy="1.2em" class="st4">; the length of the search string (1 byte) across </tspan><tspan class="st42">xmm4</tspan>.  Compare<v:newlineChar/><tspan
 						x="4" dy="1.2em" class="st4">; greater than, identifying slots to exclude due to length.<v:newlineChar/></tspan><tspan
 						x="4" dy="1.2em" class="st4">;<v:newlineChar/><v:tabChar/></tspan><tspan x="40" dy="1.2em" class="st41">vmovdqa xmm3, xmmword ptr StringTable.Lengths[rcx]<v:newlineChar/><v:newlineChar/><v:newlineChar/><v:tabChar/></tspan><tspan
-						x="40" dy="3.6em" class="st42">vbroadcastb xmm4, byte ptr String.Length[rdx]<v:newlineChar/><v:newlineChar/><v:newlineChar/><v:newlineChar/><v:tabChar/></tspan><tspan
+						x="40" dy="3.6em" class="st42">vpbroadcastb xmm4, byte ptr String.Length[rdx]<v:newlineChar/><v:newlineChar/><v:newlineChar/><v:newlineChar/><v:tabChar/></tspan><tspan
 						x="40" dy="4.8em" class="st43">vpcmpgtb xmm1, </tspan><tspan class="st41">xmm3</tspan><tspan class="st43">, </tspan><tspan
 						class="st42">xmm4</tspan><v:newlineChar/><v:newlineChar/></text>		</g>
 		<g id="shape207-610" v:mID="207" v:groupContext="shape" transform="translate(442.937,-329.98)">
