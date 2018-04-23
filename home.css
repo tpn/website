@@ -430,4 +430,19 @@ a:hover {
     text-decoration: underline;
 }
 
+a.homename {
+    text-decoration: none;
+    color: #95a5a6;
+}
+
+a.homename:visited {
+    text-decoration: none;
+    color: #95a5a6;
+}
+
+a.homename:hover {
+    text-decoration: none;
+    color: #95a5a6;
+}
+
 /* vim: set ts=8 sw=4 sts=4 tw=0 */
