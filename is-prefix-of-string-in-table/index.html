@@ -159,7 +159,7 @@
                     <div class="content">
 <pre class="code content-intro-nasm"><code class="language-nasm">
 mov      rax,  String.Buffer[rdx]                   ; Load address of string buffer.
-vpbroadcastb xmm4, byte ptr String.Length[rdx]      ; Bcast string length.
+vpbroadcastb xmm4, byte ptr String.Length[rdx]      ; Broadcast string length.
 vmovdqa  xmm3, xmmword ptr StringTable.Lengths[rcx] ; Load table lengths.
 vmovdqu  xmm0, xmmword ptr [rax]                    ; Load string buffer.
 vpcmpgtb xmm1, xmm3, xmm4                           ; Identify slots &gt; string len.
