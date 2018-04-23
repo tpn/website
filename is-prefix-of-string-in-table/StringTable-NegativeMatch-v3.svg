@@ -15,69 +15,69 @@
 	<![CDATA[
 		.st1 {fill:url(#grad0-4);stroke:#3c63ac;stroke-width:0.75}
 		.st2 {fill:none;stroke:none;stroke-width:0.25}
-		.st3 {fill:#339966;font-family:Monaco;font-size:0.833336em}
+		.st3 {fill:#339966;font-family:Monaco,Consolas,Menlo,monospace;font-size:0.833336em}
 		.st4 {font-size:1em}
 		.st5 {fill:#7030a0;font-size:1em}
 		.st6 {fill:#ed7d31;font-size:1em}
 		.st7 {fill:#007f7f;font-size:1em}
 		.st8 {fill:#ffffff;stroke:#ed7d31;stroke-width:1.75}
-		.st9 {fill:#33cc33;font-family:Monaco;font-size:0.833336em}
-		.st10 {fill:#0099cc;font-family:Monaco;font-size:0.833336em}
-		.st11 {fill:#3333cc;font-family:Monaco;font-size:0.833336em}
+		.st9 {fill:#33cc33;font-family:Monaco,Consolas,Menlo,monospace;font-size:0.833336em}
+		.st10 {fill:#0099cc;font-family:Monaco,Consolas,Menlo,monospace;font-size:0.833336em}
+		.st11 {fill:#3333cc;font-family:Monaco,Consolas,Menlo,monospace;font-size:0.833336em}
 		.st12 {fill:#ffffff;stroke:#7030a0;stroke-width:1.75}
 		.st13 {fill:none;stroke:none;stroke-width:0.75}
-		.st14 {fill:#7030a0;font-family:Monaco;font-size:0.833336em}
-		.st15 {fill:#ed7d31;font-family:Monaco;font-size:0.833336em}
+		.st14 {fill:#7030a0;font-family:Monaco,Consolas,Menlo,monospace;font-size:0.833336em}
+		.st15 {fill:#ed7d31;font-family:Monaco,Consolas,Menlo,monospace;font-size:0.833336em}
 		.st16 {fill:none;stroke:#007f7f;stroke-width:1.75}
-		.st17 {fill:#007f7f;font-family:Monaco;font-size:0.833336em}
+		.st17 {fill:#007f7f;font-family:Monaco,Consolas,Menlo,monospace;font-size:0.833336em}
 		.st18 {marker-end:url(#mrkr4-173);stroke:#0099cc;stroke-linecap:round;stroke-linejoin:round;stroke-width:1}
 		.st19 {fill:#0099cc;fill-opacity:1;stroke:#0099cc;stroke-opacity:1;stroke-width:0.28409090909091}
 		.st20 {marker-end:url(#mrkr4-179);stroke:#33cc33;stroke-linecap:round;stroke-linejoin:round;stroke-width:1}
 		.st21 {fill:#33cc33;fill-opacity:1;stroke:#33cc33;stroke-opacity:1;stroke-width:0.28409090909091}
 		.st22 {marker-end:url(#mrkr4-185);stroke:#3333cc;stroke-linecap:round;stroke-linejoin:round;stroke-width:1}
 		.st23 {fill:#3333cc;fill-opacity:1;stroke:#3333cc;stroke-opacity:1;stroke-width:0.28409090909091}
-		.st24 {fill:#7f7f7f;font-family:Monaco;font-size:0.499992em}
-		.st25 {fill:#3333cc;font-family:Monaco;font-size:0.499992em}
-		.st26 {fill:#007f7f;font-family:Monaco;font-size:0.499992em}
-		.st27 {fill:#33cc33;font-family:Monaco;font-size:0.499992em}
+		.st24 {fill:#7f7f7f;font-family:Monaco,Consolas,Menlo,monospace;font-size:0.499992em}
+		.st25 {fill:#3333cc;font-family:Monaco,Consolas,Menlo,monospace;font-size:0.499992em}
+		.st26 {fill:#007f7f;font-family:Monaco,Consolas,Menlo,monospace;font-size:0.499992em}
+		.st27 {fill:#33cc33;font-family:Monaco,Consolas,Menlo,monospace;font-size:0.499992em}
 		.st28 {fill:#cc0066;font-size:1em}
 		.st29 {fill:#759fcc;font-size:1em}
 		.st30 {fill:#ffffff;stroke:#cc0066;stroke-dasharray:3.5,2.5;stroke-width:0.5}
-		.st31 {fill:#cc0066;font-family:Monaco;font-size:0.499992em}
+		.st31 {fill:#cc0066;font-family:Monaco,Consolas,Menlo,monospace;font-size:0.499992em}
 		.st32 {fill:#ffffff;stroke:#cc0066;stroke-dasharray:1.75,1.25;stroke-width:0.25}
 		.st33 {fill:#ffffff;stroke:#cc0066;stroke-width:2.25}
-		.st34 {fill:#cc0066;font-family:Monaco;font-size:0.833336em}
+		.st34 {fill:#cc0066;font-family:Monaco,Consolas,Menlo,monospace;font-size:0.833336em}
 		.st35 {fill:#ffffff;stroke:#759fcc;stroke-dasharray:1.75,1.25;stroke-width:0.25}
-		.st36 {fill:#759fcc;font-family:Monaco;font-size:0.499992em}
+		.st36 {fill:#759fcc;font-family:Monaco,Consolas,Menlo,monospace;font-size:0.499992em}
 		.st37 {fill:#ffffff;stroke:#759fcc;stroke-width:2}
-		.st38 {fill:#759fcc;font-family:Monaco;font-size:0.833336em}
+		.st38 {fill:#759fcc;font-family:Monaco,Consolas,Menlo,monospace;font-size:0.833336em}
 		.st39 {fill:none;stroke:#007f7f;stroke-dasharray:1.75,1.25;stroke-width:0.25}
 		.st40 {fill:none;stroke:#007f7f;stroke-width:2}
 		.st41 {fill:#f799e9;font-size:1em}
 		.st42 {fill:#3399ff;font-size:1em}
 		.st43 {fill:#9966ff;font-size:1em}
-		.st44 {fill:#f799e9;font-family:Monaco;font-size:0.833336em}
+		.st44 {fill:#f799e9;font-family:Monaco,Consolas,Menlo,monospace;font-size:0.833336em}
 		.st45 {fill:#ffffff;stroke:#3399ff;stroke-width:1.75}
-		.st46 {fill:#3399ff;font-family:Monaco;font-size:0.833336em}
+		.st46 {fill:#3399ff;font-family:Monaco,Consolas,Menlo,monospace;font-size:0.833336em}
 		.st47 {fill:#ffffff;stroke:#3399ff;stroke-dasharray:1.75,1.25;stroke-width:0.25}
-		.st48 {fill:#3399ff;font-family:Monaco;font-size:0.499992em}
+		.st48 {fill:#3399ff;font-family:Monaco,Consolas,Menlo,monospace;font-size:0.499992em}
 		.st49 {fill:#ffffff;stroke:#9966ff;stroke-width:2}
-		.st50 {fill:#9966ff;font-family:Monaco;font-size:0.833336em}
+		.st50 {fill:#9966ff;font-family:Monaco,Consolas,Menlo,monospace;font-size:0.833336em}
 		.st51 {fill:#ffffff;stroke:#9966ff;stroke-dasharray:1.75,1.25;stroke-width:0.25}
-		.st52 {fill:#9966ff;font-family:Monaco;font-size:0.499992em}
+		.st52 {fill:#9966ff;font-family:Monaco,Consolas,Menlo,monospace;font-size:0.499992em}
 		.st53 {fill:#7f7f7f;font-size:1em}
 		.st54 {fill:#ffffff;stroke:#a5a5a5;stroke-dasharray:1.75,1.25;stroke-width:0.25}
-		.st55 {fill:#a5a5a5;font-family:Monaco;font-size:0.499992em}
+		.st55 {fill:#a5a5a5;font-family:Monaco,Consolas,Menlo,monospace;font-size:0.499992em}
 		.st56 {marker-end:url(#mrkr4-909);stroke:#759fcc;stroke-linecap:round;stroke-linejoin:round;stroke-width:1}
 		.st57 {fill:#759fcc;fill-opacity:1;stroke:#759fcc;stroke-opacity:1;stroke-width:0.28409090909091}
 		.st58 {marker-end:url(#mrkr4-915);stroke:#9966ff;stroke-linecap:round;stroke-linejoin:round;stroke-width:1}
 		.st59 {fill:#9966ff;fill-opacity:1;stroke:#9966ff;stroke-opacity:1;stroke-width:0.28409090909091}
-		.st60 {fill:#4672c4;font-family:Calibri;font-size:0.499992em}
+		.st60 {fill:#4672c4;font-family:Calibri,Open Sans,sans-serif;font-size:0.499992em}
 		.st61 {marker-end:url(#mrkr4-924);stroke:#007f7f;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:0.57;stroke-width:1}
 		.st62 {fill:#007f7f;fill-opacity:0.57;stroke:#007f7f;stroke-opacity:0.57;stroke-width:0.28409090909091}
 		.st63 {fill:#ffffff;stroke:#f799e9;stroke-width:1.75}
 		.st64 {fill:#ffffff;stroke:#f799e9;stroke-dasharray:1.75,1.25;stroke-width:0.25}
-		.st65 {fill:#f799e9;font-family:Monaco;font-size:0.499992em}
+		.st65 {fill:#f799e9;font-family:Monaco,Consolas,Menlo,monospace;font-size:0.499992em}
 		.st66 {fill:none;fill-rule:evenodd;font-size:12px;overflow:visible;stroke-linecap:square;stroke-miterlimit:3}
 	]]>
 	</style>
@@ -1811,7 +1811,7 @@
 			<text x="4" y="521.12" class="st3" v:langID="1033"><v:paragraph v:bulletSize="0.166667"/><v:tabList/>;<v:newlineChar/><tspan
 						x="4" dy="1.2em" class="st4">; Load the lengths of each string table slot into </tspan><tspan class="st41">xmm3</tspan>, broadcast<v:newlineChar/><tspan
 						x="4" dy="1.2em" class="st4">; the length of the search string (1 byte) across </tspan><tspan class="st42">xmm4</tspan>.  Compare<v:newlineChar/><tspan
-						x="4" dy="1.2em" class="st4">; greater than equal, identifying slots to exclude due to length.<v:newlineChar/></tspan><tspan
+						x="4" dy="1.2em" class="st4">; greater than, identifying slots to exclude due to length.<v:newlineChar/></tspan><tspan
 						x="4" dy="1.2em" class="st4">;<v:newlineChar/><v:tabChar/></tspan><tspan x="40" dy="1.2em" class="st41">vmovdqa xmm3, xmmword ptr StringTable.Lengths[rcx]<v:newlineChar/><v:newlineChar/><v:newlineChar/><v:tabChar/></tspan><tspan
 						x="40" dy="3.6em" class="st42">vbroadcastb xmm4, byte ptr String.Length[rdx]<v:newlineChar/><v:newlineChar/><v:newlineChar/><v:newlineChar/><v:tabChar/></tspan><tspan
 						x="40" dy="4.8em" class="st43">vpcmpgtb xmm1, </tspan><tspan class="st41">xmm3</tspan><tspan class="st43">, </tspan><tspan
