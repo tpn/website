@@ -174,7 +174,8 @@ ret                                                 ; Return NO_MATCH_FOUND.
 
 <pre class="code content-intro-iaca"><code class="language-nasm">
 S:\Source\tracer>iaca x64\Release\StringTable2.dll
-Intel(R) Architecture Code Analyzer Version -  v3.0-28-g1ba2cbb build date: 2017-10-23;17:30:24
+Intel(R) Architecture Code Analyzer
+Version -  v3.0-28-g1ba2cbb build date: 2017-10-23;17:30:24
 Analyzed File -  x64\Release\StringTable2.dll
 Binary Format - 64Bit
 Architecture  -  SKL
@@ -222,8 +223,8 @@ Total Num Of &#181;ops: 18
                     Here's a simplified walk-through of a negative match in action,
                     using the search string "CAT":
 
-                    <a href="StringTable-NegativeMatch.svg" target="_blank">
-                        <img class="svg-image" src="StringTable-NegativeMatch.svg"/>
+                    <a href="StringTable-NegativeMatch-v3.svg" target="_blank">
+                        <img class="svg-image" src="StringTable-NegativeMatch-v3.svg"/>
                     </a>
 
                 </p>
@@ -2390,6 +2391,20 @@ Pfx60:  vpextrb     rcx, xmm4, 2                ; Restore rcx counter.
         LEAF_END   IsPrefixOfStringInTable_x64_2, _TEXT$00
 
 </code></pre>
+
+                <h1>The Implementations</h1>
+
+                <p>
+
+                    In this section, we'll take a look at the various implementations we
+                    experimented with in order to get to the fastest version.
+
+                </p>
+
+                <h2>IsPrefixOfStringInTable_1</h2>
+                <p>
+
+                </p>
 
                 <!--
                 <hr/>
