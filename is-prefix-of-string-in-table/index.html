@@ -55,8 +55,11 @@
             </div>
             <ul class="header-links">
                 <li><a href="#home"><i class="fa fa-home"></i>Is Prefix Of String In Table?</a></li>
-                <li><a href="https://github.com/tpn" target="_blank"><i class="fa fa-github"></i> GitHub</a></li>
+                <li><a href="https://github.com/tpn/tracer/tree/2018-04-18.2/StringTable2" target="_blank"><i class="fa fa-github"></i> GitHub</a></li>
+                <li><a href="https://twitter.com/trentnelson" target="_blank"><i class="fa fa-twitter"></i> Twitter</a></li>
+                <!--
                 <li><a href="https://twitter.com/trentnelson" class="twitter-follow-button" data-show-count="false">Follow @trentnelson</a></li>
+                -->
             </ul>
         </header>
 
@@ -124,7 +127,7 @@
 
                 <p>
 
-                    An example of the memory layout of the STRING_TABLE structure at run time using
+                    An example of the memory layout of the STRING_TABLE structure at run time, using
                     sample <a href="#ntfs-reserved-names">test data</a>, is depicted below.  Note
                     the width of each row is 16 bytes (128 bits), which is the size of an XMM register.
 
@@ -155,18 +158,18 @@
                     </ul>
                     <div class="content">
 <pre class="code content-intro-nasm"><code class="language-nasm">
-mov      rax,  String.Buffer[rdx]           ; Load address of string buffer.
-vpbroadcastb xmm4, String.Length[rdx]       ; Broadcast string length.
-vmovdqa  xmm3, StringTable.Lengths[rcx]     ; Load table lengths.
-vmovdqu  xmm0, String.Buffer[rdx]           ; Load search buffer.
-vpcmpgtb xmm1, xmm3, xmm4                   ; Identify slots &gt; string length.
-vpshufb  xmm5, xmm0, StringTable.UniqueIndex[rcx] ; Rearrange string by unique index.
-vpcmpeqb xmm5, xmm5, StringTable.UniqueChars[rcx] ; Compare rearranged to unique chars.
-vptest   xmm1, xmm5                         ; Unique slots AND (!long slots).
-jnc      Short Pfx10                        ; CY=0, continue with routine.
-xor      eax, eax                           ; CY=1, no match.
-not      al                                 ; al = -1 (NO_MATCH_FOUND).
-ret                                         ; Return NO_MATCH_FOUND.
+mov      rax,  String.Buffer[rdx]                   ; Load address of string buffer.
+vpbroadcastb xmm4, byte ptr String.Length[rdx]      ; Bcast string length.
+vmovdqa  xmm3, xmmword ptr StringTable.Lengths[rcx] ; Load table lengths.
+vmovdqu  xmm0, xmmword ptr [rax]                    ; Load string buffer.
+vpcmpgtb xmm1, xmm3, xmm4                           ; Identify slots &gt; string len.
+vpshufb  xmm5, xmm0, StringTable.UniqueIndex[rcx]   ; Rearrange string by unique index.
+vpcmpeqb xmm5, xmm5, StringTable.UniqueChars[rcx]   ; Compare rearranged to unique.
+vptest   xmm1, xmm5                                 ; Unique slots AND (!long slots).
+jnc      Short Pfx10                                ; CY=0, continue with routine.
+xor      eax, eax                                   ; CY=1, no match.
+not      al                                         ; al = -1 (NO_MATCH_FOUND).
+ret                                                 ; Return NO_MATCH_FOUND.
 </code></pre>
 
 <pre class="code content-intro-iaca"><code class="language-nasm">
@@ -273,23 +276,6 @@ Total Num Of &#181;ops: 18
 
                 </p>
 
-                <!--
-                <div class="cols-2">
-                    <div>
-                        <script async class="speakerdeck-embed" data-id="feadc0a06e770130c56622000a9f1084" src="//speakerdeck.com/assets/embed.js"></script>
-                    </div>
-                    <div>
-                        <script async class="speakerdeck-embed" data-id="606aa4e02d30013103c12a5f68b843a3" src="//speakerdeck.com/assets/embed.js"></script>
-                    </div>
-                    <div>
-                        <script async class="speakerdeck-embed" data-id="feadc0a06e770130c56622000a9f1084" data-ratio="1.33333333333333" src="//speakerdeck.com/assets/embed.js"></script>
-                    </div>
-                    <div>
-                        <script async class="speakerdeck-embed" data-id="606aa4e02d30013103c12a5f68b843a3" data-ratio="1.33333333333333" src="//speakerdeck.com/assets/embed.js"></script>
-                    </div>
-                </div>
-                -->
-
             </div>
         </section>
         <hr/>
@@ -297,9 +283,7 @@ Total Num Of &#181;ops: 18
         <section class="section section-toc">
             <div class="container">
 
-                <h2>Contents</h2>
-
-                <small><em>(Work In Progress)</em></small></h2>
+                <h1>Contents</h1>
 
                 <p>
                     <ul class="toc-list">
