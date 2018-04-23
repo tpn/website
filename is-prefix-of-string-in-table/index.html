@@ -2392,6 +2392,107 @@ Pfx60:  vpextrb     rcx, xmm4, 2                ; Restore rcx counter.
 
 </code></pre>
 
+                <h1>The Benchmark</h1>
+
+                <p>
+
+                    The performance comparison graphs in the subsequent sections were generated in
+                    Excel, using CSV data output by the creatively-named program
+                    <a href="https://github.com/tpn/tracer/blob/2018-04-18.2/StringTable2BenchmarkExe/main.c#L227">
+                    StringTable2BenchmarkExe</a>.
+
+                </p>
+
+                <p>
+
+                    Modern CPUs are fast, timing is hard, especially when you're dealing with CPU
+                    cycle comparisons.  No approach is perfect.  Here's what I settled on:
+
+                    <ul>
+
+                        <li>
+
+                            The benchmark utility has <code>#pragma optimize("", off)</code> at the
+                            start of the file, which disables global optimizations, even in release
+                            (optimized) builds.  This prevents the compiler doing clever things with
+                            regards to scheduling of the timestamping logic, which affects reported
+                            times.
+
+                        </li>
+
+                        <li>
+
+                            The benchmark utility pins itself to a single core and sets its thread
+                            priority to the highest permissible value at startup.  (Turbo is
+                            disabled on the computer, such that the frequency is pinned to 3.68GHz.)
+
+                        </li>
+
+                        <li>
+
+                            The benchmark utility is fed an array of function pointers and test
+                            inputs.  It iterates over each test input, and then iterates over
+                            each function, calling it with the test input and potentially verifying
+                            the result (some functions are included for comparison purposes but
+                            don't actually produce correct results, and thus, do not have their
+                            results verified).
+
+                        </li>
+
+                        <li>
+
+                            The test input string is copied into a local buffer that is aligned on a
+                            32 byte boundary.  This ensures that all test inputs are being compared
+                            fairly.  (The natural alignment of the buffers varies anywhere from 2 to
+                            512 bytes, unaligned buffers have a significant impact on the timings.)
+
+                        </li>
+
+                        <li>
+
+                            The function is run once, with the result captured.  If verification has
+                            been requested, the result is verified.  We <code>__debugbreak()</code>
+                            immediately if there's a mismatch, which is handy during development.
+
+                        </li>
+
+                        <li>
+
+                            <code>NtDelayExecution(TRUE, 1)</code> is called, which results in a sleep of
+                            approximately 100 nanoseconds.  This is done to force a context switch,
+                            such that the thread gets a new scheduling quantum before each function
+                            is run.
+
+                        </li>
+
+                        <li>
+
+                            The function is executed 100 times for warmup.
+
+                        </li>
+
+                        <li>
+
+                            Timings are taken for 1000 iterations of the function using the given
+                            test input.  The <code>__rdtscp()</code> intrinsic is used (which forces
+                            some serialization) to capture the timestamp counter before and after the
+                            iterations.
+
+                        </li>
+
+                        <li>
+
+                            This process is repeated 100 times.  The minimum time observed to
+                            perform 1000 iterations (out of 100 attempts) is captured as the
+                            function's best time.
+
+                        </li>
+
+                    </ul>
+
+                </p>
+
+
                 <h1>The Implementations</h1>
 
                 <p>
@@ -2401,42 +2502,164 @@ Pfx60:  vpextrb     rcx, xmm4, 2                ; Restore rcx counter.
 
                 </p>
 
+                <h2>IsPrefixOfCStrInArray</h2>
+                <p>
+
+                    Let's review the baseline implementation again, as that's what we're ultimately
+                    comparing ourselves against.  This version enumerates the string array (and thus
+                    has a slightly different function signature to the STRING_TABLE-based functions)
+                    looking for prefix matches.  No SIMD instructions are used.  The timings
+                    captured should be proportional to the location of the test input string in the
+                    array.  That is, it should take less time to prefix match strings that occur
+                    earlier in the array versus those that appear later.
+
+                </p>
+<pre class="code"><code class="language-c">
+_Use_decl_annotations_
+STRING_TABLE_INDEX
+IsPrefixOfCStrInArray(
+    PCSZ *StringArray,
+    PCSZ String,
+    PSTRING_MATCH Match
+    )
+{
+    PCSZ Left;
+    PCSZ Right;
+    PCSZ *Target;
+    ULONG Index = 0;
+    ULONG Count;
+
+    for (Target = StringArray; *Target != NULL; Target++, Index++) {
+        Count = 0;
+        Left = String;
+        Right = *Target;
+
+        while (*Left && *Right && *Left++ == *Right++) {
+            Count++;
+        }
+
+        if (Count > 0 && !*Right) {
+            if (ARGUMENT_PRESENT(Match)) {
+                Match->Index = (BYTE)Index;
+                Match->NumberOfMatchedCharacters = (BYTE)Count;
+                Match->String = NULL;
+            }
+            return (STRING_TABLE_INDEX)Index;
+        }
+    }
+
+    return NO_MATCH_FOUND;
+}
+</code></pre>
+
                 <h2>IsPrefixOfStringInTable_1</h2>
-                <p>
-
-                </p>
-
-                <!--
-                <hr/>
-                <p><em>Work in progress.</em></p>
-                <hr/>
-
-                <h1>The Benchmark</h1>
 
                 <p>
 
-                    See <a
-                    href="https://github.com/tpn/tracer/blob/2018-04-18.2/StringTable2BenchmarkExe">StringTable2BenchmarkExe</a>.
+                    This version is similar to the IsPrefixOfCStrInArray implementation, except it
+                    utilizes the slot length information provided by the STRING_ARRAY structure, and
+                    conforms to our standard IsPrefixOfStringInTable function signature.  It uses no
+                    SIMD instructions.
 
                 </p>
 
-                <h1>What about the other 9 C implementations?</h1>
+<pre class="code"><code class="language-c">
+_Use_decl_annotations_
+STRING_TABLE_INDEX
+IsPrefixOfStringInTable_1(
+    PSTRING_TABLE StringTable,
+    PSTRING String,
+    PSTRING_MATCH Match
+    )
+/*++
 
-                <p>
+Routine Description:
 
-                    XXX TODO.
+    Searches a string table to see if any strings "prefix match" the given
+    search string.  That is, whether any string in the table "starts with
+    or is equal to" the search string.
 
-                </p>
-                -->
+    This routine performs a simple linear scan of the string table looking for
+    a prefix match against each slot.
+
+Arguments:
+
+    StringTable - Supplies a pointer to a STRING_TABLE struct.
+
+    String - Supplies a pointer to a STRING struct that contains the string to
+        search for.
+
+    Match - Optionally supplies a pointer to a variable that contains the
+        address of a STRING_MATCH structure.  This will be populated with
+        additional details about the match if a non-NULL pointer is supplied.
+
+Return Value:
+
+    Index of the prefix match if one was found, NO_MATCH_FOUND if not.
+
+--*/
+{
+    BYTE Left;
+    BYTE Right;
+    ULONG Index;
+    ULONG Count;
+    PSTRING_ARRAY StringArray;
+    PSTRING TargetString;
+
+    //IACA_VC_START();
+
+    StringArray = StringTable-&gt;pStringArray;
+
+    if (StringArray-&gt;MinimumLength &gt; String-&gt;Length) {
+        return NO_MATCH_FOUND;
+    }
+
+    for (Count = 0; Count &lt; StringArray-&gt;NumberOfElements; Count++) {
+
+        TargetString = &amp;StringArray-&gt;Strings[Count];
+
+        if (String-&gt;Length &lt; TargetString-&gt;Length) {
+            continue;
+        }
+
+        for (Index = 0; Index &lt; TargetString-&gt;Length; Index++) {
+            Left = String-&gt;Buffer[Index];
+            Right = TargetString-&gt;Buffer[Index];
+            if (Left != Right) {
+                break;
+            }
+        }
+
+        if (Index == TargetString-&gt;Length) {
+
+            if (ARGUMENT_PRESENT(Match)) {
+
+                Match-&gt;Index = (BYTE)Count;
+                Match-&gt;NumberOfMatchedCharacters = (BYTE)Index;
+                Match-&gt;String = TargetString;
+
+            }
+
+            return (STRING_TABLE_INDEX)Count;
+        }
+
+    }
+
+    //IACA_VC_END();
+
+    return NO_MATCH_FOUND;
+}
+</code></pre>
+
 
                 <a class="xref" name="other-applications"></a>
                 <h1>Other Applications</h1>
                 <p>
 
-                    Once I'd written the first version of the StringTable component, it became the
-                    hammer for all of my string-related problems!  My favorite example of this is
-                    the code I wrote for parsing the output of Windows debug engine's 'examine
-                    symbols' command.
+                    Once I'd written the first version of the StringTable component, for better or
+                    worse, it became the hammer for all of my string-related problems!  My favorite
+                    example of this is the code I wrote for parsing the output of Windows debug
+                    engine's <em>examine symbols</em> command.
 
                 </p>
 
