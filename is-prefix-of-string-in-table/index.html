@@ -468,7 +468,7 @@ Total Num Of &#181;ops: 18
 // Declare a set of module names to be used as a string array.
 //
 
-CONST PCSZ ModuleNames[] = {
+const PCSZ ModuleNames[] = {
     "myproject1",
     "myproject2",
     "myproject3.subproject",
@@ -1924,7 +1924,7 @@ Unwind info at 00007ffd`15594468, 4 bytes
                     is that you only have a handful of volatile registers to work with, and no stack
                     space can be used for register spilling or temporaries.  (There's a nice little
                     32 byte home parameter space trailing the return address that is intended for
-                    routines to stash the four parameter variables, rcx, rdx, r8 and r9, but I
+                    routines to stash the four parameter variables, rcx, rdx, r8, and r9, but I
                     didn't use this; I figured if I was going to the trouble of avoiding stack
                     spills I may as well try avoid all memory spills.)
 
@@ -4413,7 +4413,7 @@ prv func   00007ffd`15703cc0   9e <function> Rtl!DisableCreateSymbolicLinkPrivil
 // ExamineSymbolsBasicTypes
 //
 
-CONST STRING ExamineSymbolsBasicTypes1 = RTL_CONSTANT_STRING(
+const STRING ExamineSymbolsBasicTypes1 = RTL_CONSTANT_STRING(
     DSTR("&lt;NoType&gt;")
     DSTR("&lt;function&gt;")
     DSTR("char")
@@ -4432,7 +4432,7 @@ CONST STRING ExamineSymbolsBasicTypes1 = RTL_CONSTANT_STRING(
     DSTR("struct")
 );
 
-CONST STRING ExamineSymbolsBasicTypes2 = RTL_CONSTANT_STRING(
+const STRING ExamineSymbolsBasicTypes2 = RTL_CONSTANT_STRING(
     DSTR("&lt;CLR type&gt;")
     DSTR("bool")
     DSTR("void")
@@ -4857,7 +4857,7 @@ Return Value:
     //      order).
     //
 
-    CONST PCSTR Names[] = {
+    const PCSTR Names[] = {
         "SetCSpecificHandler",
         "CopyStringArray",
         "CreateStringTable",
@@ -5451,6 +5451,17 @@ typedef __m512i DECLSPEC_ALIGN(64) ZMMWORD, *PZMMWORD, **PPZMMWORD;
 
         </section>
 
+        <script type="text/javascript">
+            // Google Analytics
+            (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+            })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+            ga('create', 'UA-24686252-1', 'auto');
+            ga('send', 'pageview');
+        </script>
+
         <section class="section section-comments">
             <div class="container">
                 <p>
@@ -5461,6 +5472,14 @@ typedef __m512i DECLSPEC_ALIGN(64) ZMMWORD, *PZMMWORD, **PPZMMWORD;
                     var disqus_config = function () {
                         this.page.url = "http://trent.me/is-prefix-of-string-in-table";
                         this.page.identifier = "is-prefix-of-string-in-table";
+                        this.callbacks.onNewComment = [function(comment) {
+                            ga('send', {
+                                'hitType': 'event',            // Required.
+                                'eventCategory': 'Comments',   // Required.
+                                'eventAction': 'New Comment',  // Required.
+                                'eventLabel': 'New Comment'
+                            });
+                        }];
                     };
 
                     (function() {
@@ -5490,19 +5509,7 @@ typedef __m512i DECLSPEC_ALIGN(64) ZMMWORD, *PZMMWORD, **PPZMMWORD;
             </div>
         </section>
 
-        <!-- Twitter/Analytics -->
         <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
-
-        <script type="text/javascript">
-            // Google Analytics
-            (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-            })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-            ga('create', 'UA-24686252-1', 'auto');
-            ga('send', 'pageview');
-        </script>
 
     </body>
 </html>

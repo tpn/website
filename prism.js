@@ -582,16 +582,18 @@ Prism.languages.clike = {
 			punctuation: /[.\\]/
 		}
 	},
-	'keyword': /\b(?:if|else|while|do|for|return|in|instanceof|function|new|try|throw|catch|finally|null|break|continue)\b/,
+	'keyword': /\b(?:if|else|while|do|for|return|in|instanceof|function|new|try|throw|catch|finally|null|break|continue|typedef|struct|union)\b/,
 	'boolean': /\b(?:true|false)\b/,
+	'intrinsics': /\b(_mm_shuffle_epi8|_mm_loadu_si128|_mm_set1_epi8|_mm_load_si128|_mm_broadcastb_epi8|_mm_cmpeq_epi8|_mm_cmpgt_epi8|_mm_xor_si128|_mm_and_si128|_tzcnt_u32|__popcnt|_bzhi_u32|_mm_movemask_epi8|DECLSPEC_ALIGN|__movsb|__movsw|__movsq|__mm_loadu_si128|_mm_stream_load_si128|_mm256_loadu_si256|_mm256_stream_load_si256|_mm256_cmpeq_epi8|_mm256_movemask_epi8|_mm_crc32_u32|RtlOffsetToPointer|__popcnt16|__popcnt64|__popcnt|_tzcnt_u32)\(/,	
 	'function': /[a-z0-9_]+(?=\()/i,
 	'number': /\b0x[\da-f]+\b|(?:\b\d+\.?\d*|\B\.\d+)(?:e[+-]?\d+)?/i,
 	'operator': /--?|\+\+?|!=?=?|<=?|>=?|==?=?|&&?|\|\|?|\?|\*|\/|~|\^|%/,
+	'masmtypes': /\b(CHAR|BYTE|SHORT|USHORT|LONG|ULONG|LONGLONG|ULONGLONG|PVOID|PCHAR|PCSZ|PBYTE|PPVOID|PUSHORT|PULONG|PULONGLONG|LONG_PTR|PLONG_PTR|ULONG_PTR|PULONG_PTR|LARGE_INTEGER|PLARGE_INTEGER|STRING|STRING_MATCH|UNICODE_STRING|PSTRING|PUNICODE_STRING|RTL_BITMAP|RTL_AVL_TABLE|STRING_TABLE|PSTRING_TABLE|PSTRING_MATCH|STRING_ARRAY|PSTRING_ARRAY|SLOT_INDEX|STRING_TABLE_FLAGS|PRTL|HMODULE|PSTRING_TABLE_ANY_API|PCSTR|PALLOCATOR|BOOL|SLOT_INDEX|LENGTH_INDEX_TABLE|SLOT_BITMAPS|PLENGTH_INDEX_ENTRY|BOOLEAN|STRING_SLOT|PSTRING_SLOT|SLOT_LENGTHS|PPSLOT_LENGTHS|PPSLOT_INDEX|PPSTRING_SLOT|STRING_TABLE_INDEX|XMMWORD|PXMMWORD|YMMWORD|PYMMWORD|ZMMWORD|PZMMWORD|NO_MATCH_FOUND|MAX_STRING_TABLE_ENTRIES|PCHARACTER_BITMAP)\b/,
 	'punctuation': /[{}[\];(),.:]/
 };
 
 Prism.languages.c = Prism.languages.extend('clike', {
-	'keyword': /\b(?:_Alignas|_Alignof|_Atomic|_Bool|_Complex|_Generic|_Imaginary|_Noreturn|_Static_assert|_Thread_local|asm|typeof|inline|auto|break|case|char|const|continue|default|do|double|else|enum|extern|float|for|goto|if|int|long|register|return|short|signed|sizeof|static|struct|switch|typedef|union|unsigned|void|volatile|while|CHAR|BYTE|SHORT|USHORT|LONG|ULONG|LONGLONG|ULONGLONG|PVOID|PCHAR|PCSZ|PBYTE|PPVOID|PUSHORT|PULONG|PULONGLONG|LONG_PTR|PLONG_PTR|ULONG_PTR|PULONG_PTR|LARGE_INTEGER|PLARGE_INTEGER|STRING|STRING_MATCH|UNICODE_STRING|PSTRING|PUNICODE_STRING|RTL_BITMAP|RTL_AVL_TABLE|STRING_TABLE|PSTRING_TABLE|PSTRING_MATCH|STRING_ARRAY|PSTRING_ARRAY|SLOT_INDEX|STRING_TABLE_FLAGS|PRTL|HMODULE|PSTRING_TABLE_ANY_API|PCSTR|PALLOCATOR|BOOL|SLOT_INDEX|LENGTH_INDEX_TABLE|SLOT_BITMAPS|PLENGTH_INDEX_ENTRY|BOOLEAN|STRING_SLOT|PSTRING_SLOT|SLOT_LENGTHS|XMMWORD|PXMMWORD|YMMWORD|PYMMWORD|ZMMWORD|PZMMWORD|__mm_set1_epi8|_mm_shuffle_epi8|_mm_load_si128|_mm_broadcastb_epi8|_mm_cmpeq_epi8|_mm_cmpgt_epi8|_mm_xor_si128|_mm_and_si128|_tzcnt_u32|__popcnt|_bzhi_u32|_mm_movemask_epi8|DECLSPEC_ALIGN|__movsb|__movsw|__movsq|__mm_loadu_si128|_mm_stream_load_si128|_mm256_loadu_si256|_mm256_stream_load_si256|_mm256_cmpeq_epi8|_mm256_movemask_epi8|_mm_crc32_u32|RtlOffsetToPointer|__popcnt16|__popcnt64)\b/,
+	'keyword': /\b(?:_Alignas|_Alignof|_Atomic|_Bool|_Complex|_Generic|_Imaginary|_Noreturn|_Static_assert|_Thread_local|asm|typeof|inline|auto|break|case|char|const|continue|default|do|double|else|enum|extern|float|for|goto|if|int|long|register|return|short|signed|sizeof|static|struct|switch|typedef|union|unsigned|void|volatile|while)\b/,
 	'operator': /-[>-]?|\+\+?|!=?|<<?=?|>>?=?|==?|&&?|\|\|?|[~^%?*\/]/,
 	'number': /(?:\b0x[\da-f]+|(?:\b\d+\.?\d*|\B\.\d+)(?:e[+-]?\d+)?)[ful]*/i
 });
@@ -641,10 +643,9 @@ Prism.languages.nasm = {
 		/(?:extern|global)[^;\r\n]*/i,
 		/(?:CPU|FLOAT|DEFAULT).*$/m
 	],
-	'register': {
-		pattern: /\b(?:st\d|[xyz]mm\d\d?|[cdt]r\d|r\d\d?[bwd]?|[er]?[abcd]x|[abcd][hl]|[er]?(?:bp|sp|si|di)|[cdefgs]s)\b/i,
-		alias: 'variable'
-	},
+	'masmcast': /\b(byte|char|word|dword|qword|xmmword) ptr\b/i,
+	'masmtypes': /\b(String|StringTable|StringArray|StringMatch)\.(Buffer|UniqueIndex|UniqueChars|Length|Lengths|pStringArray|String|Strings)\b/,
+	'register': /\b(?:st\d|[xyz]mm\d\d?|[cdt]r\d|r\d\d?[bwd]?|[er]?[abcd]x|[abcd][hl]|[er]?(?:bp|sp|si|di)|[cdefgs]s)\b/i,
 	'number': /(?:\b|(?=\$))(?:0[hx][\da-f]*\.?[\da-f]+(?:p[+-]?\d+)?|\d[\da-f]+[hx]|\$\d[\da-f]*|0[oq][0-7]+|[0-7]+[oq]|0[by][01]+|[01]+[by]|0[dt]\d+|\d*\.?\d+(?:\.?e[+-]?\d+)?[dt]?)\b/i,
 	'operator': /[\[\]*+\-\/%<>=&|$!]/
 };
