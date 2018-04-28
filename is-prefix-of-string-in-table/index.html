@@ -26,15 +26,11 @@
     <!--
 
         TODO:
-
-            - Syntax highlighting
-                - Review asm keywords.
-                - Tweak/extend colorscheme.
-            - Add screenshots of stepping through the routine for:
-                - C version
-                - Asm version
             - Zip up everything and provide a download for it on github.
             - Add a section on release build vs PGO.
+            - Fix the image alignment issues on high DPI/Retina/font-scaling resolutions.
+
+        IN PROGRESS:
             - Benchmark section.
                 - How it works.
                 - How to build/download perhaps.
@@ -42,9 +38,18 @@
                 - Diagram depicting sequence of events things were written in.
                 - Updated graphs of performance.
                 - Diffs to previous version of the various changes to code
-            - Embed a speakerdeck deck graphically depicting how the algorithm works.
+
+        DONE:
             - Interface section.
-            - Fix the image alignment issues on high DPI/Retina/font-scaling resolutions.
+            - Syntax highlighting
+                - Review asm keywords.
+                - Tweak/extend colorscheme.
+
+        NOPE:
+            - Add screenshots of stepping through the routine for:
+                - C version
+                - Asm version
+            - Embed a speakerdeck deck graphically depicting how the algorithm works.
 
     -->
     <body>
@@ -2485,6 +2490,48 @@ Pfx60:  vpextrb     rcx, xmm4, 2                ; Restore rcx counter.
 
                 </p>
 
+                <h4>Release vs PGO Oddities</h4>
+
+                <p>
+
+                    All of the times in the graphs come from the profile-guided optimization build
+                    of the StringTable component.  The PGO build is faster than the normal release
+                    build in every case, except one, where it is notably slower.
+
+                </p>
+
+                <p>
+
+                    It's... odd.  I haven't investigated it.  The following graph depicts the
+                    affected function, IsPrefixOfStringInTable_1, and a few other versions for
+                    reference, and depicts the performance of the PGO build to the release build on
+                    the input strings "$INDEX_ALLOCATION" and "$Bai123456789012".
+
+                </p>
+
+                <a href="Benchmark-Release-vs-PGO-v3.svg" target="_blank">
+                    <img class="svg-image" src="Benchmark-Release-vs-PGO-v3.svg"/>
+                </a>
+
+                <p>
+
+                    Only that function is affected, and the problem really only manifests on
+                    the two example test strings depicted.  As this routine essentially serves
+                    as one of the initial baseline implementations, it would be misleading to
+                    compare all of our optimized PGO versions to the abnormally-slow baseline
+                    implementation.  So, the release and PGO timings were blended together into
+                    a single CSV, and the Excel PivotTables pick whatever the minimum time is
+                    for a given function and test input.
+
+                </p>
+
+                <p>
+
+                    Thus, you're always looking at the PGO timings, except for this outlier case
+                    where the release versions are faster.
+
+                </p>
+
 
                 <h1>The Implementations</h1>
 
@@ -2527,15 +2574,15 @@ IsPrefixOfCStrInArray(
         Left = String;
         Right = *Target;
 
-        while (*Left && *Right && *Left++ == *Right++) {
+        while (*Left &amp;&amp; *Right &amp;&amp; *Left++ == *Right++) {
             Count++;
         }
 
-        if (Count > 0 && !*Right) {
+        if (Count &gt; 0 &amp;&amp; !*Right) {
             if (ARGUMENT_PRESENT(Match)) {
-                Match->Index = (BYTE)Index;
-                Match->NumberOfMatchedCharacters = (BYTE)Count;
-                Match->String = NULL;
+                Match-&gt;Index = (BYTE)Index;
+                Match-&gt;NumberOfMatchedCharacters = (BYTE)Count;
+                Match-&gt;String = NULL;
             }
             return (STRING_TABLE_INDEX)Index;
         }
@@ -2643,6 +2690,16 @@ Return Value:
     return NO_MATCH_FOUND;
 }
 </code></pre>
+
+                <p>
+
+                    Here's the performance of these two baseline routines:
+
+                    <a href="Benchmark-01-v6.svg" target="_blank">
+                        <img class="svg-image" src="Benchmark-01-v6.svg"/>
+                    </a>
+
+                </p>
 
                 <h2>IsPrefixOfStringInTable_2</h2>
 
@@ -3338,11 +3395,28 @@ NoMatch:
 }
 </code></pre>
 
+                <p>
+
+                    <a href="Benchmark-02-v1.svg" target="_blank">
+                        <img class="svg-image" src="Benchmark-02-v1.svg"/>
+                    </a>
+
+                </p>
+
+                <p>
+
+                    Eek!  Our first SIMD attempt actually has worse prefix matching performance in
+                    most cases!  The only area where it shows a performance improvement is negative
+                    matching.
+
+                </p>
+
+
                 <h2>IsPrefixOfStringInTable_3</h2>
 
                 <p>
 
-                    For version 3, we simply switch the call to IsPrefixMatchAvx2 with our simpler
+                    For version 3, let's replace the call to IsPrefixMatchAvx2 with our simpler
                     version, IsPrefixMatch:
 
                 </p>
@@ -3703,13 +3777,22 @@ NoMatch:
 
                 <p>
 
-                    Let's take a look at the performance so far.
+                    <a href="Benchmark-03-v1.svg" target="_blank">
+                        <img class="svg-image" src="Benchmark-03-v1.svg"/>
+                    </a>
 
                 </p>
 
-                <a href="Benchmark-01-PrefixMatch-Cv1v2v3.svg" target="_blank">
-                    <img class="svg-image" src="Benchmark-01-PrefixMatch-Cv1v2v3.svg"/>
-                </a>
+
+                <p>
+
+                    Phew!  We finally see superior performance across the board.  This ends the
+                    short lived tenure of the IsPrefixOfStringInTable_2 routine (which calls out to
+                    the elaborate IsPrefixAvx2 routine), which is demonstrably worse in every case.
+                    We'll also omit the IsPrefixOfCStrInArray routine from the graphs for now, as
+                    it has served its initial baseline purpose.
+
+                </p>
 
                 <h2>IsPrefixOfStringInTable_4</h2>
 
@@ -4078,6 +4161,22 @@ NoMatch:
 }</code></pre>
                     </div>
                 </div>
+
+                <p>
+
+                    Performance of version 4 was slightly worse than 3 in every case:
+
+                    <a href="Benchmark-04-v1.svg" target="_blank">
+                        <img class="svg-image" src="Benchmark-04-v1.svg"/>
+                    </a>
+
+                </p>
+
+                <p>
+
+                    Thanks version 4, you can go home.  Version 3, you're still in the lead.
+
+                </p>
 
 
                 <h2>IsPrefixOfStringInTable_5</h2>
@@ -4577,14 +4676,49 @@ NoMatch:
                 <p>
 
                     If our theory is correct, the performance of this version should be worse, due
-                    to all the extra branches in the initial test.
+                    to all the extra branches in the initial test.  Let's see if we're right:
 
-                    [insert 5v3 chart here]
                 </p>
 
                 <p>
 
-                    Just as we expected, version 5 was much worse.  Let's ditch that approach.
+                    <a href="Benchmark-05-v1.svg" target="_blank">
+                        <img class="svg-image" src="Benchmark-05-v1.svg"/>
+                    </a>
+
+                </p>
+
+                <p>
+
+                    Holy smokes, version 5 <strong>is</strong> bad!  It's so bad it's actually
+                    closest in territory to the bunk version 2 that had the elaborate AVX2 prefix
+                    matching routine.  <small>(Note: actually it was so close I ended up double
+                    checking the two routines were correct; they were, so this is just a
+                    coincidence.)</small>
+
+                </p>
+
+                <p>
+
+                    That's good news though, as it validates this assumption that we've been working
+                    with since inception:
+
+                </p>
+
+<pre class="code"><code class="language-c">    //
+    // We do all five of these operations up front regardless of whether or not
+    // they're strictly necessary.  That is, if the unique character isn't in
+    // the unique character array, we don't need to load array lengths -- and
+    // vice versa.  However, we assume the benefits afforded by giving the CPU
+    // a bunch of independent things to do unconditionally up-front outweigh
+    // the cost of putting in branches and conditionally loading things if
+    // necessary.
+    //
+</code></pre>
+
+                <p>
+
+                    That's the end of version's 5 tenure.  TL;DR: less branches &gt; more branches.
 
                 </p>
 
@@ -4596,6 +4730,15 @@ NoMatch:
                     explicitly loading it via an unaligned load.  If the underlying buffer is
                     aligned on a 16 byte boundary, this is just as fast as an aligned load.
                     If not, hey, at least it doesn't crash &mdash; it's just slow.
+
+                </p>
+
+                <p>
+
+                    (If you attempt an aligned load on an address that isn't aligned at a 16 byte
+                    boundary, the processor will generate an exception, resulting in the crash of
+                    your program (assuming you don't have any structured exception handlers in place
+                    to catch the error).)
 
                 </p>
 
@@ -4969,6 +5112,29 @@ NoMatch:
 
                     </div>
                 </div>
+
+                <p>
+
+                    Version 6 should be faster than version 3; we omit alignment checks, all of our
+                    input buffers are aligned at 32 bytes, and an unaligned XMM load of an aligned
+                    buffer should definitely be faster than a __movsb().  Let's see:
+
+                </p>
+
+                <p>
+
+                    <a href="Benchmark-06-v1.svg" target="_blank">
+                        <img class="svg-image" src="Benchmark-06-v1.svg"/>
+                    </a>
+
+                </p>
+
+                <p>
+
+                    We have a new winner!  Version 3 had a good run, but it's time to retire.
+                    Let's tweak version 6 going forward.
+
+                </p>
 
                 <h2>IsPrefixOfStringInTable_7</h2>
 
@@ -5374,7 +5540,25 @@ NoMatch:
 
                 <p>
 
-                    [Insert graph and commentary about v7.]
+                    This is a tiny change; if it shows any performance difference, it should err on
+                    the side of a positive change, although perhaps the compiler noticed that we
+                    didn't use the expression until much later and deferred the scheduling until
+                    after the initial negative match logic.  Let's see:
+
+                </p>
+
+                <p>
+
+                    <a href="Benchmark-07-v1.svg" target="_blank">
+                        <img class="svg-image" src="Benchmark-07-v1.svg"/>
+                    </a>
+
+                </p>
+
+                <p>
+
+                    Tiny change, tiny performance improvement!  Looks like this saves a couple of
+                    cycles, thus ending the short-lived rein of version 6.
 
                 </p>
 
@@ -5382,7 +5566,9 @@ NoMatch:
 
                 <p>
 
-                    Version 8 is based off version 7, but omits the initial length test.
+                    Version 8 is based off version 7, but omits the initial length test.  Again,
+                    it's another small change, but if version 5 was anything to go off, the less
+                    branches, the better.
 
                 </p>
 
@@ -5768,10 +5954,19 @@ NoMatch:
                     </div>
                 </div>
 
+                <p>
+
+                    <a href="Benchmark-08-v1.svg" target="_blank">
+                        <img class="svg-image" src="Benchmark-08-v1.svg"/>
+                    </a>
+
+                </p>
 
                 <p>
 
-                    [Insert commentary and comparison about v8.]
+                    Hey, look at that, another win across the board!  Omitting the length test
+                    shaves off a few more cycles for both prefix and negative matching.  Version 7's
+                    one-round rein has come to a timely end.
 
                 </p>
 
@@ -5780,7 +5975,8 @@ NoMatch:
                 <p>
 
                     Version 9 tweaks version 8 and simply does 'return NO_MATCH_FOUND' after the
-                    initial bitmap check versus 'goto NoMatch'.
+                    initial bitmap check versus 'goto NoMatch'.  (The use of goto was a bit peculiar
+                    there, anyway.)
 
                 </p>
 
@@ -6158,20 +6354,46 @@ FoundMatch:
 
                 <p>
 
-                    [Insert graph and comments about v9.]
+                    <a href="Benchmark-09-v1.svg" target="_blank">
+                        <img class="svg-image" src="Benchmark-09-v1.svg"/>
+                    </a>
 
                 </p>
 
+                <p>
+
+                    This is an interesting one.  The return versus goto looks to have cost us a
+                    little bit with the first few test inputs.  But only a tiny amount, we're
+                    talking about like 0.2 more cycles, which is nothing in the grand scheme of
+                    things.  (Although let's not pull on that thread too much, the premise of the
+                    whole article is at stake!)
+
+                </p>
+
+                <p>
+                    Version 9 improves the negative match performance by a few cycles, though, so
+                    let's keep it.
+
+                </p>
 
                 <h2>IsPrefixOfStringInTable_10</h2>
 
                 <p>
 
-                    That exhausts about all we can do tweaking little things.  Let's re-write the
-                    inner loop that does the character comparison and see how that affects
+                    At this point, we've exhausted all the little easy tweaks.  Let's re-write
+                    the inner loop that does the character comparison and see how that affects
                     performance.
 
                 </p>
+
+                <p>
+
+                    This should be an interesting one because the way it's written now is... a tad
+                    odd.  (I've clearly made some assumptions regarding optimal branch organization
+                    at the very least.)
+
+                </p>
+
 
                 <div class="tab-box language box-10v9">
                     <ul class="tabs">
@@ -6590,7 +6812,27 @@ Return Value:
 
                 <p>
 
-                    Insert graph of v10 + commentary.
+                    That's a nicer bit of logic.  More C-like, less assembly-like.  Arguably
+                    clearer.  Let's see how they compare.  (This is an interesting one as I
+                    genuinely don't have a strong hunch what sort of a performance impact this
+                    will have; obviously I thought the first way of structuring the loop was
+                    optimal, and I had that in place for two years before deciding to embark
+                    on this article, which led to the rework we just saw.)
+
+                </p>
+
+                <p>
+
+                    <a href="Benchmark-10-v1.svg" target="_blank">
+                        <img class="svg-image" src="Benchmark-10-v1.svg"/>
+                    </a>
+
+                </p>
+
+                <p>
+
+                    Hey, look at that, we've shaved off a few more cycles in most cases, especially
+                    for the negative matches!
 
                 </p>
 
