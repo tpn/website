@@ -6630,16 +6630,12 @@ StringTable2!IsPrefixOfStringInTable_10:
         vpxor       xmm1, xmm1, xmm5            ; Invert the result.
 
 ;
-; Intersect xmm0 and xmm1 to identify string slots of a suitable length with
-; a matching unique character.
-;
-
-;
-; Test the final xmm0 register for all zeros (indicating no match).
+; Intersect-via-test xmm0 and xmm1 to identify string slots of a suitable
+; length with a matching unique character.
 ;
 
         vptest      xmm0, xmm1                  ; Check for no match.
-        ;jnz         short @F                   ; There was a match.
+        ;jnz        short @F                    ; There was a match.
                                                 ; (Not yet implemented.)
 
 ;
@@ -6721,12 +6717,16 @@ Unwind info at 00007ffd`15594468, 4 bytes
                 <p>
 
                     The bad news is that we now need to implement the rest of the functionality
-                    within the constraints of a LEAF_ENTRY!  The problem with a LEAF_ENTRY for
-                    anything more than a trivial bit of code is that you only have a handful of
-                    volatile registers to work with, and no stack space can be used for register
-                    spilling or temporaries.  (Technically I could use the home parameter space,
-                    but, eh, we're already avoiding stack spills, why not make life harder for
-                    ourselves and avoid <strong>any</strong> memory spilling.)
+                    within the constraints of a LEAF_ENTRY!
+
+                <p>
+
+                    The problem with a LEAF_ENTRY for anything more than a trivial bit of code is
+                    that you only have a handful of volatile registers to work with, and no stack
+                    space can be used for register spilling or temporaries.  (Technically I could
+                    use the home parameter space, but, eh, we're already avoiding stack spills, why
+                    not make life harder for ourselves and avoid <strong>any</strong> memory
+                    spilling.)
 
                 </p>
 
@@ -6759,7 +6759,6 @@ Unwind info at 00007ffd`15594468, 4 bytes
                         <li data-content="content-x64-2v1-diff">Diff</li>
                     </ul>
                     <div class="content">
-
 <pre class="code content-x64-2-full"><code class="language-nasm">;++
 ;
 ; STRING_TABLE_INDEX
@@ -7220,15 +7219,13 @@ Pfx60:  vpextrb     rcx, xmm4, 2                ; Restore rcx counter.
 ; vim:set tw=80 ts=8 sw=4 sts=4 et syntax=masm fo=croql comments=\:;           :
 </code></pre>
 <pre class="code content-x64-2v1-diff"><code class="language-diff">% diff -u IsPrefixOfStringInTable_x64_1.asm IsPrefixOfStringInTable_x64_2.asm
---- IsPrefixOfStringInTable_x64_1.asm   2018-04-28 20:55:59.761003300 -0400
+--- IsPrefixOfStringInTable_x64_1.asm   2018-04-29 11:03:46.403568800 -0400
 +++ IsPrefixOfStringInTable_x64_2.asm   2018-04-26 14:15:53.805409700 -0400
-@@ -50,47 +50,49 @@
+@@ -50,12 +50,12 @@
  ;
  ;--
 
 -        LEAF_ENTRY IsPrefixOfStringInTable_x64_1, _TEXT$00
--
--        ;IACA_VC_START
 +        LEAF_ENTRY IsPrefixOfStringInTable_x64_2, _TEXT$00
 
  ;
@@ -7238,8 +7235,8 @@ Pfx60:  vpextrb     rcx, xmm4, 2                ; Restore rcx counter.
 +; result into xmm5.
  ;
 
-+        ;IACA_VC_START
-+
+         ;IACA_VC_START
+@@ -63,34 +63,36 @@
          mov     rax, String.Buffer[rdx]
          vmovdqu xmm0, xmmword ptr [rax]                 ; Load search buffer.
          vmovdqa xmm1, xmmword ptr StringTable.UniqueIndex[rcx] ; Load indexes.
@@ -7288,7 +7285,7 @@ Pfx60:  vpextrb     rcx, xmm4, 2                ; Restore rcx counter.
 
  ;
  ; Compare the search string's length, which we've broadcasted to all 8-byte
-@@ -100,27 +102,378 @@
+@@ -100,30 +102,378 @@
  ; a slot with a length less than or equal to our search string's length.
  ;
 
@@ -7298,14 +7295,15 @@ Pfx60:  vpextrb     rcx, xmm4, 2                ; Restore rcx counter.
 +        vpxor       xmm1, xmm1, xmm2            ; Invert the result.
 
  ;
--; Test the final xmm0 register for all zeros (indicating no match).
+-; Intersect-and-test the unique character match xmm mask register (xmm0) with
 +; Intersect-and-test the unique character match xmm mask register (xmm5) with
-+; the length match mask xmm register (xmm1).  This affects flags, allowing us
-+; to do a fast-path exit for the no-match case (where ZF = 1).
+ ; the length match mask xmm register (xmm1).  This affects flags, allowing us
+ ; to do a fast-path exit for the no-match case (where ZF = 1).
  ;
 
 -        vptest      xmm0, xmm1                  ; Check for no match.
--        ;jnz         short @F                    ; There was a match.
+-        ;jnz        short @F                    ; There was a match.
+-                                                ; (Not yet implemented.)
 +        vptest      xmm5, xmm1                  ; Check for no match.
 +        jnz         short Pfx10                 ; There was a match.
 
@@ -7681,7 +7679,99 @@ Pfx60:  vpextrb     rcx, xmm4, 2                ; Restore rcx counter.
 
                 <p>
 
-                    (Insert performance graph for version 2.)
+                    Looking back on my time logs, that second routine took about 8 hours to
+                    implement over the course of about two days, give or take.  Writing assembly
+                    is slow, writing correct assembly is even slower.  I generally find that there's
+                    a noticeable hump I need to get over in the first say 30 minutes of any assembly
+                    programming session, but once you get into the zone, things can start flowing
+                    quite nicely.  I'm an aggressive debugger user; often, to get started I'll write
+                    a simple LEAF_ENTRY that looks like this:
+                    <small><pre>
+        LEAF_ENTRY Foo, _TEXT$00
+                int 3
+                xor eax, eax
+                ret
+        LEAF_END Foo, _TEXT$00
+                    </pre></small>
+                    That'll allow me to attach the debugger and at least inspect the parameter
+                    registers so I can write the next couple of instructions.  I find it definitely
+                    helps get me into the zone quicker.
+
+                </p>
+
+                <p>
+
+                    Anyway, enough about that.  Let's look at performance.  Again, this will be an
+                    interesting one &mdash; other than the optimal negative match logic that we
+                    copied from version 1, I didn't really pay much attention to micro-optimizations
+                    or anything like that, at least not for the first pass.  It took long enough
+                    just to get the thing working end-to-end.  So, it'll be interesting to see how
+                    it compares to version 1 in the negative matching space (it should be very
+                    close), and then against the C versions in the prefix matching case (it
+                    hopefully won't be prohibitively worse).
+
+                </p>
+
+                <p>
+                    <a href="Benchmark-x64-02-Negative-v1.svg" target="_blank">
+                        <img class="svg-image" src="Benchmark-x64-02-Negative-v1.svg"/>
+                    </a>
+                </p>
+
+                <p>
+
+                    Hmmm, that's not too bad!  We're very close to version 1 for negative matching,
+                    within about 0.5 cycles or so.  That sounds about right, given that our initial
+                    logic had to be tweaked a bit to play nicer with the rest of the implementation.
+                    And we're still about 3-4 cycles faster than the fastest C version.
+
+                </p>
+
+                <p>
+
+                    What about prefix matching performance?
+
+                </p>
+
+                <p>
+                    <a href="Benchmark-x64-02-v2.svg" target="_blank">
+                        <img class="svg-image" src="Benchmark-x64-02-v2.svg"/>
+                    </a>
+                </p>
+
+                <p>
+
+                    The prefix matching performance isn't too bad either!  We're definitely slower
+                    than the C version, ranging from about 4 cycles to 10 cycles in most cases,
+                    with the $INDEX_ALLOCATION input about 13 cycles slower.
+
+                </p>
+
+                <p>
+
+                    <small>
+
+                    (I've just noticed the pattern with regards to the first 8 entries, $AttrDef to
+                    $Mft, clocking in at about 18 and 24 cycles respectively.  But the next four
+                    entries, $Secure to $Cairo, consistently clock in at about 24 and 34 cycles
+                    respectively.  $Secure is the 9th slot, which puts it at memory offset 192 bytes
+                    from the start of the string table.  I know that this machine has the adjacent
+                    cache line prefetcher setting enabled in the BIOS (such that 128 bytes are
+                    fetched instead of 64 bytes), so I wonder if that has anything to do with it.
+                    Note that the 18 and 24 cycle behavior returns for the last two items, ???? and
+                    ., which are at the end of the string table's inner slot array; so, maybe not.
+                    Curious.  As much as I'd like to investigate that on the Sunday afternoon
+                    preceeding the self-imposed Monday deadline that's already slipped by four
+                    weeks, I should probably focus on finishing off the article as is.  The
+                    investigation will have to wait for another time!)
+
+                    </small>
+
+                </p>
+
+                <h2>IsPrefixOfStringInTable_x64_3</h2>
+
+                <p>
 
                 </p>
 
