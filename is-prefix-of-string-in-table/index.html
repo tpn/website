@@ -6442,9 +6442,13 @@ StringTable2!IsPrefixOfStringInTable_10:
                 <p>
 
                     It also cheekily uses the home parameter space for stashing rbp and rsi, instead
-                    of pushing them to the stack.  That's fair game though, this is the PGO build, I'd
-                    expect it to use some extra tricks for shaving off a few more cycles here and
-                    there.  I'd do the same thing if I were writing assembly.
+                    of pushing them to the stack.  That's fair game though, this is the PGO build,
+                    I'd expect it to use some extra tricks for shaving off a few more cycles here
+                    and there.  I'd do the same thing if I were writing assembly.  (Side note: if
+                    you view the source of this page, there's a commented-out section below that
+                    depicts the runtime function entry for the release build of version 10; it uses
+                    9 registers instead of 6, and 40 bytes of stack space instead of 32.  I wrote it
+                    before switching to using the PGO for everything.)
 
                 </p>
 
@@ -6458,7 +6462,12 @@ StringTable2!IsPrefixOfStringInTable_10:
                     repurposed within a routine, but also have a way to refer to the parameters again
                     if need be.  That's what it's meant for &mdash; however, its not something that is
                     enforced, you can basically treat the area as a free 32 byte scratch area if
-                    you're writing assembly.  (On a semi-related note, I'd highly recommend reading
+                    you're writing assembly.
+                </p>
+
+                <p>
+                    <small>
+                    (On a semi-related note, I'd highly recommend reading
                     <a href="https://github.com/tpn/pdfs/blob/4d2296269d3737b649def585a19eb103cda9c3d0/A%20History%20of%20Modern%2064-bit%20Computing%20-%20Feb%202007%20(CSEP590A).pdf">
                     A History of Modern 64-bit Computing</a> if you have some spare time, it's a
                     fascinating insight into contemporary x64 conventions we often take for granted,
@@ -6468,16 +6477,7 @@ StringTable2!IsPrefixOfStringInTable_10:
                     function entries, and why you can't write inline assembly for x64 with MSVC
                     anymore &mdash; it provides a direct vector for obliterating the mechanisms
                     relied upon by the kernel stack unwinding functionality.)
-                </p>
-
-                <p>
-                    <small>
-                    (Side note: if you view the source of this page, there's a commented-out section
-                    below that depicts the runtime function entry for the release build of version
-                    10; it uses 9 registers instead of 6, and 40 bytes of stack space instead of 32.
-                    I wrote it before switching to using the PGO for everything.)
                     </small>
-
                 </p>
 
 <!--
