@@ -104,6 +104,10 @@ pre[class*="language-"] {
 	color: lightgoldenrodyellow;
 }
 
+.token.function2 {
+	color: lightgoldenrodyellow;
+}
+
 .token.property,
 .token.class-name,
 .token.constant {
@@ -128,6 +132,10 @@ pre[class*="language-"] {
 
 .token.builtin {
 	color: #cc99cd;
+}
+
+.token.sal {
+	color: lightpink;
 }
 
 .token.string,

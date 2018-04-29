@@ -3,7 +3,9 @@ $(function() {
     setupSmoothAnchorScolling();
     initTabBox('.tab-box.language.box-intro');
     initTabBox('.tab-box.language.box-simple');
+    initTabBox('.tab-box.language.box-create');
     initTabBox('.tab-box.language.box-string-table');
+    initTabBox('.tab-box.language.box-is-prefix-match');
     initTabBox('.tab-box.language.box-is-prefix-v1');
     initTabBox('.tab-box.language.box-is-prefix-asm-v1');
     initTabBox('.tab-box.language.box-3v2');
@@ -14,12 +16,14 @@ $(function() {
     initTabBox('.tab-box.language.box-8v7');
     initTabBox('.tab-box.language.box-9v8');
     initTabBox('.tab-box.language.box-10v9');
+    initTabBox('.tab-box.language.box-x64-2v1');
     initTabBox('.tab-box.language.box-11v10');
     initTabBox('.tab-box.language.box-12v10');
     initTabBox('.tab-box.language.box-13v10');
     initTabBox('.tab-box.language.box-14v13');
     initTabBox('.tab-box.language.box-x64-4v2');
     initTabBox('.tab-box.language.box-x64-5v4');
+    initTabBox('.tab-box.language.box-api');
     initTabBox('.tab-box.language.box-typedefs');
     //beginLanguageTicker();
 });

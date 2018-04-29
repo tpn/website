@@ -584,11 +584,14 @@ Prism.languages.clike = {
 	},
 	'keyword': /\b(?:if|else|while|do|for|return|in|instanceof|function|new|try|throw|catch|finally|null|break|continue|typedef|struct|union)\b/,
 	'boolean': /\b(?:true|false)\b/,
-	'intrinsics': /\b(_mm_shuffle_epi8|_mm_loadu_si128|_mm_set1_epi8|_mm_load_si128|_mm_broadcastb_epi8|_mm_cmpeq_epi8|_mm_cmpgt_epi8|_mm_xor_si128|_mm_and_si128|_tzcnt_u32|__popcnt|_bzhi_u32|_mm_movemask_epi8|DECLSPEC_ALIGN|__movsb|__movsw|__movsq|__mm_loadu_si128|_mm_stream_load_si128|_mm256_loadu_si256|_mm256_stream_load_si256|_mm256_cmpeq_epi8|_mm256_movemask_epi8|_mm_crc32_u32||__popcnt16|__popcnt64|__popcnt|_tzcnt_u32)\(/,
+	'intrinsics': /\b(_mm_shuffle_epi8|_mm_loadu_si128|_mm_set1_epi8|_mm_load_si128|_mm_broadcastb_epi8|_mm_cmpeq_epi8|_mm_cmpgt_epi8|_mm_xor_si128|_mm_and_si128|_tzcnt_u32|__popcnt|_bzhi_u32|_mm_movemask_epi8|DECLSPEC_ALIGN|__movsb|__movsw|__movsq|__mm_loadu_si128|_mm_stream_load_si128|_mm256_loadu_si256|_mm256_stream_load_si256|_mm256_cmpeq_epi8|_mm256_movemask_epi8|_mm_crc32_u32|__popcnt16|__popcnt64|__popcnt|_tzcnt_u32)/i,
+        'sal': /\b(_In_|_Inout_|_In_opt_|_Out_opt_|_Field_range_|_Struct_size_bytes_|_Use_decl_annotations_)\b/,
 	'function': /[a-z0-9_]+(?=\()/i,
+	//'function': /[a-z0-9_]+\(/i,
+	'function2': /[a-z0-9_]+\(/i,
 	'number': /\b0x[\da-f]+\b|(?:\b\d+\.?\d*|\B\.\d+)(?:e[+-]?\d+)?/i,
 	'operator': /--?|\+\+?|!=?=?|<=?|>=?|==?=?|&&?|\|\|?|\?|\*|\/|~|\^|%/,
-	'masmtypes': /\b(CHAR|BYTE|SHORT|USHORT|LONG|ULONG|LONGLONG|ULONGLONG|PVOID|PCHAR|PCSZ|PBYTE|PPVOID|PUSHORT|PULONG|PULONGLONG|LONG_PTR|PLONG_PTR|ULONG_PTR|PULONG_PTR|LARGE_INTEGER|PLARGE_INTEGER|STRING|STRING_MATCH|UNICODE_STRING|PSTRING|PUNICODE_STRING|RTL_BITMAP|RTL_AVL_TABLE|STRING_TABLE|PSTRING_TABLE|PSTRING_MATCH|STRING_ARRAY|PSTRING_ARRAY|SLOT_INDEX|STRING_TABLE_FLAGS|PRTL|HMODULE|PSTRING_TABLE_ANY_API|PCSTR|PALLOCATOR|BOOL|SLOT_INDEX|LENGTH_INDEX_TABLE|SLOT_BITMAPS|PLENGTH_INDEX_ENTRY|BOOLEAN|STRING_SLOT|PSTRING_SLOT|SLOT_LENGTHS|PPSLOT_LENGTHS|PPSLOT_INDEX|PPSTRING_SLOT|STRING_TABLE_INDEX|XMMWORD|PXMMWORD|YMMWORD|PYMMWORD|ZMMWORD|PZMMWORD|NO_MATCH_FOUND|MAX_STRING_TABLE_ENTRIES|PCHARACTER_BITMAP)\b/,
+	'masmtypes': /\b(CHAR|BYTE|SHORT|USHORT|LONG|ULONG|LONGLONG|ULONGLONG|PVOID|PCHAR|PCSZ|PBYTE|PPVOID|PUSHORT|PULONG|PULONGLONG|LONG_PTR|PLONG_PTR|ULONG_PTR|PULONG_PTR|LARGE_INTEGER|PLARGE_INTEGER|STRING|STRING_MATCH|UNICODE_STRING|PSTRING|PUNICODE_STRING|RTL_BITMAP|RTL_AVL_TABLE|STRING_TABLE|PSTRING_TABLE|PSTRING_MATCH|STRING_ARRAY|PSTRING_ARRAY|SLOT_INDEX|STRING_TABLE_FLAGS|PRTL|HMODULE|PSTRING_TABLE_ANY_API|PCSTR|PALLOCATOR|BOOL|SLOT_INDEX|LENGTH_INDEX_TABLE|SLOT_BITMAPS|PLENGTH_INDEX_ENTRY|BOOLEAN|STRING_SLOT|PSTRING_SLOT|SLOT_LENGTHS|PPSLOT_LENGTHS|PPSLOT_INDEX|PPSTRING_SLOT|STRING_TABLE_INDEX|XMMWORD|PXMMWORD|YMMWORD|PYMMWORD|ZMMWORD|PZMMWORD|NO_MATCH_FOUND|MAX_STRING_TABLE_ENTRIES|PCHARACTER_BITMAP|DEBUG_ENGINE_EXAMINE_SYMBOLS_TYPE|IS_PREFIX_OF_STRING_IN_TABLE|PIS_PREFIX_OF_STRING_IN_TABLE|IS_STRING_IN_TABLE|PIS_STRING_IN_TABLE)\b/,
 	'punctuation': /[{}[\];(),.:]/
 };
 

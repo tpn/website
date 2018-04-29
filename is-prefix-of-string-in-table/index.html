@@ -56,10 +56,14 @@
 
         <header class="header">
             <div class="header-logo" href="#">
+                <!--
                 <a class="homename" href="http://trent.me"><strong>T</strong>rent <strong>N</strong>elson</a>
+                -->
+                <a class="homename" href=".."><strong>T</strong>rent <strong>N</strong>elson</a>
             </div>
             <ul class="header-links">
-                <li><a href="#home"><i class="fa fa-home"></i>Is Prefix Of String In Table?</a></li>
+                <li><a href="#home"><i class="fa fa-home"></i> Is Prefix Of String In Table?</a></li>
+                <li><a href="#contents"><i class="fa fa-align-left"></i> Contents</a></li>
                 <li><a href="https://github.com/tpn/tracer/tree/2018-04-18.2/StringTable2" target="_blank"><i class="fa fa-github"></i> GitHub</a></li>
                 <li><a href="https://twitter.com/trentnelson" target="_blank"><i class="fa fa-twitter"></i> Twitter</a></li>
                 <!--
@@ -84,7 +88,7 @@
             <div class="container">
 
                 <small>
-                    Current status: <strong>late draft</strong>.  Updated: 27th April, 2018.
+                    Current status: <strong>late draft</strong>.  Updated: 28th April, 2018.
                     Target publish date: <del>20th April, 2018</del> <del>23rd April, 2018</del>
                     <del>25th April, 2018</del> 30th April, 2018.
                     Thanks to <a href="https://twitter.com/rygorous">Fabian Giesen</a>,
@@ -98,7 +102,21 @@
                 </small>
 
                 <hr/>
-                <h2>TL;DR</h2>
+                <h3>TL;DR</h3>
+                <small>
+                <p>
+                    Wrote some C and assembly code that uses SIMD instructions to perform prefix
+                    matching of strings.  The C code was between 4-7x faster than the baseline
+                    implementation for prefix matching.  The assembly code was 9-12x faster than the
+                    baseline specifically for the negative match case (determining that an incoming
+                    string definitely does <strong>not</strong> prefix match any of our known
+                    strings).  The fastest negative match could be done in around 6 CPU cycles, which
+                    is pretty quick.  (Integer division, for example, takes about 90 cycles.)
+                </p>
+                </small>
+                <hr/>
+
+                <h2>Overview</h2>
                 <p>
 
                     Goal: given a string, determine if it prefix-matches a set of known strings as
@@ -152,9 +170,10 @@
 
                 <p>
                     The layout of the STRING_TABLE structure allows us to determine if a given
-                    search string <strong>does not</strong> prefix match all 16 strings at once
+                    search string does <strong>not</strong> prefix match all 16 strings at once
                     in 12 assembly instructions.  This breaks down into 18 &#181;ops, with a
-                    block throughput of 3.48 cycles on Intel's Skylake architecture:
+                    block throughput of 3.48 cycles on Intel's Skylake architecture.  (In practice,
+                    this clocks in at around 6 CPU cycles.)
                 </p>
 
                 <div class="tab-box language box-intro">
@@ -244,11 +263,6 @@ Total Num Of &#181;ops: 18
 
                 </p>
 
-                <picture>
-                    <source srcset="PrefixMatchPerformance.png"/>
-                    <img width="815px" height="660px" srcset="PrefixMatchPerformance.png"/>
-                </picture>
-
                 <p>
 
                     An <a
@@ -256,31 +270,27 @@ Total Num Of &#181;ops: 18
                     version of the algorithm was authored specifically to optimize for the negative
                     match case, and was able to do so in as little as 8 cycles, representing a 9x
                     improvement over the baseline.  (It was a little bit slower than the fastest
-                    C routine in the case of prefix matches, though, as can be seen above.)
+                    C routine in the case of prefix matches, though, as can be seen below.)
 
                 </p>
 
-                <picture>
-                    <source srcset="NegativeMatchPerformance.png"/>
-                    <img width="817px" height="657px" srcset="NegativeMatchPerformance.png"/>
-                </picture>
-
                 <p>
 
-                    <small>
-                    (Feedback for an early draft of this article was then solicited on <a
+                    Feedback for an early draft of this article was then solicited via <a
                     href="https://twitter.com/trentnelson/status/985715037934440448">Twitter</a>,
-                    resulting in three more iterations of the C version, and two more iterations
-                    of the assembly version.  The PGO build of the fastest C version (thirteenth
-                    attempt) prefix matched in about 16 cycles (and also had the best "worst case
-                    input string" performance (where three slots needed comparison), negative
-                    matching in about 26 cycles).  The fifth iteration of the assembly version
-                    negative matched in about 6 cycles, a 3 and 1 cycle improvement, respectively.
-                    Now, I could re-do these intro graphs, or you could just picture the ones above
-                    with a few more bars, slightly shorter in length than their nearest counterparts,
-                    and then I won't have to.)
-                    </small>
+                    resulting in four more iterations of the C version, and three more iterations of
+                    the assembly version.  The PGO build of the fastest C version prefix matched in
+                    about 16 cycles (and also had the best "worst case input string" performance
+                    (where three slots needed comparison), negative matching in about 26 cycles).
+                    The fifth iteration of the assembly version negative matched in about 6 cycles,
+                    a 3 and 1 cycle improvement, respectively.
 
+                </p>
+
+                <p>
+                    <a href="Benchmark-Overview-v2.svg" target="_blank">
+                        <img class="svg-image" src="Benchmark-Overview-v2.svg"/>
+                    </a>
                 </p>
 
             </div>
@@ -290,6 +300,7 @@ Total Num Of &#181;ops: 18
         <section class="section section-toc">
             <div class="container">
 
+                <a class="xref" name="contents"></a>
                 <h1>Contents</h1>
 
                 <p>
@@ -405,16 +416,15 @@ Total Num Of &#181;ops: 18
                     <a href="https://github.com/tpn/tracer">tracer</a> project, which allows you to
                     set an environment variable named TRACER_MODULE_NAMES to restrict which modules
                     should be traced, e.g.:
-                    <small><pre>set TRACER_MODULE_NAMES=myproject1;myproject2;myproject3.subproject;numpy;pandas;scipy</pre></small>
+                    <pre>set TRACER_MODULE_NAMES=myproject1;myproject2;myproject3.subproject;numpy;pandas;scipy</pre>
 
                 </p>
 
                 <p>
 
                     If the code being executed is coming from the module
-                    <small><code>myproject3.subproject.foo</code></small>,
-                    then we need to trace it, as that string <strong>prefix matches</strong>
-                    the third entry on our list.
+                    <code>myproject3.subproject.foo</code>, then we need to trace it, as that string
+                    <strong>prefix matches</strong> the third entry on our list.
 
                 </p>
 
@@ -442,10 +452,7 @@ Total Num Of &#181;ops: 18
                         <a href="https://www.freebsd.org/cgi/man.cgi?query=style&sektion=9">
                         <em>Kernel Normal Form</em></a> of C, it's quite like that, except that it's
                         absolutely nothing like that, and all these code samples will probably be
-                        very jarring.  And if that doesn't put you off, there's zero support at the
-                        moment for running on anything other than Windows, including these
-                        benchmarks.  How's that for alienating most of your article's audience up
-                        front!
+                        very jarring.
 
                     <p>
 
@@ -661,7 +668,7 @@ is_prefix_of_c_str_in_array(const char **array,
                 <p>
 
                     Let's take a look at the interface we're proposing, the
-                    <strong>IsPrefixOfStringInTable</strong> function, that this article is based upon:
+                    <code>IsPrefixOfStringInTable</code> function, that this article is based upon:
 
                 </p>
 
@@ -1399,996 +1406,418 @@ typedef union DECLSPEC_ALIGN(16) _SLOT_LENGTHS {
 C_ASSERT(sizeof(SLOT_LENGTHS) == 16);
 </code></pre>
 
-                <a class="xref" name="algorithm"></a>
-                <h1>The Algorithm</h1>
+                <a class="xref" name="CreateStringTable"></a>
+                <h2>String Table Construction</h2>
 
                 <p>
-                    <!--
-                    <div>
-                        <script async class="speakerdeck-embed" data-id="feadc0a06e770130c56622000a9f1084" data-ratio="1.33333333333333" src="//speakerdeck.com/assets/embed.js"></script>
-                    </div>
-                    -->
 
-                    The source code is verbosely commented, so without further ado, here is the
-                    implementation of our (initially) fastest C version of the prefix match function
-                    <small>
-                        <a
-                        href="https://github.com/tpn/tracer/blob/2018-04-18.2/StringTable2/IsPrefixOfStringInTable_10.c#L21">
-                            (view on GitHub)
-                        </a>
-                    </small>:
+                    The <a
+                    href="https://github.com/tpn/tracer/blob/2018-04-18.2/StringTable2/CreateStringTable.c#L147">
+                    CreateSingleStringTable</a> routine is responsible for construction of a new
+                    STRING_TABLE.  It is here we identify the unique set of characters (and their
+                    indices) to store in the first two fields of the string table.
 
                 </p>
 
-                <!--
-                <a class="xref" name="implementation"></a>
-                <h1>The Implementation(s)</h1>
+                <div class="tab-box language box-create">
+                    <ul class="tabs">
+                        <li data-content="content-create-string-table">CreateSingleStringTable</li>
+                    </ul>
+                    <div class="content">
+<pre class="code content-create-string-table"><code class="language-c">//
+// Define private types used by this module.
+//
 
-                -->
-                <a class="xref" name="IsPrefixOfStringInTable_10"></a>
-                <h2>IsPrefixOfStringInTable_10</h2>
+typedef struct _LENGTH_INDEX_ENTRY {
+    BYTE Length;
+    BYTE Index;
+} LENGTH_INDEX_ENTRY;
+typedef LENGTH_INDEX_ENTRY *PLENGTH_INDEX_ENTRY;
 
-<pre class="code content-is-prefix-v10"><code class="language-c">_Use_decl_annotations_
-STRING_TABLE_INDEX
-IsPrefixOfStringInTable_10(
-    PSTRING_TABLE StringTable,
-    PSTRING String,
-    PSTRING_MATCH Match
+typedef struct _LENGTH_INDEX_TABLE {
+    LENGTH_INDEX_ENTRY Entry[16];
+} LENGTH_INDEX_TABLE;
+typedef LENGTH_INDEX_TABLE *PLENGTH_INDEX_TABLE;
+
+typedef union DECLSPEC_ALIGN(32) _CHARACTER_BITMAP {
+    YMMWORD Ymm;
+    XMMWORD Xmm[2];
+    LONG Bits[(256 / (4 &lt;&lt; 3))];  // 8
+} CHARACTER_BITMAP;
+C_ASSERT(sizeof(CHARACTER_BITMAP) == 32);
+typedef CHARACTER_BITMAP *PCHARACTER_BITMAP;
+
+typedef struct _SLOT_BITMAPS {
+    CHARACTER_BITMAP Bitmap[16];
+} SLOT_BITMAPS;
+typedef SLOT_BITMAPS *PSLOT_BITMAPS;
+
+//
+// Function implementation.
+//
+
+_Use_decl_annotations_
+PSTRING_TABLE
+CreateSingleStringTable(
+    PRTL Rtl,
+    PALLOCATOR StringTableAllocator,
+    PALLOCATOR StringArrayAllocator,
+    PSTRING_ARRAY StringArray,
+    BOOL CopyArray
     )
 /*++
 
 Routine Description:
 
-    Searches a string table to see if any strings "prefix match" the given
-    search string.  That is, whether any string in the table "starts with
-    or is equal to" the search string.
+    Allocates space for a STRING_TABLE structure using the provided allocators,
+    then initializes it using the provided STRING_ARRAY.  If CopyArray is set
+    to TRUE, the routine will copy the string array such that the caller is
+    free to destroy it after the table has been successfully created.  If it
+    is set to FALSE and StringArray-&gt;StringTable has a non-NULL value, it is
+    assumed that sufficient space has already been allocated for the string
+    table and this pointer will be used to initialize the rest of the structure.
 
-    This version is based off version 8, but rewrites the inner loop that checks
-    for comparisons.
+    DestroyStringTable() must be called against the returned PSTRING_TABLE when
+    the structure is no longer needed in order to ensure resources are released.
 
 Arguments:
 
-    StringTable - Supplies a pointer to a STRING_TABLE struct.
+    Rtl - Supplies a pointer to an initialized RTL structure.
 
-    String - Supplies a pointer to a STRING struct that contains the string to
-        search for.
+    StringTableAllocator - Supplies a pointer to an ALLOCATOR structure which
+        will be used for creating the STRING_TABLE.
 
-    Match - Optionally supplies a pointer to a variable that contains the
-        address of a STRING_MATCH structure.  This will be populated with
-        additional details about the match if a non-NULL pointer is supplied.
+    StringArrayAllocator - Supplies a pointer to an ALLOCATOR structure which
+        may be used to create the STRING_ARRAY if it cannot fit within the
+        padding of the STRING_TABLE structure.  This is kept separate from the
+        StringTableAllocator due to the stringent alignment requirements of the
+        string table.
+
+    StringArray - Supplies a pointer to an initialized STRING_ARRAY structure
+        that contains the STRING structures that are to be added to the table.
+
+    CopyArray - Supplies a boolean value indicating whether or not the
+        StringArray structure should be deep-copied during creation.  This is
+        typically set when the caller wants to be able to free the structure
+        as soon as this call returns (or can't guarantee it will persist past
+        this function's invocation, i.e. if it was stack allocated).
 
 Return Value:
 
-    Index of the prefix match if one was found, NO_MATCH_FOUND if not.
+    A pointer to a valid PSTRING_TABLE structure on success, NULL on failure.
+    Call DestroyStringTable() on the returned structure when it is no longer
+    needed in order to ensure resources are cleaned up appropriately.
 
 --*/
 {
-    ULONG Bitmap;
-    ULONG Mask;
-    ULONG Count;
-    ULONG Length;
-    ULONG Index;
-    ULONG Shift = 0;
-    ULONG CharactersMatched;
-    ULONG NumberOfTrailingZeros;
-    ULONG SearchLength;
-    PSTRING TargetString;
-    STRING_SLOT Slot;
-    STRING_SLOT Search;
-    STRING_SLOT Compare;
+    BYTE Byte;
+    BYTE Count;
+    BYTE Index;
+    BYTE Length;
+    BYTE NumberOfElements;
+    ULONG HighestBit;
+    ULONG OccupiedMask;
+    PULONG Bits;
+    USHORT OccupiedBitmap;
+    USHORT ContinuationBitmap;
+    PSTRING_TABLE StringTable;
+    PSTRING_ARRAY StringArray;
+    PSTRING String;
+    PSTRING_SLOT Slot;
+    STRING_SLOT UniqueChars;
+    SLOT_INDEX UniqueIndex;
+    SLOT_INDEX LengthIndex;
     SLOT_LENGTHS Lengths;
-    XMMWORD LengthXmm;
-    XMMWORD UniqueChar;
-    XMMWORD TableUniqueChars;
-    XMMWORD IncludeSlotsByUniqueChar;
-    XMMWORD IgnoreSlotsByLength;
-    XMMWORD IncludeSlotsByLength;
-    XMMWORD IncludeSlots;
-    const XMMWORD AllOnesXmm = _mm_set1_epi8(0xff);
+    LENGTH_INDEX_TABLE LengthIndexTable;
+    PCHARACTER_BITMAP Bitmap;
+    SLOT_BITMAPS SlotBitmaps;
+    PLENGTH_INDEX_ENTRY Entry;
 
     //
-    // Unconditionally do the following five operations before checking any of
-    // the results and determining how the search should proceed:
-    //
-    //  1. Load the search string into an Xmm register, and broadcast the
-    //     character indicated by the unique character index (relative to
-    //     other strings in the table) across a second Xmm register.
-    //
-    //  2. Load the string table's unique character array into an Xmm register.
-    //
-    //  3. Broadcast the search string's length into an XMM register.
-    //
-    //  3. Load the string table's slot lengths array into an XMM register.
-    //
-    //  4. Compare the unique character from step 1 to the string table's unique
-    //     character array set up in step 2.  The result of this comparison
-    //     will produce an XMM register with each byte set to either 0xff if
-    //     the unique character was found, or 0x0 if it wasn't.
-    //
-    //  5. Compare the search string's length from step 3 to the string table's
-    //     slot length array set up in step 3.  This allows us to identify the
-    //     slots that have strings that are of lesser or equal length to our
-    //     search string.  As we're doing a prefix search, we can ignore any
-    //     slots longer than our incoming search string.
-    //
-    // We do all five of these operations up front regardless of whether or not
-    // they're strictly necessary.  That is, if the unique character isn't in
-    // the unique character array, we don't need to load array lengths -- and
-    // vice versa.  However, we assume the benefits afforded by giving the CPU
-    // a bunch of independent things to do unconditionally up-front outweigh
-    // the cost of putting in branches and conditionally loading things if
-    // necessary.
+    // Validate arguments.
     //
 
-    //
-    // Load the first 16-bytes of the search string into an XMM register.
-    //
-
-    Search.CharsXmm = _mm_load_si128((PXMMWORD)String-&gt;Buffer);
-
-    //
-    // Broadcast the search string's unique characters according to the string
-    // table's unique character index.
-    //
-
-    UniqueChar = _mm_shuffle_epi8(Search.CharsXmm,
-                                  StringTable-&gt;UniqueIndex.IndexXmm);
-
-    //
-    // Load the slot length array into an XMM register.
-    //
-
-    Lengths.SlotsXmm = _mm_load_si128(&amp;StringTable-&gt;Lengths.SlotsXmm);
-
-    //
-    // Load the string table's unique character array into an XMM register.
-    //
-
-    TableUniqueChars = _mm_load_si128(&amp;StringTable-&gt;UniqueChars.CharsXmm);
-
-    //
-    // Broadcast the search string's length into an XMM register.
-    //
-
-    LengthXmm.m128i_u8[0] = (BYTE)String-&gt;Length;
-    LengthXmm = _mm_broadcastb_epi8(LengthXmm);
-
-    //
-    // Compare the search string's unique character with all of the unique
-    // characters of strings in the table, saving the results into an XMM
-    // register.  This comparison will indicate which slots we can ignore
-    // because the characters at a given index don't match.  Matched slots
-    // will be 0xff, unmatched slots will be 0x0.
-    //
-
-    IncludeSlotsByUniqueChar = _mm_cmpeq_epi8(UniqueChar, TableUniqueChars);
-
-    //
-    // Find all slots that are longer than the incoming string length, as these
-    // are the ones we're going to exclude from any prefix match.
-    //
-    // N.B. Because we default the length of empty slots to 0x7f, they will
-    //      handily be included in the ignored set (i.e. their bytes will also
-    //      be set to 0xff), which means they'll also get filtered out when
-    //      we invert the mask shortly after.
-    //
-
-    IgnoreSlotsByLength = _mm_cmpgt_epi8(Lengths.SlotsXmm, LengthXmm);
-
-    //
-    // Invert the result of the comparison; we want 0xff for slots to include
-    // and 0x0 for slots to ignore (it's currently the other way around).  We
-    // can achieve this by XOR'ing the result against our all-ones XMM register.
-    //
-
-    IncludeSlotsByLength = _mm_xor_si128(IgnoreSlotsByLength, AllOnesXmm);
-
-    //
-    // We're now ready to intersect the two XMM registers to determine which
-    // slots should still be included in the comparison (i.e. which slots have
-    // the exact same unique character as the string and a length less than or
-    // equal to the length of the search string).
-    //
-
-    IncludeSlots = _mm_and_si128(IncludeSlotsByUniqueChar,
-                                 IncludeSlotsByLength);
-
-    //
-    // Generate a mask.
-    //
-
-    Bitmap = _mm_movemask_epi8(IncludeSlots);
-
-    if (!Bitmap) {
-
-        //
-        // No bits were set, so there are no strings in this table starting
-        // with the same character and of a lesser or equal length as the
-        // search string.
-        //
-
-        return NO_MATCH_FOUND;
+    if (!ARGUMENT_PRESENT(StringTableAllocator)) {
+        return NULL;
     }
 
-    SearchLength = min(String-&gt;Length, 16);
+    if (!ARGUMENT_PRESENT(StringArrayAllocator)) {
+        return NULL;
+    }
 
-    Count = __popcnt(Bitmap);
+    if (!ARGUMENT_PRESENT(SourceStringArray)) {
+        return NULL;
+    }
 
-    do {
+    if (SourceStringArray-&gt;NumberOfElements == 0) {
+        return NULL;
+    }
 
-        //
-        // Extract the next index by counting the number of trailing zeros left
-        // in the bitmap and adding the amount we've already shifted by.
-        //
+    //
+    // Copy the incoming string array if applicable.
+    //
 
-        NumberOfTrailingZeros = _tzcnt_u32(Bitmap);
-        Index = NumberOfTrailingZeros + Shift;
+    if (CopyArray) {
 
-        //
-        // Shift the bitmap right, past the zeros and the 1 that was just found,
-        // such that it's positioned correctly for the next loop's tzcnt. Update
-        // the shift count accordingly.
-        //
+        StringArray = CopyStringArray(
+            StringTableAllocator,
+            StringArrayAllocator,
+            SourceStringArray,
+            FIELD_OFFSET(STRING_TABLE, StringArray),
+            sizeof(STRING_TABLE),
+            &amp;StringTable
+        );
 
-        Bitmap &gt;&gt;= (NumberOfTrailingZeros + 1);
-        Shift = Index + 1;
-
-        //
-        // Load the slot and its length.
-        //
-
-        Slot.CharsXmm = _mm_load_si128(&amp;StringTable-&gt;Slots[Index].CharsXmm);
-        Length = Lengths.Slots[Index];
-
-        //
-        // Compare the slot to the search string.
-        //
-
-        Compare.CharsXmm = _mm_cmpeq_epi8(Slot.CharsXmm, Search.CharsXmm);
-
-        //
-        // Create a mask of the comparison, then filter out high bits from the
-        // search string's length (which is capped at 16).  (This shouldn't be
-        // technically necessary as the string array buffers should have been
-        // calloc'd and zeroed, but optimizing compilers can often ignore the
-        // zeroing request -- which can produce some bizarre results where the
-        // debug build is correct (because the buffers were zeroed) but the
-        // release build fails because the zeroing got ignored and there are
-        // junk bytes past the NULL terminator, which get picked up in our
-        // 128-bit loads.)
-        //
-
-        Mask = _bzhi_u32(_mm_movemask_epi8(Compare.CharsXmm), SearchLength);
-
-        //
-        // Count how many characters matched.
-        //
-
-        CharactersMatched = __popcnt(Mask);
-
-        if ((USHORT)CharactersMatched &lt; Length &amp;&amp; Length &lt; 16) {
-
-            //
-            // The slot length is longer than the number of characters matched
-            // from the search string; this isn't a prefix match.  Continue.
-            //
-
-            continue;
+        if (!StringArray) {
+            return NULL;
         }
 
+    } else {
+
+        //
+        // We're not copying the array, so initialize StringArray to point at
+        // the caller's SourceStringArray, and StringTable to point at the
+        // array's StringTable field (which will be non-NULL if sufficient
+        // space has been allocated).
+        //
+
+        StringArray = SourceStringArray;
+        StringTable = StringArray-&gt;StringTable;
+
+    }
+
+    //
+    // If StringTable has no value, we've either been called with CopyArray set
+    // to FALSE, or CopyStringArray() wasn't able to allocate sufficient space
+    // for both the table and itself.  Either way, we need to allocate space for
+    // the table.
+    //
+
+    if (!StringTable) {
+
+        StringTable = (PSTRING_TABLE)(
+            StringTableAllocator-&gt;AlignedCalloc(
+                StringTableAllocator-&gt;Context,
+                1,
+                sizeof(STRING_TABLE),
+                STRING_TABLE_ALIGNMENT
+            )
+        );
+
+        if (!StringTable) {
+            return NULL;
+        }
+    }
+
+    //
+    // Make sure the fields that are sensitive to alignment are, in fact,
+    // aligned correctly.
+    //
+
+    if (!AssertStringTableFieldAlignment(StringTable)) {
+        DestroyStringTable(StringTableAllocator,
+                           StringArrayAllocator,
+                           StringTable);
+        return NULL;
+    }
+
+    //
+    // At this point, we have copied the incoming StringArray if necessary,
+    // and we've allocated sufficient space for the StringTable structure.
+    // Enumerate over all of the strings, set the continuation bit if the
+    // length &gt; 16, set the relevant slot length, set the relevant unique
+    // character entry, then move the first 16-bytes of the string into the
+    // relevant slot via an aligned SSE mov.
+    //
+
+    //
+    // Initialize pointers and counters, clear stack-based structures.
+    //
+
+    Slot = StringTable-&gt;Slots;
+    String = StringArray-&gt;Strings;
+
+    OccupiedBitmap = 0;
+    ContinuationBitmap = 0;
+    NumberOfElements = (BYTE)StringArray-&gt;NumberOfElements;
+    UniqueChars.CharsXmm = _mm_setzero_si128();
+    UniqueIndex.IndexXmm = _mm_setzero_si128();
+    LengthIndex.IndexXmm = _mm_setzero_si128();
+
+    //
+    // Set all the slot lengths to 0x7f up front instead of defaulting
+    // to zero.  This allows for simpler logic when searching for a prefix
+    // string, which involves broadcasting a search string's length to an XMM
+    // register, then doing _mm_cmpgt_epi8() against the lengths array and
+    // the string length.  If we left the lengths as 0 for unused slots, they
+    // would get included in the resulting comparison register (i.e. the high
+    // bits would be set to 1), so we'd have to do a subsequent masking of
+    // the result at some point using the OccupiedBitmap.  By defaulting the
+    // lengths to 0x7f, we ensure they'll never get included in any cmpgt-type
+    // SIMD matches.  (We use 0x7f instead of 0xff because the _mm_cmpgt_epi8()
+    // intrinsic assumes packed signed integers.)
+    //
+
+    Lengths.SlotsXmm = _mm_set1_epi8(0x7f);
+
+    ZeroStruct(LengthIndexTable);
+    ZeroStruct(SlotBitmaps);
+
+    for (Count = 0; Count &lt; NumberOfElements; Count++) {
+
+        XMMWORD CharsXmm;
+
+        //
+        // Set the string length for the slot.
+        //
+
+        Length = Lengths.Slots[Count] = (BYTE)String-&gt;Length;
+
+        //
+        // Set the appropriate bit in the continuation bitmap if the string is
+        // longer than 16 bytes.
+        //
+
         if (Length &gt; 16) {
+            ContinuationBitmap |= (Count == 0 ? 1 : 1 &lt;&lt; (Count + 1));
+        }
+
+        if (Count == 0) {
+
+            Entry = &amp;LengthIndexTable.Entry[0];
+            Entry-&gt;Index = 0;
+            Entry-&gt;Length = Length;
+
+        } else {
 
             //
-            // The first 16 characters in the string matched against this
-            // slot, and the slot is oversized (longer than 16 characters),
-            // so do a direct comparison between the remaining buffers.
+            // Perform a linear scan of the length-index table in order to
+            // identify an appropriate insertion point.
             //
 
-            TargetString = &amp;StringTable-&gt;pStringArray-&gt;Strings[Index];
+            for (Index = 0; Index &lt; Count; Index++) {
+                if (Length &lt; LengthIndexTable.Entry[Index].Length) {
+                    break;
+                }
+            }
 
-            CharactersMatched = IsPrefixMatch(String, TargetString, 16);
-
-            if (CharactersMatched == NO_MATCH_FOUND) {
+            if (Index != Count) {
 
                 //
-                // The prefix match failed, continue our search.
+                // New entry doesn't go at the end of the table, so shuffle
+                // everything else down.
                 //
 
-                continue;
+                Rtl-&gt;RtlMoveMemory(&amp;LengthIndexTable.Entry[Index + 1],
+                                   &amp;LengthIndexTable.Entry[Index],
+                                   (Count - Index) * sizeof(*Entry));
+            }
+
+            Entry = &amp;LengthIndexTable.Entry[Index];
+            Entry-&gt;Index = Count;
+            Entry-&gt;Length = Length;
+        }
+
+        //
+        // Copy the first 16-bytes of the string into the relevant slot.  We
+        // have taken care to ensure everything is 16-byte aligned by this
+        // stage, so we can use SSE intrinsics here.
+        //
+
+        CharsXmm = _mm_load_si128((PXMMWORD)String-&gt;Buffer);
+        _mm_store_si128(&amp;(*Slot).CharsXmm, CharsXmm);
+
+        //
+        // Advance our pointers.
+        //
+
+        ++Slot;
+        ++String;
+
+    }
+
+    //
+    // Store the slot lengths.
+    //
+
+    _mm_store_si128(&amp;(StringTable-&gt;Lengths.SlotsXmm), Lengths.SlotsXmm);
+
+    //
+    // Loop through the strings in order of shortest to longest and construct
+    // the uniquely-identifying character table with corresponding index.
+    //
+
+
+    for (Count = 0; Count &lt; NumberOfElements; Count++) {
+        Entry = &amp;LengthIndexTable.Entry[Count];
+        Length = Entry-&gt;Length;
+        Slot = &amp;StringTable-&gt;Slots[Entry-&gt;Index];
+
+        //
+        // Iterate over each character in the slot and find the first one
+        // without a corresponding bit set.
+        //
+
+        for (Index = 0; Index &lt; Length; Index++) {
+            Bitmap = &amp;SlotBitmaps.Bitmap[Index];
+            Bits = (PULONG)&amp;Bitmap-&gt;Bits[0];
+            Byte = Slot-&gt;Char[Index];
+            if (!BitTestAndSet(Bits, Byte)) {
+                break;
             }
         }
 
-        //
-        // This slot is a prefix match.  Fill out the Match structure if the
-        // caller provided a non-NULL pointer, then return the index of the
-        // match.
-        //
+        UniqueChars.Char[Count] = Byte;
+        UniqueIndex.Index[Count] = Index;
+        LengthIndex.Index[Count] = Entry-&gt;Index;
+    }
 
-        if (ARGUMENT_PRESENT(Match)) {
+    //
+    // Loop through the elements again such that the unique chars are stored
+    // in the order they appear in the table.
+    //
 
-            Match-&gt;Index = (BYTE)Index;
-            Match-&gt;NumberOfMatchedCharacters = (BYTE)CharactersMatched;
-            Match-&gt;String = &amp;StringTable-&gt;pStringArray-&gt;Strings[Index];
-
+    for (Count = 0; Count &lt; NumberOfElements; Count++) {
+        for (Index = 0; Index &lt; NumberOfElements; Index++) {
+            if (LengthIndex.Index[Index] == Count) {
+                StringTable-&gt;UniqueChars.Char[Count] = UniqueChars.Char[Index];
+                StringTable-&gt;UniqueIndex.Index[Count] = UniqueIndex.Index[Index];
+                break;
+            }
         }
-
-        return (STRING_TABLE_INDEX)Index;
-
-    } while (--Count);
+    }
 
     //
-    // If we get here, we didn't find a match.
+    // Generate and store the occupied bitmap.  Each bit, from low to high,
+    // corresponds to the index of a slot.  When set, the slot is occupied.
+    // When clear, it is not.  So, fill bits from the highest bit set down.
     //
 
-    //IACA_VC_END();
+    HighestBit = (1 &lt;&lt; (StringArray-&gt;NumberOfElements-1));
+    OccupiedMask = _blsmsk_u32(HighestBit);
+    StringTable-&gt;OccupiedBitmap = (USHORT)OccupiedMask;
 
-    return NO_MATCH_FOUND;
+    //
+    // Store the continuation bitmap.
+    //
+
+    StringTable-&gt;ContinuationBitmap = (USHORT)(ContinuationBitmap);
+
+    //
+    // Wire up the string array to the table.
+    //
+
+    StringTable-&gt;pStringArray = StringArray;
+
+    //
+    // And we're done, return the table.
+    //
+
+    return StringTable;
 }
-
-
-
 </code></pre>
-
-                <a class="xref" name="IsPrefixOfStringInTable_x64_2"></a>
-                <h2>IsPrefixOfStringInTable_x64_2</h2>
-
-                <p>
-
-                    Looking at the output of the assembly of the C version, I suspected a faster
-                    version could be written in assembly specifically for the negative match case.
-                    This led to a proof-of-concept LEAF_ENTRY named <a
-                    href="https://github.com/tpn/tracer/blob/2018-04-18.2/StringTable2/IsPrefixOfStringInTable_x64_1.asm#L25">
-                    IsPrefixOfStringInTable_x64_1</a> that simply dealt with the negative match
-                    fast-path.  That is, it correctly returned NO_MATCH_FOUND if the unique
-                    character and length vectors did not corroborate with the incoming search
-                    string.
-
-                </p>
-
-                <p>
-
-                    However, it also returned NO_MATCH_FOUND if there was a corroboration
-                    (requiring a comparison against each slot matched in the bitmap).  So, it wasn't
-                    particularly useful other than evaluating how fast we could get the negative
-                    match case.
-
-                </p>
-
-                <p>
-
-                    But as far as proof-of-concepts go, it was very effective, indicating that the
-                    negative match could be done in as little as about 12 instructions and ~6-7-ish
-                    CPU cycles, depending on which way the wind was blowing.  The disassembly for
-                    this initial test looks like this:
-
-                </p>
-
-                <hr/>
-<small><pre>
-0:000&gt; uf StringTable2!IsPrefixOfStringInTable_x64_1
-StringTable2!IsPrefixOfStringInTable_x64_1:
-00007ffd`15593290 488b4208        mov           rax,qword ptr [rdx+8]
-00007ffd`15593294 c5fa6f00        vmovdqu       xmm0,xmmword ptr [rax]
-00007ffd`15593298 c5f96f4910      vmovdqa       xmm1,xmmword ptr [rcx+10h]
-00007ffd`1559329d c4e27900c1      vpshufb       xmm0,xmm0,xmm1
-00007ffd`155932a2 c5f96f11        vmovdqa       xmm2,xmmword ptr [rcx]
-00007ffd`155932a6 c5f96f5920      vmovdqa       xmm3,xmmword ptr [rcx+20h]
-00007ffd`155932ab c4e25129ed      vpcmpeqq      xmm5,xmm5,xmm5
-00007ffd`155932b0 c4e2797822      vpbroadcastb  xmm4,byte ptr [rdx]
-00007ffd`155932b5 c5f974c2        vpcmpeqb      xmm0,xmm0,xmm2
-00007ffd`155932b9 c5d964cb        vpcmpgtb      xmm1,xmm4,xmm3
-00007ffd`155932bd c5f1efcd        vpxor         xmm1,xmm1,xmm5
-00007ffd`155932c1 c4e27917c1      vptest        xmm0,xmm1
-00007ffd`155932c6 33c0            xor           eax,eax
-00007ffd`155932c8 f6d0            not           al
-00007ffd`155932ca c3              ret
-</pre></small>
-                <hr/>
-
-                <p>
-
-                    Implementing it as a LEAF_ENTRY bit me in the ass when it came time to implement
-                    the second version, which I wanted to keep identical to the first version,
-                    except, you know, have it work.
-
-                </p>
-
-                <p>
-
-                    A bit of background information first.  The Windows x64 ABI and calling
-                    convention dictates there are two types of functions:
-                    <a
-                    href="https://github.com/tpn/winsdk-10/blob/master/Include/10.0.16299.0/shared/macamd64.inc#L524">
-                    NESTED_ENTRY</a> and
-                    <a href="https://github.com/tpn/winsdk-10/blob/master/Include/10.0.16299.0/shared/macamd64.inc#L353">
-                    LEAF_ENTRY</a>.  NESTED_ENTRY is by far the most common; C and C++ functions are
-                    all implicitly NESTED_ENTRY functions.  (The LEAF_ENTRY and NESTED_ENTRY symbols
-                    are MASM (ml64.exe) macro names, but the concept applies to all languages.)
-
-                </p>
-
-                <p>
-
-                    A LEAF_ENTRY can only be implemented in assembly.  It is constrained in that it
-                    may not manipulate any of the non-volatile x64 registers (rbx, rdi, rsi, rsp,
-                    rbp, r12, r13, r14, r15, xmm6-15), nor may it call any other functions (because
-                    call implicitly modifies the stack pointer), nor may it have a structured
-                    exception handler (because that also manipulates the stack pointer).
-
-                </p>
-
-                <p>
-
-                    The reason behind all of these constraints is that LEAF_ENTRY routines do not
-                    have any unwind information generated for them in their runtime function
-                    entries.  Unwind information is used by the kernel to do just that, unwind
-                    the modifications made to non-volatile registers whilst traversing back up
-                    through the call stack looking for an exception handler in the case of an
-                    exception.
-
-                </p>
-
-                <p>
-
-                    For example, here's the function entry and associated unwind information for the
-                    IsPrefixOfStringInTable_10 function:
-
-                </p>
-
-                <hr/>
-<small><pre>
-0:000> .fnent StringTable2!IsPrefixOfStringInTable_10
-Debugger function entry 000001f9`048edf98 for:
-Exact matches:
-    StringTable2!IsPrefixOfStringInTable_10 (struct _STRING_TABLE *, struct _STRING *, struct _STRING_MATCH *)
-
-BeginAddress      = 00000000`00001fe0
-EndAddress        = 00000000`00002165
-UnwindInfoAddress = 00000000`00004370
-
-Unwind info at 00007ffd`15594370, 1e bytes
-  version 1, flags 0, prolog 81, codes d
-  00: offs 81, unwind op 4, op info 7   UWOP_SAVE_NONVOL FrameOffset: 20 reg: rdi.
-  02: offs 7c, unwind op 4, op info 6   UWOP_SAVE_NONVOL FrameOffset: 60 reg: rsi.
-  04: offs 77, unwind op 4, op info 5   UWOP_SAVE_NONVOL FrameOffset: 58 reg: rbp.
-  06: offs 72, unwind op 4, op info 3   UWOP_SAVE_NONVOL FrameOffset: 50 reg: rbx.
-  08: offs c, unwind op 2, op info 4    UWOP_ALLOC_SMALL.
-  09: offs 8, unwind op 0, op info f    UWOP_PUSH_NONVOL reg: r15.
-  0a: offs 6, unwind op 0, op info e    UWOP_PUSH_NONVOL reg: r14.
-  0b: offs 4, unwind op 0, op info d    UWOP_PUSH_NONVOL reg: r13.
-  0c: offs 2, unwind op 0, op info c    UWOP_PUSH_NONVOL reg: r12.
-0:000>
-</pre></small>
-                <hr/>
-
-                <p>
-
-                    We can see that the C version of our routine manipulates 9 non-volatile
-                    registers in total, including the stack pointer.  The first instructions
-                    of the C version constitute the function's prologue; in the disassembly,
-                    you can see that four of the rxx registers are pushed to the stack and then
-                    0x28 (40) bytes of stack space is allocated:
-
-                </p>
-
-                <hr/>
-<small><pre>
-0:000> uf StringTable2!IsPrefixOfStringInTable_10
-StringTable2!IsPrefixOfStringInTable_10:
-00007ffd`15591fe0 4154            push    r12
-00007ffd`15591fe2 4155            push    r13
-00007ffd`15591fe4 4156            push    r14
-00007ffd`15591fe6 4157            push    r15
-00007ffd`15591fe8 4883ec28        sub     rsp,28h
---- END OF PROLOGUE ---
-00007ffd`15591fec c5fa6f5920      vmovdqu xmm3,xmmword ptr [rcx+20h]
-</pre></small>
-                <hr/>
-
-                <p>
-
-                    With our LEAF_ENTRY version, though, we don't need to push anything to the stack
-                    as we won't be manipulating any non-volatile registers.  If an exception occurs
-                    within the body of our implementation (say we dereference a NULL pointer), the
-                    kernel knows it doesn't have to undo any non-volatile register modifications
-                    (using offsets specified by the unwind information) because there isn't any
-                    unwind information.  It can simply advance to the frame before us (e.g. rsp at
-                    the time of the fault, minus 8 bytes) as it continues its search for runtime
-                    function entries and associated unwind information.  As you can see, there is
-                    no unwind information:
-
-                </p>
-
-                <hr/>
-<small><pre>
-0:000> .fnent StringTable2!IsPrefixOfStringInTable_x64_1
-Debugger function entry 000001f9`048edf98 for:
-Exact matches:
-    StringTable2!IsPrefixOfStringInTable_x64_1 (void)
-
-BeginAddress      = 00000000`00003290
-EndAddress        = 00000000`000032cb
-UnwindInfoAddress = 00000000`00004468
-
-Unwind info at 00007ffd`15594468, 4 bytes
-  version 1, flags 0, prolog 0, codes 0
-</pre></small>
-                <hr/>
-
-                <p>
-
-                    Now, the problem with a LEAF_ENTRY for anything more than a trivial bit of code
-                    is that you only have a handful of volatile registers to work with, and no stack
-                    space can be used for register spilling or temporaries.  (There's a nice little
-                    32 byte home parameter space trailing the return address that is intended for
-                    routines to stash the four parameter variables, rcx, rdx, r8, and r9, but I
-                    didn't use this; I figured if I was going to the trouble of avoiding stack
-                    spills I may as well try avoid all memory spills.)
-
-                </p>
-
-                <p>
-
-                    So, the good news is that the completed version 2 of the assembly routine
-                    worked, and basically maintained the negative match performance of the first
-                    attempt, maybe save for a cycle or two.  Even still, it consistently hovers
-                    around 8 cycles for negative matches, which is 3-4 cycles better than our
-                    fastest C version.  It was simultaneously fun, challenging, and tedious to
-                    write.  To get around the limited registers, I ended up spilling to XMM
-                    registers via vpinsr/vpextr combinations, as can be seen below.
-
-                </p>
-
-<pre class="code content-is-prefix-asm-v4"><code class="language-nasm">
-;++
-;
-; BOOL
-; IsPrefixOfStringInTable_x64_4(
-;     _In_ PSTRING_TABLE StringTable,
-;     _In_ PSTRING String,
-;     _Out_ PSTRING_MATCH StringMatch
-;     )
-;
-; Routine Description:
-;
-;     This routine searches for a prefix match of String in the given
-;     StringTable structure.
-;
-; Arguments:
-;
-;     StringTable - Supplies a pointer to a STRING_TABLE structure to search.
-;
-;     String - Supplies a pointer to a STRING structure that a prefix match
-;         is searched for.
-;
-;     StringMatch - Supplies a pointer to a STRING_MATCH structure that will
-;         receive the results of the string match.
-;
-; Return Value:
-;
-;    Returns TRUE on sucess, FALSE on failure.
-;
-;--
-
-        LEAF_ENTRY IsPrefixOfStringInTable_x64_2, _TEXT$00
-
-;
-; Load the string buffer into xmm0, and the unique indexes from the string table
-; into xmm1.  Shuffle the buffer according to the unique indexes, and store the
-; result back into xmm0.
-;
-
-        ;IACA_VC_START
-
-        mov     rax, String.Buffer[rdx]
-        vmovdqu xmm0, xmmword ptr [rax]                 ; Load search buffer.
-        vmovdqa xmm1, xmmword ptr StringTable.UniqueIndex[rcx] ; Load indexes.
-        vpshufb xmm5, xmm0, xmm1
-
-;
-; Load the string table's unique character array into xmm2, and the lengths for
-; each string slot into xmm3.
-;
-
-        vmovdqa xmm2, xmmword ptr StringTable.UniqueChars[rcx]  ; Load chars.
-        vmovdqa xmm3, xmmword ptr StringTable.Lengths[rcx]      ; Load lengths.
-
-;
-; Broadcast the byte-sized string length into xmm4.
-;
-
-        vpbroadcastb xmm4, byte ptr String.Length[rdx]  ; Broadcast length.
-
-;
-; Compare the search string's unique character array (xmm5) against the string
-; table's unique chars (xmm2), saving the result back into xmm5.
-;
-
-        vpcmpeqb    xmm5, xmm5, xmm2            ; Compare unique chars.
-
-;
-; Compare the search string's length, which we've broadcasted to all 8-byte
-; elements of the xmm4 register, to the lengths of the slots in the string
-; table, to find those that are greater in length.  Invert the result, such
-; that we're left with a masked register where each 0xff element indicates
-; a slot with a length less than or equal to our search string's length.
-;
-
-        vpcmpeqq    xmm2, xmm2, xmm2            ; Set xmm2 to all ones.
-        vpcmpgtb    xmm1, xmm3, xmm4            ; Identify long slots.
-        vpxor       xmm1, xmm1, xmm2            ; Invert the result.
-
-;
-; Intersect-and-test the unique character match xmm mask register (xmm5) with
-; the length match mask xmm register (xmm1).  This affects flags, allowing us
-; to do a fast-path exit for the no-match case (where ZF = 1).
-;
-
-        vptest      xmm5, xmm1                  ; Check for no match.
-        jnz         short Pfx10                 ; There was a match.
-
-;
-; No match, set rax to -1 and return.
-;
-
-        xor         eax, eax                    ; Clear rax.
-        not         al                          ; al = -1
-        ret                                     ; Return.
-
-        ;IACA_VC_END
-
-;
-; (There was at least one match, continue with processing.)
-;
-
-;
-; Calculate the "search length" for the incoming search string, which is
-; equivalent of 'min(String-&gt;Length, 16)'.  (The search string's length
-; currently lives in xmm4, albeit as a byte-value broadcasted across the
-; entire register, so extract that first.)
-;
-; Once the search length is calculated, deposit it back at the second byte
-; location of xmm4.
-;
-;   r10 and xmm4[15:8] - Search length (min(String-&gt;Length, 16))
-;
-;   r11 - String length (String-&gt;Length)
-;
-
-Pfx10:  vpextrb     r11, xmm4, 0                ; Load length.
-        mov         rax, 16                     ; Load 16 into rax.
-        mov         r10, r11                    ; Copy into r10.
-        cmp         r10w, ax                    ; Compare against 16.
-        cmova       r10w, ax                    ; Use 16 if length is greater.
-        vpinsrb     xmm4, xmm4, r10d, 1         ; Save back to xmm4b[1].
-
-;
-; Home our parameter registers into xmm registers instead of their stack-backed
-; location, to avoid memory writes.
-;
-
-        vpxor       xmm2, xmm2, xmm2            ; Clear xmm2.
-        vpinsrq     xmm2, xmm2, rcx, 0          ; Save rcx into xmm2q[0].
-        vpinsrq     xmm2, xmm2, rdx, 1          ; Save rdx into xmm2q[1].
-
-;
-; Intersect xmm5 and xmm1 (as we did earlier with the 'vptest xmm5, xmm1'),
-; yielding a mask identifying indices we need to perform subsequent matches
-; upon.  Convert this into a bitmap and save in xmm2d[2].
-;
-
-        vpand       xmm5, xmm5, xmm1            ; Intersect unique + lengths.
-        vpmovmskb   edx, xmm5                   ; Generate a bitmap from mask.
-
-;
-; We're finished with xmm5; repurpose it in the same vein as xmm2 above.
-;
-
-        vpxor       xmm5, xmm5, xmm5            ; Clear xmm5.
-        vpinsrq     xmm5, xmm5, r8, 0           ; Save r8 into xmm5q[0].
-
-;
-; Summary of xmm register stashing for the rest of the routine:
-;
-; xmm2:
-;        0:63   (vpinsrq 0)     rcx (1st function parameter, StringTable)
-;       64:127  (vpinsrq 1)     rdx (2nd function paramter, String)
-;
-; xmm4:
-;       0:7     (vpinsrb 0)     length of search string
-;       8:15    (vpinsrb 1)     min(String-&gt;Length, 16)
-;      16:23    (vpinsrb 2)     loop counter (when doing long string compares)
-;      24:31    (vpinsrb 3)     shift count
-;
-; xmm5:
-;       0:63    (vpinsrq 0)     r8 (3rd function parameter, StringMatch)
-;      64:95    (vpinsrd 2)     bitmap of slots to compare
-;      96:127   (vpinsrd 3)     index of slot currently being processed
-;
-
-;
-; Initialize rcx as our counter register by doing a popcnt against the bitmap
-; we just generated in edx, and clear our shift count register (r9).
-;
-
-        popcnt      ecx, edx                    ; Count bits in bitmap.
-        xor         r9, r9                      ; Clear r9.
-
-        align 16
-
-;
-; Top of the main comparison loop.  The bitmap will be present in rdx.  Count
-; trailing zeros of the bitmap, and then add in the shift count, producing an
-; index (rax) we can use to load the corresponding slot.
-;
-; Register usage at top of loop:
-;
-;   rax - Index.
-;
-;   rcx - Loop counter.
-;
-;   rdx - Bitmap initially, then slot length.
-;
-;   r9 - Shift count.
-;
-;   r10 - Search length.
-;
-;   r11 - String length.
-;
-
-Pfx20:  tzcnt       r8d, edx                    ; Count trailing zeros.
-        mov         eax, r8d                    ; Copy tzcnt to rax,
-        add         rax, r9                     ; Add shift to create index.
-        inc         r8                          ; tzcnt + 1
-        shrx        rdx, rdx, r8                ; Reposition bitmap.
-        vpinsrd     xmm5, xmm5, edx, 2          ; Store bitmap, free up rdx.
-        xor         edx, edx                    ; Clear edx.
-        mov         r9, rax                     ; Copy index back to shift.
-        inc         r9                          ; Shift = Index + 1
-        vpinsrd     xmm5, xmm5, eax, 3          ; Store the raw index xmm5d[3].
-
-;
-; "Scale" the index (such that we can use it in a subsequent vmovdqa) by
-; shifting left by 4 (i.e. multiply by '(sizeof STRING_SLOT)', which is 16).
-;
-; Then, load the string table slot at this index into xmm1, then shift rax back.
-;
-
-        shl         eax, 4
-        vpextrq     r8, xmm2, 0
-        vmovdqa     xmm1, xmmword ptr [rax + StringTable.Slots[r8]]
-        shr         eax, 4
-
-;
-; The search string's first 16 characters are already in xmm0.  Compare this
-; against the slot that has just been loaded into xmm1, storing the result back
-; into xmm1.
-;
-
-        vpcmpeqb    xmm1, xmm1, xmm0            ; Compare search string to slot.
-
-;
-; Convert the XMM mask into a 32-bit representation, then zero high bits after
-; our "search length", which allows us to ignore the results of the comparison
-; above for bytes that were after the search string's length, if applicable.
-; Then, count the number of bits remaining, which tells us how many characters
-; we matched.
-;
-
-        vpmovmskb   r8d, xmm1                   ; Convert into mask.
-        bzhi        r8d, r8d, r10d              ; Zero high bits.
-        popcnt      r8d, r8d                    ; Count bits.
-
-;
-; Load the slot length into rdx.  As xmm3 already has all the slot lengths in
-; it, we can load rax (the current index) into xmm1 and use it to extract the
-; slot length via shuffle.  (The length will be in the lowest byte of xmm1
-; after the shuffle, which we can then vpextrb.)
-;
-
-        movd        xmm1, rax                   ; Load index into xmm1.
-        vpshufb     xmm1, xmm3, xmm1            ; Shuffle lengths.
-        vpextrb     rdx, xmm1, 0                ; Extract target length to rdx.
-
-;
-; If 16 characters matched, and the search string's length is longer than 16,
-; we're going to need to do a comparison of the remaining strings.
-;
-
-        cmp         r8w, 16                     ; Compare chars matched to 16.
-        je          short @F                    ; 16 chars matched.
-        jmp         Pfx30                       ; Less than 16 matched.
-
-;
-; All 16 characters matched.  If the slot length is greater than 16, we need
-; to do an inline memory comparison of the remaining bytes.  If it's 16 exactly,
-; then great, that's a slot match, we're done.
-;
-
-@@:     cmp         dl, 16                      ; Compare length to 16.
-        ja          Pfx50                       ; Length is &gt; 16.
-        je          short Pfx35                 ; Lengths match!
-                                                ; Length &lt;= 16, fall through...
-
-;
-; Less than or equal to 16 characters were matched.  Compare this against the
-; length of the slot; if equal, this is a match, if not, no match, continue.
-;
-
-Pfx30:  cmp         r8b, dl                     ; Compare against slot length.
-        jne         @F                          ; No match found.
-        jmp         short Pfx35                 ; Match found!
-
-;
-; No match against this slot, decrement counter and either continue the loop
-; or terminate the search and return no match.
-;
-
-@@:     vpextrd     edx, xmm5, 2                ; Restore rdx bitmap.
-        dec         cx                          ; Decrement counter.
-        jnz         Pfx20                       ; cx != 0, continue.
-
-        xor         eax, eax                    ; Clear rax.
-        not         al                          ; al = -1
-        ret                                     ; Return.
-
-;
-; Pfx35 and Pfx40 are the jump targets for when the prefix match succeeds.  The
-; former is used when we need to copy the number of characters matched from r8
-; back to rax.  The latter jump target doesn't require this.
-;
-
-Pfx35:  mov         rax, r8                     ; Copy numbers of chars matched.
-
-;
-; Load the match parameter back into r8 and test to see if it's not-NULL, in
-; which case we need to fill out a STRING_MATCH structure for the match.
-;
-
-Pfx40:  vpextrq     r8, xmm5, 0                 ; Extract StringMatch.
-        test        r8, r8                      ; Is NULL?
-        jnz         short @F                    ; Not zero, need to fill out.
-
-;
-; StringMatch is NULL, we're done. Extract index of match back into rax and ret.
-;
-
-        vpextrd     eax, xmm5, 3                ; Extract raw index for match.
-        ret                                     ; StringMatch == NULL, finish.
-
-;
-; StringMatch is not NULL.  Fill out characters matched (currently rax), then
-; reload the index from xmm5 into rax and save.
-;
-
-@@:     mov         byte ptr StringMatch.NumberOfMatchedCharacters[r8], al
-        vpextrd     eax, xmm5, 3                ; Extract raw index for match.
-        mov         byte ptr StringMatch.Index[r8], al
-
-;
-; Final step, loading the address of the string in the string array.  This
-; involves going through the StringTable, so we need to load that parameter
-; back into rcx, then resolving the string array address via pStringArray,
-; then the relevant STRING offset within the StringArray.Strings structure.
-;
-
-        vpextrq     rcx, xmm2, 0            ; Extract StringTable into rcx.
-        mov         rcx, StringTable.pStringArray[rcx] ; Load string array.
-
-        shl         eax, 4                  ; Scale the index; sizeof STRING=16.
-        lea         rdx, [rax + StringArray.Strings[rcx]] ; Resolve address.
-        mov         qword ptr StringMatch.String[r8], rdx ; Save STRING ptr.
-        shr         eax, 4                  ; Revert the scaling.
-
-        ret
-
-;
-; 16 characters matched and the length of the underlying slot is greater than
-; 16, so we need to do a little memory comparison to determine if the search
-; string is a prefix match.
-;
-; The slot length is stored in rax at this point, and the search string's
-; length is stored in r11.  We know that the search string's length will
-; always be longer than or equal to the slot length at this point, so, we
-; can subtract 16 (currently stored in r10) from rax, and use the resulting
-; value as a loop counter, comparing the search string with the underlying
-; string slot byte-by-byte to determine if there's a match.
-;
-
-Pfx50:  sub         rdx, r10                ; Subtract 16 from search length.
-
-;
-; Free up some registers by stashing their values into various xmm offsets.
-;
-
-        vpinsrb     xmm4, xmm4, ecx, 2      ; Free up rcx register.
-        mov         rcx, rdx                ; Free up rdx, rcx is now counter.
-
-;
-; Load the search string buffer and advance it 16 bytes.
-;
-
-        vpextrq     r11, xmm2, 1            ; Extract String into r11.
-        mov         r11, String.Buffer[r11] ; Load buffer address.
-        add         r11, r10                ; Advance buffer 16 bytes.
-
-;
-; Loading the slot is more involved as we have to go to the string table, then
-; the pStringArray pointer, then the relevant STRING offset within the string
-; array (which requires re-loading the index from xmm5d[3]), then the string
-; buffer from that structure.
-;
-
-        vpextrq     r8, xmm2, 0             ; Extract StringTable into r8.
-        mov         r8, StringTable.pStringArray[r8] ; Load string array.
-
-        shl         eax, 4                  ; Scale the index; sizeof STRING=16.
-
-        lea         r8, [rax + StringArray.Strings[r8]] ; Resolve address.
-        mov         r8, String.Buffer[r8]   ; Load string table buffer address.
-        add         r8, r10                 ; Advance buffer 16 bytes.
-
-        xor         eax, eax                ; Clear eax.
-
-;
-; We've got both buffer addresses + 16 bytes loaded in r11 and r8 respectively.
-; Do a byte-by-byte comparison.
-;
-
-        align 16
-@@:     mov         dl, byte ptr [rax + r11]    ; Load byte from search string.
-        cmp         dl, byte ptr [rax + r8]     ; Compare against target.
-        jne         short Pfx60                 ; If not equal, jump.
-
-;
-; The two bytes were equal, update rax, decrement rcx and potentially continue
-; the loop.
-;
-
-        inc         ax                          ; Increment index.
-        loopnz      @B                          ; Decrement cx and loop back.
-
-;
-; All bytes matched!  Add 16 (still in r10) back to rax such that it captures
-; how many characters we matched, and then jump to Pfx40 for finalization.
-;
-
-        add         rax, r10
-        jmp         Pfx40
-
-;
-; Byte comparisons were not equal.  Restore the rcx loop counter and decrement
-; it.  If it's zero, we have no more strings to compare, so we can do a quick
-; exit.  If there are still comparisons to be made, restore the other registers
-; we trampled then jump back to the start of the loop Pfx20.
-;
-
-Pfx60:  vpextrb     rcx, xmm4, 2                ; Restore rcx counter.
-        dec         cx                          ; Decrement counter.
-        jnz         short @F                    ; Jump forward if not zero.
-
-;
-; No more comparisons remaining, return.
-;
-
-        xor         eax, eax                    ; Clear rax.
-        not         al                          ; al = -1
-        ret                                     ; Return.
-
-;
-; More comparisons remain; restore the registers we clobbered and continue loop.
-;
-
-@@:     vpextrb     r10, xmm4, 1                ; Restore r10.
-        vpextrb     r11, xmm4, 0                ; Restore r11.
-        vpextrd     edx, xmm5, 2                ; Restore rdx bitmap.
-        jmp         Pfx20                       ; Continue comparisons.
-
-        ;IACA_VC_END
-
-        LEAF_END   IsPrefixOfStringInTable_x64_2, _TEXT$00
-
-</code></pre>
+                    </div>
+                </div>
 
                 <h1>The Benchmark</h1>
 
@@ -2596,10 +2025,11 @@ IsPrefixOfCStrInArray(
 
                 <p>
 
-                    This version is similar to the IsPrefixOfCStrInArray implementation, except it
-                    utilizes the slot length information provided by the STRING_ARRAY structure, and
-                    conforms to our standard IsPrefixOfStringInTable function signature.  It uses no
-                    SIMD instructions.
+                    This version is similar to the <code>IsPrefixOfCStrInArray</code>
+                    implementation, except it utilizes the slot length information provided by the
+                    <code>STRING_ARRAY</code> structure, and conforms to our standard
+                    <code>IsPrefixOfStringInTable</code> function signature.  It uses no SIMD
+                    instructions.
 
                 </p>
 
@@ -2701,6 +2131,14 @@ Return Value:
 
                 </p>
 
+                <p>
+
+                    In all but one case, we're faster.  That's neat; just by using a more
+                    sophisticated data structure, we can get a decent speedup, without needing any
+                    SIMD instructions.
+
+                </p>
+
                 <h2>IsPrefixOfStringInTable_2</h2>
 
                 <p>
@@ -2721,12 +2159,47 @@ Return Value:
                     component, detailed in this article.  Our lengths are 8 bits, and we use unique
                     characters in the initial negative match fast-path.  However, the first version
                     used an elaborate AVX2 prefix match routine that was geared toward matching
-                    long strings, depicted below:
+                    long strings, and attempted to use non-temporal streaming load instructions
+                    where possible (which would only make sense for a large number of long strings).
+                    Compare that to our simpler implementation, <code>IsPrefixMatch</code>:
 
                 </p>
 
-<pre class="code"><code class="language-c">
-FORCEINLINE
+                <div class="tab-box language box-is-prefix-match">
+                    <ul class="tabs">
+                        <li data-content="content-is-prefix-match">IsPrefixMatch</li>
+                        <li data-content="content-is-prefix-match-avx2">IsPrefixMatchAvx2</li>
+                    </ul>
+                    <div class="content">
+<pre class="code content-is-prefix-match"><code class="language-c">FORCEINLINE
+BYTE
+IsPrefixMatch(
+    _In_ PCSTRING SearchString,
+    _In_ PCSTRING TargetString,
+    _In_ BYTE Offset
+    )
+{
+    PBYTE Left;
+    PBYTE Right;
+    BYTE Matched = 0;
+    BYTE Remaining = (SearchString-&gt;Length - Offset) + 1;
+
+    Left = (PBYTE)RtlOffsetToPointer(SearchString-&gt;Buffer, Offset);
+    Right = (PBYTE)RtlOffsetToPointer(TargetString-&gt;Buffer, Offset);
+
+    while (--Remaining &amp;&amp; *Left++ == *Right++) {
+        Matched++;
+    }
+
+    Matched += Offset;
+    if (Matched != TargetString-&gt;Length) {
+        return NO_MATCH_FOUND;
+    }
+
+    return Matched;
+}
+</code></pre>
+<pre class="code content-is-prefix-match-avx2"><code class="language-c">FORCEINLINE
 USHORT
 IsPrefixMatchAvx2(
     _In_ PCSTRING SearchString,
@@ -3020,43 +2493,8 @@ StartXmm:
     return NO_MATCH_FOUND;
 }
 </code></pre>
-
-                <p>
-
-                    Compare that to the actual inline routine we end up using to confirm prefix
-                    matches:
-
-                </p>
-
-<pre class="code"><code class="language-c">
-FORCEINLINE
-BYTE
-IsPrefixMatch(
-    _In_ PCSTRING SearchString,
-    _In_ PCSTRING TargetString,
-    _In_ BYTE Offset
-    )
-{
-    PBYTE Left;
-    PBYTE Right;
-    BYTE Matched = 0;
-    BYTE Remaining = (SearchString-&gt;Length - Offset) + 1;
-
-    Left = (PBYTE)RtlOffsetToPointer(SearchString-&gt;Buffer, Offset);
-    Right = (PBYTE)RtlOffsetToPointer(TargetString-&gt;Buffer, Offset);
-
-    while (--Remaining &amp;&amp; *Left++ == *Right++) {
-        Matched++;
-    }
-
-    Matched += Offset;
-    if (Matched != TargetString-&gt;Length) {
-        return NO_MATCH_FOUND;
-    }
-
-    return Matched;
-}
-</code></pre>
+                    </div>
+                </div>
 
                 <p>
 
@@ -3397,6 +2835,13 @@ NoMatch:
 
                 <p>
 
+                    Let's see how version 2, our first SIMD attempt, performs in comparison to the
+                    two baselines.
+
+                </p>
+
+                <p>
+
                     <a href="Benchmark-02-v1.svg" target="_blank">
                         <img class="svg-image" src="Benchmark-02-v1.svg"/>
                     </a>
@@ -3416,8 +2861,8 @@ NoMatch:
 
                 <p>
 
-                    For version 3, let's replace the call to IsPrefixMatchAvx2 with our simpler
-                    version, IsPrefixMatch:
+                    For version 3, let's replace the call to <code>IsPrefixMatchAvx2</code> with our
+                    simpler version, <code>IsPrefixMatch</code>:
 
                 </p>
 
@@ -3787,10 +3232,9 @@ NoMatch:
                 <p>
 
                     Phew!  We finally see superior performance across the board.  This ends the
-                    short lived tenure of the IsPrefixOfStringInTable_2 routine (which calls out to
-                    the elaborate IsPrefixAvx2 routine), which is demonstrably worse in every case.
-                    We'll also omit the IsPrefixOfCStrInArray routine from the graphs for now, as
-                    it has served its initial baseline purpose.
+                    short lived tenure of version 2, which is demonstrably worse in every case.
+                    We'll also omit the <code>IsPrefixOfCStrInArray</code> routine from the graphs
+                    for now (for the most part), as it has served its initial baseline purpose.
 
                 </p>
 
@@ -5117,7 +4561,7 @@ NoMatch:
 
                     Version 6 should be faster than version 3; we omit alignment checks, all of our
                     input buffers are aligned at 32 bytes, and an unaligned XMM load of an aligned
-                    buffer should definitely be faster than a __movsb().  Let's see:
+                    buffer should definitely be faster than a <code>__movsb()</code>.  Let's see:
 
                 </p>
 
@@ -6836,11 +6280,1412 @@ Return Value:
 
                 </p>
 
-                <h2>Assembly Versions</h2>
-                <p>Maybe put assembly versions here.</p>
+                <h2>Speeding Up Negative Matches with Assembly</h2>
 
-                <p>[Internet feedback.]</p>
+                <p>
+                    <small><small>(Note: if you build the Tracer project, you can run a helper batch file
+                    in the root directory called cdb-simple.bat, which uses cdb to launch one of the
+                    project's executables called ModuleLoader.exe, which will start up, load all of
+                    our tracing project's DLLs, then allow the debugger to break in, which yields us
+                    a debugger prompt from which we can easily disassemble functions and inspect
+                    runtime function entries etc.  This is the approach I used for capturing the
+                    output over the next couple of sections.)</small></small>
+                </p>
 
+                <p>
+
+                    Now for the fun part!  Let's take a look at the disassembly of the initial part
+                    of version 10 that is responsible for doing the negative match logic and see if
+                    there are any improvements we can make.
+
+                </p>
+
+                <hr/>
+                <small><pre>
+0:000&gt; uf StringTable2!IsPrefixOfStringInTable_10
+StringTable2!IsPrefixOfStringInTable_10:
+00007fff`f69c1df0 48896c2418      mov     qword ptr [rsp+18h],rbp
+00007fff`f69c1df5 4889742420      mov     qword ptr [rsp+20h],rsi
+00007fff`f69c1dfa 4155            push    r13
+00007fff`f69c1dfc 4156            push    r14
+00007fff`f69c1dfe 4157            push    r15
+00007fff`f69c1e00 4883ec20        sub     rsp,20h
+00007fff`f69c1e04 c5fa6f5920      vmovdqu xmm3,xmmword ptr [rcx+20h]
+00007fff`f69c1e09 4c8b6a08        mov     r13,qword ptr [rdx+8]
+00007fff`f69c1e0d 4d8bf0          mov     r14,r8
+00007fff`f69c1e10 440fb63a        movzx   r15d,byte ptr [rdx]
+00007fff`f69c1e14 33ed            xor     ebp,ebp
+00007fff`f69c1e16 44883c24        mov     byte ptr [rsp],r15b
+00007fff`f69c1e1a 488bf1          mov     rsi,rcx
+00007fff`f69c1e1d c4e279780c24    vpbroadcastb xmm1,byte ptr [rsp]
+00007fff`f69c1e23 c4c17a6f6500    vmovdqu xmm4,xmmword ptr [r13]
+00007fff`f69c1e29 c4e259004110    vpshufb xmm0,xmm4,xmmword ptr [rcx+10h]
+00007fff`f69c1e2f c5f97411        vpcmpeqb xmm2,xmm0,xmmword ptr [rcx]
+00007fff`f69c1e33 c5e164c9        vpcmpgtb xmm1,xmm3,xmm1
+00007fff`f69c1e37 c5f1ef0d41320000 vpxor   xmm1,xmm1,xmmword ptr [StringTable2!_xmmffffffffffffffffffffffffffffffff (00007fff`f69c5080)]
+00007fff`f69c1e3f c5e9dbd1        vpand   xmm2,xmm2,xmm1
+00007fff`f69c1e43 c579d7c2        vpmovmskb r8d,xmm2
+00007fff`f69c1e47 c5fa7f5c2410    vmovdqu xmmword ptr [rsp+10h],xmm3
+00007fff`f69c1e4d 4585c0          test    r8d,r8d
+00007fff`f69c1e50 0f849a000000    je      StringTable2!IsPrefixOfStringInTable_10+0x100 (00007fff`f69c1ef0)
+                </pre></small>
+                <hr/>
+
+                <p>
+
+                    There's a bit of cruft there at the start with regards to setting up the
+                    function's prologue (pushing non-volatile registers to the stack, etc).  That's
+                    to be expected for C (and C++, and basically every language); as the programmer,
+                    you don't really have any <strong>direct</strong> control over how many registers
+                    a compiler uses for a routine, how much stack space it uses, which registers it
+                    uses when, etc.
+
+                </p>
+
+                <p>
+
+                    However, with assembly, we're on the other end of the spectrum: we can control
+                    everything!  We also have a little trick up our sleeves: the venerable
+                    LEAF_ENTRY.
+
+                </p>
+
+                <p>
+
+                    First, some background.  The Windows x64 ABI and calling convention dictates there
+                    are two types of functions: <a
+                    href="https://github.com/tpn/winsdk-10/blob/master/Include/10.0.16299.0/shared/macamd64.inc#L524">
+                    NESTED_ENTRY</a> and <a
+                    href="https://github.com/tpn/winsdk-10/blob/master/Include/10.0.16299.0/shared/macamd64.inc#L353">
+                    LEAF_ENTRY</a>.  NESTED_ENTRY is by far the most common; C and C++ functions are
+                    all implicitly NESTED_ENTRY functions.  (The LEAF_ENTRY and NESTED_ENTRY symbols
+                    are MASM (ml64.exe) macro names, but the concept applies to all languages.)
+
+                </p>
+
+                <p>
+
+                    A LEAF_ENTRY can only be implemented in assembly.  It is constrained in that it
+                    may not manipulate any of the non-volatile x64 registers (rbx, rdi, rsi, rsp,
+                    rbp, r12, r13, r14, r15, xmm6-15), nor may it <code>call</code> any other functions
+                    (because <code>call</code> implicitly modifies the stack pointer), nor may it have a structured
+                    exception handler (because handling an exception for a given stack frame also
+                    manipulates the stack pointer).
+
+                </p>
+
+                <p>
+
+                    The reason behind all of these constraints is that LEAF_ENTRY routines do not
+                    have any unwind information generated for them in their runtime function
+                    entries.  Unwind information is used by the kernel to do just that, unwind
+                    the modifications made to non-volatile registers whilst traversing back up
+                    through the call stack looking for an exception handler in the case of an
+                    exception.
+
+                </p>
+
+                <p>
+
+                    For example, here's the function entry and associated unwind information for the
+                    PGO build of the IsPrefixOfStringInTable_10 function:
+
+                </p>
+
+                <hr/>
+<small><pre>
+0:000&gt; .fnent StringTable2!IsPrefixOfStringInTable_10
+Debugger function entry 000001d8`2ea03cf8 for:
+(00007fff`f8411df0)   StringTable2!IsPrefixOfStringInTable_10
+Exact matches:
+    StringTable2!IsPrefixOfStringInTable_10 (struct _STRING_TABLE *,
+                                             struct _STRING *,
+                                             struct _STRING_MATCH *)
+
+BeginAddress      = 00000000`00001df0
+EndAddress        = 00000000`00001e59
+UnwindInfoAddress = 00000000`000054f8
+
+Unwind info at 00007fff`f84154f8, 14 bytes
+  version 1, flags 0, prolog 14, codes 8
+  00: offs 14, unwind op 4, op info 6   UWOP_SAVE_NONVOL FrameOffset: 58 reg: rsi.
+  02: offs 14, unwind op 4, op info 5   UWOP_SAVE_NONVOL FrameOffset: 50 reg: rbp.
+  04: offs 14, unwind op 2, op info 3   UWOP_ALLOC_SMALL.
+  05: offs 10, unwind op 0, op info f   UWOP_PUSH_NONVOL reg: r15.
+  06: offs e, unwind op 0, op info e    UWOP_PUSH_NONVOL reg: r14.
+  07: offs c, unwind op 0, op info d    UWOP_PUSH_NONVOL reg: r13.
+</pre></small>
+                <hr/>
+
+                <p>
+
+                    We can see that this routine manipulates 6 non-volatile registers in total,
+                    including the stack pointer.  The first instructions of the routine constitute
+                    the function's prologue; in the disassembly, you can see that three of the rxx
+                    registers are pushed to the stack and then 0x20 (32) bytes of stack space is
+                    allocated:
+
+                </p>
+                <hr/>
+<small><pre>
+0:000&gt; uf StringTable2!IsPrefixOfStringInTable_10
+StringTable2!IsPrefixOfStringInTable_10:
+00007fff`f69c1df0 48896c2418      mov     qword ptr [rsp+18h],rbp
+00007fff`f69c1df5 4889742420      mov     qword ptr [rsp+20h],rsi
+00007fff`f69c1dfa 4155            push    r13
+00007fff`f69c1dfc 4156            push    r14
+00007fff`f69c1dfe 4157            push    r15
+00007fff`f69c1e00 4883ec20        sub     rsp,20h
+</pre></small>
+                <hr/>
+
+                <p>
+
+                    It also cheekily uses the home parameter space for stashing rbp and rsi, instead
+                    of pushing them to the stack.  That's fair game though, this is the PGO build, I'd
+                    expect it to use some extra tricks for shaving off a few more cycles here and
+                    there.  I'd do the same thing if I were writing assembly.
+
+                </p>
+
+                <p>
+                    The home parameter space is a 32 byte area that immediately follows the return
+                    address (i.e. the value of <code>rsp</code> when the function is entered); it is
+                    mandated by the x64 calling convention on Windows, and is primarily intended to
+                    provide some scratch space for a routine to <em>home</em> its parameter
+                    registers (i.e. the registers used for the first four arguments of a function:
+                    rcx, rdx, r8 and r9).  This allows the four non-volatile registers to be
+                    repurposed within a routine, but also have a way to refer to the parameters again
+                    if need be.  That's what it's meant for &mdash; however, its not something that is
+                    enforced, you can basically treat the area as a free 32 byte scratch area if
+                    you're writing assembly.  (On a semi-related note, I'd highly recommend reading
+                    <a href="https://github.com/tpn/pdfs/blob/4d2296269d3737b649def585a19eb103cda9c3d0/A%20History%20of%20Modern%2064-bit%20Computing%20-%20Feb%202007%20(CSEP590A).pdf">
+                    A History of Modern 64-bit Computing</a> if you have some spare time, it's a
+                    fascinating insight into contemporary x64 conventions we often take for granted,
+                    drawing on numerous interviews with industry luminaries like Dave Cutler and Linus
+                    Torvalds.  I found it incredibly useful for understanding the <em>why</em>
+                    behind things like home parameter space, structured exception handling, runtime
+                    function entries, and why you can't write inline assembly for x64 with MSVC
+                    anymore &mdash; it provides a direct vector for obliterating the mechanisms
+                    relied upon by the kernel stack unwinding functionality.)
+                </p>
+
+                <p>
+                    <small>
+                    (Side note: if you view the source of this page, there's a commented-out section
+                    below that depicts the runtime function entry for the release build of version
+                    10; it uses 9 registers instead of 6, and 40 bytes of stack space instead of 32.
+                    I wrote it before switching to using the PGO for everything.)
+                    </small>
+
+                </p>
+
+<!--
+    This is the runtime function entry for the release build of version 10, including follow-up
+    commentary.  I wrote this before switching to the PGO version for everything.
+
+<small><pre>
+0:000&gt; .fnent StringTable2!IsPrefixOfStringInTable_10
+Debugger function entry 000001f9`048edf98 for:
+Exact matches:
+    StringTable2!IsPrefixOfStringInTable_10 (struct _STRING_TABLE *, struct _STRING *, struct _STRING_MATCH *)
+
+BeginAddress      = 00000000`00001fe0
+EndAddress        = 00000000`00002165
+UnwindInfoAddress = 00000000`00004370
+
+Unwind info at 00007ffd`15594370, 1e bytes
+  version 1, flags 0, prolog 81, codes d
+  00: offs 81, unwind op 4, op info 7   UWOP_SAVE_NONVOL FrameOffset: 20 reg: rdi.
+  02: offs 7c, unwind op 4, op info 6   UWOP_SAVE_NONVOL FrameOffset: 60 reg: rsi.
+  04: offs 77, unwind op 4, op info 5   UWOP_SAVE_NONVOL FrameOffset: 58 reg: rbp.
+  06: offs 72, unwind op 4, op info 3   UWOP_SAVE_NONVOL FrameOffset: 50 reg: rbx.
+  08: offs c, unwind op 2, op info 4    UWOP_ALLOC_SMALL.
+  09: offs 8, unwind op 0, op info f    UWOP_PUSH_NONVOL reg: r15.
+  0a: offs 6, unwind op 0, op info e    UWOP_PUSH_NONVOL reg: r14.
+  0b: offs 4, unwind op 0, op info d    UWOP_PUSH_NONVOL reg: r13.
+  0c: offs 2, unwind op 0, op info c    UWOP_PUSH_NONVOL reg: r12.
+0:000&gt;
+</pre></small>
+                <hr/>
+
+                <p>
+
+                    We can see that the C version of our routine manipulates 9 non-volatile
+                    registers in total, including the stack pointer.  The first instructions
+                    of the C version constitute the function's prologue; in the disassembly,
+                    you can see that four of the rxx registers are pushed to the stack and then
+                    0x28 (40) bytes of stack space is allocated:
+
+                </p>
+
+                <hr/>
+<small><pre>
+0:000&gt; uf StringTable2!IsPrefixOfStringInTable_10
+StringTable2!IsPrefixOfStringInTable_10:
+00007ffd`15591fe0 4154            push    r12
+00007ffd`15591fe2 4155            push    r13
+00007ffd`15591fe4 4156            push    r14
+00007ffd`15591fe6 4157            push    r15
+00007ffd`15591fe8 4883ec28        sub     rsp,28h
+--- END OF PROLOGUE ---
+00007ffd`15591fec c5fa6f5920      vmovdqu xmm3,xmmword ptr [rcx+20h]
+</pre></small>
+                <hr/>
+-->
+
+                <p>
+
+                    So, knowing what we now know about the venerable little LEAF_ENTRY trick, let's
+                    see if we can construct a simple routine in assembly that just deals with the
+                    negative match case.
+
+                </p>
+
+                <h2>IsPrefixOfStringInTable_x64_1</h2>
+
+<pre class="code"><code class="language-nasm">;++
+;
+; STRING_TABLE_INDEX
+; IsPrefixOfStringInTable_x64_*(
+;     _In_ PSTRING_TABLE StringTable,
+;     _In_ PSTRING String,
+;     _Out_opt_ PSTRING_MATCH Match
+;     )
+;
+; Routine Description:
+;
+;   Searches a string table to see if any strings "prefix match" the given
+;   search string.  That is, whether any string in the table "starts with
+;   or is equal to" the search string.
+;
+; Arguments:
+;
+;   StringTable - Supplies a pointer to a STRING_TABLE struct.
+;
+;   String - Supplies a pointer to a STRING struct that contains the string to
+;       search for.
+;
+;   Match - Optionally supplies a pointer to a variable that contains the
+;       address of a STRING_MATCH structure.  This will be populated with
+;       additional details about the match if a non-NULL pointer is supplied.
+;
+; Return Value:
+;
+;   Index of the prefix match if one was found, NO_MATCH_FOUND if not.
+;
+;--
+
+        LEAF_ENTRY IsPrefixOfStringInTable_x64_1, _TEXT$00
+
+        ;IACA_VC_START
+
+;
+; Load the string buffer into xmm0, and the unique indexes from the string table
+; into xmm1.  Shuffle the buffer according to the unique indexes, and store the
+; result back into xmm0.
+;
+
+        mov     rax, String.Buffer[rdx]
+        vmovdqu xmm0, xmmword ptr [rax]                 ; Load search buffer.
+        vmovdqa xmm1, xmmword ptr StringTable.UniqueIndex[rcx] ; Load indexes.
+        vpshufb xmm0, xmm0, xmm1
+
+;
+; Load the string table's unique character array into xmm2, and the lengths for
+; each string slot into xmm3.
+;
+
+        vmovdqa xmm2, xmmword ptr StringTable.UniqueChars[rcx]  ; Load chars.
+        vmovdqa xmm3, xmmword ptr StringTable.Lengths[rcx]      ; Load lengths.
+
+;
+; Set xmm5 to all ones.  This is used later.
+;
+
+        vpcmpeqq    xmm5, xmm5, xmm5                    ; Set xmm5 to all ones.
+
+;
+; Broadcast the byte-sized string length into xmm4.
+;
+
+        vpbroadcastb xmm4, byte ptr String.Length[rdx]  ; Broadcast length.
+
+;
+; Compare the search string's unique character array (xmm0) against the string
+; table's unique chars (xmm2), saving the result back into xmm0.
+;
+
+        vpcmpeqb    xmm0, xmm0, xmm2            ; Compare unique chars.
+
+;
+; Compare the search string's length, which we've broadcasted to all 8-byte
+; elements of the xmm4 register, to the lengths of the slots in the string
+; table, to find those that are greater in length.  Invert the result, such
+; that we're left with a masked register where each 0xff element indicates
+; a slot with a length less than or equal to our search string's length.
+;
+
+        vpcmpgtb    xmm1, xmm4, xmm3            ; Identify long slots.
+        vpxor       xmm1, xmm1, xmm5            ; Invert the result.
+
+;
+; Intersect xmm0 and xmm1 to identify string slots of a suitable length with
+; a matching unique character.
+;
+
+;
+; Test the final xmm0 register for all zeros (indicating no match).
+;
+
+        vptest      xmm0, xmm1                  ; Check for no match.
+        ;jnz         short @F                   ; There was a match.
+                                                ; (Not yet implemented.)
+
+;
+; No match, set rax to -1 and return.
+;
+
+        xor         eax, eax                    ;
+        not         al                          ; rax = -1
+        ret
+
+        ;IACA_VC_END
+
+        LEAF_END   IsPrefixOfStringInTable_x64_1, _TEXT$00
+
+; vim:set tw=80 ts=8 sw=4 sts=4 et syntax=masm fo=croql comments=\:;           :
+</code></pre>
+
+                <p>
+
+                    Note how we don't need to push anything to the stack as we didn't manipulate any
+                    non-volatile registers.  If an exception occurs within the body of our
+                    implementation (say we dereference a NULL pointer), the kernel knows it doesn't
+                    have to undo any non-volatile register modifications (using offsets specified by
+                    the unwind information) because there isn't any unwind information.  It can
+                    simply advance to the frame before us (e.g. rsp at the time of the fault, minus
+                    8 bytes) as it continues its search for runtime function entries and associated
+                    unwind information.  As you can see, the prologue is empty:
+
+                </p>
+
+                <hr/>
+<small><pre>
+0:000&gt; .fnent StringTable2!IsPrefixOfStringInTable_x64_1
+Debugger function entry 000001f9`048edf98 for:
+Exact matches:
+    StringTable2!IsPrefixOfStringInTable_x64_1 (void)
+
+BeginAddress      = 00000000`00003290
+EndAddress        = 00000000`000032cb
+UnwindInfoAddress = 00000000`00004468
+
+Unwind info at 00007ffd`15594468, 4 bytes
+  version 1, flags 0, prolog 0, codes 0
+</pre></small>
+                <hr/>
+
+                <p>
+
+                    Let's see how this scrappy little fellow (who always returns NO_MATCH_FOUND but
+                    still mimics the steps required to successfuly negative match) does against the
+                    leading C implementation at this point, version 10:
+
+                </p>
+
+                <p>
+                    <a href="Benchmark-x64-01-v1.svg" target="_blank">
+                        <img class="svg-image" src="Benchmark-x64-01-v1.svg"/>
+                    </a>
+                </p>
+
+                <p>
+
+                    Fwoah, look at that, we've shaved about three cycles off the C version!  (Note
+                    that when I first wrote this, I was comparing the assembly version against the
+                    release build (not the PGO build), which was clocking in at about 13-14 cycles
+                    for negative matching.  So getting it down to ~7.5 was a bit more exciting.)
+
+                </p>
+
+                <p>
+
+                    The good news is that our theory about the performance of the LEAF_ENTRY looks
+                    like it's paid off: we can reliably get about 7.5 cycles for negative matching.
+
+                </p>
+
+                <h2>IsPrefixOfStringInTable_x64_2</h2>
+
+                <p>
+
+                    The bad news is that we now need to implement the rest of the functionality
+                    within the constraints of a LEAF_ENTRY!  The problem with a LEAF_ENTRY for
+                    anything more than a trivial bit of code is that you only have a handful of
+                    volatile registers to work with, and no stack space can be used for register
+                    spilling or temporaries.  (Technically I could use the home parameter space,
+                    but, eh, we're already avoiding stack spills, why not make life harder for
+                    ourselves and avoid <strong>any</strong> memory spilling.)
+
+                </p>
+
+                <p>
+
+                    If you can't spill to memory, your only option is really spilling to XMM
+                    registers via <code>vpinsr</code> and <code>vpextr</code> combinations, which,
+                    as you can see in the implementation of version 2 below, I have to do a lot.
+                </p>
+
+                <p>
+
+                    (Also note: when I wrote this version, I didn't use the disassembly from the C
+                    routines for guidance.  As soon as you start to grok the disassembly for a given
+                    routine, it becomes harder to think of ways to approach it from a fresh angle.
+                    Also, the LEAF_ENTRY aspect significantly limited what I could do anyway, so I
+                    figured I may as well just give it a crack from scratch and see what I could
+                    come up with.)
+
+                </p>
+
+                <p>
+                    The diff view for this routine is less useful given the vast majority of the
+                    code is new, so I've put the full version of the code first.
+                </p>
+
+                <div class="tab-box language box-x64-2v1">
+                    <ul class="tabs">
+                        <li data-content="content-x64-2-full">Full</li>
+                        <li data-content="content-x64-2v1-diff">Diff</li>
+                    </ul>
+                    <div class="content">
+
+<pre class="code content-x64-2-full"><code class="language-nasm">;++
+;
+; STRING_TABLE_INDEX
+; IsPrefixOfStringInTable_x64_*(
+;     _In_ PSTRING_TABLE StringTable,
+;     _In_ PSTRING String,
+;     _Out_opt_ PSTRING_MATCH Match
+;     )
+;
+; Routine Description:
+;
+;   Searches a string table to see if any strings "prefix match" the given
+;   search string.  That is, whether any string in the table "starts with
+;   or is equal to" the search string.
+;
+; Arguments:
+;
+;   StringTable - Supplies a pointer to a STRING_TABLE struct.
+;
+;   String - Supplies a pointer to a STRING struct that contains the string to
+;       search for.
+;
+;   Match - Optionally supplies a pointer to a variable that contains the
+;       address of a STRING_MATCH structure.  This will be populated with
+;       additional details about the match if a non-NULL pointer is supplied.
+;
+; Return Value:
+;
+;   Index of the prefix match if one was found, NO_MATCH_FOUND if not.
+;
+;--
+
+        LEAF_ENTRY IsPrefixOfStringInTable_x64_2, _TEXT$00
+
+;
+; Load the string buffer into xmm0, and the unique indexes from the string table
+; into xmm1.  Shuffle the buffer according to the unique indexes, and store the
+; result into xmm5.
+;
+
+        ;IACA_VC_START
+
+        mov     rax, String.Buffer[rdx]
+        vmovdqu xmm0, xmmword ptr [rax]                 ; Load search buffer.
+        vmovdqa xmm1, xmmword ptr StringTable.UniqueIndex[rcx] ; Load indexes.
+        vpshufb xmm5, xmm0, xmm1
+
+;
+; Load the string table's unique character array into xmm2.
+
+        vmovdqa xmm2, xmmword ptr StringTable.UniqueChars[rcx]  ; Load chars.
+
+;
+; Compare the search string's unique character array (xmm5) against the string
+; table's unique chars (xmm2), saving the result back into xmm5.
+;
+
+        vpcmpeqb    xmm5, xmm5, xmm2            ; Compare unique chars.
+
+;
+; Load the lengths of each string table slot into xmm3.
+;
+        vmovdqa xmm3, xmmword ptr StringTable.Lengths[rcx]      ; Load lengths.
+
+;
+; Set xmm2 to all ones.  We use this later to invert the length comparison.
+;
+
+        vpcmpeqq    xmm2, xmm2, xmm2            ; Set xmm2 to all ones.
+
+;
+; Broadcast the byte-sized string length into xmm4.
+;
+
+        vpbroadcastb xmm4, byte ptr String.Length[rdx]  ; Broadcast length.
+
+;
+; Compare the search string's length, which we've broadcasted to all 8-byte
+; elements of the xmm4 register, to the lengths of the slots in the string
+; table, to find those that are greater in length.  Invert the result, such
+; that we're left with a masked register where each 0xff element indicates
+; a slot with a length less than or equal to our search string's length.
+;
+
+        vpcmpgtb    xmm1, xmm3, xmm4            ; Identify long slots.
+        vpxor       xmm1, xmm1, xmm2            ; Invert the result.
+
+;
+; Intersect-and-test the unique character match xmm mask register (xmm5) with
+; the length match mask xmm register (xmm1).  This affects flags, allowing us
+; to do a fast-path exit for the no-match case (where ZF = 1).
+;
+
+        vptest      xmm5, xmm1                  ; Check for no match.
+        jnz         short Pfx10                 ; There was a match.
+
+;
+; No match, set rax to -1 and return.
+;
+
+        xor         eax, eax                    ; Clear rax.
+        not         al                          ; al = -1
+        ret                                     ; Return.
+
+        ;IACA_VC_END
+
+;
+; (There was at least one match, continue with processing.)
+;
+
+;
+; Calculate the "search length" for the incoming search string, which is
+; equivalent of 'min(String-&gt;Length, 16)'.  (The search string's length
+; currently lives in xmm4, albeit as a byte-value broadcasted across the
+; entire register, so extract that first.)
+;
+; Once the search length is calculated, deposit it back at the second byte
+; location of xmm4.
+;
+;   r10 and xmm4[15:8] - Search length (min(String-&gt;Length, 16))
+;
+;   r11 - String length (String-&gt;Length)
+;
+
+Pfx10:  vpextrb     r11, xmm4, 0                ; Load length.
+        mov         rax, 16                     ; Load 16 into rax.
+        mov         r10, r11                    ; Copy into r10.
+        cmp         r10w, ax                    ; Compare against 16.
+        cmova       r10w, ax                    ; Use 16 if length is greater.
+        vpinsrb     xmm4, xmm4, r10d, 1         ; Save back to xmm4b[1].
+
+;
+; Home our parameter registers into xmm registers instead of their stack-backed
+; location, to avoid memory writes.
+;
+
+        vpxor       xmm2, xmm2, xmm2            ; Clear xmm2.
+        vpinsrq     xmm2, xmm2, rcx, 0          ; Save rcx into xmm2q[0].
+        vpinsrq     xmm2, xmm2, rdx, 1          ; Save rdx into xmm2q[1].
+
+;
+; Intersect xmm5 and xmm1 (as we did earlier with the 'vptest xmm5, xmm1'),
+; yielding a mask identifying indices we need to perform subsequent matches
+; upon.  Convert this into a bitmap and save in xmm2d[2].
+;
+
+        vpand       xmm5, xmm5, xmm1            ; Intersect unique + lengths.
+        vpmovmskb   edx, xmm5                   ; Generate a bitmap from mask.
+
+;
+; We're finished with xmm5; repurpose it in the same vein as xmm2 above.
+;
+
+        vpxor       xmm5, xmm5, xmm5            ; Clear xmm5.
+        vpinsrq     xmm5, xmm5, r8, 0           ; Save r8 into xmm5q[0].
+
+;
+; Summary of xmm register stashing for the rest of the routine:
+;
+; xmm2:
+;        0:63   (vpinsrq 0)     rcx (1st function parameter, StringTable)
+;       64:127  (vpinsrq 1)     rdx (2nd function paramter, String)
+;
+; xmm4:
+;       0:7     (vpinsrb 0)     length of search string
+;       8:15    (vpinsrb 1)     min(String-&gt;Length, 16)
+;      16:23    (vpinsrb 2)     loop counter (when doing long string compares)
+;      24:31    (vpinsrb 3)     shift count
+;
+; xmm5:
+;       0:63    (vpinsrq 0)     r8 (3rd function parameter, StringMatch)
+;      64:95    (vpinsrd 2)     bitmap of slots to compare
+;      96:127   (vpinsrd 3)     index of slot currently being processed
+;
+
+;
+; Initialize rcx as our counter register by doing a popcnt against the bitmap
+; we just generated in edx, and clear our shift count register (r9).
+;
+
+        popcnt      ecx, edx                    ; Count bits in bitmap.
+        xor         r9, r9                      ; Clear r9.
+
+        align 16
+
+;
+; Top of the main comparison loop.  The bitmap will be present in rdx.  Count
+; trailing zeros of the bitmap, and then add in the shift count, producing an
+; index (rax) we can use to load the corresponding slot.
+;
+; Register usage at top of loop:
+;
+;   rax - Index.
+;
+;   rcx - Loop counter.
+;
+;   rdx - Bitmap initially, then slot length.
+;
+;   r9 - Shift count.
+;
+;   r10 - Search length.
+;
+;   r11 - String length.
+;
+
+Pfx20:  tzcnt       r8d, edx                    ; Count trailing zeros.
+        mov         eax, r8d                    ; Copy tzcnt to rax,
+        add         rax, r9                     ; Add shift to create index.
+        inc         r8                          ; tzcnt + 1
+        shrx        rdx, rdx, r8                ; Reposition bitmap.
+        vpinsrd     xmm5, xmm5, edx, 2          ; Store bitmap, free up rdx.
+        xor         edx, edx                    ; Clear edx.
+        mov         r9, rax                     ; Copy index back to shift.
+        inc         r9                          ; Shift = Index + 1
+        vpinsrd     xmm5, xmm5, eax, 3          ; Store the raw index xmm5d[3].
+
+;
+; "Scale" the index (such that we can use it in a subsequent vmovdqa) by
+; shifting left by 4 (i.e. multiply by '(sizeof STRING_SLOT)', which is 16).
+;
+; Then, load the string table slot at this index into xmm1, then shift rax back.
+;
+
+        shl         eax, 4
+        vpextrq     r8, xmm2, 0
+        vmovdqa     xmm1, xmmword ptr [rax + StringTable.Slots[r8]]
+        shr         eax, 4
+
+;
+; The search string's first 16 characters are already in xmm0.  Compare this
+; against the slot that has just been loaded into xmm1, storing the result back
+; into xmm1.
+;
+
+        vpcmpeqb    xmm1, xmm1, xmm0            ; Compare search string to slot.
+
+;
+; Convert the XMM mask into a 32-bit representation, then zero high bits after
+; our "search length", which allows us to ignore the results of the comparison
+; above for bytes that were after the search string's length, if applicable.
+; Then, count the number of bits remaining, which tells us how many characters
+; we matched.
+;
+
+        vpmovmskb   r8d, xmm1                   ; Convert into mask.
+        bzhi        r8d, r8d, r10d              ; Zero high bits.
+        popcnt      r8d, r8d                    ; Count bits.
+
+;
+; Load the slot length into rdx.  As xmm3 already has all the slot lengths in
+; it, we can load rax (the current index) into xmm1 and use it to extract the
+; slot length via shuffle.  (The length will be in the lowest byte of xmm1
+; after the shuffle, which we can then vpextrb.)
+;
+
+        movd        xmm1, rax                   ; Load index into xmm1.
+        vpshufb     xmm1, xmm3, xmm1            ; Shuffle lengths.
+        vpextrb     rdx, xmm1, 0                ; Extract target length to rdx.
+
+;
+; If 16 characters matched, and the search string's length is longer than 16,
+; we're going to need to do a comparison of the remaining strings.
+;
+
+        cmp         r8w, 16                     ; Compare chars matched to 16.
+        je          short @F                    ; 16 chars matched.
+        jmp         Pfx30                       ; Less than 16 matched.
+
+;
+; All 16 characters matched.  If the slot length is greater than 16, we need
+; to do an inline memory comparison of the remaining bytes.  If it's 16 exactly,
+; then great, that's a slot match, we're done.
+;
+
+@@:     cmp         dl, 16                      ; Compare length to 16.
+        ja          Pfx50                       ; Length is &gt; 16.
+        je          short Pfx35                 ; Lengths match!
+                                                ; Length &lt;= 16, fall through...
+
+;
+; Less than or equal to 16 characters were matched.  Compare this against the
+; length of the slot; if equal, this is a match, if not, no match, continue.
+;
+
+Pfx30:  cmp         r8b, dl                     ; Compare against slot length.
+        jne         @F                          ; No match found.
+        jmp         short Pfx35                 ; Match found!
+
+;
+; No match against this slot, decrement counter and either continue the loop
+; or terminate the search and return no match.
+;
+
+@@:     vpextrd     edx, xmm5, 2                ; Restore rdx bitmap.
+        dec         cx                          ; Decrement counter.
+        jnz         Pfx20                       ; cx != 0, continue.
+
+        xor         eax, eax                    ; Clear rax.
+        not         al                          ; al = -1
+        ret                                     ; Return.
+
+;
+; Pfx35 and Pfx40 are the jump targets for when the prefix match succeeds.  The
+; former is used when we need to copy the number of characters matched from r8
+; back to rax.  The latter jump target doesn't require this.
+;
+
+Pfx35:  mov         rax, r8                     ; Copy numbers of chars matched.
+
+;
+; Load the match parameter back into r8 and test to see if it's not-NULL, in
+; which case we need to fill out a STRING_MATCH structure for the match.
+;
+
+Pfx40:  vpextrq     r8, xmm5, 0                 ; Extract StringMatch.
+        test        r8, r8                      ; Is NULL?
+        jnz         short @F                    ; Not zero, need to fill out.
+
+;
+; StringMatch is NULL, we're done. Extract index of match back into rax and ret.
+;
+
+        vpextrd     eax, xmm5, 3                ; Extract raw index for match.
+        ret                                     ; StringMatch == NULL, finish.
+
+;
+; StringMatch is not NULL.  Fill out characters matched (currently rax), then
+; reload the index from xmm5 into rax and save.
+;
+
+@@:     mov         byte ptr StringMatch.NumberOfMatchedCharacters[r8], al
+        vpextrd     eax, xmm5, 3                ; Extract raw index for match.
+        mov         byte ptr StringMatch.Index[r8], al
+
+;
+; Final step, loading the address of the string in the string array.  This
+; involves going through the StringTable, so we need to load that parameter
+; back into rcx, then resolving the string array address via pStringArray,
+; then the relevant STRING offset within the StringArray.Strings structure.
+;
+
+        vpextrq     rcx, xmm2, 0            ; Extract StringTable into rcx.
+        mov         rcx, StringTable.pStringArray[rcx] ; Load string array.
+
+        shl         eax, 4                  ; Scale the index; sizeof STRING=16.
+        lea         rdx, [rax + StringArray.Strings[rcx]] ; Resolve address.
+        mov         qword ptr StringMatch.String[r8], rdx ; Save STRING ptr.
+        shr         eax, 4                  ; Revert the scaling.
+
+        ret
+
+;
+; 16 characters matched and the length of the underlying slot is greater than
+; 16, so we need to do a little memory comparison to determine if the search
+; string is a prefix match.
+;
+; The slot length is stored in rax at this point, and the search string's
+; length is stored in r11.  We know that the search string's length will
+; always be longer than or equal to the slot length at this point, so, we
+; can subtract 16 (currently stored in r10) from rax, and use the resulting
+; value as a loop counter, comparing the search string with the underlying
+; string slot byte-by-byte to determine if there's a match.
+;
+
+Pfx50:  sub         rdx, r10                ; Subtract 16 from search length.
+
+;
+; Free up some registers by stashing their values into various xmm offsets.
+;
+
+        vpinsrb     xmm4, xmm4, ecx, 2      ; Free up rcx register.
+        mov         rcx, rdx                ; Free up rdx, rcx is now counter.
+
+;
+; Load the search string buffer and advance it 16 bytes.
+;
+
+        vpextrq     r11, xmm2, 1            ; Extract String into r11.
+        mov         r11, String.Buffer[r11] ; Load buffer address.
+        add         r11, r10                ; Advance buffer 16 bytes.
+
+;
+; Loading the slot is more involved as we have to go to the string table, then
+; the pStringArray pointer, then the relevant STRING offset within the string
+; array (which requires re-loading the index from xmm5d[3]), then the string
+; buffer from that structure.
+;
+
+        vpextrq     r8, xmm2, 0             ; Extract StringTable into r8.
+        mov         r8, StringTable.pStringArray[r8] ; Load string array.
+
+        shl         eax, 4                  ; Scale the index; sizeof STRING=16.
+
+        lea         r8, [rax + StringArray.Strings[r8]] ; Resolve address.
+        mov         r8, String.Buffer[r8]   ; Load string table buffer address.
+        add         r8, r10                 ; Advance buffer 16 bytes.
+
+        xor         eax, eax                ; Clear eax.
+
+;
+; We've got both buffer addresses + 16 bytes loaded in r11 and r8 respectively.
+; Do a byte-by-byte comparison.
+;
+
+        align 16
+@@:     mov         dl, byte ptr [rax + r11]    ; Load byte from search string.
+        cmp         dl, byte ptr [rax + r8]     ; Compare against target.
+        jne         short Pfx60                 ; If not equal, jump.
+
+;
+; The two bytes were equal, update rax, decrement rcx and potentially continue
+; the loop.
+;
+
+        inc         ax                          ; Increment index.
+        loopnz      @B                          ; Decrement cx and loop back.
+
+;
+; All bytes matched!  Add 16 (still in r10) back to rax such that it captures
+; how many characters we matched, and then jump to Pfx40 for finalization.
+;
+
+        add         rax, r10
+        jmp         Pfx40
+
+;
+; Byte comparisons were not equal.  Restore the rcx loop counter and decrement
+; it.  If it's zero, we have no more strings to compare, so we can do a quick
+; exit.  If there are still comparisons to be made, restore the other registers
+; we trampled then jump back to the start of the loop Pfx20.
+;
+
+Pfx60:  vpextrb     rcx, xmm4, 2                ; Restore rcx counter.
+        dec         cx                          ; Decrement counter.
+        jnz         short @F                    ; Jump forward if not zero.
+
+;
+; No more comparisons remaining, return.
+;
+
+        xor         eax, eax                    ; Clear rax.
+        not         al                          ; al = -1
+        ret                                     ; Return.
+
+;
+; More comparisons remain; restore the registers we clobbered and continue loop.
+;
+
+@@:     vpextrb     r10, xmm4, 1                ; Restore r10.
+        vpextrb     r11, xmm4, 0                ; Restore r11.
+        vpextrd     edx, xmm5, 2                ; Restore rdx bitmap.
+        jmp         Pfx20                       ; Continue comparisons.
+
+        ;IACA_VC_END
+
+        LEAF_END   IsPrefixOfStringInTable_x64_2, _TEXT$00
+
+; vim:set tw=80 ts=8 sw=4 sts=4 et syntax=masm fo=croql comments=\:;           :
+</code></pre>
+<pre class="code content-x64-2v1-diff"><code class="language-diff">% diff -u IsPrefixOfStringInTable_x64_1.asm IsPrefixOfStringInTable_x64_2.asm
+--- IsPrefixOfStringInTable_x64_1.asm   2018-04-28 20:55:59.761003300 -0400
++++ IsPrefixOfStringInTable_x64_2.asm   2018-04-26 14:15:53.805409700 -0400
+@@ -50,47 +50,49 @@
+ ;
+ ;--
+
+-        LEAF_ENTRY IsPrefixOfStringInTable_x64_1, _TEXT$00
+-
+-        ;IACA_VC_START
++        LEAF_ENTRY IsPrefixOfStringInTable_x64_2, _TEXT$00
+
+ ;
+ ; Load the string buffer into xmm0, and the unique indexes from the string table
+ ; into xmm1.  Shuffle the buffer according to the unique indexes, and store the
+-; result back into xmm0.
++; result into xmm5.
+ ;
+
++        ;IACA_VC_START
++
+         mov     rax, String.Buffer[rdx]
+         vmovdqu xmm0, xmmword ptr [rax]                 ; Load search buffer.
+         vmovdqa xmm1, xmmword ptr StringTable.UniqueIndex[rcx] ; Load indexes.
+-        vpshufb xmm0, xmm0, xmm1
++        vpshufb xmm5, xmm0, xmm1
+
+ ;
+-; Load the string table's unique character array into xmm2, and the lengths for
+-; each string slot into xmm3.
+-;
++; Load the string table's unique character array into xmm2.
+
+         vmovdqa xmm2, xmmword ptr StringTable.UniqueChars[rcx]  ; Load chars.
+-        vmovdqa xmm3, xmmword ptr StringTable.Lengths[rcx]      ; Load lengths.
+
+ ;
+-; Set xmm5 to all ones.  This is used later.
++; Compare the search string's unique character array (xmm5) against the string
++; table's unique chars (xmm2), saving the result back into xmm5.
+ ;
+
+-        vpcmpeqq    xmm5, xmm5, xmm5                    ; Set xmm5 to all ones.
++        vpcmpeqb    xmm5, xmm5, xmm2            ; Compare unique chars.
+
+ ;
+-; Broadcast the byte-sized string length into xmm4.
++; Load the lengths of each string table slot into xmm3.
+ ;
++        vmovdqa xmm3, xmmword ptr StringTable.Lengths[rcx]      ; Load lengths.
+
+-        vpbroadcastb xmm4, byte ptr String.Length[rdx]  ; Broadcast length.
++;
++; Set xmm2 to all ones.  We use this later to invert the length comparison.
++;
++
++        vpcmpeqq    xmm2, xmm2, xmm2            ; Set xmm2 to all ones.
+
+ ;
+-; Compare the search string's unique character array (xmm0) against the string
+-; table's unique chars (xmm2), saving the result back into xmm0.
++; Broadcast the byte-sized string length into xmm4.
+ ;
+
+-        vpcmpeqb    xmm0, xmm0, xmm2            ; Compare unique chars.
++        vpbroadcastb xmm4, byte ptr String.Length[rdx]  ; Broadcast length.
+
+ ;
+ ; Compare the search string's length, which we've broadcasted to all 8-byte
+@@ -100,27 +102,378 @@
+ ; a slot with a length less than or equal to our search string's length.
+ ;
+
+-        vpcmpgtb    xmm1, xmm4, xmm3            ; Identify long slots.
+-        vpxor       xmm1, xmm1, xmm5            ; Invert the result.
++        vpcmpgtb    xmm1, xmm3, xmm4            ; Identify long slots.
++        vpxor       xmm1, xmm1, xmm2            ; Invert the result.
+
+ ;
+-; Test the final xmm0 register for all zeros (indicating no match).
++; Intersect-and-test the unique character match xmm mask register (xmm5) with
++; the length match mask xmm register (xmm1).  This affects flags, allowing us
++; to do a fast-path exit for the no-match case (where ZF = 1).
+ ;
+
+-        vptest      xmm0, xmm1                  ; Check for no match.
+-        ;jnz         short @F                    ; There was a match.
++        vptest      xmm5, xmm1                  ; Check for no match.
++        jnz         short Pfx10                 ; There was a match.
+
+ ;
+ ; No match, set rax to -1 and return.
+ ;
+
+-        xor         eax, eax                    ;
+-        not         al                          ; rax = -1
++        xor         eax, eax                    ; Clear rax.
++        not         al                          ; al = -1
++        ret                                     ; Return.
++
++        ;IACA_VC_END
++
++;
++; (There was at least one match, continue with processing.)
++;
++
++;
++; Calculate the "search length" for the incoming search string, which is
++; equivalent of 'min(String-&gt;Length, 16)'.  (The search string's length
++; currently lives in xmm4, albeit as a byte-value broadcasted across the
++; entire register, so extract that first.)
++;
++; Once the search length is calculated, deposit it back at the second byte
++; location of xmm4.
++;
++;   r10 and xmm4[15:8] - Search length (min(String-&gt;Length, 16))
++;
++;   r11 - String length (String-&gt;Length)
++;
++
++Pfx10:  vpextrb     r11, xmm4, 0                ; Load length.
++        mov         rax, 16                     ; Load 16 into rax.
++        mov         r10, r11                    ; Copy into r10.
++        cmp         r10w, ax                    ; Compare against 16.
++        cmova       r10w, ax                    ; Use 16 if length is greater.
++        vpinsrb     xmm4, xmm4, r10d, 1         ; Save back to xmm4b[1].
++
++;
++; Home our parameter registers into xmm registers instead of their stack-backed
++; location, to avoid memory writes.
++;
++
++        vpxor       xmm2, xmm2, xmm2            ; Clear xmm2.
++        vpinsrq     xmm2, xmm2, rcx, 0          ; Save rcx into xmm2q[0].
++        vpinsrq     xmm2, xmm2, rdx, 1          ; Save rdx into xmm2q[1].
++
++;
++; Intersect xmm5 and xmm1 (as we did earlier with the 'vptest xmm5, xmm1'),
++; yielding a mask identifying indices we need to perform subsequent matches
++; upon.  Convert this into a bitmap and save in xmm2d[2].
++;
++
++        vpand       xmm5, xmm5, xmm1            ; Intersect unique + lengths.
++        vpmovmskb   edx, xmm5                   ; Generate a bitmap from mask.
++
++;
++; We're finished with xmm5; repurpose it in the same vein as xmm2 above.
++;
++
++        vpxor       xmm5, xmm5, xmm5            ; Clear xmm5.
++        vpinsrq     xmm5, xmm5, r8, 0           ; Save r8 into xmm5q[0].
++
++;
++; Summary of xmm register stashing for the rest of the routine:
++;
++; xmm2:
++;        0:63   (vpinsrq 0)     rcx (1st function parameter, StringTable)
++;       64:127  (vpinsrq 1)     rdx (2nd function paramter, String)
++;
++; xmm4:
++;       0:7     (vpinsrb 0)     length of search string
++;       8:15    (vpinsrb 1)     min(String-&gt;Length, 16)
++;      16:23    (vpinsrb 2)     loop counter (when doing long string compares)
++;      24:31    (vpinsrb 3)     shift count
++;
++; xmm5:
++;       0:63    (vpinsrq 0)     r8 (3rd function parameter, StringMatch)
++;      64:95    (vpinsrd 2)     bitmap of slots to compare
++;      96:127   (vpinsrd 3)     index of slot currently being processed
++;
++
++;
++; Initialize rcx as our counter register by doing a popcnt against the bitmap
++; we just generated in edx, and clear our shift count register (r9).
++;
++
++        popcnt      ecx, edx                    ; Count bits in bitmap.
++        xor         r9, r9                      ; Clear r9.
++
++        align 16
++
++;
++; Top of the main comparison loop.  The bitmap will be present in rdx.  Count
++; trailing zeros of the bitmap, and then add in the shift count, producing an
++; index (rax) we can use to load the corresponding slot.
++;
++; Register usage at top of loop:
++;
++;   rax - Index.
++;
++;   rcx - Loop counter.
++;
++;   rdx - Bitmap initially, then slot length.
++;
++;   r9 - Shift count.
++;
++;   r10 - Search length.
++;
++;   r11 - String length.
++;
++
++Pfx20:  tzcnt       r8d, edx                    ; Count trailing zeros.
++        mov         eax, r8d                    ; Copy tzcnt to rax,
++        add         rax, r9                     ; Add shift to create index.
++        inc         r8                          ; tzcnt + 1
++        shrx        rdx, rdx, r8                ; Reposition bitmap.
++        vpinsrd     xmm5, xmm5, edx, 2          ; Store bitmap, free up rdx.
++        xor         edx, edx                    ; Clear edx.
++        mov         r9, rax                     ; Copy index back to shift.
++        inc         r9                          ; Shift = Index + 1
++        vpinsrd     xmm5, xmm5, eax, 3          ; Store the raw index xmm5d[3].
++
++;
++; "Scale" the index (such that we can use it in a subsequent vmovdqa) by
++; shifting left by 4 (i.e. multiply by '(sizeof STRING_SLOT)', which is 16).
++;
++; Then, load the string table slot at this index into xmm1, then shift rax back.
++;
++
++        shl         eax, 4
++        vpextrq     r8, xmm2, 0
++        vmovdqa     xmm1, xmmword ptr [rax + StringTable.Slots[r8]]
++        shr         eax, 4
++
++;
++; The search string's first 16 characters are already in xmm0.  Compare this
++; against the slot that has just been loaded into xmm1, storing the result back
++; into xmm1.
++;
++
++        vpcmpeqb    xmm1, xmm1, xmm0            ; Compare search string to slot.
++
++;
++; Convert the XMM mask into a 32-bit representation, then zero high bits after
++; our "search length", which allows us to ignore the results of the comparison
++; above for bytes that were after the search string's length, if applicable.
++; Then, count the number of bits remaining, which tells us how many characters
++; we matched.
++;
++
++        vpmovmskb   r8d, xmm1                   ; Convert into mask.
++        bzhi        r8d, r8d, r10d              ; Zero high bits.
++        popcnt      r8d, r8d                    ; Count bits.
++
++;
++; Load the slot length into rdx.  As xmm3 already has all the slot lengths in
++; it, we can load rax (the current index) into xmm1 and use it to extract the
++; slot length via shuffle.  (The length will be in the lowest byte of xmm1
++; after the shuffle, which we can then vpextrb.)
++;
++
++        movd        xmm1, rax                   ; Load index into xmm1.
++        vpshufb     xmm1, xmm3, xmm1            ; Shuffle lengths.
++        vpextrb     rdx, xmm1, 0                ; Extract target length to rdx.
++
++;
++; If 16 characters matched, and the search string's length is longer than 16,
++; we're going to need to do a comparison of the remaining strings.
++;
++
++        cmp         r8w, 16                     ; Compare chars matched to 16.
++        je          short @F                    ; 16 chars matched.
++        jmp         Pfx30                       ; Less than 16 matched.
++
++;
++; All 16 characters matched.  If the slot length is greater than 16, we need
++; to do an inline memory comparison of the remaining bytes.  If it's 16 exactly,
++; then great, that's a slot match, we're done.
++;
++
++@@:     cmp         dl, 16                      ; Compare length to 16.
++        ja          Pfx50                       ; Length is &gt; 16.
++        je          short Pfx35                 ; Lengths match!
++                                                ; Length &lt;= 16, fall through...
++
++;
++; Less than or equal to 16 characters were matched.  Compare this against the
++; length of the slot; if equal, this is a match, if not, no match, continue.
++;
++
++Pfx30:  cmp         r8b, dl                     ; Compare against slot length.
++        jne         @F                          ; No match found.
++        jmp         short Pfx35                 ; Match found!
++
++;
++; No match against this slot, decrement counter and either continue the loop
++; or terminate the search and return no match.
++;
++
++@@:     vpextrd     edx, xmm5, 2                ; Restore rdx bitmap.
++        dec         cx                          ; Decrement counter.
++        jnz         Pfx20                       ; cx != 0, continue.
++
++        xor         eax, eax                    ; Clear rax.
++        not         al                          ; al = -1
++        ret                                     ; Return.
++
++;
++; Pfx35 and Pfx40 are the jump targets for when the prefix match succeeds.  The
++; former is used when we need to copy the number of characters matched from r8
++; back to rax.  The latter jump target doesn't require this.
++;
++
++Pfx35:  mov         rax, r8                     ; Copy numbers of chars matched.
++
++;
++; Load the match parameter back into r8 and test to see if it's not-NULL, in
++; which case we need to fill out a STRING_MATCH structure for the match.
++;
++
++Pfx40:  vpextrq     r8, xmm5, 0                 ; Extract StringMatch.
++        test        r8, r8                      ; Is NULL?
++        jnz         short @F                    ; Not zero, need to fill out.
++
++;
++; StringMatch is NULL, we're done. Extract index of match back into rax and ret.
++;
++
++        vpextrd     eax, xmm5, 3                ; Extract raw index for match.
++        ret                                     ; StringMatch == NULL, finish.
++
++;
++; StringMatch is not NULL.  Fill out characters matched (currently rax), then
++; reload the index from xmm5 into rax and save.
++;
++
++@@:     mov         byte ptr StringMatch.NumberOfMatchedCharacters[r8], al
++        vpextrd     eax, xmm5, 3                ; Extract raw index for match.
++        mov         byte ptr StringMatch.Index[r8], al
++
++;
++; Final step, loading the address of the string in the string array.  This
++; involves going through the StringTable, so we need to load that parameter
++; back into rcx, then resolving the string array address via pStringArray,
++; then the relevant STRING offset within the StringArray.Strings structure.
++;
++
++        vpextrq     rcx, xmm2, 0            ; Extract StringTable into rcx.
++        mov         rcx, StringTable.pStringArray[rcx] ; Load string array.
++
++        shl         eax, 4                  ; Scale the index; sizeof STRING=16.
++        lea         rdx, [rax + StringArray.Strings[rcx]] ; Resolve address.
++        mov         qword ptr StringMatch.String[r8], rdx ; Save STRING ptr.
++        shr         eax, 4                  ; Revert the scaling.
++
+         ret
+
++;
++; 16 characters matched and the length of the underlying slot is greater than
++; 16, so we need to do a little memory comparison to determine if the search
++; string is a prefix match.
++;
++; The slot length is stored in rax at this point, and the search string's
++; length is stored in r11.  We know that the search string's length will
++; always be longer than or equal to the slot length at this point, so, we
++; can subtract 16 (currently stored in r10) from rax, and use the resulting
++; value as a loop counter, comparing the search string with the underlying
++; string slot byte-by-byte to determine if there's a match.
++;
++
++Pfx50:  sub         rdx, r10                ; Subtract 16 from search length.
++
++;
++; Free up some registers by stashing their values into various xmm offsets.
++;
++
++        vpinsrb     xmm4, xmm4, ecx, 2      ; Free up rcx register.
++        mov         rcx, rdx                ; Free up rdx, rcx is now counter.
++
++;
++; Load the search string buffer and advance it 16 bytes.
++;
++
++        vpextrq     r11, xmm2, 1            ; Extract String into r11.
++        mov         r11, String.Buffer[r11] ; Load buffer address.
++        add         r11, r10                ; Advance buffer 16 bytes.
++
++;
++; Loading the slot is more involved as we have to go to the string table, then
++; the pStringArray pointer, then the relevant STRING offset within the string
++; array (which requires re-loading the index from xmm5d[3]), then the string
++; buffer from that structure.
++;
++
++        vpextrq     r8, xmm2, 0             ; Extract StringTable into r8.
++        mov         r8, StringTable.pStringArray[r8] ; Load string array.
++
++        shl         eax, 4                  ; Scale the index; sizeof STRING=16.
++
++        lea         r8, [rax + StringArray.Strings[r8]] ; Resolve address.
++        mov         r8, String.Buffer[r8]   ; Load string table buffer address.
++        add         r8, r10                 ; Advance buffer 16 bytes.
++
++        xor         eax, eax                ; Clear eax.
++
++;
++; We've got both buffer addresses + 16 bytes loaded in r11 and r8 respectively.
++; Do a byte-by-byte comparison.
++;
++
++        align 16
++@@:     mov         dl, byte ptr [rax + r11]    ; Load byte from search string.
++        cmp         dl, byte ptr [rax + r8]     ; Compare against target.
++        jne         short Pfx60                 ; If not equal, jump.
++
++;
++; The two bytes were equal, update rax, decrement rcx and potentially continue
++; the loop.
++;
++
++        inc         ax                          ; Increment index.
++        loopnz      @B                          ; Decrement cx and loop back.
++
++;
++; All bytes matched!  Add 16 (still in r10) back to rax such that it captures
++; how many characters we matched, and then jump to Pfx40 for finalization.
++;
++
++        add         rax, r10
++        jmp         Pfx40
++
++;
++; Byte comparisons were not equal.  Restore the rcx loop counter and decrement
++; it.  If it's zero, we have no more strings to compare, so we can do a quick
++; exit.  If there are still comparisons to be made, restore the other registers
++; we trampled then jump back to the start of the loop Pfx20.
++;
++
++Pfx60:  vpextrb     rcx, xmm4, 2                ; Restore rcx counter.
++        dec         cx                          ; Decrement counter.
++        jnz         short @F                    ; Jump forward if not zero.
++
++;
++; No more comparisons remaining, return.
++;
++
++        xor         eax, eax                    ; Clear rax.
++        not         al                          ; al = -1
++        ret                                     ; Return.
++
++;
++; More comparisons remain; restore the registers we clobbered and continue loop.
++;
++
++@@:     vpextrb     r10, xmm4, 1                ; Restore r10.
++        vpextrb     r11, xmm4, 0                ; Restore r11.
++        vpextrd     edx, xmm5, 2                ; Restore rdx bitmap.
++        jmp         Pfx20                       ; Continue comparisons.
++
+         ;IACA_VC_END
+
+-        LEAF_END   IsPrefixOfStringInTable_x64_1, _TEXT$00
++        LEAF_END   IsPrefixOfStringInTable_x64_2, _TEXT$00
+
+ ; vim:set tw=80 ts=8 sw=4 sts=4 et syntax=masm fo=croql comments=\:;           :
+</code></pre>
+
+                    </div>
+                </div>
+
+                <p>
+
+                    (Insert performance graph for version 2.)
+
+                </p>
+
+                <h2>Internet Feedback</h2>
 
                 <h2>IsPrefixOfStringInTable_11</h2>
 
@@ -9969,7 +10814,22 @@ prv func   00007ffd`157093b0   1e &lt;CLR type&gt; Rtl!UnregisterRtlAtExitEntry$
 
                 </p>
 
-<pre class="code"><code class="language-c">
+<pre class="code"><code class="language-c">    //
+    // (Type declarations of the variables being referenced shortly.)
+    //
+
+    SHORT MatchOffset;
+    USHORT MatchIndex;
+    USHORT MatchAttempts;
+    USHORT NumberOfStringTables;
+    STRING BasicType;
+    STRING_MATCH Match;
+    PSTRING_TABLE StringTable;
+    DEBUG_ENGINE_EXAMINE_SYMBOLS_TYPE SymbolType;
+    PIS_PREFIX_OF_STRING_IN_TABLE IsPrefixOfStringInTable;
+
+    ...
+
     //
     // The basic type will be next.  Set up the variable then search the string
     // table for a match.  Set the length to the BytesRemaining for now; as long
@@ -10024,6 +10884,28 @@ RetryBasicTypeMatch:
         SymbolType = MatchIndex + MatchOffset;
     }
 
+    //
+    // N.B. This next part doesn't occur in the source file, but I wanted
+    //      to include it to demonstrate how you could then simply switch
+    //      on the resulting symbol type directly, e.g.:
+    //
+
+    switch (SymbolType) {
+        case CharType:
+        case WideCharType:
+            ...
+            break;
+
+        case UnionType:
+        case StructType:
+            ...
+            break;
+
+        default:
+            ...
+            break;
+
+    }
 </code></pre>
 
                 <p>
@@ -10085,22 +10967,79 @@ RetryBasicTypeMatch:
 
                 </p>
 
+                <a class="xref" name="appendix"></a>
+                <h1>Appendix</h1>
+
+                <p>
+
+                    And now here's all the stuff that wasn't important enough to occur earlier in
+                    the article.
+
+                </p>
+
                 <h2>Implementation Considerations</h2>
 
                 <p>
-                    <small><em>
 
-                    Maybe put some notes here about the implications of authoring so many different
-                    versions of a routine, and how to handle making them available to some
-                    components (e.g. unit tests and benchmarks) without unnecessarily cluttering
-                    other components.
+                    One issue with writing so many versions of the exact same function is... how do
+                    you actually handle this?  Downstream consumers of the component don't need to
+                    access the 30 different function pointers for each function you've experimented
+                    with, but things like unit tests and benchmark programs do.
 
-                    Here's the approach used by the StringTable component:
-
-                    </em></small>
                 </p>
 
-<pre class="code"><code class="language-c">
+                <p>
+
+                    Here's what I did for the StringTable component.  Define two API structures, a
+                    normal one and an "extended" one.  The extended one mirrors the normal one, and
+                    then adds all of its additional functions to the end.
+
+                </p>
+
+                <p>
+
+                    I use a .def file to control the DLL function exports, with an alias to easily
+                    control which version of a function is the official version.  The main header
+                    file then contains some bootstrap glue (in the form of an inline function) that
+                    dynamically loads the target library and resolves the number of API methods
+                    according to the size of the API structure provided.
+
+                </p>
+
+                <p>
+
+                    This currently means that the StringTable2.dll includes all 14 C and 5 assembly
+                    variants, which is harmless, but it does increase the size of the module
+                    unnecessarily.  (The module is currently about 19KB in size, whereas it would be
+                    under 4KB if only the official versions were included.)  What I'll probably end
+                    up doing is setting up a second project called StringTableEx, and, in
+                    conjunction with some #ifdefs, have that be the version of the module that
+                    contains all the additional functions, with the normal version just containing
+                    the official versions.
+
+                </p>
+
+                <p>
+
+                    Here's the <a
+                    href="https://github.com/tpn/tracer/blob/v0.1.11/StringTable2/StringTable.h#L1342">bootstrap glue
+                    from StringTable.h</a> and the
+                    <a
+                    href="https://github.com/tpn/tracer/blob/v0.1.11/StringTable2/StringTable.def">StringTable.def</a>
+                    file I currently use.  (Note: this routine uses the
+                    <a
+                    href="https://github.com/tpn/tracer/blob/master/Rtl/SymbolLoader.c#L117">LoadSymbols()</a>
+                    function from the Rtl component.)
+
+                </p>
+
+                <div class="tab-box language box-api">
+                    <ul class="tabs">
+                        <li data-content="content-api-c">Bootstrap Header Glue</li>
+                        <li data-content="content-api-def">StringTable.def</li>
+                    </ul>
+                    <div class="content">
+<pre class="code content-api-c"><code class="language-c">
 //
 // Define the string table API structure.
 //
@@ -10179,9 +11118,15 @@ typedef struct _STRING_TABLE_API_EX {
     PIS_PREFIX_OF_STRING_IN_TABLE IsPrefixOfStringInTable_8;
     PIS_PREFIX_OF_STRING_IN_TABLE IsPrefixOfStringInTable_9;
     PIS_PREFIX_OF_STRING_IN_TABLE IsPrefixOfStringInTable_10;
+    PIS_PREFIX_OF_STRING_IN_TABLE IsPrefixOfStringInTable_11;
+    PIS_PREFIX_OF_STRING_IN_TABLE IsPrefixOfStringInTable_12;
+    PIS_PREFIX_OF_STRING_IN_TABLE IsPrefixOfStringInTable_13;
+    PIS_PREFIX_OF_STRING_IN_TABLE IsPrefixOfStringInTable_14;
     PIS_PREFIX_OF_STRING_IN_TABLE IsPrefixOfStringInTable_x64_1;
     PIS_PREFIX_OF_STRING_IN_TABLE IsPrefixOfStringInTable_x64_2;
     PIS_PREFIX_OF_STRING_IN_TABLE IsPrefixOfStringInTable_x64_3;
+    PIS_PREFIX_OF_STRING_IN_TABLE IsPrefixOfStringInTable_x64_4;
+    PIS_PREFIX_OF_STRING_IN_TABLE IsPrefixOfStringInTable_x64_5;
     PIS_PREFIX_OF_STRING_IN_TABLE IntegerDivision_x64_1;
 
 } STRING_TABLE_API_EX;
@@ -10294,9 +11239,15 @@ Return Value:
         "IsPrefixOfStringInTable_8",
         "IsPrefixOfStringInTable_9",
         "IsPrefixOfStringInTable_10",
+        "IsPrefixOfStringInTable_11",
+        "IsPrefixOfStringInTable_12",
+        "IsPrefixOfStringInTable_13",
+        "IsPrefixOfStringInTable_14",
         "IsPrefixOfStringInTable_x64_1",
         "IsPrefixOfStringInTable_x64_2",
         "IsPrefixOfStringInTable_x64_3",
+        "IsPrefixOfStringInTable_x64_4",
+        "IsPrefixOfStringInTable_x64_5",
         "IntegerDivision_x64_1",
     };
 
@@ -10394,392 +11345,45 @@ Return Value:
 }
 
 </code></pre>
-
-
-                <h1>Appendix</h1>
-
-                <p>
-
-                    And now here's all the stuff that wasn't important enough to occur earlier in
-                    the article.
-
-                </p>
-
-                <a class="xref" name="CreateStringTable"></a>
-                <h2>String Table Construction</h2>
-
-                <p>
-
-                    The <a
-                    href="https://github.com/tpn/tracer/blob/2018-04-18.2/StringTable2/CreateStringTable.c#L147">
-                    CreateSingleStringTable</a> routine is responsible for construction of a new
-                    STRING_TABLE.  It is here we identify the unique set of characters (and their
-                    indices) to store in the first two fields of the string table.  The code is
-                    provided below.
-
-                </p>
-
-<pre class="code content-typedefs"><code class="language-c">
-_Use_decl_annotations_
-PSTRING_TABLE
-CreateSingleStringTable(
-    PRTL Rtl,
-    PALLOCATOR StringTableAllocator,
-    PALLOCATOR StringArrayAllocator,
-    PSTRING_ARRAY StringArray,
-    BOOL CopyArray
-    )
-/*++
-
-Routine Description:
-
-    Allocates space for a STRING_TABLE structure using the provided allocators,
-    then initializes it using the provided STRING_ARRAY.  If CopyArray is set
-    to TRUE, the routine will copy the string array such that the caller is
-    free to destroy it after the table has been successfully created.  If it
-    is set to FALSE and StringArray-&gt;StringTable has a non-NULL value, it is
-    assumed that sufficient space has already been allocated for the string
-    table and this pointer will be used to initialize the rest of the structure.
-
-    DestroyStringTable() must be called against the returned PSTRING_TABLE when
-    the structure is no longer needed in order to ensure resources are released.
-
-Arguments:
-
-    Rtl - Supplies a pointer to an initialized RTL structure.
-
-    StringTableAllocator - Supplies a pointer to an ALLOCATOR structure which
-        will be used for creating the STRING_TABLE.
-
-    StringArrayAllocator - Supplies a pointer to an ALLOCATOR structure which
-        may be used to create the STRING_ARRAY if it cannot fit within the
-        padding of the STRING_TABLE structure.  This is kept separate from the
-        StringTableAllocator due to the stringent alignment requirements of the
-        string table.
-
-    StringArray - Supplies a pointer to an initialized STRING_ARRAY structure
-        that contains the STRING structures that are to be added to the table.
-
-    CopyArray - Supplies a boolean value indicating whether or not the
-        StringArray structure should be deep-copied during creation.  This is
-        typically set when the caller wants to be able to free the structure
-        as soon as this call returns (or can't guarantee it will persist past
-        this function's invocation, i.e. if it was stack allocated).
-
-Return Value:
-
-    A pointer to a valid PSTRING_TABLE structure on success, NULL on failure.
-    Call DestroyStringTable() on the returned structure when it is no longer
-    needed in order to ensure resources are cleaned up appropriately.
-
---*/
-{
-    BYTE Byte;
-    BYTE Count;
-    BYTE Index;
-    BYTE Length;
-    BYTE NumberOfElements;
-    ULONG HighestBit;
-    ULONG OccupiedMask;
-    PULONG Bits;
-    USHORT OccupiedBitmap;
-    USHORT ContinuationBitmap;
-    PSTRING_TABLE StringTable;
-    PSTRING_ARRAY StringArray;
-    PSTRING String;
-    PSTRING_SLOT Slot;
-    STRING_SLOT UniqueChars;
-    SLOT_INDEX UniqueIndex;
-    SLOT_INDEX LengthIndex;
-    SLOT_LENGTHS Lengths;
-    LENGTH_INDEX_TABLE LengthIndexTable;
-    PCHARACTER_BITMAP Bitmap;
-    SLOT_BITMAPS SlotBitmaps;
-    PLENGTH_INDEX_ENTRY Entry;
-
-    //
-    // Validate arguments.
-    //
-
-    if (!ARGUMENT_PRESENT(StringTableAllocator)) {
-        return NULL;
-    }
-
-    if (!ARGUMENT_PRESENT(StringArrayAllocator)) {
-        return NULL;
-    }
-
-    if (!ARGUMENT_PRESENT(SourceStringArray)) {
-        return NULL;
-    }
-
-    if (SourceStringArray-&gt;NumberOfElements == 0) {
-        return NULL;
-    }
-
-    //
-    // Copy the incoming string array if applicable.
-    //
-
-    if (CopyArray) {
-
-        StringArray = CopyStringArray(
-            StringTableAllocator,
-            StringArrayAllocator,
-            SourceStringArray,
-            FIELD_OFFSET(STRING_TABLE, StringArray),
-            sizeof(STRING_TABLE),
-            &amp;StringTable
-        );
-
-        if (!StringArray) {
-            return NULL;
-        }
-
-    } else {
-
-        //
-        // We're not copying the array, so initialize StringArray to point at
-        // the caller's SourceStringArray, and StringTable to point at the
-        // array's StringTable field (which will be non-NULL if sufficient
-        // space has been allocated).
-        //
-
-        StringArray = SourceStringArray;
-        StringTable = StringArray-&gt;StringTable;
-
-    }
-
-    //
-    // If StringTable has no value, we've either been called with CopyArray set
-    // to FALSE, or CopyStringArray() wasn't able to allocate sufficient space
-    // for both the table and itself.  Either way, we need to allocate space for
-    // the table.
-    //
-
-    if (!StringTable) {
-
-        StringTable = (PSTRING_TABLE)(
-            StringTableAllocator-&gt;AlignedCalloc(
-                StringTableAllocator-&gt;Context,
-                1,
-                sizeof(STRING_TABLE),
-                STRING_TABLE_ALIGNMENT
-            )
-        );
-
-        if (!StringTable) {
-            return NULL;
-        }
-    }
-
-    //
-    // Make sure the fields that are sensitive to alignment are, in fact,
-    // aligned correctly.
-    //
-
-    if (!AssertStringTableFieldAlignment(StringTable)) {
-        DestroyStringTable(StringTableAllocator,
-                           StringArrayAllocator,
-                           StringTable);
-        return NULL;
-    }
-
-    //
-    // At this point, we have copied the incoming StringArray if necessary,
-    // and we've allocated sufficient space for the StringTable structure.
-    // Enumerate over all of the strings, set the continuation bit if the
-    // length &gt; 16, set the relevant slot length, set the relevant unique
-    // character entry, then move the first 16-bytes of the string into the
-    // relevant slot via an aligned SSE mov.
-    //
-
-    //
-    // Initialize pointers and counters, clear stack-based structures.
-    //
-
-    Slot = StringTable-&gt;Slots;
-    String = StringArray-&gt;Strings;
-
-    OccupiedBitmap = 0;
-    ContinuationBitmap = 0;
-    NumberOfElements = (BYTE)StringArray-&gt;NumberOfElements;
-    UniqueChars.CharsXmm = _mm_setzero_si128();
-    UniqueIndex.IndexXmm = _mm_setzero_si128();
-    LengthIndex.IndexXmm = _mm_setzero_si128();
-
-    //
-    // Set all the slot lengths to 0x7f up front instead of defaulting
-    // to zero.  This allows for simpler logic when searching for a prefix
-    // string, which involves broadcasting a search string's length to an XMM
-    // register, then doing _mm_cmpgt_epi8() against the lengths array and
-    // the string length.  If we left the lengths as 0 for unused slots, they
-    // would get included in the resulting comparison register (i.e. the high
-    // bits would be set to 1), so we'd have to do a subsequent masking of
-    // the result at some point using the OccupiedBitmap.  By defaulting the
-    // lengths to 0x7f, we ensure they'll never get included in any cmpgt-type
-    // SIMD matches.  (We use 0x7f instead of 0xff because the _mm_cmpgt_epi8()
-    // intrinsic assumes packed signed integers.)
-    //
-
-    Lengths.SlotsXmm = _mm_set1_epi8(0x7f);
-
-    ZeroStruct(LengthIndexTable);
-    ZeroStruct(SlotBitmaps);
-
-    for (Count = 0; Count &lt; NumberOfElements; Count++) {
-
-        XMMWORD CharsXmm;
-
-        //
-        // Set the string length for the slot.
-        //
-
-        Length = Lengths.Slots[Count] = (BYTE)String-&gt;Length;
-
-        //
-        // Set the appropriate bit in the continuation bitmap if the string is
-        // longer than 16 bytes.
-        //
-
-        if (Length &gt; 16) {
-            ContinuationBitmap |= (Count == 0 ? 1 : 1 &lt;&lt; (Count + 1));
-        }
-
-        if (Count == 0) {
-
-            Entry = &amp;LengthIndexTable.Entry[0];
-            Entry-&gt;Index = 0;
-            Entry-&gt;Length = Length;
-
-        } else {
-
-            //
-            // Perform a linear scan of the length-index table in order to
-            // identify an appropriate insertion point.
-            //
-
-            for (Index = 0; Index &lt; Count; Index++) {
-                if (Length &lt; LengthIndexTable.Entry[Index].Length) {
-                    break;
-                }
-            }
-
-            if (Index != Count) {
-
-                //
-                // New entry doesn't go at the end of the table, so shuffle
-                // everything else down.
-                //
-
-                Rtl-&gt;RtlMoveMemory(&amp;LengthIndexTable.Entry[Index + 1],
-                                   &amp;LengthIndexTable.Entry[Index],
-                                   (Count - Index) * sizeof(*Entry));
-            }
-
-            Entry = &amp;LengthIndexTable.Entry[Index];
-            Entry-&gt;Index = Count;
-            Entry-&gt;Length = Length;
-        }
-
-        //
-        // Copy the first 16-bytes of the string into the relevant slot.  We
-        // have taken care to ensure everything is 16-byte aligned by this
-        // stage, so we can use SSE intrinsics here.
-        //
-
-        CharsXmm = _mm_load_si128((PXMMWORD)String-&gt;Buffer);
-        _mm_store_si128(&amp;(*Slot).CharsXmm, CharsXmm);
-
-        //
-        // Advance our pointers.
-        //
-
-        ++Slot;
-        ++String;
-
-    }
-
-    //
-    // Store the slot lengths.
-    //
-
-    _mm_store_si128(&amp;(StringTable-&gt;Lengths.SlotsXmm), Lengths.SlotsXmm);
-
-    //
-    // Loop through the strings in order of shortest to longest and construct
-    // the uniquely-identifying character table with corresponding index.
-    //
-
-
-    for (Count = 0; Count &lt; NumberOfElements; Count++) {
-        Entry = &amp;LengthIndexTable.Entry[Count];
-        Length = Entry-&gt;Length;
-        Slot = &amp;StringTable-&gt;Slots[Entry-&gt;Index];
-
-        //
-        // Iterate over each character in the slot and find the first one
-        // without a corresponding bit set.
-        //
-
-        for (Index = 0; Index &lt; Length; Index++) {
-            Bitmap = &amp;SlotBitmaps.Bitmap[Index];
-            Bits = (PULONG)&amp;Bitmap-&gt;Bits[0];
-            Byte = Slot-&gt;Char[Index];
-            if (!BitTestAndSet(Bits, Byte)) {
-                break;
-            }
-        }
-
-        UniqueChars.Char[Count] = Byte;
-        UniqueIndex.Index[Count] = Index;
-        LengthIndex.Index[Count] = Entry-&gt;Index;
-    }
-
-    //
-    // Loop through the elements again such that the unique chars are stored
-    // in the order they appear in the table.
-    //
-
-    for (Count = 0; Count &lt; NumberOfElements; Count++) {
-        for (Index = 0; Index &lt; NumberOfElements; Index++) {
-            if (LengthIndex.Index[Index] == Count) {
-                StringTable-&gt;UniqueChars.Char[Count] = UniqueChars.Char[Index];
-                StringTable-&gt;UniqueIndex.Index[Count] = UniqueIndex.Index[Index];
-                break;
-            }
-        }
-    }
-
-    //
-    // Generate and store the occupied bitmap.  Each bit, from low to high,
-    // corresponds to the index of a slot.  When set, the slot is occupied.
-    // When clear, it is not.  So, fill bits from the highest bit set down.
-    //
-
-    HighestBit = (1 &lt;&lt; (StringArray-&gt;NumberOfElements-1));
-    OccupiedMask = _blsmsk_u32(HighestBit);
-    StringTable-&gt;OccupiedBitmap = (USHORT)OccupiedMask;
-
-    //
-    // Store the continuation bitmap.
-    //
-
-    StringTable-&gt;ContinuationBitmap = (USHORT)(ContinuationBitmap);
-
-    //
-    // Wire up the string array to the table.
-    //
-
-    StringTable-&gt;pStringArray = StringArray;
-
-    //
-    // And we're done, return the table.
-    //
-
-    return StringTable;
-}
+<pre class="code content-api-def"><code class="language-c">
+LIBRARY StringTable2
+EXPORTS
+    SetCSpecificHandler
+    CopyStringArray
+    CreateStringTable
+    DestroyStringTable
+    InitializeStringTableAllocator
+    InitializeStringTableAllocatorFromRtlBootstrap
+    CreateStringArrayFromDelimitedString
+    CreateStringTableFromDelimitedString
+    CreateStringTableFromDelimitedEnvironmentVariable
+    TestIsPrefixOfStringInTableFunctions
+    IsStringInTable
+    IsPrefixOfStringInTable_1
+    IsPrefixOfStringInTable_2
+    IsPrefixOfStringInTable_3
+    IsPrefixOfStringInTable_4
+    IsPrefixOfStringInTable_5
+    IsPrefixOfStringInTable_6
+    IsPrefixOfStringInTable_7
+    IsPrefixOfStringInTable_8
+    IsPrefixOfStringInTable_9
+    IsPrefixOfStringInTable_10
+    IsPrefixOfStringInTable_11
+    IsPrefixOfStringInTable_12
+    IsPrefixOfStringInTable_13
+    IsPrefixOfStringInTable_14
+    IsPrefixOfStringInTable_x64_1
+    IsPrefixOfStringInTable_x64_2
+    IsPrefixOfStringInTable_x64_3
+    IsPrefixOfStringInTable_x64_4
+    IsPrefixOfStringInTable_x64_5
+    IsPrefixOfCStrInArray
+    IntegerDivision_x64_1
+    IsPrefixOfStringInTable=IsPrefixOfStringInTable_13
 </code></pre>
+                    </div>
+                </div>
 
                 <a class="xref" name="release-vs-pgo"></a>
                 <h3>Release Build versus Profile Guided Optimization Build</h3>
@@ -10787,20 +11391,24 @@ Return Value:
                 <p>
 
                     It's interesting to see a side-by-side comparison of the optimized release build
-                    next to the PGO build:
+                    next to the PGO build.  The main changes are mostly all to do with branching and
+                    jump direction.
 
                 </p>
 
+                <a href="IsPrefixOfStringInTable_13-Release-vs-PGO.png" target="_blank">
+                    <img width="800px" height="1550px" src="IsPrefixOfStringInTable_13-Release-vs-PGO-Small.png"/>
+                </a>
                 <!--
-                <picture>
-                    <source srcset="IsPrefixOfStringInTable_13-Release-vs-PGO.png"/>
-                    <img width="1664px" height="3224px" srcset="PrefixOfStringInTable_13-Release-vs-PGO.png"/>
-                </picture>
+                    <picture>
+                        <source srcset="IsPrefixOfStringInTable_13-Release-vs-PGO.png"/>
+                        <img width="800px" height="1550px" srcset="PrefixOfStringInTable_13-Release-vs-PGO-Small.png"/>
+                        <img width="1664px" height="3224px" srcset="PrefixOfStringInTable_13-Release-vs-PGO.png"/>
+                    </picture>
                 -->
 
-
                 <a class="xref" name="typedefs"></a>
-                <h4>Typedefs</h4>
+                <h3>Typedefs</h3>
 
                 <p>
 

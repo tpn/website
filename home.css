@@ -299,6 +299,11 @@ pre {
     font-size: 90%;
 }
 
+code {
+    font-family: Monaco, Consolas, Menlo, monospace;
+    font-size: 90%;
+}
+
 .code {
     font-family: Monaco, Consolas, Menlo, monospace;
     font-size: 90%;
@@ -306,10 +311,17 @@ pre {
 
 @media only screen and (device-width: 375px) {
     pre {
+        font-family: Monaco, Consolas, Menlo, monospace;
+        font-size: 60%;
+    }
+
+    code {
+        font-family: Monaco, Consolas, Menlo, monospace;
         font-size: 60%;
     }
 
     .code {
+        font-family: Monaco, Consolas, Menlo, monospace;
         font-size: 60%;
     }
 }
