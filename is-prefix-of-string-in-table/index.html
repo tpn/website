@@ -12315,6 +12315,7 @@ Unwind info at 00007fff`f8425530, 10 bytes
 
                 </p>
 
+                <hr/>
 <small><pre>
 0:000&gt; uf StringTable2!IsPrefixOfStringInTable_x64_7
 StringTable2!IsPrefixOfStringInTable_x64_7:
@@ -12345,6 +12346,7 @@ StringTable2!IsPrefixOfStringInTable_x64_7+0x3d:
 00007fff`f842458c c4c37914e300    vpextrb r11d,xmm4,0
 00007fff`f8424592 48c7c010000000  mov     rax,10h
 </pre></small>
+                <hr/>
 
                 <p>
 
@@ -12355,6 +12357,7 @@ StringTable2!IsPrefixOfStringInTable_x64_7+0x3d:
 
                 </p>
 
+                <hr/>
 <small><pre>
 Pfx10:  alloc_stack LOCALS_SIZE                     ; Allocate stack space.
 
@@ -12364,6 +12367,7 @@ Pfx10:  alloc_stack LOCALS_SIZE                     ; Allocate stack space.
 
         END_PROLOGUE
 </pre></small>
+                <hr/>
 
                 <p>
 
@@ -12508,10 +12512,10 @@ IsPrefixOfStringInTable_x64_7.asm(511): error A2247: size of prolog too big, mus
                     (Technically we're not allowed to do that; the direction indicator is classed as
                     non-volatile; if the calling function has it set to reverse, and on return,
                     we've set it to forward, things are going to be problematic if it actually
-                    wanted it set to reverse.  In practice, this isn't that common.  At least with
-                    our current stack, what with our aversion to even using a C runtime library, we
-                    know nothing in our benchmark environment is going to be faced with that
-                    predicament.)
+                    <strong>wanted</strong> it set to reverse.  In practice, this isn't that common.
+                    At least with our current stack, what with our aversion to even using a C
+                    runtime library, we know nothing in our benchmark environment is going to be
+                    faced with that predicament.)
 
                 </small></p>
 
