@@ -18,6 +18,8 @@ $(function() {
     initTabBox('.tab-box.language.box-10v9');
     initTabBox('.tab-box.language.box-x64-2v1');
     initTabBox('.tab-box.language.box-x64-3v2');
+    initTabBox('.tab-box.language.box-x64-7v3');
+    initTabBox('.tab-box.language.box-x64-8v7');
     initTabBox('.tab-box.language.box-11v10');
     initTabBox('.tab-box.language.box-12v10');
     initTabBox('.tab-box.language.box-13v10');
