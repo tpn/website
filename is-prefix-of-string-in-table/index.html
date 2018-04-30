@@ -6491,16 +6491,18 @@ StringTable2!IsPrefixOfStringInTable_10:
                 </p>
 
                 <p>
+
                     The home parameter space is a 32 byte area that immediately follows the return
                     address (i.e. the value of <code>rsp</code> when the function is entered); it is
                     mandated by the x64 calling convention on Windows, and is primarily intended to
                     provide some scratch space for a routine to <em>home</em> its parameter
                     registers (i.e. the registers used for the first four arguments of a function:
-                    rcx, rdx, r8 and r9).  This allows the four non-volatile registers to be
-                    repurposed within a routine, but also have a way to refer to the parameters again
-                    if need be.  That's what it's meant for &mdash; however, its not something that is
-                    enforced, you can basically treat the area as a free 32 byte scratch area if
-                    you're writing assembly.
+                    rcx, rdx, r8 and r9).  This allows the four volatile registers to be repurposed
+                    within a routine, but also have a way to refer to the parameters again if need
+                    be.  At least, that's what it was intended for &mdash; however, its not
+                    something that is enforced, you can basically treat the area as a free 32 byte
+                    scratch area if you're writing assembly.
+
                 </p>
 
                 <p>
