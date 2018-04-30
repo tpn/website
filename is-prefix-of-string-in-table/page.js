@@ -17,6 +17,7 @@ $(function() {
     initTabBox('.tab-box.language.box-9v8');
     initTabBox('.tab-box.language.box-10v9');
     initTabBox('.tab-box.language.box-x64-2v1');
+    initTabBox('.tab-box.language.box-x64-3v2');
     initTabBox('.tab-box.language.box-11v10');
     initTabBox('.tab-box.language.box-12v10');
     initTabBox('.tab-box.language.box-13v10');
@@ -25,5 +26,4 @@ $(function() {
     initTabBox('.tab-box.language.box-x64-5v4');
     initTabBox('.tab-box.language.box-api');
     initTabBox('.tab-box.language.box-typedefs');
-    //beginLanguageTicker();
 });
