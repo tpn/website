@@ -6739,13 +6739,19 @@ Unwind info at 00007ffd`15594468, 4 bytes
 
                 <p>
 
-                    Fwoah, look at that, we've shaved about three cycles off the C version!  (Note
-                    that when I first wrote this, I was comparing the assembly version against the
-                    release build (not the PGO build), which was clocking in at about 13-14 cycles
-                    for negative matching.  So getting it down to ~7.5 from 13-14 was a bit more
-                    exciting.)
+                    Fwoah, look at that, we've shaved about three cycles off the C version!
 
                 </p>
+
+                <small><p>
+
+                    (Note that when I first wrote this, I was comparing the assembly version against
+                    the release build (not the PGO build), which was clocking in at about 13-14
+                    cycles for negative matching.  So getting it down to ~7.5 from 13-14 was a bit
+                    more exciting.  Damn the PGO build and it's 10.9-ish cycles for negative
+                    matching!)
+
+                </p></small>
 
                 <p>
 
@@ -6768,7 +6774,7 @@ Unwind info at 00007ffd`15594468, 4 bytes
                     that you only have a handful of volatile registers to work with, and no stack
                     space can be used for register spilling or temporaries.  (Technically I could
                     use the home parameter space, but, eh, we're already avoiding stack spills, why
-                    not make life harder for ourselves and avoid <strong>any</strong> memory
+                    not make life harder for ourselves and try avoid <strong>all</strong> memory
                     spilling.)
 
                 </p>
@@ -6780,7 +6786,7 @@ Unwind info at 00007ffd`15594468, 4 bytes
                     as you can see in the implementation of version 2 below, I have to do a lot.
                 </p>
 
-                <p>
+                <small><p>
 
                     (Also note: when I wrote this version, I didn't use the disassembly from the C
                     routines for guidance.  I find that as soon as you start to grok the disassembly
@@ -6791,7 +6797,7 @@ Unwind info at 00007ffd`15594468, 4 bytes
                     compared to a future iteration that tries to improve on the disassembly of an
                     optimized PGO version, for example.)
 
-                </p>
+                </p></small>
 
                 <p>
                     The diff view for this routine is less useful given the vast majority of the
@@ -8716,8 +8722,8 @@ Pfx90:  mov     rsi, Locals.SavedRsi[rsp]       ; Restore rsi.
                 </p>
 
                 <hr/>
-
-                <h2>Internet Feedback</h2>
+                <h2>&lt;Internet Feedback Happened Here&gt;</h2>
+                <hr/>
 
                 <h2>IsPrefixOfStringInTable_11</h2>
 
@@ -12291,7 +12297,6 @@ Unwind info at 00007fff`f8425508, 10 bytes
 <small><pre>
 0:000&gt; .fnent StringTable2!IsPrefixOfStringInTable_x64_7
 Debugger function entry 00000185`395f2a88 for:
-(00007fff`f8424540)   StringTable2!IsPrefixOfStringInTable_x64_7   |  (00007fff`f8424740)   StringTable2!IsPrefixOfStringInTable_x64_8
 Exact matches:
     StringTable2!IsPrefixOfStringInTable_x64_7 (void)
 
@@ -12405,9 +12410,10 @@ Pfx10:  alloc_stack LOCALS_SIZE                     ; Allocate stack space.
                     the value contained in the RIP register at the time of the fault) in order to
                     determine what needs to be unwound as part of exception handling.  In this case,
                     at byte offset <code>0x41</code>, the <code>sub rsp, 20h</code> instruction will
-                    have already been executed, so the kernel knows it needs to unwind this by doing
-                    <code>add rsp, 20h</code> within the exception handling logic when it needs to
-                    unwind the entire frame and restore all of the non-volatile registers.
+                    have already been executed, so the kernel knows it needs to unwind this (e.g. by
+                    doing what will effectively equate to <code>add rsp, 20h</code>) within the
+                    exception handling logic when it needs to unwind the entire frame and restore
+                    all of the non-volatile registers.
 
                 </p>
 
@@ -12497,15 +12503,15 @@ IsPrefixOfStringInTable_x64_7.asm(511): error A2247: size of prolog too big, mus
                     things.  Flags though.  Flags are an interesting one.  The bane of the out-of-order
                     CPU pipeline, they could very well be forcing a synchronization point within the
                     code, preventing all the contemporary goodies you get when you let the CPU do
-                    its thing whenever it wants, rather than when you want.  (Goodies like...
+                    its thing whenever it wants, rather than when you need.  (Goodies like...
                     Meltdown!)
 
                 </p>
 
                 <p>
 
-                    Let's test the theory.  Take version 7 and comment-out the flag pushing and
-                    popping.
+                    Let's test the theory.  We'll take version 7 and simply comment-out the flag
+                    pushing and popping behavior.
 
                 </p>
 
