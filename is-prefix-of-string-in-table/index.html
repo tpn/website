@@ -2359,7 +2359,8 @@ Return Value:
                     characters in the initial negative match fast-path.  However, the first version
                     used an elaborate AVX2 prefix match routine that was geared toward matching
                     long strings, and attempted to use non-temporal streaming load instructions
-                    where possible (which would only make sense for a large number of long strings).
+                    where possible (which would only make sense for a large number of long strings
+                    in a very small set of cache-thrashing scenarios).
 
                     Compare our simpler implementation, <code>IsPrefixMatch</code>, which we use in
                     version 3 onward, to the far more elaborate (and unncessary)
@@ -4629,15 +4630,15 @@ NoMatch:
 
                     Holy smokes, version 5 <strong>is</strong> bad!  It's so bad it's actually
                     closest in territory to the bunk version 2 that had the elaborate AVX2 prefix
-                    matching routine.  <small>(Note: actually it was so close I ended up double
-                    checking the two routines were correct; they were, so this is just a
+                    matching routine.  <small>(Note: actually it was so close I ended up double-checking
+                    the two routines were correct; they were, so this is just a
                     coincidence.)</small>
 
                 </p>
 
                 <small>
 
-                    <p>Narrator: not well enough, you putz.</p>
+                    <p>Narrator: nice "double-checking", you putz.</p>
 
                 </small>
 
@@ -8277,13 +8278,17 @@ Pfx60:  vpextrb     rcx, xmm4, 2                ; Restore rcx counter.
 
                 <p>
 
-                    Looking back on my time logs, that second routine took about 8 hours to
-                    implement over the course of about two days, give or take.  Writing assembly
-                    is slow, writing correct assembly is even slower.  I generally find that there's
-                    a noticeable hump I need to get over in the first say 30 minutes of any assembly
-                    programming session, but once you get into the zone, things can start flowing
-                    quite nicely.  I'm an aggressive debugger user; often, to get started I'll write
-                    a simple <code>LEAF_ENTRY</code> that looks like this:
+                    Looking back on my time logs (shout out to my favorite iPhone app,
+                    <a
+                    href="https://itunes.apple.com/us/app/hourstracker-hours-and-pay/id336456412?mt=8">HoursTracker</a>!),
+                    that second routine took about 8 hours to implement over the course of about two
+                    days, give or take.  Writing assembly is slow, writing correct assembly is even
+                    slower.  I generally find that there's a noticeable hump I need to get over in
+                    the first say 30 minutes of any assembly programming session, but once you get
+                    into the zone, things can start flowing quite nicely.  I'm an aggressive
+                    debugger user; often, to get started I'll write a simple <code>LEAF_ENTRY</code>
+                    that looks like this:
+
                     <small><pre>
         LEAF_ENTRY Foo, _TEXT$00
                 int 3
@@ -8302,7 +8307,7 @@ Pfx60:  vpextrb     rcx, xmm4, 2                ; Restore rcx counter.
                     Anyway, enough about that.  Let's look at performance.  Again, this will be an
                     interesting one &mdash; other than the optimal negative match logic that I
                     copied from version 1, the sole focus was on getting a working assembly version;
-                    I wasn't giving much thought to micro-optimizations at this stage.
+                    I wasn't giving any thought to performance at this stage.
 
                 </p>
 
