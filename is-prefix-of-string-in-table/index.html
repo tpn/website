@@ -89,9 +89,10 @@
             <div class="container">
 
                 <small>
-                    Current status: <strong>late draft</strong>.  Updated: 30th April, 2018.
+                    Current status: <strong>late draft</strong>.  Updated: 2nd May, 2018.
                     Target publish date: <del>20th April, 2018</del> <del>23rd April, 2018</del>
-                    <del>25th April, 2018</del> <del>30th April, 2018</del> 2nd May, 2018.
+                    <del>25th April, 2018</del> <del>30th April, 2018</del> <del>2nd May, 2018</del>
+                    hopefully before 2019.
                     Thanks to <a href="https://twitter.com/rygorous">Fabian Giesen</a>,
                     <a href="https://twitter.com/pshufb">Wojciech Mu&#322;a</a>,
                     <a href="https://twitter.com/geofflangdale">Geoff Langdale</a>,
@@ -99,12 +100,12 @@
                     <a href="https://twitter.com/KendallWillets">Kendall Willets</a>
                     for their valuable
                     <a href="https://twitter.com/trentnelson/status/985715037934440448">feedback</a>
-                    on an early draft of this article.
-                </small>
+                    on an early draft of this article.  <a
+                        href="https://github.com/tpn/website/blob/master/is-prefix-of-string-in-table/index.html">
+                        View this page's source on GitHub.</a>
 
                 <hr/>
                 <h3>TL;DR</h3>
-                <small>
                 <p>
                     Wrote some C and assembly code that uses SIMD instructions to perform prefix
                     matching of strings.  The C code was between 4-7x faster than the baseline
@@ -350,6 +351,140 @@ Total Num Of &#181;ops: 18
                         </li>
                         <li>
                             <a href="#implementations">The Implementations</a>
+                            <ul class="toc-list-2">
+                                <li>
+                                    <a href="#round1">Round 1</a>
+                                    <ul class="toc-list-3">
+                                        <li><a href="#round1-c">C</a></li>
+                                        <ul class="toc-list-4">
+                                            <li>
+                                                <a href="#IsPrefixOfCStrInArray">IsPrefixOfCStrInArray</a>
+                                            </li>
+                                            <li>
+                                                <a href="#IsPrefixOfStringInTable_1">IsPrefixOfStringInTable_1</a>
+                                            </li>
+                                            <li>
+                                                <a href="#IsPrefixOfStringInTable_2">IsPrefixOfStringInTable_2</a>
+                                            </li>
+                                            <li>
+                                                <a href="#IsPrefixOfStringInTable_3">IsPrefixOfStringInTable_3</a>
+                                            </li>
+                                            <li>
+                                                <a href="#IsPrefixOfStringInTable_4">IsPrefixOfStringInTable_4</a>
+                                            </li>
+                                            <li>
+                                                <a href="#IsPrefixOfStringInTable_5">IsPrefixOfStringInTable_5</a>
+                                            </li>
+                                            <li>
+                                                <a href="#IsPrefixOfStringInTable_6">IsPrefixOfStringInTable_6</a>
+                                            </li>
+                                            <li>
+                                                <a href="#IsPrefixOfStringInTable_7">IsPrefixOfStringInTable_7</a>
+                                            </li>
+                                            <li>
+                                                <a href="#IsPrefixOfStringInTable_8">IsPrefixOfStringInTable_8</a>
+                                            </li>
+                                            <li>
+                                                <a href="#IsPrefixOfStringInTable_9">IsPrefixOfStringInTable_9</a>
+                                            </li>
+                                            <li>
+                                                <a href="#IsPrefixOfStringInTable_10">IsPrefixOfStringInTable_10</a>
+                                            </li>
+
+                                        </ul>
+
+                                        <li><a href="#round1-assembly">Assembly</a>
+                                        <ul class="toc-list-4">
+                                            <li>
+                                                <a href="#IsPrefixOfStringInTable_x64_1">IsPrefixOfStringInTable_x64_1</a>
+                                            </li>
+                                            <li>
+                                                <a href="#IsPrefixOfStringInTable_x64_2">IsPrefixOfStringInTable_x64_2</a>
+                                            </li>
+                                            <li>
+                                                <a href="#IsPrefixOfStringInTable_x64_3">IsPrefixOfStringInTable_x64_3</a>
+                                            </li>
+                                        </ul>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <a href="#round2">Round 2</a>
+                                    <ul class="toc-list-3">
+                                        <li><a href="#round2-c">C</a></li>
+                                        <ul class="toc-list-4">
+                                            <li>
+                                                <a href="#IsPrefixOfStringInTable_11">IsPrefixOfStringInTable_11</a>
+                                            </li>
+                                            <li>
+                                                <a href="#IsPrefixOfStringInTable_12">IsPrefixOfStringInTable_12</a>
+                                            </li>
+                                            <li>
+                                                <a href="#IsPrefixOfStringInTable_13">IsPrefixOfStringInTable_13</a>
+                                            </li>
+                                            <li>
+                                                <a href="#IsPrefixOfStringInTable_14">IsPrefixOfStringInTable_14</a>
+                                            </li>
+                                        </ul>
+
+                                        <li><a href="#round2-assembly">Assembly</a>
+                                        <ul class="toc-list-4">
+                                            <li>
+                                                <a href="#IsPrefixOfStringInTable_x64_4">IsPrefixOfStringInTable_x64_4</a>
+                                            </li>
+                                            <li>
+                                                <a href="#IsPrefixOfStringInTable_x64_5">IsPrefixOfStringInTable_x64_5</a>
+                                            </li>
+                                            <li>
+                                                <a href="#IsPrefixOfStringInTable_x64_3">IsPrefixOfStringInTable_x64_3</a>
+                                            </li>
+                                        </ul>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <a href="#round3">Round 3</a>
+                                    <ul class="toc-list-3">
+                                        <li><a href="#round3-c">C</a></li>
+                                        <ul class="toc-list-4">
+                                            <li>
+                                                <a href="#IsPrefixOfStringInTable_15">IsPrefixOfStringInTable_15</a>
+                                            </li>
+                                        </ul>
+
+                                        <li><a href="#round3-assembly">Assembly</a>
+                                        <ul class="toc-list-4">
+                                            <li>
+                                                <a href="#IsPrefixOfStringInTable_x64_7">IsPrefixOfStringInTable_x64_7</a>
+                                            </li>
+                                            <li>
+                                                <a href="#IsPrefixOfStringInTable_x64_8">IsPrefixOfStringInTable_x64_8</a>
+                                            </li>
+                                            <li>
+                                                <a href="#IsPrefixOfStringInTable_x64_9">IsPrefixOfStringInTable_x64_9</a>
+                                            </li>
+                                            <li>
+                                                <a href="#IsPrefixOfStringInTable_x64_10">IsPrefixOfStringInTable_x64_10</a>
+                                            </li>
+                                        </ul>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <a href="#round4">Round 4</a>
+                                    <ul class="toc-list-3">
+                                        <li><a href="#round3-assembly">Assembly</a>
+                                        <ul class="toc-list-4">
+                                            <li>
+                                                <a href="#IsPrefixOfStringInTable_x64_11">IsPrefixOfStringInTable_x64_11</a>
+                                            </li>
+                                            <li>
+                                                <a href="#IsPrefixOfStringInTable_x64_12">IsPrefixOfStringInTable_x64_12</a>
+                                            </li>
+                                            <li>
+                                                <a href="#IsPrefixOfStringInTable_x64_13">IsPrefixOfStringInTable_x64_13</a>
+                                            </li>
+                                        </ul>
+                                    </ul>
+                                </li>
+                            </ul>
                         </li>
 
                         <!--
@@ -464,7 +599,7 @@ Total Num Of &#181;ops: 18
 
                 </small>
 
-                <a class="xref" name="IsPrefixOfCStrInArray"></a>
+                <a class="xref" name="baseline"></a>
                 <h2>Baseline C Implementation</h2>
 
                 <p>
@@ -1980,7 +2115,11 @@ Return Value:
 
                 </p>
 
+                <a class="xref" name="IsPrefixOfCStrInArray"></a>
                 <h2>IsPrefixOfCStrInArray</h2>
+                <small>
+                    <a href="#IsPrefixOfStringInTable_1">IsPrefixOfStringInTable_1  <i class="fa fa-arrow-right"></i></a>
+                </small>
                 <p>
 
                     Let's review the baseline implementation again, as that's what we're ultimately
@@ -2030,7 +2169,12 @@ IsPrefixOfCStrInArray(
 }
 </code></pre>
 
+                <a class="xref" name="IsPrefixOfStringInTable_1"></a>
                 <h2>IsPrefixOfStringInTable_1</h2>
+                <small>
+                    <a href="#IsPrefixOfCStrInArray"><i class="fa fa-arrow-left"></i>  IsPrefixOfCStrInArray</a> |
+                    <a href="#IsPrefixOfStringInTable_2">IsPrefixOfStringInTable_2  <i class="fa fa-arrow-right"></i></a>
+                </small>
 
                 <p>
 
@@ -2148,7 +2292,13 @@ Return Value:
 
                 </p>
 
+                <a class="xref" name="IsPrefixOfStringInTable_2"></a>
                 <h2>IsPrefixOfStringInTable_2</h2>
+                <small>
+                    <a href="#IsPrefixOfStringInTable_1"><i class="fa fa-arrow-left"></i>  IsPrefixOfStringInTable_1</a> |
+                    <a href="#IsPrefixOfStringInTable_3">IsPrefixOfStringInTable_3  <i class="fa fa-arrow-right"></i></a>
+                </small>
+
 
                 <p>
 
@@ -2865,8 +3015,13 @@ NoMatch:
 
                 </p>
 
-
+                <a class="xref" name="IsPrefixOfStringInTable_3"></a>
                 <h2>IsPrefixOfStringInTable_3</h2>
+                <small>
+                    <a href="#IsPrefixOfStringInTable_2"><i class="fa fa-arrow-left"></i>  IsPrefixOfStringInTable_2</a> |
+                    <a href="#IsPrefixOfStringInTable_4">IsPrefixOfStringInTable_4  <i class="fa fa-arrow-right"></i></a>
+                </small>
+
 
                 <p>
 
@@ -3247,7 +3402,12 @@ NoMatch:
 
                 </p>
 
+                <a class="xref" name="IsPrefixOfStringInTable_4"></a>
                 <h2>IsPrefixOfStringInTable_4</h2>
+                <small>
+                    <a href="#IsPrefixOfStringInTable_3"><i class="fa fa-arrow-left"></i>  IsPrefixOfStringInTable_3</a> |
+                    <a href="#IsPrefixOfStringInTable_5">IsPrefixOfStringInTable_5  <i class="fa fa-arrow-right"></i></a>
+                </small>
 
                 <p>
 
@@ -3669,7 +3829,13 @@ NoMatch:
                 </p>
 
 
+                <a class="xref" name="IsPrefixOfStringInTable_5"></a>
                 <h2>IsPrefixOfStringInTable_5</h2>
+                <small>
+                    <a href="#IsPrefixOfStringInTable_4"><i class="fa fa-arrow-left"></i>  IsPrefixOfStringInTable_4</a> |
+                    <a href="#IsPrefixOfStringInTable_6">IsPrefixOfStringInTable_6  <i class="fa fa-arrow-right"></i></a>
+                </small>
+
 
                 <p>
 
@@ -4212,7 +4378,13 @@ NoMatch:
 
                 </p>
 
+                <a class="xref" name="IsPrefixOfStringInTable_6"></a>
                 <h2>IsPrefixOfStringInTable_6</h2>
+                <small>
+                    <a href="#IsPrefixOfStringInTable_5"><i class="fa fa-arrow-left"></i>  IsPrefixOfStringInTable_5</a> |
+                    <a href="#IsPrefixOfStringInTable_7">IsPrefixOfStringInTable_7  <i class="fa fa-arrow-right"></i></a>
+                </small>
+
 
                 <p>
 
@@ -4626,7 +4798,13 @@ NoMatch:
 
                 </p>
 
+                <a class="xref" name="IsPrefixOfStringInTable_7"></a>
                 <h2>IsPrefixOfStringInTable_7</h2>
+                <small>
+                    <a href="#IsPrefixOfStringInTable_6"><i class="fa fa-arrow-left"></i>  IsPrefixOfStringInTable_6</a> |
+                    <a href="#IsPrefixOfStringInTable_8">IsPrefixOfStringInTable_8  <i class="fa fa-arrow-right"></i></a>
+                </small>
+
 
                 <p>
 
@@ -5052,7 +5230,13 @@ NoMatch:
 
                 </p>
 
+                <a class="xref" name="IsPrefixOfStringInTable_8"></a>
                 <h2>IsPrefixOfStringInTable_8</h2>
+                <small>
+                    <a href="#IsPrefixOfStringInTable_7"><i class="fa fa-arrow-left"></i>  IsPrefixOfStringInTable_7</a> |
+                    <a href="#IsPrefixOfStringInTable_9">IsPrefixOfStringInTable_9  <i class="fa fa-arrow-right"></i></a>
+                </small>
+
 
                 <p>
 
@@ -5460,7 +5644,13 @@ NoMatch:
 
                 </p>
 
+                <a class="xref" name="IsPrefixOfStringInTable_9"></a>
                 <h2>IsPrefixOfStringInTable_9</h2>
+                <small>
+                    <a href="#IsPrefixOfStringInTable_8"><i class="fa fa-arrow-left"></i>  IsPrefixOfStringInTable_8</a> |
+                    <a href="#IsPrefixOfStringInTable_10">IsPrefixOfStringInTable_10  <i class="fa fa-arrow-right"></i></a>
+                </small>
+
 
                 <p>
 
@@ -5866,7 +6056,13 @@ FoundMatch:
 
                 </p>
 
+                <a class="xref" name="IsPrefixOfStringInTable_10"></a>
                 <h2>IsPrefixOfStringInTable_10</h2>
+                <small>
+                    <a href="#IsPrefixOfStringInTable_9"><i class="fa fa-arrow-left"></i>  IsPrefixOfStringInTable_9</a> |
+                    <a href="#IsPrefixOfStringInTable_11">IsPrefixOfStringInTable_11  <i class="fa fa-arrow-right"></i></a>
+                </small>
+
 
                 <p>
 
@@ -8733,7 +8929,13 @@ Pfx90:  mov     rsi, Locals.SavedRsi[rsp]       ; Restore rsi.
                 <h2>&lt;Internet Feedback Happened Here&gt;</h2>
                 <hr/>
 
+                <a class="xref" name="IsPrefixOfStringInTable_11"></a>
                 <h2>IsPrefixOfStringInTable_11</h2>
+                <small>
+                    <a href="#IsPrefixOfStringInTable_10"><i class="fa fa-arrow-left"></i>  IsPrefixOfStringInTable_10</a> |
+                    <a href="#IsPrefixOfStringInTable_12">IsPrefixOfStringInTable_12  <i class="fa fa-arrow-right"></i></a>
+                </small>
+
 
                 <p>
 
@@ -9684,9 +9886,13 @@ Pfx60:  vpextrb     rcx, xmm4, 2                ; Restore rcx counter.
                     </div>
                 </div>
 
-
-
+                <a class="xref" name="IsPrefixOfStringInTable_12"></a>
                 <h2>IsPrefixOfStringInTable_12</h2>
+                <small>
+                    <a href="#IsPrefixOfStringInTable_11"><i class="fa fa-arrow-left"></i>  IsPrefixOfStringInTable_11</a> |
+                    <a href="#IsPrefixOfStringInTable_13">IsPrefixOfStringInTable_13  <i class="fa fa-arrow-right"></i></a>
+                </small>
+
 
                 <p>
 
@@ -10157,7 +10363,12 @@ Return Value:
 
                 </p>
 
+                <a class="xref" name="IsPrefixOfStringInTable_13"></a>
                 <h2>IsPrefixOfStringInTable_13</h2>
+                <small>
+                    <a href="#IsPrefixOfStringInTable_12"><i class="fa fa-arrow-left"></i>  IsPrefixOfStringInTable_12</a> |
+                    <a href="#IsPrefixOfStringInTable_14">IsPrefixOfStringInTable_14  <i class="fa fa-arrow-right"></i></a>
+                </small>
 
                 <p>
 
@@ -10583,7 +10794,12 @@ Return Value:
                 </p>
 
 
+                <a class="xref" name="IsPrefixOfStringInTable_14"></a>
                 <h2>IsPrefixOfStringInTable_14</h2>
+                <small>
+                    <a href="#IsPrefixOfStringInTable_13"><i class="fa fa-arrow-left"></i>  IsPrefixOfStringInTable_13</a> |
+                    <a href="#IsPrefixOfStringInTable_15">IsPrefixOfStringInTable_15  <i class="fa fa-arrow-right"></i></a>
+                </small>
 
                 <p>
 
@@ -11627,6 +11843,15 @@ Pfx60:  vpextrb     rcx, xmm4, 2                ; Restore rcx counter.
 </code></pre>
                     </div>
                 </div>
+
+                <!--
+                <a class="xref" name="IsPrefixOfStringInTable_15"></a>
+                <h2>IsPrefixOfStringInTable_15</h2>
+                <small>
+                    <a href="#IsPrefixOfStringInTable_14"><i class="fa fa-arrow-left"></i>  IsPrefixOfStringInTable_14</a>
+                </small>
+                -->
+
 
                 <hr/>
                 <a class="xref" name="IsPrefixOfStringInTable_x64_3-review"></a>

@@ -1,6 +1,6 @@
 
 $(function() {
-    setupSmoothAnchorScolling();
+    //setupSmoothAnchorScolling();
     initTabBox('.tab-box.language.box-intro');
     initTabBox('.tab-box.language.box-simple');
     initTabBox('.tab-box.language.box-create');
