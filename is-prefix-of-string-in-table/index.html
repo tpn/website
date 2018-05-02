@@ -2108,10 +2108,37 @@ Return Value:
                 <a class="xref" name="implementations"></a>
                 <h1>The Implementations</h1>
 
+                <h2>Round 1</h2>
+
                 <p>
 
-                    In this section, we'll take a look at the various implementations we
-                    experimented with in order to get to the fastest version.
+                    In this section, we'll take a look at the various implementations I experimented
+                    with on the first pass, prior to soliciting any feedback.  I figured there were
+                    a couple of ways I could present this information.  First, I could hand-pick
+                    what I choose to show and hide, such that a nice rosey picture is presented that
+                    makes it seemed like I effortlessly arrived at the fastest implementation
+                    without much actual effort whatsoever.
+
+                </p>
+
+                <p>
+
+                    Or I could show the gritty reality of how everything <strong>actually</strong> went
+                    down in a chronological fashion, errors and all.  And there were definitely some
+                    errors!  For better or for worse, I've chosen to go down this route, so you'll
+                    get to enjoy some pretty tedious tweaks (changing a single line, for example)
+                    before the juicy stuff really gets going.
+
+                </p>
+
+                <p>
+
+                    Additionally, with the benefit of writing this little section introduction
+                    retro-actively, iterations 4 and 5 aren't testing what I thought they were
+                    initially testing.  I've left them in as is; if anything, it demonstrates the
+                    importance of only changing one thing at a time, and making sure you're testing
+                    what you think you're testing.  I'll discuss the errors with those iterations
+                    later in the article.
 
                 </p>
 
@@ -2168,6 +2195,7 @@ IsPrefixOfCStrInArray(
     return NO_MATCH_FOUND;
 }
 </code></pre>
+                <hr/>
 
                 <a class="xref" name="IsPrefixOfStringInTable_1"></a>
                 <h2>IsPrefixOfStringInTable_1</h2>
@@ -2286,12 +2314,24 @@ Return Value:
 
                 <p>
 
-                    In all but one case, we're faster.  That's neat; just by using a more
-                    sophisticated data structure, we can get a decent speedup, without needing any
-                    SIMD instructions.
+                    That's an interesting result!  Even without using any SIMD instructions, version
+                    1, the <code>IsPrefixOfStringInTable_1</code> routine, is faster (in all but one case)
+                    than the baseline <code>IsPrefixOfCStrInArray</code> routine, thanks to a more
+                    sophisticated data structure.
 
                 </p>
 
+                <p>
+
+                    (And really, it's not even using the sophisticated parts of the
+                    <code>STRING_TABLE</code>; it's just leveraging the fact that we've captured the
+                    lengths of each string in the backing <code>STRING_ARRAY</code> structure, by
+                    virtue of the fact that we use the <code>STRING</code> structure to wrap our
+                    strings (versus relying on the standard NULL-terminated C string approach).)
+
+                </p>
+
+                <hr/>
                 <a class="xref" name="IsPrefixOfStringInTable_2"></a>
                 <h2>IsPrefixOfStringInTable_2</h2>
                 <small>
@@ -2320,7 +2360,10 @@ Return Value:
                     used an elaborate AVX2 prefix match routine that was geared toward matching
                     long strings, and attempted to use non-temporal streaming load instructions
                     where possible (which would only make sense for a large number of long strings).
-                    Compare that to our simpler implementation, <code>IsPrefixMatch</code>:
+
+                    Compare our simpler implementation, <code>IsPrefixMatch</code>, which we use in
+                    version 3 onward, to the far more elaborate (and unncessary)
+                    <code>IsPrefixMatchAvx2</code>:
 
                 </p>
 
@@ -2662,6 +2705,19 @@ StartXmm:
                     we want to put broad statements like that to the test, so let's include it
                     as our first SIMD implementation so that we can see how it stacks up against
                     the simpler versions.
+
+                </p>
+
+                <p>
+
+                    Also note, this is the first time we're seeing the full body of the SIMD-style
+                    <code>IsPrefixOfStringInTable</code> implementation.  It's commented heavily,
+                    and, in general, the core algorithm doesn't fundamentally change across
+                    iterations (things are just tweaked slightly), so I'd recommend reading through
+                    it thoroughly to build up a mental model of how the matching algorithm works.
+                    It's pretty straight forward, and the subsequent iterations will make a lot more
+                    sense as they're typically presented as diffs against the previous version
+                    first.
 
                 </p>
 
@@ -3015,6 +3071,7 @@ NoMatch:
 
                 </p>
 
+                <hr/>
                 <a class="xref" name="IsPrefixOfStringInTable_3"></a>
                 <h2>IsPrefixOfStringInTable_3</h2>
                 <small>
@@ -3402,6 +3459,7 @@ NoMatch:
 
                 </p>
 
+                <hr/>
                 <a class="xref" name="IsPrefixOfStringInTable_4"></a>
                 <h2>IsPrefixOfStringInTable_4</h2>
                 <small>
@@ -3411,8 +3469,194 @@ NoMatch:
 
                 <p>
 
-                    Ok, I've been putting off writing an intro for version 4 long enough, here goes.
-                    In our StringTable2.vcxproj file, we have the following:
+                    When I first wrote the initial string table code, I was playing around with
+                    different strategies for loading the initial search string buffer.  That
+                    resulted in the file
+                    <a
+                    href="https://github.com/tpn/tracer/blob/v0.1.11/StringTable2/StringLoadStoreOperations.h">
+                    StringLoadStoreOperations.h</a>, which defined a bunch of helper macros,
+                    depicted below:
+
+                </p>
+
+<pre class="code"><code class="language-c">
+/*++
+
+    VOID
+    LoadSearchStringIntoXmmRegister_SEH(
+        _In_ STRING_SLOT Slot,
+        _In_ PSTRING String,
+        _In_ USHORT LengthVar
+        );
+
+Routine Description:
+
+    Attempts an aligned 128-bit load of String-&gt;Buffer into Slot.CharXmm via
+    the _mm_load_si128() intrinsic.  The intrinsic is surrounded in a __try/
+    __except block that catches EXCEPTION_ACCESS_VIOLATION exceptions.
+
+    If such an exception is caught, the routine will check to see if the string
+    buffer's address will cross a page boundary if 16-bytes are loaded.  If a
+    page boundary would be crossed, a __movsb() intrinsic is used to copy only
+    the bytes specified by String-&gt;Length, otherwise, an unaligned 128-bit load
+    is attemped via the _mm_loadu_si128() intrinsic.
+
+Arguments:
+
+    Slot - Supplies the STRING_SLOT local variable name within the calling
+        function that will receive the results of the load operation.
+
+    String - Supplies the name of the PSTRING variable that is to be loaded
+        into the slot.  This will usually be one of the function parameters.
+
+    LengthVar - Supplies the name of a USHORT local variable that will receive
+        the value of min(String-&gt;Length, 16).
+
+Return Value:
+
+    None.
+
+--*/
+#define LoadSearchStringIntoXmmRegister_SEH(Slot, String, LengthVar)   \
+    LengthVar = min(String-&gt;Length, 16);                               \
+    TRY_SSE42_ALIGNED {                                                \
+        Slot.CharsXmm = _mm_load_si128((PXMMWORD)String-&gt;Buffer);      \
+    } CATCH_EXCEPTION_ACCESS_VIOLATION {                               \
+        if (PointerToOffsetCrossesPageBoundary(String-&gt;Buffer, 16)) {  \
+            __movsb(Slot.Char, String-&gt;Buffer, LengthVar);             \
+        } else {                                                       \
+            Slot.CharsXmm = _mm_loadu_si128((PXMMWORD)String-&gt;Buffer); \
+        }                                                              \
+    }
+
+/*++
+
+    VOID
+    LoadSearchStringIntoXmmRegister_AlignmentCheck(
+        _In_ STRING_SLOT Slot,
+        _In_ PSTRING String,
+        _In_ USHORT LengthVar
+        );
+
+Routine Description:
+
+    This routine checks to see if a page boundary will be crossed if 16-bytes
+    are loaded from the address supplied by String-&gt;Buffer.  If a page boundary
+    will be crossed, a __movsb() intrinsic is used to only copy String-&gt;Length
+    bytes into the given Slot.
+
+    If no page boundary will be crossed by a 128-bit load, the alignment of
+    the address supplied by String-&gt;Buffer is checked.  If the alignment isn't
+    at least on a 16-byte boundary, an unaligned load will be issued via the
+    _mm_loadu_si128() intrinsic, otherwise, an _mm_load_si128() will be used.
+
+Arguments:
+
+    Slot - Supplies the STRING_SLOT local variable name within the calling
+        function that will receive the results of the load operation.
+
+    String - Supplies the name of the PSTRING variable that is to be loaded
+        into the slot.  This will usually be one of the function parameters.
+
+    LengthVar - Supplies the name of a USHORT local variable that will receive
+        the value of min(String-&gt;Length, 16).
+
+Return Value:
+
+    None.
+
+--*/
+#define LoadSearchStringIntoXmmRegister_AlignmentCheck(Slot, String,LengthVar) \
+    LengthVar = min(String-&gt;Length, 16);                                       \
+    if (PointerToOffsetCrossesPageBoundary(String-&gt;Buffer, 16)) {              \
+        __movsb(Slot.Char, String-&gt;Buffer, LengthVar);                         \
+    } else if (GetAddressAlignment(String-&gt;Buffer) &lt; 16) {                     \
+        Slot.CharsXmm = _mm_loadu_si128((PXMMWORD)String-&gt;Buffer);             \
+    } else {                                                                   \
+        Slot.CharsXmm = _mm_load_si128((PXMMWORD)String-&gt;Buffer);              \
+    }
+
+/*++
+
+    VOID
+    LoadSearchStringIntoXmmRegister_AlwaysUnaligned(
+        _In_ STRING_SLOT Slot,
+        _In_ PSTRING String,
+        _In_ USHORT LengthVar
+        );
+
+Routine Description:
+
+    This routine performs an unaligned 128-bit load of the address supplied by
+    String-&gt;Buffer into the given Slot via the _mm_loadu_si128() intrinsic.
+    No checks are done regarding whether or not a page boundary will be crossed.
+
+Arguments:
+
+    Slot - Supplies the STRING_SLOT local variable name within the calling
+        function that will receive the results of the load operation.
+
+    String - Supplies the name of the PSTRING variable that is to be loaded
+        into the slot.  This will usually be one of the function parameters.
+
+    LengthVar - Supplies the name of a USHORT local variable that will receive
+        the value of min(String-&gt;Length, 16).
+
+Return Value:
+
+    None.
+
+--*/
+#define LoadSearchStringIntoXmmRegister_Unaligned(Slot, String, LengthVar) \
+    LengthVar = min(String-&gt;Length, 16);                                   \
+    if (PointerToOffsetCrossesPageBoundary(String-&gt;Buffer, 16)) {          \
+        __movsb(Slot.Char, String-&gt;Buffer, LengthVar);                     \
+    } else if (GetAddressAlignment(String-&gt;Buffer) &lt; 16) {                 \
+        Slot.CharsXmm = _mm_loadu_si128(String-&gt;Buffer);                   \
+    } else {                                                               \
+        Slot.CharsXmm = _mm_load_si128(String-&gt;Buffer);                    \
+    }
+
+/*++
+
+    VOID
+    LoadSearchStringIntoXmmRegister_AlwaysMovsb(
+        _In_ STRING_SLOT Slot,
+        _In_ PSTRING String,
+        _In_ USHORT LengthVar
+        );
+
+Routine Description:
+
+    This routine copies min(String-&gt;Length, 16) bytes from String-&gt;Buffer
+    into the given Slot via the __movsb() intrinsic.  The memory referenced by
+    the Slot is not cleared first via SecureZeroMemory().
+
+Arguments:
+
+    Slot - Supplies the STRING_SLOT local variable name within the calling
+        function that will receive the results of the load operation.
+
+    String - Supplies the name of the PSTRING variable that is to be loaded
+        into the slot.  This will usually be one of the function parameters.
+
+    LengthVar - Supplies the name of a USHORT local variable that will receive
+        the value of min(String-&gt;Length, 16).
+
+Return Value:
+
+    None.
+
+--*/
+#define LoadSearchStringIntoXmmRegister_AlwaysMovsb(Slot, String, LengthVar) \
+    LengthVar = min(String-&gt;Length, 16);                                     \
+    __movsb(Slot.Char, String-&gt;Buffer, LengthVar);
+</code></pre>
+                <p>
+
+                    In our <a
+                    href="https://github.com/tpn/tracer/blob/v0.1.11/StringTable2/StringTable2.vcxproj#L52">StringTable2.vcxproj</a>
+                    file, we have the following:
 
                 </p>
 
@@ -3429,22 +3673,36 @@ NoMatch:
 </pre></small>
                 <hr/>
 
-                <!--
                 <p>
 
-                    When I first wrote the initial string table code, I was playing around with
-                    different strategies for loading the initial search string buffer.  That
-                    resulted in the file
-                    <a
-                    href="https://github.com/tpn/tracer/blob/v0.1.11/StringTable2/StringLoadStoreOperations.h">
-                    StringLoadStoreOperations.h</a>, which defined a bunch of helper macros,
-                    depicted below:
+                    This basically allowed me to toggle which of the strategies I wanted to use to
+                    do load the search string into an XMM register.  As you can see above, the
+                    default is to use the <code>AlwaysMovsb</code> approach*; so, with version 4,
+                    let's swap that out for the <code>SEH</code> approach, which wraps the aligned
+                    load in a structured exception handler that falls back to <code>__movsb()</code>
+                    if the aligned load fails and the pointer plus 16 bytes crosses a page boundary.
 
                 </p>
 
-<pre class="code"><code class="language-c">
-</code></pre>
-                -->
+                <p>
+
+                    <small>
+
+                    <p>[*]: Or was it?</p>
+                    <p>Narrator: <a
+                    href="https://github.com/tpn/tracer/blob/v0.1.11/StringTable2/StringLoadStoreOperations.h#L226">
+                    it wasn't</a>.</p>
+
+                    <small><p>(Note: these little <em>Narrator</em> interjections work best if you
+                    imagine they're being read in <a
+                    href="https://en.wikipedia.org/wiki/Arrested_Development_(TV_series)">Ron
+                    Howard</a>'s voice.)</p>
+                    </small>
+
+                    </small>
+
+                </p>
+
 
                 <div class="tab-box language box-4v3">
                     <ul class="tabs">
@@ -3824,11 +4082,21 @@ NoMatch:
 
                 <p>
 
-                    Thanks version 4, you can go home.  Version 3, you're still in the lead.
+                    Version 3 is still in the lead with the <code>AlwaysMovsb</code>-based search string
+                    loading approach.
+
+                    <small>
+
+                    <p>Narrator: except the
+                    <a href="https://github.com/tpn/tracer/blob/v0.1.11/StringTable2/StringLoadStoreOperations.h#L112"> AlignmentCheck</a>
+                    macro was actually active, not the
+                    <a href="https://github.com/tpn/tracer/blob/v0.1.11/StringTable2/StringLoadStoreOperations.h#L112"> AlwaysMovsb</a>
+                    one.
+                    </small>
 
                 </p>
 
-
+                <hr/>
                 <a class="xref" name="IsPrefixOfStringInTable_5"></a>
                 <h2>IsPrefixOfStringInTable_5</h2>
                 <small>
@@ -3845,6 +4113,18 @@ NoMatch:
                     early as possible.
 
                 </p>
+
+                <p>
+
+                    Note: we'll also explicitly use the <code>LoadSearchStringIntoXmmRegister_AlwaysMovsb</code>
+                    macro here, instead of <code>LoadSearchStringIntoXmmRegister</code>, just to
+                    make it more explicit that we're actually relying on the
+                    <code>__movsb()</code>-based string loading routine.
+
+                </p>
+
+                <small><p>Narrator: can anyone spot the mistake with this logic?</p></small>
+
 
                 <div class="tab-box language box-5v3">
                     <ul class="tabs">
@@ -4326,6 +4606,7 @@ NoMatch:
 // vim:set ts=8 sw=4 sts=4 tw=80 expandtab                                     :
 </code></pre>
 
+
                     </div>
                 </div>
 
@@ -4354,6 +4635,12 @@ NoMatch:
 
                 </p>
 
+                <small>
+
+                    <p>Narrator: not well enough, you putz.</p>
+
+                </small>
+
                 <p>
 
                     That's good news though, as it validates this assumption that we've been working
@@ -4378,6 +4665,18 @@ NoMatch:
 
                 </p>
 
+                <small>
+
+                    <p>
+
+                        Narrator: more accurate TL;DR: <code>__movsb()</code> is slow, and always
+                        make sure you're testing what you think you're testing before.
+
+                    </p>
+
+                </small>
+
+                <hr/>
                 <a class="xref" name="IsPrefixOfStringInTable_6"></a>
                 <h2>IsPrefixOfStringInTable_6</h2>
                 <small>
@@ -4798,6 +5097,27 @@ NoMatch:
 
                 </p>
 
+                <small>
+
+                    <p>
+
+                        Narrator: this is actually testing <code>_mm_loadu_si128()</code> against
+                        the
+                        <a href="https://github.com/tpn/tracer/blob/v0.1.11/StringTable2/StringLoadStoreOperations.h#L112"> AlignmentCheck</a>
+                        routine, which first calls
+                        <code>PointerToOffsetCrossesPageBoundary()</code>, and then checks the
+                        address alignment before calling <code>_mm_load_si128()</code>.
+                        As unaligned loads are just as fast as aligned loads as long as the
+                        underlying buffer is aligned, all this is really showing is that it's
+                        slightly faster not doing the pointer boundary check and address
+                        alignment check, which shouldn't be that surprising.
+
+                    </p>
+
+                </small>
+
+
+                <hr/>
                 <a class="xref" name="IsPrefixOfStringInTable_7"></a>
                 <h2>IsPrefixOfStringInTable_7</h2>
                 <small>
@@ -5230,6 +5550,7 @@ NoMatch:
 
                 </p>
 
+                <hr/>
                 <a class="xref" name="IsPrefixOfStringInTable_8"></a>
                 <h2>IsPrefixOfStringInTable_8</h2>
                 <small>
@@ -5644,6 +5965,7 @@ NoMatch:
 
                 </p>
 
+                <hr/>
                 <a class="xref" name="IsPrefixOfStringInTable_9"></a>
                 <h2>IsPrefixOfStringInTable_9</h2>
                 <small>
@@ -5654,9 +5976,10 @@ NoMatch:
 
                 <p>
 
-                    Version 9 tweaks version 8 and simply does 'return NO_MATCH_FOUND' after the
-                    initial bitmap check versus 'goto NoMatch'.  (The use of goto was a bit peculiar
-                    there, anyway.)
+                    Version 9 tweaks version 8 and simply does <code>return NO_MATCH_FOUND</code>
+                    after the initial bitmap check versus <code>goto NoMatch</code>.  (The use of goto was a
+                    bit peculiar there, anyway.  And we're going to rewrite the body in a similar
+                    fashion for version 10, but let's try stick to making one change at a time.)
 
                 </p>
 
@@ -6056,13 +6379,13 @@ FoundMatch:
 
                 </p>
 
+                <hr/>
                 <a class="xref" name="IsPrefixOfStringInTable_10"></a>
                 <h2>IsPrefixOfStringInTable_10</h2>
                 <small>
                     <a href="#IsPrefixOfStringInTable_9"><i class="fa fa-arrow-left"></i>  IsPrefixOfStringInTable_9</a> |
                     <a href="#IsPrefixOfStringInTable_11">IsPrefixOfStringInTable_11  <i class="fa fa-arrow-right"></i></a>
                 </small>
-
 
                 <p>
 
@@ -6522,16 +6845,20 @@ Return Value:
 
                 </p>
 
+                <hr/>
                 <h2>Speeding Up Negative Matches with Assembly</h2>
 
                 <p>
-                    <small><small>(Note: if you build the Tracer project, you can run a helper batch file
-                    in the root directory called cdb-simple.bat, which uses cdb to launch one of the
-                    project's executables called ModuleLoader.exe, which will start up, load all of
-                    our tracing project's DLLs, then allow the debugger to break in, which yields us
-                    a debugger prompt from which we can easily disassemble functions and inspect
-                    runtime function entries etc.  This is the approach I used for capturing the
-                    output over the next couple of sections.)</small></small>
+
+                    <small><small>(Note: if you build the <a
+                    href="https://github.com/tpn/tracer">Tracer</a> project, you can run a helper
+                    batch file in the root directory called cdb-simple.bat, which uses cdb to launch
+                    one of the project's executables called ModuleLoader.exe, which will start up,
+                    load all of our tracing project's DLLs, then allow the debugger to break in,
+                    which yields us a debugger prompt from which we can easily disassemble functions
+                    and inspect runtime function entries etc.  This is the approach I used for
+                    capturing the output over the next couple of sections.)</small></small>
+
                 </p>
 
                 <p>
@@ -6710,6 +7037,7 @@ StringTable2!IsPrefixOfStringInTable_10:
                 </p>
 
                 <p>
+
                     <small>
                     (On a semi-related note, I'd highly recommend reading
                     <a href="https://github.com/tpn/pdfs/blob/4d2296269d3737b649def585a19eb103cda9c3d0/A%20History%20of%20Modern%2064-bit%20Computing%20-%20Feb%202007%20(CSEP590A).pdf">
@@ -6722,6 +7050,7 @@ StringTable2!IsPrefixOfStringInTable_10:
                     anymore &mdash; it provides a direct vector for obliterating the mechanisms
                     relied upon by the kernel stack unwinding functionality.)
                     </small>
+
                 </p>
 
 <!--
@@ -6786,8 +7115,12 @@ StringTable2!IsPrefixOfStringInTable_10:
 
                 </p>
 
+                <hr/>
                 <a class="xref" name="IsPrefixOfStringInTable_x64_1"></a>
                 <h2>IsPrefixOfStringInTable_x64_1</h2>
+                <small>
+                    <a href="#IsPrefixOfStringInTable_x64_2">IsPrefixOfStringInTable_x64_2  <i class="fa fa-arrow-right"></i></a>
+                </small>
 
 <pre class="code"><code class="language-nasm">;++
 ;
@@ -6964,8 +7297,13 @@ Unwind info at 00007ffd`15594468, 4 bytes
 
                 </p>
 
+                <hr/>
                 <a class="xref" name="IsPrefixOfStringInTable_x64_2"></a>
                 <h2>IsPrefixOfStringInTable_x64_2</h2>
+                <small>
+                    <a href="#IsPrefixOfStringInTable_x64_1"><i class="fa fa-arrow-left"></i>  IsPrefixOfStringInTable_x64_1</a> |
+                    <a href="#IsPrefixOfStringInTable_x64_3">IsPrefixOfStringInTable_x64_3  <i class="fa fa-arrow-right"></i></a>
+                </small>
 
                 <p>
 
@@ -7004,8 +7342,13 @@ Unwind info at 00007ffd`15594468, 4 bytes
                 </p></small>
 
                 <p>
+
                     The diff view for this routine is less useful given the vast majority of the
-                    code is new, so I've put the full version of the code first.
+                    code is new, so I've put the full version of the code first.  It's based more or
+                    less on the approach used by version 8 of the C routine (I actually wrote it
+                    after I wrote version 8; versions 9 and 10 of the C routine (with the latter
+                    having the improved loop logic) came after).
+
                 </p>
 
                 <div class="tab-box language box-x64-2v1">
@@ -7957,13 +8300,17 @@ Pfx60:  vpextrb     rcx, xmm4, 2                ; Restore rcx counter.
                 <p>
 
                     Anyway, enough about that.  Let's look at performance.  Again, this will be an
-                    interesting one &mdash; other than the optimal negative match logic that we
-                    copied from version 1, I didn't really pay much attention to micro-optimizations
-                    or anything like that, at least not for the first pass.  It took long enough
-                    just to get the thing working end-to-end.  So, it'll be interesting to see how
-                    it compares to version 1 in the negative matching space (it should be very
-                    close), and then against the C versions in the prefix matching case (it
-                    hopefully won't be prohibitively worse).
+                    interesting one &mdash; other than the optimal negative match logic that I
+                    copied from version 1, the sole focus was on getting a working assembly version;
+                    I wasn't giving much thought to micro-optimizations at this stage.
+
+                </p>
+
+                <p>
+
+                    So, it'll be interesting to see how it compares to a) version 1 in the negative
+                    matching space (it should be very close), and b) against the C versions in the
+                    prefix matching case (it hopefully won't be prohibitively worse).
 
                 </p>
 
@@ -8010,22 +8357,22 @@ Pfx60:  vpextrb     rcx, xmm4, 2                ; Restore rcx counter.
                     $Mft, clocking in at about 18 and 24 cycles respectively.  But the next four
                     entries, $Secure to $Cairo, consistently clock in at about 24 and 34 cycles
                     respectively.  $Secure is the 9th slot, which puts it at memory offset 192 bytes
-                    from the start of the string table.  I know that this machine has the adjacent
-                    cache line prefetcher setting enabled in the BIOS (such that 128 bytes are
-                    fetched instead of 64 bytes), so I wonder if that has anything to do with it.
-                    Note that the 18 and 24 cycle behavior returns for the last two items, ???? and
-                    ., which are at the end of the string table's inner slot array; so, maybe not.
-                    Curious.  As much as I'd like to investigate that on the Sunday afternoon
-                    preceeding the self-imposed Monday deadline that's already slipped by four
-                    weeks, I should probably focus on finishing off the article as is.  The
-                    investigation will have to wait for another time!)
+                    from the start of the string table.  And then the 18 and 24 cycle behavior
+                    returns for the last two items, <code>????</code> and <code>.</code>, which are
+                    at the end of the string table's inner slot array.  This pattern is prevalent in
+                    all of our iterations.  Very peculiar!  We'll investigate later.)
 
                     </small>
 
                 </p>
 
+                <hr/>
                 <a class="xref" name="IsPrefixOfStringInTable_x64_3"></a>
                 <h2>IsPrefixOfStringInTable_x64_3</h2>
+                <small>
+                    <a href="#IsPrefixOfStringInTable_x64_2"><i class="fa fa-arrow-left"></i>  IsPrefixOfStringInTable_x64_2</a> |
+                    <a href="#IsPrefixOfStringInTable_x64_4">IsPrefixOfStringInTable_x64_4  <i class="fa fa-arrow-right"></i></a>
+                </small>
 
                 <p><small>
 
@@ -8091,8 +8438,10 @@ Pfx60:  vpextrb     rcx, xmm4, 2                ; Restore rcx counter.
 
                 <p>
 
-                    Other than that, the main changes involved converting all the early
-                    exit returns in the body of the function to jump to a single exit point,
+                    This routine was written last, after version 10 of the C routine, so it
+                    incorporates the slightly re-arranged loop logic that proved to be faster for
+                    that version.  Other than that, the main changes involved converting all the
+                    early exit returns in the body of the function to jump to a single exit point,
                     <code>Pfx90</code>, mainly to simplify epilogue exit code.
 
                 </p>
@@ -8910,25 +9259,49 @@ Pfx90:  mov     rsi, Locals.SavedRsi[rsp]       ; Restore rsi.
 
                 <p>
 
-                    Now, in the interest of keeping events chronological, as much as we should
-                    probably dive in and find out why, I'll have to defer to my behavior when I
-                    encountered this huge performance gap with version 3 when I first benchmarked
-                    it: I laughed, shelved the experiment, and moved on.
+                    Now, in the interest of keeping events chronological, as much as I'd like to
+                    dive in now and figure out why, I'll have to defer to my behavior when I
+                    encountered this performance gap: I laughed, shelved the version 3 experiment,
+                    and moved on.
 
                 </p>
 
                 <p>
 
-                    That's a decidedly unsatisfying end to the matter, though, I'll admit.  Perhaps
-                    we'll review later in the article, at least to get some closure as to why it was
-                    so slow, comparatively.
+                    That's a decidedly unsatisfying end to the matter, though, I'll admit.  We'll
+                    come back to it later in the article and try and get some closure as to why it
+                    was so slow, comparatively.
 
                 </p>
 
                 <hr/>
-                <h2>&lt;Internet Feedback Happened Here&gt;</h2>
-                <hr/>
+                <h2>Internet Feedback</h2>
 
+                <p>
+
+                    So, at this point, with version 10 of the C routine and version 2 of the
+                    assembly version in hand, and a very early draft of this article, I solicited
+                    <a href="https://twitter.com/trentnelson/status/985715037934440448">feedback on
+                    Twitter</a> and got some great responses.  Thanks again to
+                    <a href="https://twitter.com/rygorous">Fabian Giesen</a>,
+                    <a href="https://twitter.com/pshufb">Wojciech Mu&#322;a</a>,
+                    <a href="https://twitter.com/geofflangdale">Geoff Langdale</a>,
+                    <a href="https://twitter.com/lemire">Daniel Lemire</a>, and
+                    <a href="https://twitter.com/KendallWillets">Kendall Willets</a>
+                    for their discussion and input over the course of a few days!
+
+                </p>
+
+                <hr/>
+                <h1>Round 2 &mdash; Post-Internet Feedback</h1>
+
+                <p>
+
+                    Let's take a look at the iterations that came about after receiving feedback.
+
+                </p>
+
+                <hr/>
                 <a class="xref" name="IsPrefixOfStringInTable_11"></a>
                 <h2>IsPrefixOfStringInTable_11</h2>
                 <small>
@@ -9336,8 +9709,13 @@ Return Value:
 
                 </p>
 
+                <hr/>
+                <a class="xref" name="IsPrefixOfStringInTable_x64_4"></a>
                 <h2>IsPrefixOfStringInTable_x64_4</h2>
-
+                <small>
+                    <a href="#IsPrefixOfStringInTable_x64_3"><i class="fa fa-arrow-left"></i>  IsPrefixOfStringInTable_x64_3</a> |
+                    <a href="#IsPrefixOfStringInTable_x64_5">IsPrefixOfStringInTable_x64_5  <i class="fa fa-arrow-right"></i></a>
+                </small>
 
                 <div class="tab-box language box-x64-4v2">
                     <ul class="tabs">
@@ -9886,13 +10264,13 @@ Pfx60:  vpextrb     rcx, xmm4, 2                ; Restore rcx counter.
                     </div>
                 </div>
 
+                <hr/>
                 <a class="xref" name="IsPrefixOfStringInTable_12"></a>
                 <h2>IsPrefixOfStringInTable_12</h2>
                 <small>
                     <a href="#IsPrefixOfStringInTable_11"><i class="fa fa-arrow-left"></i>  IsPrefixOfStringInTable_11</a> |
                     <a href="#IsPrefixOfStringInTable_13">IsPrefixOfStringInTable_13  <i class="fa fa-arrow-right"></i></a>
                 </small>
-
 
                 <p>
 
@@ -10363,6 +10741,7 @@ Return Value:
 
                 </p>
 
+                <hr/>
                 <a class="xref" name="IsPrefixOfStringInTable_13"></a>
                 <h2>IsPrefixOfStringInTable_13</h2>
                 <small>
@@ -11248,7 +11627,13 @@ Return Value:
 
                 </p>
 
+                <hr/>
+                <a class="xref" name="IsPrefixOfStringInTable_x64_5"></a>
                 <h2>IsPrefixOfStringInTable_x64_5</h2>
+                <small>
+                    <a href="#IsPrefixOfStringInTable_x64_4"><i class="fa fa-arrow-left"></i>  IsPrefixOfStringInTable_x64_4</a> |
+                    <a href="#IsPrefixOfStringInTable_x64_6">IsPrefixOfStringInTable_x64_6  <i class="fa fa-arrow-right"></i></a>
+                </small>
 
                 <p>
 
