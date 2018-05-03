@@ -7111,6 +7111,13 @@ StringTable2!IsPrefixOfStringInTable_10:
                 <hr/>
 -->
 
+                <hr/>
+                <a class="xref" name="IsPrefixOfStringInTable_x64_1"></a>
+                <h2>IsPrefixOfStringInTable_x64_1</h2>
+                <small>
+                    <a href="#IsPrefixOfStringInTable_x64_2">IsPrefixOfStringInTable_x64_2  <i class="fa fa-arrow-right"></i></a>
+                </small>
+
                 <p>
 
                     So, knowing what we now know about the venerable little <code>LEAF_ENTRY</code> trick, let's
@@ -7118,13 +7125,6 @@ StringTable2!IsPrefixOfStringInTable_10:
                     negative match case.
 
                 </p>
-
-                <hr/>
-                <a class="xref" name="IsPrefixOfStringInTable_x64_1"></a>
-                <h2>IsPrefixOfStringInTable_x64_1</h2>
-                <small>
-                    <a href="#IsPrefixOfStringInTable_x64_2">IsPrefixOfStringInTable_x64_2  <i class="fa fa-arrow-right"></i></a>
-                </small>
 
 <pre class="code"><code class="language-nasm">;++
 ;
@@ -8284,7 +8284,7 @@ Pfx60:  vpextrb     rcx, xmm4, 2                ; Restore rcx counter.
                     Looking back on my time logs (shout out to my favorite iPhone app,
                     <a
                     href="https://itunes.apple.com/us/app/hourstracker-hours-and-pay/id336456412?mt=8">HoursTracker</a>!),
-                    that second routine took about 8 hours to implement over the course of about two
+                    the routine above took about 8 hours to implement over the course of about two
                     days, give or take.  Writing assembly is slow, writing correct assembly is even
                     slower.  I generally find that there's a noticeable hump I need to get over in
                     the first say 30 minutes of any assembly programming session, but once you get
