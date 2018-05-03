@@ -8359,6 +8359,7 @@ Pfx60:  vpextrb     rcx, xmm4, 2                ; Restore rcx counter.
 
                 <p>
 
+                    <a class="xref" name="oddities"></a>
                     <small>
 
                     (I've just noticed the pattern with regards to the first 8 entries, $AttrDef to
@@ -14319,6 +14320,14 @@ Pfx90:  mov     rsi, Locals.SavedRsi[rsp]       ; Restore rsi.
                     Crikey!  Flags were clearly at fault!  Not only that, but look at the
                     performance of the routine in comparison with version 2 for prefix matching;
                     there's a definite improvement in performance!
+
+                </p>
+
+                <p>
+
+                    ....wait wait wait.  Shut the front door!  This new assembly version is nearly
+                    as fast as the fastest C versions, and it doesn't even have the optimized
+                    negative match re-work in place.  Plot twist!
 
                 </p>
 
