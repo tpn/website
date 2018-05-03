@@ -3477,8 +3477,9 @@ NoMatch:
                     href="https://github.com/tpn/tracer/blob/v0.1.11/StringTable2/StringLoadStoreOperations.h">
                     StringLoadStoreOperations.h</a>, which defined a bunch of helper macros.
                     I've included them below, but don't spend too much time absorbing them, they're
-                    all irrelevant as soon as we switch to <code>_mm_loadu_si128()</code>.  I'm
-                    including them because the set the scene for versions 4, 5 and 6.
+                    not good practice, and they're all irrelevant anyway as soon as we switch to
+                    <code>_mm_loadu_si128()</code> in a few versions.  I'm including them because
+                    they set the scene for versions 4, 5 and 6.
 
                 </p>
 
