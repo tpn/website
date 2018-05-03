@@ -8317,7 +8317,7 @@ Pfx60:  vpextrb     rcx, xmm4, 2                ; Restore rcx counter.
                 <p>
 
                     So, it'll be interesting to see how it compares to a) version 1 in the negative
-                    matching space (it should be very close), and b) against the C versions in the
+                    matching case (it should be very close), and b) against the C versions in the
                     prefix matching case (it hopefully won't be prohibitively worse).
 
                 </p>
@@ -12035,20 +12035,28 @@ Total Num Of &#181;ops: 18
 
                     Alright, well, what can we do?  A good answer would be that with an intimate
                     understanding of contemporary Intel CPU architecture, you can pin-point exactly
-                    what needs changing in order to reduce dependencies or block throughput.
+                    what needs changing in order to reduce dependencies, and maximise port
+                    utilization, and leverage macro fusion, but also not forgetting about
+                    microfusion, and remembering microcode latencies, and generally become one with
+                    the Intel optimization manual, but never at the expense of under-utilizing
+                    your front-back &#181;op-frobulator, unless the inverted cache re-up and
+                    re-vigor policy is in its hybrid coalesced L9 state, at which point any increase
+                    in thermal unit pivot-bracketing will nullify all efforts across product lines 4
+                    and 5 but exponentially accelerate entropy discount licensing for models 6 and
+                    7, but only after recent microcode patches if you're in the Northern hemisphere
+                    during an unseasonably cold Spring.
 
                 </p>
 
                 <p>
 
-                    In reality, here's what I did for version 5: moved shit around until the number
-                    got smaller.
+                    Or you can just move shit around until the number gets smaller.  That's what I did.
 
                 </p>
 
                 <p>
 
-                    That's not entirely true.  Fabian did make a good suggestion when he was
+                    Well, that's not entirely true.  Fabian did make a good suggestion when he was
                     reviewing some of my assembly that I was often needlessly doing a load into an
                     XMM register only to use it once in a subsequent operation.  Instead of doing
                     that I could just use the <em>load-op</em> version of the instruction, which
