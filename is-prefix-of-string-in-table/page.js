@@ -2,6 +2,7 @@
 $(function() {
     //setupSmoothAnchorScolling();
     initTabBox('.tab-box.language.box-intro');
+    initTabBox('.tab-box.language.box-intro2');
     initTabBox('.tab-box.language.box-simple');
     initTabBox('.tab-box.language.box-create');
     initTabBox('.tab-box.language.box-string-table');
@@ -25,6 +26,7 @@ $(function() {
     initTabBox('.tab-box.language.box-13v10');
     initTabBox('.tab-box.language.box-14v13');
     initTabBox('.tab-box.language.box-x64-4v2');
+    initTabBox('.tab-box.language.box-x64-v4');
     initTabBox('.tab-box.language.box-x64-5v4');
     initTabBox('.tab-box.language.box-api');
     initTabBox('.tab-box.language.box-typedefs');

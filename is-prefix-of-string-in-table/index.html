@@ -89,10 +89,10 @@
             <div class="container">
 
                 <small>
-                    Current status: <strong>late draft</strong>.  Updated: 2nd May, 2018.
+                    Current status: <strong>late late draft</strong>.  Updated: 2nd May, 2018.
                     Target publish date: <del>20th April, 2018</del> <del>23rd April, 2018</del>
                     <del>25th April, 2018</del> <del>30th April, 2018</del> <del>2nd May, 2018</del>
-                    hopefully before 2019.
+                    4th May, 2018.
                     Thanks to <a href="https://twitter.com/rygorous">Fabian Giesen</a>,
                     <a href="https://twitter.com/pshufb">Wojciech Mu&#322;a</a>,
                     <a href="https://twitter.com/geofflangdale">Geoff Langdale</a>,
@@ -103,6 +103,9 @@
                     on an early draft of this article.  <a
                         href="https://github.com/tpn/website/blob/master/is-prefix-of-string-in-table/index.html">
                         View this page's source on GitHub.</a>
+
+                    <!-- 15.6 + 48.53 + 2.42 + 33.85 + 42 + 49.67 + 11.55 + 9.12 -->
+                    Hours spent on this article to date: 212.74.
 
                 <hr/>
                 <h3>TL;DR</h3>
@@ -193,7 +196,7 @@ vpcmpgtb xmm1, xmm3, xmm4                           ; Identify slots &gt; string
 vpshufb  xmm5, xmm0, StringTable.UniqueIndex[rcx]   ; Rearrange string by unique index.
 vpcmpeqb xmm5, xmm5, StringTable.UniqueChars[rcx]   ; Compare rearranged to unique.
 vptest   xmm1, xmm5                                 ; Unique slots AND (!long slots).
-jnc      Short Pfx10                                ; CY=0, continue with routine.
+jnc      short Pfx10                                ; CY=0, continue with routine.
 xor      eax, eax                                   ; CY=1, no match.
 not      al                                         ; al = -1 (NO_MATCH_FOUND).
 ret                                                 ; Return NO_MATCH_FOUND.
@@ -408,7 +411,7 @@ Total Num Of &#181;ops: 18
                                     </ul>
                                 </li>
                                 <li>
-                                    <a href="#round2">Round 2</a>
+                                    <a href="#round2">Round 2; Post-Internet Feedback</a>
                                     <ul class="toc-list-3">
                                         <li><a href="#round2-c">C</a></li>
                                         <ul class="toc-list-4">
@@ -433,9 +436,6 @@ Total Num Of &#181;ops: 18
                                             </li>
                                             <li>
                                                 <a href="#IsPrefixOfStringInTable_x64_5">IsPrefixOfStringInTable_x64_5</a>
-                                            </li>
-                                            <li>
-                                                <a href="#IsPrefixOfStringInTable_x64_3">IsPrefixOfStringInTable_x64_3</a>
                                             </li>
                                         </ul>
                                     </ul>
@@ -3475,8 +3475,10 @@ NoMatch:
                     resulted in the file
                     <a
                     href="https://github.com/tpn/tracer/blob/v0.1.11/StringTable2/StringLoadStoreOperations.h">
-                    StringLoadStoreOperations.h</a>, which defined a bunch of helper macros,
-                    depicted below:
+                    StringLoadStoreOperations.h</a>, which defined a bunch of helper macros.
+                    I've included them below, but don't spend too much time absorbing them, they're
+                    all irrelevant as soon as we switch to <code>_mm_loadu_si128()</code>.  I'm
+                    including them because the set the scene for versions 4, 5 and 6.
 
                 </p>
 
@@ -9298,6 +9300,7 @@ Pfx90:  mov     rsi, Locals.SavedRsi[rsp]       ; Restore rsi.
                 </p>
 
                 <hr/>
+                <a class="xref" name="round2"></a>
                 <h1>Round 2 &mdash; Post-Internet Feedback</h1>
 
                 <p>
@@ -9313,7 +9316,6 @@ Pfx90:  mov     rsi, Locals.SavedRsi[rsp]       ; Restore rsi.
                     <a href="#IsPrefixOfStringInTable_10"><i class="fa fa-arrow-left"></i>  IsPrefixOfStringInTable_10</a> |
                     <a href="#IsPrefixOfStringInTable_12">IsPrefixOfStringInTable_12  <i class="fa fa-arrow-right"></i></a>
                 </small>
-
 
                 <p>
 
@@ -9710,7 +9712,22 @@ Return Value:
 
                 <p>
 
-                    Insert graph and commentary.
+                    We're only shaving one instruction off here, so the performance gain, if any,
+                    should be very modest.
+
+                </p>
+
+                <p>
+
+                    <a href="Benchmark-11-v1.svg" target="_blank">
+                        <img class="svg-image" src="Benchmark-11-v1.svg"/>
+                    </a>
+
+                </p>
+
+                <p>
+
+                    Definitely a slight improvement over version 10 in most cases!
 
                 </p>
 
@@ -9721,6 +9738,31 @@ Return Value:
                     <a href="#IsPrefixOfStringInTable_x64_3"><i class="fa fa-arrow-left"></i>  IsPrefixOfStringInTable_x64_3</a> |
                     <a href="#IsPrefixOfStringInTable_x64_5">IsPrefixOfStringInTable_x64_5  <i class="fa fa-arrow-right"></i></a>
                 </small>
+
+                <p>
+
+                    Something I didn't know about <code>vptest</code> that Fabian pointed out is
+                    that it actually does two operations.  The first essentially does an AND of the
+                    two input registers and sets the zero flag (ZF=1) if the result is all 0s.
+                    We've been using that aspect in the assembly version up to now.
+
+                </p>
+
+                <p>
+
+                    However, it also does the equivalent of <code>(xmm0 and (not xmm1))</code>, and
+                    sets the carry flag (CY=1) if that expression evaluates to all zeros. That's
+                    handy, because it's exactly the expression we want to do!
+
+                </p>
+
+                <p>
+
+                    So, let's take version 2 of our assembly routine, remove the vpxor bit, and
+                    re-arrange the vptest inputs such that we can do a <code>jnc</code> instead of
+                    <code>jnz</code>:
+
+                </p>
 
                 <div class="tab-box language box-x64-4v2">
                     <ul class="tabs">
@@ -10269,6 +10311,30 @@ Pfx60:  vpextrb     rcx, xmm4, 2                ; Restore rcx counter.
                     </div>
                 </div>
 
+                <p>
+
+                    Let's see how that stacks up against the existing version 2 of the assembly
+                    routine:
+
+                </p>
+
+                <p>
+                    <a href="Benchmark-x64-04-v1.svg" target="_blank">
+                        <img class="svg-image" src="Benchmark-x64-04-v1.svg"/>
+                    </a>
+                </p>
+
+                <p>
+
+                    Nice, we've shaved an entire cycle off the negative match path!  I say that both
+                    seriously and sarcastically.  A single cycle, wow, stop the press!  On the other
+                    hand, going from 8 cycles to 7 cycles is usually a lot harder than, say, going
+                    from 100,000 cycles to 80,000 cycles.  We're so close to the lower bound,
+                    additional cycle improvements is a lot like trying to get blood out of a stone.
+
+                </p>
+
+
                 <hr/>
                 <a class="xref" name="IsPrefixOfStringInTable_12"></a>
                 <h2>IsPrefixOfStringInTable_12</h2>
@@ -10279,7 +10345,7 @@ Pfx60:  vpextrb     rcx, xmm4, 2                ; Restore rcx counter.
 
                 <p>
 
-                    The vptest fast-path exit definitely yielded a repeatable and measurable gain
+                    The <code>vptest</code> fast-path exit definitely yielded a repeatable and measurable gain
                     for the assembly version.  Let's replicate it in a C version.
 
                 </p>
@@ -10742,7 +10808,16 @@ Return Value:
 
                 <p>
 
-                    (Insert commentary and graph.)
+                    <a href="Benchmark-12-v1.svg" target="_blank">
+                        <img class="svg-image" src="Benchmark-12-v1.svg"/>
+                    </a>
+
+                </p>
+
+                <p>
+
+                    Eh, there's not much in this one.  The negative match fast path is basically
+                    identical, and the normal prefix matches are a tiny bit slower.
 
                 </p>
 
@@ -10756,10 +10831,13 @@ Return Value:
 
                 <p>
 
-                    Another tidbit from Fabian: we can tweak the loop logic further and simply do a
-                    'while (Bitmap) { }' loop instead of the 'do { } while (--Count)' approach.
-                    This also simplifies the inner loop comparison logic, as we don't need to keep
-                    shifting the bitmap by the trailing zero count to find the next set bit.
+                    Another tip from Fabian: we can tweak the loop logic further.  Instead of
+                    shifting the bitmap right each iteration (and keeping a separate shift count),
+                    we can just leverage the <code>blsr</code> intrinsic, which stands for <em>reset
+                    lowest set bit</em>, and is equivalent to doing <code>x &amp; (x -1)</code>.
+                    This allows us to tweak the loop organization as well, such that we can simply
+                    do <code>while (Bitmap) { }</code> instead of the <code>do { } while (--Count)</code>
+                    approach we've been using.
 
                 </p>
 
@@ -11167,17 +11245,28 @@ Return Value:
 
                 <p>
 
-                    (Insert graph.)
+                    I like this change.  It was a great suggestion from Fabian.  Let's see how it
+                    performs.  Hopefully it'll do slightly better at prefix matching, given that
+                    we're effectively reducing the number of instructions required as part of the
+                    string comparison logic.
 
                 </p>
 
                 <p>
 
-                    Ah!  A measurable, repeatable speed-up!
+                    <a href="Benchmark-13-v1.svg" target="_blank">
+                        <img class="svg-image" src="Benchmark-13-v1.svg"/>
+                    </a>
 
                 </p>
 
+                <p>
 
+                    Ah!  A measurable, repeatable speed-up!  Excellent!
+
+                </p>
+
+                <hr/>
                 <a class="xref" name="IsPrefixOfStringInTable_14"></a>
                 <h2>IsPrefixOfStringInTable_14</h2>
                 <small>
@@ -11188,15 +11277,15 @@ Return Value:
                 <p>
 
                     Let's give the C version the same chance as the assembly version with regards to
-                    negative matching; we'll take version 13 above and factor in the vptest logic
-                    that put version 4 of the assembly version.
+                    negative matching; we'll take version 13 above and factor in the
+                    <code>vptest</code> logic from version 12.
 
                 </p>
 
-
                 <div class="tab-box language box-14v13">
                     <ul class="tabs">
-                        <li data-content="content-14v13-diff">Diff</li>
+                        <li data-content="content-14v13-diff">Diff (14 vs 13)</li>
+                        <li data-content="content-14v12-diff">Diff (14 vs 12)</li>
                         <li data-content="content-14-full">Full</li>
                     </ul>
                     <div class="content">
@@ -11308,6 +11397,130 @@ Return Value:
      // Calculate the "search length" of the incoming string, which ensures we
      // only compare up to the first 16 characters.
 
+</code></pre>
+<pre class="code content-14v12-diff"><code class="language-diff">% diff -u IsPrefixOfStringInTable_12.c IsPrefixOfStringInTable_14.c
+--- IsPrefixOfStringInTable_12.c        2018-04-26 17:47:54.970331600 -0400
++++ IsPrefixOfStringInTable_14.c        2018-04-26 19:32:30.674199200 -0400
+@@ -19,7 +19,7 @@
+
+ _Use_decl_annotations_
+ STRING_TABLE_INDEX
+-IsPrefixOfStringInTable_12(
++IsPrefixOfStringInTable_14(
+     PSTRING_TABLE StringTable,
+     PSTRING String,
+     PSTRING_MATCH Match
+@@ -32,15 +32,8 @@
+     search string.  That is, whether any string in the table "starts with
+     or is equal to" the search string.
+
+-    This version is based off version 10, but with factors in the improvements
+-    made to version 4 of the x64 assembly version, thanks to suggestions from
+-    both Wojciech Mula (@pshufb) and Fabian Giesen (@rygorous).
+-
+-    Like version 11, we omit the vpxor to invert the lengths, but instead of
+-    an initial vpandn, we leverage the fact that vptest sets the carry flag
+-    if all 0s result from the expression: "param1 and (not param2)".  This
+-    allows us to do a fast-path early exit (like x64 version 2 does) if no
+-    match is found.
++    This version combines the altered bitmap logic from version 13 with the
++    fast-path _mm_testc_si128() exit from version 12.
+
+ Arguments:
+
+@@ -61,12 +54,9 @@
+ {
+     ULONG Bitmap;
+     ULONG Mask;
+-    ULONG Count;
+     ULONG Length;
+     ULONG Index;
+-    ULONG Shift = 0;
+     ULONG CharactersMatched;
+-    ULONG NumberOfTrailingZeros;
+     ULONG SearchLength;
+     PSTRING TargetString;
+     STRING_SLOT Slot;
+@@ -118,7 +108,7 @@
+     // Load the first 16-bytes of the search string into an XMM register.
+     //
+
+-    Search.CharsXmm = _mm_load_si128((PXMMWORD)String-&gt;Buffer);
++    Search.CharsXmm = _mm_loadu_si128((PXMMWORD)String-&gt;Buffer);
+
+     //
+     // Broadcast the search string's unique characters according to the string
+@@ -164,7 +154,7 @@
+     // N.B. Because we default the length of empty slots to 0x7f, they will
+     //      handily be included in the ignored set (i.e. their words will also
+     //      be set to 0xff), which means they'll also get filtered out when
+-    //      we do the "and not" intersection with the include slots next.
++    //      we invert the mask shortly after.
+     //
+
+     IgnoreSlotsByLength = _mm_cmpgt_epi8(Lengths.SlotsXmm, LengthXmm);
+@@ -209,8 +199,7 @@
+                                     IncludeSlotsByUniqueChar);
+
+     //
+-    // Generate a mask, count the number of bits, and initialize the search
+-    // length.
++    // Generate a mask.
+     //
+
+     Bitmap = _mm_movemask_epi8(IncludeSlots);
+@@ -222,31 +211,26 @@
+
+     SearchLength = min(String-&gt;Length, 16);
+
+-    //
+-    // A popcount against the mask will tell us how many slots we matched, and
+-    // thus, need to compare.
+-    //
+-
+-    Count = __popcnt(Bitmap);
+-
+-    do {
++    while (Bitmap) {
+
+         //
+         // Extract the next index by counting the number of trailing zeros left
+-        // in the bitmap and adding the amount we've already shifted by.
++        // in the bitmap.
+         //
+
+-        NumberOfTrailingZeros = _tzcnt_u32(Bitmap);
+-        Index = NumberOfTrailingZeros + Shift;
++        Index = _tzcnt_u32(Bitmap);
+
+         //
+-        // Shift the bitmap right, past the zeros and the 1 that was just found,
+-        // such that it's positioned correctly for the next loop's tzcnt. Update
+-        // the shift count accordingly.
++        // Clear the bitmap's lowest set bit, such that it's ready for the next
++        // loop's tzcnt if no match is found in this iteration.  Equivalent to
++        //
++        //      Bitmap &amp;= Bitmap - 1;
++        //
++        // (Which the optimizer will convert into a blsr instruction anyway in
++        //  non-debug builds.  But it's nice to be explicit.)
+         //
+
+-        Bitmap &gt;&gt;= (NumberOfTrailingZeros + 1);
+-        Shift = Index + 1;
++        Bitmap = _blsr_u32(Bitmap);
+
+         //
+         // Load the slot and its length.
+@@ -329,7 +313,7 @@
+
+         return (STRING_TABLE_INDEX)Index;
+
+-    } while (--Count);
++    }
+
+     //
+     // If we get here, we didn't find a match.
 </code></pre>
 <pre class="code content-14-full"><code class="language-c">_Use_decl_annotations_
 STRING_TABLE_INDEX
@@ -11622,13 +11835,30 @@ Return Value:
 
                 <p>
 
-                    (Insert chart.)
+                    We're really clutching at straws here obviously with regards to trying to eke
+                    out more performance.  The <code>_mm_testc_si128()</code> alteration was a tiny
+                    bit slower for <a href="#IsPrefixOfStringInTable_12">version 12</a> across the
+                    board.  However, the <code>vptest</code> (which is the underlying assembly
+                    instruction that maps to the <code>_mm_testc_si128()</code> intrinsic) version
+                    4 of our assembly was definitely a little bit faster than the other versions.
+                    Let's see how our final C version performs:
 
                 </p>
 
                 <p>
 
-                    We have a new winner!
+                    <a href="Benchmark-14-v1.svg" target="_blank">
+                        <img class="svg-image" src="Benchmark-14-v1.svg"/>
+                    </a>
+
+
+                </p>
+
+                <p>
+
+                    Welp, at least it's consistent!  Like version 12, the <code>_mm_testc_si128()</code>
+                    change doesn't really offer a compelling improvement for version 14.  That makes
+                    version 13 officially our fastest C implementation for round 2.
 
                 </p>
 
@@ -11642,8 +11872,299 @@ Return Value:
 
                 <p>
 
-                    Version 5 of our assembly routine is currently the fastest negative match
-                    routine.
+                    Before we conclude round 2, let's see if we can eke any more performance out of
+                    the negative match fast path of our fastest assembly version so far: version 4.
+                    For this step, I'm going to leverage <a
+                    href="https://software.intel.com/en-us/articles/intel-architecture-code-analyzer">
+                    Intel Architecture Code Analyzer</a>, or IACA, for short.
+
+                </p>
+
+                <p>
+
+                    This is a handy little static analysis tool that can provide useful information
+                    for fine-tuning performance sensitive code.  Let's take a look at the output
+                    from IACA for our assembly version 4.  To do this, I uncomment the two macros,
+                    <code>IACA_VC_START</code> and <code>IACA_VC_END</code>, which reside at the
+                    start and end of the negative match logic.  These macros are defined in
+                    <a
+                    href="https://github.com/tpn/tracer/blob/v0.1.11/StringTable2/StringTable.inc#L20">StringTable.inc</a>,
+                    and look like this:
+
+                </p>
+
+<pre class="code"><code class="language-nasm">IACA_VC_START macro Name
+
+        mov     byte ptr gs:[06fh], 06fh
+
+        endm
+
+IACA_VC_END macro Name
+
+        mov     byte ptr gs:[0deh], 0deh
+
+        endm
+</code></pre>
+
+                <p>
+
+                    The equivalent versions for C are defined in
+                    <a href="https://github.com/tpn/tracer/blob/v0.1.11/Rtl/Rtl.h#L427">Rtl.h</a>,
+                    and look like this:
+
+                </p>
+
+<pre class="code"><code class="language-c">//
+// Define start/end markers for IACA.
+//
+
+#define IACA_VC_START() __writegsbyte(111, 111)
+#define IACA_VC_END()   __writegsbyte(222, 222)
+</code></pre>
+
+                <p>
+
+                    You may have noticed commented-out versions of these macros in both the C and
+                    assembly code.  What they do is emit a specific byte pattern in the instruction
+                    byte code that the IACA tool can detect.  You place the start and end markers
+                    around the code you're interested in, recompile it, then run IACA against the
+                    final executable (or library).
+
+                </p>
+
+                <p>
+
+                    Let's see what happens when we do this for our version 4 assembly routine.  I'll
+                    include the relevant assembly snippet, reformatted into a more concise fashion,
+                    followed by the IACA output (also reformatted into a more concise fashion):
+
+                </p>
+
+                <div class="tab-box language box-x64-v4">
+                    <ul class="tabs">
+                        <li data-content="content-x64-v4-nasm">Assembly</li>
+                        <li data-content="content-x64-v4-iaca">IACA</li>
+                    </ul>
+                    <div class="content">
+<pre class="code content-x64-v4-nasm"><code class="language-nasm">
+mov      rax,  String.Buffer[rdx]                       ; Load address of string buffer.
+vmovdqu  xmm0, xmmword ptr [rax]                        ; Load search buffer.
+vmovdqa  xmm1, xmmword ptr StringTable.UniqueIndex[rcx] ; Load indexes.
+vpshufb  xmm5, xmm0, xmm1                               ; Rearrange string by uniq. ix.
+vmovdqa  xmm2, xmmword ptr StringTable.UniqueChars[rcx] ; Load unique chars.
+vpcmpeqb xmm5, xmm5, xmm2                               ; Compare unique chars.
+vmovdqa  xmm3, xmmword ptr StringTable.Lengths[rcx]     ; Load table lengths.
+vpbroadcastb xmm4, byte ptr String.Length[rdx]          ; Broadcast string length.
+vpcmpgtb xmm1, xmm3, xmm4                               ; Identify long slots.
+vptest   xmm1, xmm5                                     ; Unique slots AND (!long slots).
+jnc      short Pfx10                                    ; CY=0, continue with routine.
+xor      eax, eax                                       ; CY=1, no match.  Clear rax.
+not      al                                             ; al = -1 (NO_MATCH_FOUND)
+ret                                                     ; Return NO_MATCH_FOUND.
+</code></pre>
+<pre class="code content-x64-v4-iaca"><code class="language-nasm">
+S:\Source\tracer&gt;iaca x64\Release\StringTable2.dll
+Intel(R) Architecture Code Analyzer
+Version -  v3.0-28-g1ba2cbb build date: 2017-10-23;17:30:24
+Analyzed File -  x64\Release\StringTable2.dll
+Binary Format - 64Bit
+Architecture  -  SKL
+Analysis Type - Throughput
+
+Throughput Analysis Report
+--------------------------
+Block Throughput: 3.74 Cycles       Throughput Bottleneck: Dependency Chains
+Loop Count:  22
+Port Binding In Cycles Per Iteration:
+----------------------------------------------------------------------------
+| Port   |  0  - DV  |  1  |  2  - D   |  3  - D   |  4  |  5  |  6  |  7  |
+----------------------------------------------------------------------------
+| Cycles | 2.0   0.0 | 1.0 | 3.5   3.5 | 3.5   3.5 | 0.0 | 3.0 | 2.0 | 0.0 |
+----------------------------------------------------------------------------
+
+DV - Divider pipe (on port 0)
+D - Data fetch pipe (on ports 2 and 3)
+* - instruction micro-ops not bound to a port
+^ - Micro Fusion occurred
+
+|    | Ports pressure in cycles        | |
+|&#181;ops|0DV| 1 | 2 - D | 3 - D |4| 5 | 6 |7|
+-------------------------------------------
+| 1  |   |   |0.5 0.5|0.5 0.5| |   |   | | mov rax, qword ptr [rdx+0x8]
+| 1  |   |   |0.5 0.5|0.5 0.5| |   |   | | vmovdqu xmm0, xmmword ptr [rax]
+| 1  |   |   |0.5 0.5|0.5 0.5| |   |   | | vmovdqa xmm1, xmmword ptr [rcx+0x10]
+| 1  |   |   |       |       | |1.0|   | | vpshufb xmm5, xmm0, xmm1
+| 1  |   |   |0.5 0.5|0.5 0.5| |   |   | | vmovdqa xmm2, xmmword ptr [rcx]
+| 1  |1.0|   |0.5 0.5|0.5 0.5| |   |   | | vpcmpeqb xmm5, xmm5, xmm2
+| 1  |   |   |0.5 0.5|0.5 0.5| |   |   | | vmovdqa xmm3, xmmword ptr [rcx+0x20]
+| 2  |   |   |0.5 0.5|0.5 0.5| |1.0|   | | vpbroadcastb xmm4, byte ptr [rdx]
+| 1  |   |1.0|       |       | |   |   | | vpcmpgtb xmm1, xmm3, xmm4
+| 2  |1.0|   |       |       | |1.0|   | | vptest xmm1, xmm5
+| 1  |   |   |       |       | |   |1.0| | jnb 0x10
+| 1* |   |   |       |       | |   |   | | xor eax, eax
+| 1  |   |   |       |       | |   |1.0| | not al
+| 3^ |   |   |0.5 0.5|0.5 0.5| |   |   | | ret
+Total Num Of &#181;ops: 18
+</code></pre>
+                    </div>
+                </div>
+
+                <p>
+
+                    The <a
+                    href="https://github.com/tpn/pdfs/blob/4d2296269d3737b649def585a19eb103cda9c3d0/Intel%20Architecture%20Code%20Analyzer%20-%20User's%20Guide%20-%20v3.0%20(2017).pdf">
+                    Intel Architecture Code Analyzer User Manual (v3.0)</a> provides decent
+                    documentation about how to interpret the output, so I won't go over the gory
+                    details.  What I'm really looking at in this pass is what my block throughput
+                    is, and potentially what the bottleneck is.
+
+                </p>
+
+                <p>
+
+                    In this case, our block throughput is being reported as 3.74 cycles, which
+                    basically indicates how many CPU cycles it takes to execute the block.  Our
+                    bottleneck is dependency chains, which refers to the situation where, say,
+                    instruction C can't start because the results from instruction A aren't
+                    ready yet.  (This... this is a vastly simplified explanation.)
+
+                </p>
+
+                <p>
+
+                    Alright, well, what can we do?  A good answer would be that with an intimate
+                    understanding of contemporary Intel CPU architecture, you can pin-point exactly
+                    what needs changing in order to reduce dependencies or block throughput.
+
+                </p>
+
+                <p>
+
+                    In reality, here's what I did for version 5: moved shit around until the number
+                    got smaller.
+
+                </p>
+
+                <p>
+
+                    That's not entirely true.  Fabian did make a good suggestion when he was
+                    reviewing some of my assembly that I was often needlessly doing a load into an
+                    XMM register only to use it once in a subsequent operation.  Instead of doing
+                    that I could just use the <em>load-op</em> version of the instruction, which
+                    allows for an instruction input parameter to be sourced from memory.
+
+                </p>
+
+                <p>
+
+                    For example, instead of this:
+
+                </p>
+
+<pre class="code"><code class="language-nasm">vmovdqa  xmm2, xmmword ptr StringTable.UniqueChars[rcx]       ; Load unique chars.
+vpcmpeqb xmm5, xmm5, xmm2                                     ; Compare unique chars.
+</code></pre>
+
+                <p>
+
+                    You can do this:
+
+                </p>
+
+<pre class="code"><code class="language-nasm">vpcmpeqb xmm5, xmm5, xmmword ptr StringTable.UniqueChars[rcx] ; Compare unique chars.
+</code></pre>
+
+                <p>
+
+                    But yeah, other than a few load-op tweaks, I basically just shuffled shit around
+                    until the block throughput reported lower.  Very rigorous methodology, I know.
+                    Here's the final version, which also happens to be the version quoted in the
+                    introduction of this article:
+
+                </p>
+
+                <div class="tab-box language box-intro2">
+                    <ul class="tabs">
+                        <li data-content="content-intro2-nasm">Assembly</li>
+                        <li data-content="content-intro2-iaca">IACA</li>
+                    </ul>
+                    <div class="content">
+<pre class="code content-intro2-nasm"><code class="language-nasm">
+mov      rax,  String.Buffer[rdx]                   ; Load address of string buffer.
+vpbroadcastb xmm4, byte ptr String.Length[rdx]      ; Broadcast string length.
+vmovdqa  xmm3, xmmword ptr StringTable.Lengths[rcx] ; Load table lengths.
+vmovdqu  xmm0, xmmword ptr [rax]                    ; Load string buffer.
+vpcmpgtb xmm1, xmm3, xmm4                           ; Identify slots &gt; string len.
+vpshufb  xmm5, xmm0, StringTable.UniqueIndex[rcx]   ; Rearrange string by unique index.
+vpcmpeqb xmm5, xmm5, StringTable.UniqueChars[rcx]   ; Compare rearranged to unique.
+vptest   xmm1, xmm5                                 ; Unique slots AND (!long slots).
+jnc      short Pfx10                                ; CY=0, continue with routine.
+xor      eax, eax                                   ; CY=1, no match.
+not      al                                         ; al = -1 (NO_MATCH_FOUND).
+ret                                                 ; Return NO_MATCH_FOUND.
+</code></pre>
+<pre class="code content-intro2-iaca"><code class="language-nasm">
+S:\Source\tracer>iaca x64\Release\StringTable2.dll
+Intel(R) Architecture Code Analyzer
+Version -  v3.0-28-g1ba2cbb build date: 2017-10-23;17:30:24
+Analyzed File -  x64\Release\StringTable2.dll
+Binary Format - 64Bit
+Architecture  -  SKL
+Analysis Type - Throughput
+
+Throughput Analysis Report
+--------------------------
+Block Throughput: 3.48 Cycles       Throughput Bottleneck: FrontEnd
+Loop Count:  24
+Port Binding In Cycles Per Iteration:
+----------------------------------------------------------------------------
+| Port   |  0  - DV  |  1  |  2  - D   |  3  - D   |  4  |  5  |  6  |  7  |
+----------------------------------------------------------------------------
+| Cycles | 2.0   0.0 | 1.0 | 3.5   3.5 | 3.5   3.5 | 0.0 | 3.0 | 2.0 | 0.0 |
+----------------------------------------------------------------------------
+
+DV - Divider pipe (on port 0)
+D - Data fetch pipe (on ports 2 and 3)
+* - instruction micro-ops not bound to a port
+^ - Micro Fusion occurred
+
+|    | Ports pressure in cycles        | |
+|&#181;ops|0DV| 1 | 2 - D | 3 - D |4| 5 | 6 |7|
+-------------------------------------------
+| 1  |   |   |0.5 0.5|0.5 0.5| |   |   | | mov rax, qword ptr [rdx+0x8]
+| 2  |   |   |0.5 0.5|0.5 0.5| |1.0|   | | vpbroadcastb xmm4, byte ptr [rdx]
+| 1  |   |   |0.5 0.5|0.5 0.5| |   |   | | vmovdqa xmm3, xmmword ptr [rcx+0x20]
+| 1  |   |   |0.5 0.5|0.5 0.5| |   |   | | vmovdqu xmm0, xmmword ptr [rax]
+| 1  |1.0|   |       |       | |   |   | | vpcmpgtb xmm1, xmm3, xmm4
+| 2^ |   |   |0.5 0.5|0.5 0.5| |1.0|   | | vpshufb xmm5, xmm0, xmmword ptr [rcx+0x10]
+| 2^ |   |1.0|0.5 0.5|0.5 0.5| |   |   | | vpcmpeqb xmm5, xmm5, xmmword ptr [rcx]
+| 2  |1.0|   |       |       | |1.0|   | | vptest xmm1, xmm5
+| 1  |   |   |       |       | |   |1.0| | jnb 0x10
+| 1* |   |   |       |       | |   |   | | xor eax, eax
+| 1  |   |   |       |       | |   |1.0| | not al
+| 3^ |   |   |0.5 0.5|0.5 0.5| |   |   | | ret
+Total Num Of &#181;ops: 18
+</code></pre>
+
+                    </div>
+                </div>
+
+                <p>
+
+                    As you can see, that is reporting a block throughput of 3.48 instead of 3.74.  A
+                    whopping 0.26 reduction!  Also note the bottleneck is now being reported as
+                    <code>FrontEnd</code>, which basically means that the thing holding up this code
+                    now is literally the CPU's ability to decode the actual instruction stream into
+                    actionable internal work.  (Again, super simplistic explanation of a very complex
+                    process.)
+
+                </p>
+
+
+                <p>
+
+                    For the sake of completeness, here's the proper diff and full version of
+                    assembly version 5:
 
                 </p>
 
@@ -12233,6 +12754,74 @@ Pfx60:  vpextrb     rcx, xmm4, 2                ; Restore rcx counter.
 </code></pre>
                     </div>
                 </div>
+
+                <p>
+
+                    Did it make a difference?  Were we able to shave any time off the negative match
+                    fast path?  Let's find out:
+
+                </p>
+
+                <p>
+                    <a href="Benchmark-x64-05-v1.svg" target="_blank">
+                        <img class="svg-image" src="Benchmark-x64-05-v1.svg"/>
+                    </a>
+                </p>
+
+                <p>
+
+                    Hurrah!  We've got a new winner!  Our final tweaks yielded a very small but
+                    measurable and repeatable improvement in both prefix matching and negative
+                    matching!  Let's mark that up as a win.
+
+                </p>
+
+                <!--
+                <p>
+
+                    Actually, now that we've got VTune working without immediately causing a kernel
+                    panic (updating motherboard BIOS appeared to fix that problem), let's compare
+                    VTune's summary of version 4 versus version 5:
+
+                </p>
+
+                <hr/>
+                <pre>
+    IsPrefixOfStringInTable_x64_4       |       IsPrefixOfStringInTable_x64_5
+Elapsed Time:	        0.456s          |   Elapsed Time:	    0.456s
+Clockticks:	        1,553,630,000   |   Clockticks:	            1,551,040,000
+Instructions Retired:	5,047,170,000   |   Instructions Retired:   5,047,170,000
+CPI Rate:	        0.308           |   CPI Rate:	            0.307
+MUX Reliability:	0.872           |   MUX Reliability:        0.859
+Front-End Bound:	 7.3%           |   Front-End Bound:         0.8%
+Bad Speculation:	 4.8%           |   Bad Speculation:         0.0%
+Back-End Bound:	         4.4%           |   Back-End Bound:          0.0%
+Retiring:	        83.5%           |   Retiring:              100.0%
+   General Retirement:  82.6%           |      General Retirement: 100.0%
+   Microcode Sequencer:  0.9%           |      Microcode Sequencer:  0.4%
+</pre>
+                <hr/>
+
+                <p>
+
+                    100% retirement of pipeline slots; not bad for just shuffling shit around!
+                    You can see the tiny decrease in CPI, from 0.308 to 0.307, which matches the
+                    tiny performance improvement we observed for negative matching.
+
+                </p>
+
+                <p>
+
+                    Note: the command line invocations for version 4 and 5 above were as follows:
+
+                </p>
+
+                <hr/>
+<pre>
+
+</pre>
+                <hr/>
+                -->
 
                 <!--
                 <a class="xref" name="IsPrefixOfStringInTable_15"></a>
