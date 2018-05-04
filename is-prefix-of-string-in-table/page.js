@@ -28,6 +28,9 @@ $(function() {
     initTabBox('.tab-box.language.box-x64-4v2');
     initTabBox('.tab-box.language.box-x64-v4');
     initTabBox('.tab-box.language.box-x64-5v4');
+    initTabBox('.tab-box.language.box-x64-9');
+    initTabBox('.tab-box.language.box-x64-10v9');
+    initTabBox('.tab-box.language.box-x64-11v10');
     initTabBox('.tab-box.language.box-api');
     initTabBox('.tab-box.language.box-typedefs');
 });
