@@ -23,36 +23,6 @@
         <script src="../home.js"></script>
         <script src="page.js"></script>
     </head>
-    <!--
-
-        TODO:
-            - Zip up everything and provide a download for it on github.
-            - Add a section on release build vs PGO.
-            - Fix the image alignment issues on high DPI/Retina/font-scaling resolutions.
-
-        IN PROGRESS:
-            - Benchmark section.
-                - How to build/download perhaps.
-            - Add comparison section of all the various iterations
-                - Diagram depicting sequence of events things were written in.
-                - Updated graphs of performance.
-                - Diffs to previous version of the various changes to code
-
-        DONE:
-            - Interface section.
-            - Syntax highlighting
-                - Review asm keywords.
-                - Tweak/extend colorscheme.
-            - Benchmark section.
-                - How it works.
-
-        NOPE:
-            - Add screenshots of stepping through the routine for:
-                - C version
-                - Asm version
-            - Embed a speakerdeck deck graphically depicting how the algorithm works.
-
-    -->
     <body>
 
         <header class="header">
@@ -65,7 +35,7 @@
             <ul class="header-links">
                 <li><a href="#home"><i class="fa fa-home"></i> Is Prefix Of String In Table?</a></li>
                 <li><a href="#contents"><i class="fa fa-align-left"></i> Contents</a></li>
-                <li><a href="https://github.com/tpn/tracer/tree/2018-04-18.2/StringTable2" target="_blank"><i class="fa fa-github"></i> GitHub</a></li>
+                <li><a href="https://github.com/tpn/tracer/tree/v0.1.12/StringTable2" target="_blank"><i class="fa fa-github"></i> GitHub</a></li>
                 <li><a href="https://twitter.com/trentnelson" target="_blank"><i class="fa fa-twitter"></i> Twitter</a></li>
                 <!--
                 <li><a href="https://twitter.com/trentnelson" class="twitter-follow-button" data-show-count="false">Follow @trentnelson</a></li>
@@ -89,10 +59,13 @@
             <div class="container">
 
                 <small>
-                    Current status: <strong>late late draft</strong>.  Updated: 4th May, 2018.
+                    Published: 4th May, 2018.
+                    <!--
+                    Updated: 4th May, 2018.
                     Target publish date: <del>20th April, 2018</del> <del>23rd April, 2018</del>
                     <del>25th April, 2018</del> <del>30th April, 2018</del> <del>2nd May, 2018</del>
                     7th May, 2018.
+                    -->
                     Thanks to <a href="https://twitter.com/rygorous">Fabian Giesen</a>,
                     <a href="https://twitter.com/pshufb">Wojciech Mu&#322;a</a>,
                     <a href="https://twitter.com/geofflangdale">Geoff Langdale</a>,
@@ -298,6 +271,14 @@ Total Num Of &#181;ops: 18
                     </a>
                 </p>
 
+                <p>
+
+                    We were then ready to publish, but felt compelled to investigate an odd
+                    performance quirk we'd noticed with one of the assembly routines, which
+                    yielded 7 more assembly versions.  Were any of them faster?  Let's find out.
+
+                </p>
+
             </div>
         </section>
         <hr/>
@@ -356,7 +337,7 @@ Total Num Of &#181;ops: 18
                             <a href="#implementations">The Implementations</a>
                             <ul class="toc-list-2">
                                 <li>
-                                    <a href="#round1">Round 1</a>
+                                    Round 1
                                     <ul class="toc-list-3">
                                         <li><a href="#round1-c">C</a></li>
                                         <ul class="toc-list-4">
@@ -413,7 +394,7 @@ Total Num Of &#181;ops: 18
                                 <li>
                                     <a href="#round2">Round 2; Post-Internet Feedback</a>
                                     <ul class="toc-list-3">
-                                        <li><a href="#round2-c">C</a></li>
+                                        <li>C</li>
                                         <ul class="toc-list-4">
                                             <li>
                                                 <a href="#IsPrefixOfStringInTable_11">IsPrefixOfStringInTable_11</a>
@@ -429,7 +410,7 @@ Total Num Of &#181;ops: 18
                                             </li>
                                         </ul>
 
-                                        <li><a href="#round2-assembly">Assembly</a>
+                                        <li>Assembly</a>
                                         <ul class="toc-list-4">
                                             <li>
                                                 <a href="#IsPrefixOfStringInTable_x64_4">IsPrefixOfStringInTable_x64_4</a>
@@ -441,16 +422,8 @@ Total Num Of &#181;ops: 18
                                     </ul>
                                 </li>
                                 <li>
-                                    <a href="#round3">Round 3</a>
+                                    <a href="#IsPrefixOfStringInTable_x64_3-review">Round 3; Investigating why IsPrefixOfStringInTable_x64_3 was so slow...</a>
                                     <ul class="toc-list-3">
-                                        <li><a href="#round3-c">C</a></li>
-                                        <ul class="toc-list-4">
-                                            <li>
-                                                <a href="#IsPrefixOfStringInTable_15">IsPrefixOfStringInTable_15</a>
-                                            </li>
-                                        </ul>
-
-                                        <li><a href="#round3-assembly">Assembly</a>
                                         <ul class="toc-list-4">
                                             <li>
                                                 <a href="#IsPrefixOfStringInTable_x64_7">IsPrefixOfStringInTable_x64_7</a>
@@ -464,22 +437,11 @@ Total Num Of &#181;ops: 18
                                             <li>
                                                 <a href="#IsPrefixOfStringInTable_x64_10">IsPrefixOfStringInTable_x64_10</a>
                                             </li>
-                                        </ul>
-                                    </ul>
-                                </li>
-                                <li>
-                                    <a href="#round4">Round 4</a>
-                                    <ul class="toc-list-3">
-                                        <li><a href="#round3-assembly">Assembly</a>
-                                        <ul class="toc-list-4">
                                             <li>
                                                 <a href="#IsPrefixOfStringInTable_x64_11">IsPrefixOfStringInTable_x64_11</a>
                                             </li>
                                             <li>
                                                 <a href="#IsPrefixOfStringInTable_x64_12">IsPrefixOfStringInTable_x64_12</a>
-                                            </li>
-                                            <li>
-                                                <a href="#IsPrefixOfStringInTable_x64_13">IsPrefixOfStringInTable_x64_13</a>
                                             </li>
                                         </ul>
                                     </ul>
@@ -487,45 +449,6 @@ Total Num Of &#181;ops: 18
                             </ul>
                         </li>
 
-                        <!--
-                        <li>
-                            <a href="#implementation">The Implementation(s)</a>
-                            <ul class="toc-list-2">
-                                <li>
-                                    The <a href="#IsPrefixOfStringInTable">IsPrefixOfStringInTable</a> function signature.
-                                    (TODO)
-                                </li>
-                                <li><a href="#how-it-works">How It Works</a> (TODO)</li>
-                                <li>
-                                    First round.
-                                    <ul class="toc-list-3">
-                                        <li>
-                                            Fastest C version: <a href="#IsPrefixOfStringInTable_10">IsPrefixOfStringInTable_10</a>.
-                                        </li>
-                                        <li>
-                                            Fastest assembly version: <a
-                                            href="#IsPrefixOfStringInTable_x64_2">IsPrefixOfStringInTable_x64_2</a>.
-                                        </li>
-                                    </ul>
-                                </li>
-                                <li>
-                                    Second round, after internet feedback.
-                                    <ul class="toc-list-3">
-                                        <li>
-                                            Fastest C version: <a href="#IsPrefixOfStringInTable_10">IsPrefixOfStringInTable_10</a>.
-                                        </li>
-                                        <li>
-                                            Fastest assembly version: <a
-                                            href="#IsPrefixOfStringInTable_x64_2">IsPrefixOfStringInTable_x64_2</a>.
-                                        </li>
-                                    </ul>
-                                </li>
-                            </ul>
-                        </li>
-                        <li>
-                            <a href="#benchmark">The Benchmark</a> (TODO)
-                        </li>
-                        -->
                         <li>
                             <a href="#other-applications">Other Applications</a>
                         </li>
@@ -7114,6 +7037,7 @@ StringTable2!IsPrefixOfStringInTable_10:
 -->
 
                 <hr/>
+                <a class="xref" name="round1-assembly"></a>
                 <a class="xref" name="IsPrefixOfStringInTable_x64_1"></a>
                 <h2>IsPrefixOfStringInTable_x64_1</h2>
                 <small>
@@ -12848,7 +12772,7 @@ Retiring:	        83.5%           |   Retiring:              100.0%
 
                 <hr/>
                 <a class="xref" name="IsPrefixOfStringInTable_x64_3-review"></a>
-                <h3>Reviewing IsPrefixOfStringInTable_x64_3...</h3>
+                <h2>Reviewing IsPrefixOfStringInTable_x64_3...</h2>
 
                 <p>
 
@@ -16417,7 +16341,7 @@ Pfx60:  vpextrb     rcx, xmm4, 2                ; Restore rcx counter.
                 <h2>IsPrefixOfStringInTable_x64_12</h2>
                 <small>
                     <a href="#IsPrefixOfStringInTable_x64_11"><i class="fa fa-arrow-left"></i>  IsPrefixOfStringInTable_x64_11</a> |
-                    <a href="#IsPrefixOfStringInTable_x64_13">IsPrefixOfStringInTable_x64_13  <i class="fa fa-arrow-right"></i></a>
+                    <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ">IsPrefixOfStringInTable_x64_13  <i class="fa fa-arrow-right"></i></a>
                 </small>
 
                 <p>
@@ -17615,22 +17539,12 @@ Pfx80:  mov         byte ptr StringMatch.NumberOfMatchedCharacters[r9], r8b
 
                 <p>
 
-                    The assembly version brings in gold across the board!  Hot damn!
+                    The assembly version brings in gold across the board!  Hot damn!  A quick run
+                    through VTune suggests the routine is clocking in with a CPI of 0.266, which is
+                    pretty darn close to the theoretical maximum of 0.25 (which implies 4
+                    instructions retired per clock cycle).
 
                 </p>
-
-                <!--
-
-                <hr/>
-                <h2>Summary</h2>
-
-                <p>
-
-                    (Insert summary.)
-
-                </p>
-
-                -->
 
                 <a class="xref" name="other-applications"></a>
                 <h1>Other Applications</h1>
@@ -18510,6 +18424,20 @@ typedef __m512i DECLSPEC_ALIGN(64) ZMMWORD, *PZMMWORD, **PPZMMWORD;
 
 </code></pre>
 
+            <hr/>
+            <h3>Contact</h3>
+            <p>
+
+                Like the article?  Let me know!  E-mail: &#116;&#114;&#101;&#110;&#116;&#64;&#116;&#114;&#101;&#110;&#116;&#46;&#109;&#101;
+                (I'm also available to hire!)
+
+            </p>
+
+            <p>
+
+                I'll also be at MSBuild 2018 in Seattle next week and would love to meet up!
+
+            </p>
 
             </div>
 
