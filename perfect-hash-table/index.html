@@ -288,8 +288,8 @@ VOID Insert(ULONG Key, ULONG Value) { Table[PerfectHashFunction(Key)] = Value; }
                     The nice thing about the graph creation step is that each iteration can be
                     palmed off to a threadpool worker, such that you can attempt to find a graph
                     solution in parallel up to NCPU.  On my 12 core box at home, there is a very
-                    high probability I’ll find a solution in the first batch of 12 iterations
-                    submitted in parallel – thus, my clock time for solving the perfect hash stays
+                    high probability I'll find a solution in the first batch of 12 iterations
+                    submitted in parallel &mdash; thus, my clock time for solving the perfect hash stays
                     relatively consistent at 6-7 seconds, give or take.
 
                 </p>
