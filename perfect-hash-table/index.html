@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html>
+    <!-- vim:set tw=100 ts=8 sw=4 et                                                            :-->
+    <head>
+        <title>Perfect Hash Table</title>
+        <meta name="msvalidate.01" content="E828541C73A98C315E3D6B8C88EF6057" />
+        <meta name="viewport" content="width=device-width, initial-scale=0.65, maximum-scale=1.0" />
+
+        <!-- https://www.google.com/fonts#UsePlace:use/Collection:Lato:200,300,300italic -->
+        <!--
+        <meta name="viewport" content="width=device-width, min-width=1100px, initial-scale=0.7, maximum-scale=1.0, shrint-to-fit=no" />
+        <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:200,300,300italic">
+        <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Merriweather:300,300i,400,400i">
+        -->
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400" rel="stylesheet">
+        <link rel="stylesheet" href="//oss.maxcdn.com/normalize/3.0.1/normalize.min.css">
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css">
+        <link rel="stylesheet" href="../prism.css">
+        <link rel="stylesheet" href="../home.css">
+        <link rel="stylesheet" href="page.css">
+        <script src="//oss.maxcdn.com/jquery/2.1.1/jquery.min.js"></script>
+        <script src="../prism.js"></script>
+        <script src="../home.js"></script>
+        <script src="page.js"></script>
+    </head>
+    <body>
+
+        <header class="header">
+            <div class="header-logo" href="#">
+                <!--
+                <a class="homename" href="http://trent.me"><strong>T</strong>rent <strong>N</strong>elson</a>
+                -->
+                <a class="homename" href=".."><strong>T</strong>rent <strong>N</strong>elson</a>
+            </div>
+            <ul class="header-links">
+                <li><a href="#home"><i class="fa fa-home"></i>Creating a Perfect Hash Table</a></li>
+                <li><a href="#contents"><i class="fa fa-align-left"></i> Contents</a></li>
+                <li><a href="https://github.com/tpn/tracer/PerfectHashTable" target="_blank"><i class="fa fa-github"></i> GitHub</a></li>
+                <li><a href="https://twitter.com/trentnelson" target="_blank"><i class="fa fa-twitter"></i> Twitter</a></li>
+                <!--
+                <li><a href="https://twitter.com/trentnelson" class="twitter-follow-button" data-show-count="false">Follow @trentnelson</a></li>
+                -->
+            </ul>
+        </header>
+
+        <a class="xref" name="home"></a>
+        <section class="section section-hero">
+            <div class="container">
+                <h1>
+                    Creating a Perfect Hash Table
+                </h1>
+                <h3>
+                    A Performant, Parallel, Random Acyclic-Hypergraph Approach
+                </h3>
+            </div>
+        </section>
+
+        <section class="section section-summary">
+            <div class="container">
+
+                <small>
+                    Updated: 4th June, 2018.
+                    <a href="https://github.com/tpn/website/blob/master/perfect-hash-table/index.html">
+                    View this page's source on GitHub.</a>
+
+                <hr/>
+
+                <h3>TL;DR</h3>
+                <p>
+
+                    This article documents a recent assignment regarding the implementation of a
+                    perfect hash table.  I discuss the initial goal as a set of requirements, then
+                    capture design decisions and provide an implementation overview.
+
+                </p>
+                </small>
+
+                <hr/>
+                <h2>Requirements</h2>
+                <p>
+
+                    Author a perfect hash table component that provides offline table
+                    generation and fast lookup performance.  Assume a key and value width of
+                    <code>ULONG</code> (32 bits).  Optimize for key set sizes ranging from
+                    10,000 to 40,000 keys on average, with up to 100,000 keys on the high end.
+
+                </p>
+
+                <p>
+
+                    Assume a key distribution similar to that of shared library address offsets;
+                    not linear, but definitely not random, either.  Do not make assumptions about
+                    the presence of leading or trailing zeros (i.e. alignment), although feel free
+                    to optimize for this if it doesn't detract from the component's performance on
+                    less predictable key sets.
+
+                </p>
+
+                <p>
+
+                    Prioritize lookup speed over generation speed.  Optimize the lookup algorithm
+                    to minimize latency involved in a single <code>Value = Lookup(Key)</code>
+                    call.  Table generation will be done ahead of time, in a separate process, and
+                    only needs to ensure that tables can be generated in a reasonable amount of
+                    time given the size of the input key set.  Linear overhead is ideal, quadratic
+                    less so, exponential would be infeasible.
+
+                </p>
+
+                <p>
+
+                    Prioritize lookup speed over table size (memory requirements).  A larger table
+                    size, within reason, is an acceptable trade-off if it yields a faster lookup
+                    speed.  A minimal perfect hash table, where each key maps to exactly one table
+                    location, is not a requirement, nor is it prohibited.
+
+                </p>
+
+                <p>
+
+                    Note the inevitable tradeoff in size and performance with regards to the masking
+                    method used by the implementation.  Modulus-oriented solutions, those that use
+                    the % operator in C, tend to be slower (modulus division can take upward of 90
+                    cycles), but yield smaller table sizes.  Solutions relying on power-of-2 based
+                    table sizes boast much faster masking routines (e.g. <code>Input &amp;
+                    (Size-1)</code>), but incur greater table size overhead.
+
+                </p>
+
+                <p>
+
+                    The offline generation process takes, as its input, a key file.  The file will
+                    be an array of <code>ULONG</code> keys (i.e. binary data).  The number of
+                    elements in the array can be ascertained by dividing the file size by
+                    <code>sizeof(ULONG)</code>.  It produces, as its output, a perfect hash table
+                    file that can be subsequently loaded and used in separate processes.
+
+                </p>
+
+                <p>
+
+                    Callers wishing to use a given perfect hash table will need to load the file
+                    produced in the step above.  This will yield an interface from which the hash
+                    table can be interacted with.  At a bare minimum, the interface should support
+                    the following semantics:
+
+                </p>
+
+<pre class="code"><code class="language-c">extern PULONG Table;
+ULONG Lookup(ULONG Key) { return Table[PerfectHashFunction(Key)]; }
+VOID Insert(ULONG Key, ULONG Value) { Table[PerfectHashFunction(Key)] = Value; }
+</code></pre>
+
+                <p>
+
+                    The interface requirements are flexible and can be extended as long as the
+                    criteria above are met at a bare minimum.
+
+                </p>
+
+                <p>
+
+                    The behavior of looking up or inserting a key that wasn't in the original input
+                    set is undefined.  That is, the implementation is not required to detect or
+                    protect against this scenario &mdash; that is the responsibility of the caller.
+
+                </p>
+
+                <p>
+
+                    Feel free to review existing works on the topic, particularly the cmph open
+                    source project, the GNU gperf library, and the plethora of papers on the subject
+                    of perfect hashing and minimal perfect hashing.
+
+                </p>
+
+            </div>
+        </section>
+        <hr/>
+
+        <!--
+        <section class="section section-toc">
+            <div class="container">
+
+                <a class="xref" name="contents"></a>
+                <h1>Contents</h1>
+
+                <p>
+                    <ul class="toc-list">
+                        <li>TBD</li>
+                    </ul>
+                </p>
+            </div>
+        </section>
+        <hr/>
+        -->
+
+        <section class="section section-body">
+            <div class="container">
+
+                <h1>Getting Started</h1>
+
+                <p>
+
+                    This was an interesting project.  I'd never written a perfect hash table before,
+                    nor was I familiar with the landscape for doing such a thing.  I spent about
+                    three days reviewing existing work, including the <a
+                    href="http://cmph.sourceforge.net">cmph</a> project's source code.  (I ended up
+                    collecting about 147 (!) documents on the topic (papers, PhD thesis, slides,
+                    etc) in my <a href="https://github.com/tpn/pdfs">PDFs</a> repo over the course
+                    of the project.)
+
+                </p>
+
+                <h1>Algorithm Decisions</h1>
+
+                <p>
+
+                    The algorithm I settled on is the acyclic random 2-part hypergraph (or r-graph,
+                    where r = 2).  The algorithm works as follows: for each key, generate two
+                    independent hash values.  Mask these values such that they fall within the
+                    confines of the number of keys in the set.  These masked hash values now become
+                    the two vertices, and are added to a graph structure by a connecting edge.  The
+                    edge is simply the 0..N index being used for enumeration, e.g.:
+
+                </p>
+
+<pre class="code"><code class="language-c">for (Index = 0; Index &lt; NumberOfKeys; Index++) {
+
+    Key = Keys[Index];
+
+    Hash1 = HashFunction1(Key);
+    Hash2 = HashFunction2(Key);
+
+    Vertex1 = MaskFunction(Hash1);
+    Vertex2 = MaskFunction(Hash2);
+
+    Edge = Index;
+
+    GraphAddEdge(Graph, Edge, Vertex1, Vertex2);
+}</code></pre>
+
+                <p>
+
+                    Once constructed, the graph is assessed to determine whether or not it is
+                    acyclic.  If the graph is acyclic, it means every vertex has at most 1 degree
+                    of connectivity to other vertices.  We want an acyclic graph.  If it's not
+                    acyclic, the attempt has failed, the graph is thrown away, and a new attempt
+                    is made, using new random seed data to drive the two hash functions.  Once
+                    an acyclic graph is found, it's relatively straight forward to convert this
+                    into a data structure that can be used as a perfect hash table.
+
+                </p>
+
+                <p>
+
+                    This algorithm first has roots in <a href="">A Versatile Data Structure for
+                    Edge-Oriented Graph Algorithms (Ebert, 1987)</a>.  Its application to perfect
+                    hashing appears in <a href="">A Family of Perfect Hashing Methods (Majewski,
+                    Wormald, Havas, Czech, 1996)</a>, where they focus on more rigorous proofs of
+                    the runtime complexity associated with acyclic r-graphs, extending on the work
+                    in their earlier paper, Graphs, Hypergraphs and Hashing (1994).
+
+                </p>
+
+                <p>
+
+                    There is one thing that stood out in their 1996 paper (page 9) that I was able
+                    to verify experimentally (after finally hacking the CHM algorithm in the CHMP
+                    project into a working state).  To summarize, sans heavy math notation: the
+                    probability that we find a perfect hash solution by identifying an acyclic
+                    r-graph (r = 2) is 99.9% within 18 iterations.  On average, a solution is found
+                    in &sqrt;3 attempts.  This geometric distribution of the probability of finding
+                    a solution is very desirable.
+
+                </p>
+
+                <p>
+
+                    In my experiments, even with 10 million random keys, graph creation took about
+                    6-7 seconds on the 64-bit release build.  On average it found a solution usually
+                    within 1-3 iterations.  The worst-case I saw was 7 iterations.
+
+                </p>
+
+                <p>
+
+                    The nice thing about the graph creation step is that each iteration can be
+                    palmed off to a threadpool worker, such that you can attempt to find a graph
+                    solution in parallel up to NCPU.  On my 12 core box at home, there is a very
+                    high probability I’ll find a solution in the first batch of 12 iterations
+                    submitted in parallel – thus, my clock time for solving the perfect hash stays
+                    relatively consistent at 6-7 seconds, give or take.
+
+                </p>
+
+                <h1>Design Decisions</h1>
+
+                <p>
+
+                    Work in progress.
+
+                </p>
+
+
+                <hr/>
+                <!--
+                <h3>Contact</h3>
+                <p>
+
+                    Like the article?  Let me know!  E-mail: &#116;&#114;&#101;&#110;&#116;&#64;&#116;&#114;&#101;&#110;&#116;&#46;&#109;&#101;
+
+                </p>
+                -->
+
+            </div>
+
+        </section>
+
+        <script type="text/javascript">
+            // Google Analytics
+            (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+            })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+            ga('create', 'UA-24686252-1', 'auto');
+            ga('send', 'pageview');
+        </script>
+
+        <section class="section section-footer">
+            <div class="container">
+                <small><small>
+                    <p>
+                        <a
+                        href="https://github.com/tpn/website/blob/master/perfect-hash-table/index.html">
+                        View this page's source on GitHub.</a>
+                    </p>
+                </small></small>
+                <p>
+                    <a href="https://twitter.com/trentnelson" class="twitter-follow-button" data-show-count="false">Follow @trentnelson</a>
+                    <iframe src="https://ghbtns.com/github-btn.html?user=tpn&type=follow" frameborder="0" scrolling="0" width="170px" height="20px"></iframe>
+                </p>
+                </small>
+            </div>
+        </section>
+
+        <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+
+    </body>
+</html>
