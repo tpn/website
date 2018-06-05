@@ -59,9 +59,12 @@
             <div class="container">
 
                 <small>
-                    Updated: 4th June, 2018.
+                    Current status: <strong>draft</strong>.  Last update: 5th June, 2018.
+                    Target publish date: 7th June, 2018.
+
+                    <!--
                     <a href="https://github.com/tpn/website/blob/master/perfect-hash-table/index.html">
-                    View this page's source on GitHub.</a>
+                    View this page's source on GitHub.</a>-->
 
                 <hr/>
 
@@ -178,7 +181,6 @@ VOID Insert(ULONG Key, ULONG Value) { Table[PerfectHashFunction(Key)] = Value; }
         </section>
         <hr/>
 
-        <!--
         <section class="section section-toc">
             <div class="container">
 
@@ -187,17 +189,47 @@ VOID Insert(ULONG Key, ULONG Value) { Table[PerfectHashFunction(Key)] = Value; }
 
                 <p>
                     <ul class="toc-list">
-                        <li>TBD</li>
+
+                        <li>
+
+                            <a href="#getting-started">Getting Started</a>
+
+                        </li>
+
+                        <li>
+
+                            <a href="#algorithm-decisions">Algorithm Decisions</a>
+
+                        </li>
+
+                        <li>
+
+                            <a href="#initial-design-decisions">Initial Design Decisions</a>
+
+                        </li>
+
+                        <li>
+
+                            <a href="#implementation-notes">Implementation Notes</a>
+
+                        </li>
+
+                        <li>
+
+                            <a href="#code-walkthrough">Code Walkthrough</a>
+
+                        </li>
+
                     </ul>
                 </p>
             </div>
         </section>
         <hr/>
-        -->
 
         <section class="section section-body">
             <div class="container">
 
+                <a class="xref" name="getting-started"></a>
                 <h1>Getting Started</h1>
 
                 <p>
@@ -212,6 +244,7 @@ VOID Insert(ULONG Key, ULONG Value) { Table[PerfectHashFunction(Key)] = Value; }
 
                 </p>
 
+                <a class="xref" name="algorithm-decisions"></a>
                 <h1>Algorithm Decisions</h1>
 
                 <p>
@@ -406,7 +439,8 @@ VOID Insert(ULONG Key, ULONG Value) { Table[PerfectHashFunction(Key)] = Value; }
 
                 </p>
 
-                <h1>Design Decisions</h1>
+                <a class="xref" name="initial-design-decisions"></a>
+                <h1>Initial Design Decisions</h1>
 
                 <p>
 
@@ -442,19 +476,14 @@ VOID Insert(ULONG Key, ULONG Value) { Table[PerfectHashFunction(Key)] = Value; }
 
                             <small>
 
-                            (In fact, the way that it is currently written, you actually can't solve
+                            (In fact, the way that it is currently written, you can't actually solve
                             the graph <strong>*without*</strong> using a threadpool.  You can
                             dictate the level of concurrency you want, and specifying 1 means the
                             threadpool only gets 1 thread, which makes debugging easier, but there
-                            is no way to isolate the solving process to avoid this.  This was an
-                            explicit choice.)
+                            is no way to isolate the solving process to avoid this.  This is by
+                            design.)
 
                             </small>
-
-                            <br/>
-
-                            The decision has paid off, though, as our solving part is very
-                            performant and churns through graph attempts like no tomorrow.
 
                         </li>
 
@@ -501,7 +530,18 @@ VOID Insert(ULONG Key, ULONG Value) { Table[PerfectHashFunction(Key)] = Value; }
 
                 </p>
 
+                <a class="xref" name="implementation-notes"></a>
                 <h1>Implementation Notes</h1>
+
+                <small>
+
+                    (The following section serves as a general introduction to the project's
+                    organization, concepts, files, etc.  It aims to provide a bit of
+                    background context to some of the idioms that will be observed when reviewing
+                    the code.  The next section, <a href="#code-walkthrough">Code Walkthrough</a>,
+                    digs into the implementation details in a more end-to-end type fashion.)
+
+                </small>
 
                 <p>
 
@@ -563,6 +603,13 @@ VOID Insert(ULONG Key, ULONG Value) { Table[PerfectHashFunction(Key)] = Value; }
                     as function pointers to DDK-type functionality normally not available if you're
                     including <code>&lt;Windows.h&gt;</code> (such as bitmaps, AVL tables, prefix
                     tables, etc).
+
+                    <small>(Note: one of the original design objectives of the RTL structure was to
+                    facilitate writing components that could run in both kernel and user mode
+                    without needing recompilation or #ifdefs.  That is, you could author and test
+                    the vast majority of your functionality in user mode, where development,
+                    debugging and testing is easier, without needing to deploy it into the kernel
+                    until much later in the development lifecycle.)</small>
 
                 </p>
 
@@ -1317,6 +1364,702 @@ Return Value:
                     </div>
                 </div>
 
+                <!--
+                <p>
+
+                    I prefer this COM-style vtbl approach to the cmph project's approach, which
+                    uses giant switch statements to select appropriate backends, e.g.:
+
+                </p>
+
+<pre class="code"><code class="language-c">
+cmph_t *cmph_new(cmph_config_t *mph)
+{
+	cmph_t *mphf = NULL;
+	double c = mph-&gt;c;
+
+	DEBUGP("Creating mph with algorithm %s\n", cmph_names[mph-&gt;algo]);
+	switch (mph-&gt;algo)
+	{
+		case CMPH_CHM:
+			DEBUGP("Creating chm hash\n");
+			mphf = chm_new(mph, c);
+			break;
+		case CMPH_BMZ: /* included - Fabiano */
+			DEBUGP("Creating bmz hash\n");
+			mphf = bmz_new(mph, c);
+			break;
+		case CMPH_BMZ8: /* included - Fabiano */
+			DEBUGP("Creating bmz8 hash\n");
+			mphf = bmz8_new(mph, c);
+			break;
+		case CMPH_BRZ: /* included - Fabiano */
+			DEBUGP("Creating brz hash\n");
+			if (c &gt;= 2.0) brz_config_set_algo(mph, CMPH_FCH);
+			else brz_config_set_algo(mph, CMPH_BMZ8);
+			mphf = brz_new(mph, c);
+			break;
+		case CMPH_FCH: /* included - Fabiano */
+			DEBUGP("Creating fch hash\n");
+			mphf = fch_new(mph, c);
+			break;
+		case CMPH_BDZ: /* included - Fabiano */
+			DEBUGP("Creating bdz hash\n");
+			mphf = bdz_new(mph, c);
+			break;
+		case CMPH_BDZ_PH: /* included - Fabiano */
+			DEBUGP("Creating bdz_ph hash\n");
+			mphf = bdz_ph_new(mph, c);
+			break;
+		case CMPH_CHD_PH: /* included - Fabiano */
+			DEBUGP("Creating chd_ph hash\n");
+			mphf = chd_ph_new(mph, c);
+			break;
+		case CMPH_CHD: /* included - Fabiano */
+			DEBUGP("Creating chd hash\n");
+			mphf = chd_new(mph, c);
+			break;
+		default:
+			assert(0);
+	}
+	return mphf;
+}
+
+int cmph_dump(cmph_t *mphf, FILE *f)
+{
+	switch (mphf-&gt;algo)
+	{
+		case CMPH_CHM:
+			return chm_dump(mphf, f);
+		case CMPH_BMZ: /* included - Fabiano */
+			return bmz_dump(mphf, f);
+		case CMPH_BMZ8: /* included - Fabiano */
+			return bmz8_dump(mphf, f);
+		case CMPH_BRZ: /* included - Fabiano */
+			return brz_dump(mphf, f);
+		case CMPH_FCH: /* included - Fabiano */
+			return fch_dump(mphf, f);
+		case CMPH_BDZ: /* included - Fabiano */
+			return bdz_dump(mphf, f);
+		case CMPH_BDZ_PH: /* included - Fabiano */
+			return bdz_ph_dump(mphf, f);
+		case CMPH_CHD_PH: /* included - Fabiano */
+			return chd_ph_dump(mphf, f);
+		case CMPH_CHD: /* included - Fabiano */
+			return chd_dump(mphf, f);
+		default:
+			assert(0);
+	}
+	assert(0);
+	return 0;
+}
+</code></pre>
+                -->
+
+                <p>
+
+                    The <code>Index()</code> routine is algorithm-specific, and forms the backbone of
+                    the perfect hash table functionality: the ability to take a key and return a
+                    unique index that can be used to offset into an array of data.
+
+                </p>
+
+                <p>
+
+                    Here's what the <code>
+                    <a
+                    href="https://github.com/tpn/tracer/blob/db04ecfbd9162c838c4d747d745b10d786890cd3/PerfectHashTable/Chm_01.c#L3291">Index()</a></code>
+                    routine looks like for our CHM algorithm implementation.  Note that it too
+                    leverages the COM interface for driving the hash and masking routines.
+
+                </p>
+
+<pre class="code"><code class="language-c">_Use_decl_annotations_
+HRESULT
+PerfectHashTableIndexImplChm01(
+    PPERFECT_HASH_TABLE Table,
+    ULONG Key,
+    PULONG Index
+    )
+/*++
+
+Routine Description:
+
+    Looks up given key in a perfect hash table and returns its index.
+
+    N.B. If Key did not appear in the original set the hash table was created
+         from, the behavior of this routine is undefined.  (In practice, the
+         key will hash to either an existing key's location or an empty slot,
+         so there is potential for returning a non-unique index.)
+
+Arguments:
+
+    Table - Supplies a pointer to the table for which the key lookup is to be
+        performed.
+
+    Key - Supplies the key to look up.
+
+    Index - Receives the index associated with this key.  The index will be
+        between 0 and NumberOfKeys-1, and can be safely used to offset directly
+        into an appropriately sized array (e.g. Table-&gt;Values[]).
+
+Return Value:
+
+    S_OK on success, E_FAIL if the underlying hash function returned a failure.
+    This will happen if the two hash values for a key happen to be identical.
+    It shouldn't happen once a perfect graph has been created (i.e. it only
+    happens when attempting to solve the graph).  The Index parameter will
+    be cleared in the case of E_FAIL.
+
+--*/
+{
+    ULONG Masked;
+    ULONG Vertex1;
+    ULONG Vertex2;
+    ULONG MaskedLow;
+    ULONG MaskedHigh;
+    PULONG Assigned;
+    ULONGLONG Combined;
+    ULARGE_INTEGER Hash;
+
+    //
+    // Hash the incoming key into the 64-bit representation, which is two
+    // 32-bit ULONGs in disguise, each one driven by a separate seed value.
+    //
+
+    if (FAILED(Table-&gt;Vtbl-&gt;Hash(Table, Key, &amp;Hash.QuadPart))) {
+        goto Error;
+    }
+
+    //
+    // Mask each hash value such that it falls within the confines of the
+    // number of vertices.  That is, make sure the value is between 0 and
+    // Table-&gt;NumberOfVertices-1.
+    //
+
+    if (FAILED(Table-&gt;Vtbl-&gt;MaskHash(Table, Hash.LowPart, &amp;MaskedLow))) {
+        goto Error;
+    }
+
+    if (FAILED(Table-&gt;Vtbl-&gt;MaskHash(Table, Hash.HighPart, &amp;MaskedHigh))) {
+        goto Error;
+    }
+
+    //
+    // Obtain the corresponding vertex values for the masked high and low hash
+    // values.  These are derived from the "assigned" array that we construct
+    // during the creation routine's assignment step (GraphAssign()).
+    //
+
+    Assigned = Table-&gt;Data;
+
+    Vertex1 = Assigned[MaskedLow];
+    Vertex2 = Assigned[MaskedHigh];
+
+    //
+    // Combine the two values, then perform the index masking operation, such
+    // that our final index into the array falls within the confines of the
+    // number of edges, or keys, in the table.  That is, make sure the index
+    // value is between 0 and Table-&gt;Keys-&gt;NumberOfElements-1.
+    //
+
+    Combined = (ULONGLONG)Vertex1 + (ULONGLONG)Vertex2;
+
+    if (FAILED(Table-&gt;Vtbl-&gt;MaskIndex(Table, Combined, &amp;Masked))) {
+        goto Error;
+    }
+
+    //
+    // Update the caller's pointer and return success.  The resulting index
+    // value represents the array offset index for this given key in the
+    // underlying table, and is guaranteed to be unique amongst the original
+    // keys in the input set.
+    //
+
+    *Index = Masked;
+
+    return S_OK;
+
+Error:
+
+    //
+    // Clear the caller's pointer and return failure.  We should only hit this
+    // point if the caller supplies a key that both: a) wasn't in the original
+    // input set, and b) happens to result in a hash value where both the high
+    // part and low part are identical, which is rare, but not impossible.
+    //
+
+    *Index = 0;
+
+    return E_FAIL;
+}
+</code></pre>
+
+                <p>
+
+                    This routine lives in our
+                    <a href="https://github.com/tpn/tracer/blob/master/PerfectHashTable/Chm_01.c">Chm_01.c</a>
+                    file, which is our only algorithm backend at the moment.  This file, together
+                    with its counterpart
+                    <a href="https://github.com/tpn/tracer/blob/master/PerfectHashTable/Chm_01.h">Chm_01.h</a>
+                    header, features all of the algorithm-specific structures and routines related
+                    to the implementation.  It is here we define the graph structures specific to
+                    the CHM algorithm: <code>GRAPH_DIMENSIONS</code>, <code>GRAPH_INFO</code>, and
+                    <code>GRAPH</code>.
+
+                </p>
+
+                <div class="tab-box language box-chm01-structs">
+                    <ul class="tabs">
+                        <li data-content="content-chm01-structs-graph_dimensions">GRAPH_DIMENSIONS</li>
+                        <li data-content="content-chm01-structs-graph_info">GRAPH_INFO</li>
+                        <li data-content="content-chm01-structs-graph">GRAPH</li>
+                    </ul>
+                    <div class="content">
+<pre class="code content-chm01-structs-graph_dimensions"><code class="language-c">//
+// Define the primary dimensions governing the graph size.
+//
+
+typedef struct _GRAPH_DIMENSIONS {
+
+    //
+    // Number of edges in the graph.  This corresponds to the number of keys
+    // in our input set.  If modulus masking is active, the number of keys and
+    // the number of edges will be identical.  Otherwise, the number of edges
+    // will be the number of keys rounded up to a power of 2.
+    //
+
+    ULONG NumberOfEdges;
+
+    //
+    // Total number of edges in the graph.  This will be twice the size of the
+    // NumberOfEdges value above, due to the quirky way the underlying r-graph
+    // algorithm captures two hash values in the same list and offsets the
+    // second set after the first, e.g.:
+    //
+    //      Edge2 = Edge1 + Graph-&gt;NumberOfEdges;
+    //
+
+    ULONG TotalNumberOfEdges;
+
+    //
+    // Number of vertices in the graph.  This will vary based on the masking
+    // type.  It is doubled every time a graph resize event is encountered.
+    //
+
+    ULONG NumberOfVertices;
+
+    //
+    // The number of edges in the graph, rounded up to a power of 2, and then
+    // shifted the appropriate amount to extract the exponent part for 2^n.
+    //
+
+    BYTE NumberOfEdgesPowerOf2Exponent;
+
+    //
+    // As above, but rounded up to the next power of 2 first.
+    //
+
+    BYTE NumberOfEdgesNextPowerOf2Exponent;
+
+    //
+    // The same exponent logic applied to the number of vertices as per the
+    // NumberOfVertices field above.
+    //
+
+    BYTE NumberOfVerticesPowerOf2Exponent;
+
+    //
+    // And again for the next value.
+    //
+
+    BYTE NumberOfVerticesNextPowerOf2Exponent;
+
+} GRAPH_DIMENSIONS;
+C_ASSERT(sizeof(GRAPH_DIMENSIONS) == 16);
+typedef GRAPH_DIMENSIONS *PGRAPH_DIMENSIONS;</code></pre>
+<pre class="code content-chm01-structs-graph_info"><code class="language-c">//
+// Define various memory offsets associated with a given graph structure.
+// This allows parallel worker threads to reset their local GRAPH instance
+// back to the initial state each time they want to try a new random seed.
+//
+
+typedef struct _GRAPH_INFO {
+
+    //
+    // Number of pages consumed by the entire graph and all backing arrays.
+    //
+
+    ULONG NumberOfPagesPerGraph;
+
+    //
+    // Page size (e.g. 4096, 2MB).
+    //
+
+    ULONG PageSize;
+
+    //
+    // Total number of graphs created.  This will match the maximum concurrency
+    // level of the upstream context.
+    //
+
+    ULONG NumberOfGraphs;
+
+    //
+    // Number of RTL_BITMAP structures used by the graph.
+    //
+
+    USHORT NumberOfBitmaps;
+
+    //
+    // Size of the GRAPH structure.
+    //
+
+    USHORT SizeOfGraphStruct;
+
+    //
+    // System allocation granularity.  We align the memory map for the on-disk
+    // structure using this value initially.
+    //
+
+    ULONG AllocationGranularity;
+
+    //
+    // If a masking type other than modulus is active, the AbsoluteEdge() needs
+    // a way to mask edge values that exceed the number of edges in the table.
+    // It does this via EdgeMask, which is initialized to the number of edges
+    // (which will be power-of-2 sized for non-modulus masking), minus 1, such
+    // that all lower bits will be set.
+    //
+
+    ULONG EdgeMask;
+
+    //
+    // Also capture the mask required to isolate vertices.
+    //
+
+    ULONG VertexMask;
+
+    //
+    // Graph dimensions.  This information is duplicated in the graph due to
+    // it being accessed frequently.
+    //
+
+    GRAPH_DIMENSIONS Dimensions;
+
+    //
+    // Pointer to the owning context.
+    //
+
+    PPERFECT_HASH_TABLE_CONTEXT Context;
+
+    //
+    // Base address of the entire graph allocation.
+    //
+
+    union {
+        PVOID BaseAddress;
+        struct _GRAPH *FirstGraph;
+    };
+
+    //
+    // Array sizes.
+    //
+
+    ULONGLONG EdgesSizeInBytes;
+    ULONGLONG NextSizeInBytes;
+    ULONGLONG FirstSizeInBytes;
+    ULONGLONG PrevSizeInBytes;
+    ULONGLONG AssignedSizeInBytes;
+    ULONGLONG ValuesSizeInBytes;
+
+    //
+    // Deleted edges bitmap buffer size.
+    //
+
+    ULONGLONG DeletedEdgesBitmapBufferSizeInBytes;
+
+    //
+    // Visited vertices bitmap buffer size.
+    //
+
+    ULONGLONG VisitedVerticesBitmapBufferSizeInBytes;
+
+    //
+    // Assigned bitmap buffer size.
+    //
+
+    ULONGLONG AssignedBitmapBufferSizeInBytes;
+
+    //
+    // Index bitmap buffer size.
+    //
+
+    ULONGLONG IndexBitmapBufferSizeInBytes;
+
+    //
+    // The allocation size of the graph, including structure size and all
+    // array and bitmap buffer sizes.
+    //
+
+    ULONGLONG AllocSize;
+
+    //
+    // Allocation size rounded up to the nearest page size multiple.
+    //
+
+    ULONGLONG FinalSize;
+
+} GRAPH_INFO;
+typedef GRAPH_INFO *PGRAPH_INFO;</pre></code>
+<pre class="code content-chm01-structs-graph"><code class="language-c">//
+// Define the graph structure.  This represents an r-graph, or a hypergraph,
+// or an r-partite 2-uniform graph, or any other seemingly unlimited number
+// of names floating around in academia for what appears to be exactly the
+// same thing.
+//
+
+typedef struct _Struct_size_bytes_(SizeOfStruct) _GRAPH {
+
+    //
+    // List entry used to push the graph onto the context's work list.
+    //
+
+    SLIST_ENTRY ListEntry;
+
+    //
+    // Edge and vertex masks that can be used when non-modulus masking is in
+    // place.  Both of these values are duplicated from the info structure as
+    // they are accessed frequently.
+    //
+    //
+
+    ULONG EdgeMask;
+    ULONG VertexMask;
+
+    //
+    // Duplicate the mask type, as well, as this directs AbsoluteEdge()'s
+    // decision to use the two masks above.
+    //
+
+    PERFECT_HASH_TABLE_MASK_FUNCTION_ID MaskFunctionId;
+
+    //
+    // Duplicate the number of keys, as this is also frequently referenced.
+    //
+
+    ULONG NumberOfKeys;
+
+    //
+    // Structure size, in bytes.
+    //
+
+    _Field_range_(== , sizeof(struct _GRAPH)) ULONG SizeOfStruct;
+
+    //
+    // Graph flags.
+    //
+
+    GRAPH_FLAGS Flags;
+
+    //
+    // Pointer to the info structure describing various sizes.
+    //
+
+    PGRAPH_INFO Info;
+
+    //
+    // Graph attempt.  This ID is derived from an interlocked increment against
+    // Context-&gt;Attempts, and represents the attempt number across all threads.
+    //
+
+    ULONGLONG Attempt;
+
+    //
+    // A localized attempt number that reflects the number of attempts made
+    // by just this thread.
+    //
+
+    ULONG ThreadAttempt;
+
+    //
+    // Thread ID of the thread that owns us.  Each callback thread is provided
+    // a single graph, and will attempt to solve the perfect hash table until
+    // told otherwise.  Thus, there's a 1:1 relationship between graph instance
+    // and owning thread.
+    //
+
+    ULONG ThreadId;
+
+    //
+    // Counter that is incremented each time we delete an edge during the
+    // acyclic graph detection stage.
+    //
+
+    ULONG DeletedEdgeCount;
+
+    //
+    // Counter that is incremented each time we visit a vertex during the
+    // assignment stage.
+    //
+
+    ULONG VisitedVerticesCount;
+
+    //
+    // Capture collisions during assignment step.
+    //
+
+    ULONG Collisions;
+
+    //
+    // Inline the GRAPH_DIMENSIONS structure.  This is available from the
+    // GRAPH_INFO structure, however, it's accessed frequently, so we inline
+    // it to avoid the extra level of indirection.
+    //
+
+    union {
+
+        struct {
+            ULONG NumberOfEdges;
+            ULONG TotalNumberOfEdges;
+            ULONG NumberOfVertices;
+            BYTE NumberOfEdgesPowerOf2Exponent;
+            BYTE NumberOfEdgesNextPowerOf2Exponent;
+            BYTE NumberOfVerticesPowerOf2Exponent;
+            BYTE NumberOfVerticesNextPowerOf2Exponent;
+        };
+
+        GRAPH_DIMENSIONS Dimensions;
+    };
+
+    //
+    // Duplicate the context pointer.  (This is also available from Info.)
+    //
+
+    PPERFECT_HASH_TABLE_CONTEXT Context;
+
+    //
+    // Edges array.  The number of elements in this array is governed by the
+    // TotalNumberOfEdges field, and will be twice the number of edges.
+    //
+
+    PEDGE Edges;
+
+    //
+    // Array of the "next" edge array, as per the referenced papers.  The number
+    // of elements in this array is also governed by TotalNumberOfEdges.
+    //
+
+    PEDGE Next;
+
+    //
+    // Array of vertices.  Number of elements is governed by the
+    // NumberOfVertices field.
+    //
+
+    PVERTEX First;
+
+    //
+    // The original CHM paper in 1996 references a "prev" array to "facilitate
+    // fast deletion".  However, the chmp project appears to have switched to
+    // using bitmaps.  Let's reserve a slot for the "prev" array anyway.
+    //
+
+    PVERTEX Prev;
+
+    //
+    // Array of assigned vertices.  Number of elements is governed by the
+    // NumberOfVertices field.
+    //
+
+    PVERTEX Assigned;
+
+    //
+    // Array of values indexed by the offsets in the Assigned array.  This
+    // essentially allows us to simulate a loaded table that supports the
+    // Insert(), Index() and Lookup() routines as part of graph validation.
+    //
+
+    PULONG Values;
+
+    //
+    // Bitmap used to capture deleted edges as part of the acyclic detection
+    // stage.  The SizeOfBitMap will reflect TotalNumberOfEdges.
+    //
+
+    RTL_BITMAP DeletedEdges;
+
+    //
+    // Bitmap used to capture vertices visited as part of the assignment stage.
+    // The SizeOfBitMap will reflect NumberOfVertices.
+    //
+
+    RTL_BITMAP VisitedVertices;
+
+    //
+    // Bitmap used to test the correctness of the Assigned array.
+    //
+
+    RTL_BITMAP AssignedBitmap;
+
+    //
+    // Bitmap used to track indices during the assignment step.
+    //
+
+    RTL_BITMAP IndexBitmap;
+
+    //
+    // Capture the seeds used for each hash function employed by the graph.
+    //
+
+    ULONG NumberOfSeeds;
+
+    struct {
+        union {
+            struct {
+                union {
+                    ULONG Seed1;
+                    ULONG FirstSeed;
+                };
+                ULONG Seed2;
+            };
+            ULARGE_INTEGER Seeds12;
+        };
+        union {
+            struct {
+                ULONG Seed3;
+                union {
+                    ULONG Seed4;
+                    ULONG LastSeed;
+                };
+            };
+            ULARGE_INTEGER Seeds34;
+        };
+    };
+
+} GRAPH;
+typedef GRAPH *PGRAPH;</code></pre>
+                    </div>
+                </div>
+
+                <p>
+
+                    In general, the structures and functions defined in our
+                    <a href="https://github.com/tpn/tracer/blob/master/PerfectHashTable/PerfectHashTablePrivate.h">PerfectHashTablePrivate.h</a>
+                    file are algorithm agnostic.  That is, they don't deal with the notion of a
+                    graph, as that's an implementation detail of the CHM algorithm.
+
+                </p>
+
+                <a class="xref" name="code-walkthrough"></a>
+                <h1>Code Walkthrough</h1>
+
+                <p>
+
+                    Using our
+
+                </p>
+
                 <hr/>
 
                 <!--
@@ -1364,4 +2107,3 @@ Return Value:
 
     </body>
 </html>
-# vim:set ts=8 sw=4 sts=4 tw=78 et:
