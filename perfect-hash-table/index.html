@@ -35,7 +35,7 @@
             <ul class="header-links">
                 <li><a href="#home"><i class="fa fa-home"></i>Creating a Perfect Hash Table</a></li>
                 <li><a href="#contents"><i class="fa fa-align-left"></i> Contents</a></li>
-                <li><a href="https://github.com/tpn/tracer/PerfectHashTable" target="_blank"><i class="fa fa-github"></i> GitHub</a></li>
+                <li><a href="https://github.com/tpn/tracer/tree/master/PerfectHashTable" target="_blank"><i class="fa fa-github"></i> GitHub</a></li>
                 <li><a href="https://twitter.com/trentnelson" target="_blank"><i class="fa fa-twitter"></i> Twitter</a></li>
                 <!--
                 <li><a href="https://twitter.com/trentnelson" class="twitter-follow-button" data-show-count="false">Follow @trentnelson</a></li>
@@ -219,7 +219,9 @@ VOID Insert(ULONG Key, ULONG Value) { Table[PerfectHashFunction(Key)] = Value; }
                     The algorithm I settled on is the acyclic random 2-part hypergraph (or r-graph,
                     where r = 2).  The algorithm works as follows: for each key, generate two
                     independent hash values.  Mask these values such that they fall within the
-                    confines of the number of keys in the set.  These masked hash values now become
+                    confines of the number of <em>vertices</em> picked for the table (more on this
+                    later; for now, assume the number of <em>vertices</em> exceeds the number of
+                    keys, or <em>edges</em> by at least 2x).  These masked hash values now become
                     the two vertices, and are added to a graph structure by a connecting edge.  The
                     edge is simply the 0..N index being used for enumeration, e.g.:
 
@@ -232,8 +234,8 @@ VOID Insert(ULONG Key, ULONG Value) { Table[PerfectHashFunction(Key)] = Value; }
     Hash1 = HashFunction1(Key);
     Hash2 = HashFunction2(Key);
 
-    Vertex1 = MaskFunction(Hash1);
-    Vertex2 = MaskFunction(Hash2);
+    Vertex1 = MaskHashFunction(Hash1);
+    Vertex2 = MaskHashFunction(Hash2);
 
     Edge = Index;
 
@@ -254,43 +256,153 @@ VOID Insert(ULONG Key, ULONG Value) { Table[PerfectHashFunction(Key)] = Value; }
 
                 <p>
 
-                    This algorithm first has roots in <a href="">A Versatile Data Structure for
-                    Edge-Oriented Graph Algorithms (Ebert, 1987)</a>.  Its application to perfect
-                    hashing appears in <a href="">A Family of Perfect Hashing Methods (Majewski,
-                    Wormald, Havas, Czech, 1996)</a>, where they focus on more rigorous proofs of
-                    the runtime complexity associated with acyclic r-graphs, extending on the work
-                    in their earlier paper, <a href="">Graphs, Hypergraphs and Hashing (1994)</a>.
+                    This algorithm first has roots in <a href="https://github.com/tpn/pdfs/blob/master/A%20Versatile%20Graph%20Structure%20for%20Edge-Oriented%20Graph%20Algorithms%20-%201987%20(Ebert1987AVD).pdf">
+                    A Versatile Data Structure for Edge-Oriented Graph Algorithms (Ebert, 1987)</a>.
+                    Its application to perfect hashing appears in <a
+                    href="https://github.com/tpn/pdfs/blob/master/A%20Family%20of%20Perfect%20Hashing%20Methods%20-%201996%20(TR0242).pdf">
+                    A Family of Perfect Hashing Methods (Majewski, Wormald, Havas, Czech, 1996)</a>,
+                    where they focus on more rigorous proofs of the runtime complexity associated
+                    with acyclic r-graphs, extending on the work in their earlier paper, <a
+                    href="https://github.com/tpn/pdfs/blob/3dc05fb22d87d86117802a2dc206926c79981ca3/Graphs,%20Hypergraphs%20and%20Hashing.pdf">Graphs, Hypergraphs and Hashing (1994)</a>, and their initial works on
+                    the matter, <a
+                    href="https://github.com/tpn/pdfs/blob/master/An%20Optimal%20Algorithm%20for%20Generating%20Minimal%20Perfect%20Hash%20Functions%20-%201992%20(10.1.1.51.5566).pdf">
+                    An Optimal Algorithm for generating Minimal Perfect Hash Functions (Majewski,
+                    Havas, Czech, 1992)</a>.
 
                 </p>
 
                 <p>
 
                     There is one thing that stood out in their 1996 paper (page 9) that I was able
-                    to verify experimentally (after finally hacking the CHM algorithm in the CHMP
-                    project into a working state).  To summarize, sans heavy math notation: the
+                    to verify experimentally (after finally hacking the
+                    <a href="https://github.com/tpn/cmph-2.0/blob/master/src/chm.c">CHM</a> algorithm
+                    in the CMHP project into a working state).  To summarize, sans heavy math notation: the
                     probability that we find a perfect hash solution by identifying an acyclic
                     r-graph (r = 2) is 99.9% within 18 iterations.  On average, a solution is found
-                    in &radic;3 attempts.  This geometric distribution of the probability of finding
-                    a solution is very desirable.
+                    in &radic;3 attempts.
 
                 </p>
 
                 <p>
 
-                    In my experiments, even with 10 million random keys, graph creation took about
-                    6-7 seconds on the 64-bit release build.  On average it found a solution usually
-                    within 1-3 iterations.  The worst-case I saw was 7 iterations.
+                    This is referred to as a <a
+                    href="https://en.wikipedia.org/wiki/Geometric_distribution">geometric
+                    distribution</a>, something I hadn't come across before.  It is a very desirable
+                    trait, especially for this particular problem.  In essence, the more we do it,
+                    the more likely we'll figure it out.  Assuming there is a solution (i.e. the
+                    hash function is performing properly), the chance of us not solving it is provably
+                    infinitesimal, which is neat.
 
                 </p>
 
                 <p>
 
-                    The nice thing about the graph creation step is that each iteration can be
-                    palmed off to a threadpool worker, such that you can attempt to find a graph
-                    solution in parallel up to NCPU.  On my 12 core box at home, there is a very
-                    high probability I'll find a solution in the first batch of 12 iterations
-                    submitted in parallel &mdash; thus, my clock time for solving the perfect hash stays
-                    relatively consistent at 6-7 seconds, give or take.
+                    I made the following notes around day 3 of the project:
+
+                </p>
+
+                <div class="blockquote"><small>
+
+                    <p>
+
+                        In my experiments, even with 10 million random keys, graph creation took about
+                        6-7 seconds on the 64-bit release build.  On average it found a solution usually
+                        within 1-3 iterations.  The worst-case I saw was 7 iterations.
+
+                    </p>
+
+
+                    <p>
+
+                        The nice thing about the graph creation step is that each iteration can be
+                        palmed off to a threadpool worker, such that you can attempt to find a graph
+                        solution in parallel up to NCPU.  On my 12 core box at home, there is a very
+                        high probability I'll find a solution in the first batch of 12 iterations
+                        submitted in parallel &mdash; thus, my clock time for solving the perfect hash
+                        stays relatively consistent at 6-7 seconds, give or take.
+
+                    </p>
+
+
+                    <p>
+
+                        This algorithm is not the fastest, nor the most state-of-the-art, nor does
+                        it have the lowest bits-per-key storage requirement, nor will I be aiming
+                        for a minimal perfect hash function.  However, it's simple (relatively),
+                        I understand it, I can explain it on a whiteboard without having to
+                        continually reference a paper, and it's definitely fast enough in the
+                        generation stage based on our target static key sets.  It's also old; graph
+                        theory has flourished since the 60s, and this particular algorithm came onto
+                        the scene in 1992, and has been cited widely.
+
+                    </p>
+
+                    <p>
+
+                        (The current state-of-the-art depicted in papers like <a
+                        href="https://github.com/tpn/pdfs/blob/master/Fast%20Scalable%20Construction%20of%20(Minimal%20Perfect%20Hash)%20Functions%20-%2022%20Mar%202016,%20v2%20(1603.04330).pdf">
+                        Fast Scalable Construction of (Minimal Perfect Hash) Functions (Genuzio,
+                        Ottaviano, Vigna, 2016)</a> use "lazy Gaussian elimination" to try tackle
+                        the minimal perfect hash problem on ultra-large key sets (in the billions
+                        and above).  That is interesting, but not a wise choice for me to tackle in
+                        a week, nor does it improve on our target static key sets, which are very
+                        modest in size in comparison.)
+
+                    </p>
+
+                    <p>
+
+                        Another reason I'm favoring the algorithm I've chosen is that because the
+                        generation stage is so cheap, relatively, and we have that nice
+                        probabilistic guarantee that we'll "probably" find a solution by iteration
+                        18... that gives us a lot of leeway with regards to experimenting with the
+                        underlying hash functions used.  I envision there being much faster, non-mod
+                        based hash functions we can experiment with, that actually have relatively
+                        poor "randomness" qualities unless a particularly good seed is found.
+                        Combined with the threadpool infrastructure for submitting iterations in
+                        parallel, I have a hunch that I'll be able to find some very fast hash
+                        functions that can still be solved in an acceptable amount of time.  This
+                        will help greatly with our evaluation time; reducing the latency and CPU
+                        cycles required to perform the lookup.
+
+                    </p>
+
+                    <p>
+
+                        There is one large risk item associated with my current plan: the key
+                        validation step of the cmph command line program just flat-out isn't working
+                        properly.  The graph generation step <strong>*appears*</strong> to be doing
+                        the right thing, at least with regards to finding cyclic graphs and
+                        discarding them, etc.  The validation step works on small key sizes,
+                        however, after about 500, I'm seeing rampant conflicts and severe
+                        degradation of the underlying hash functions (i.e. everything is hashing to
+                        394 or 85 or something).
+
+                    </p>
+
+                </small></div>
+
+                <p>
+
+                    The last paragraph depicts some of the issues I had trying to get the cmph
+                    program to validate the perfect hash tables it was supposedly generating.  Try
+                    as I might, I just couldn't get the thing to generate solutions that were
+                    actually valid (despite it reporting that they were valid) after a few hours
+                    of fiddling.
+
+                </p>
+
+                <p>
+
+                    More impressively, though, is that the bug survived and still exists in my
+                    complete reimplementation of their initial modulus-oriented masking approach.
+                    This only became apparent in the latter stages of the project, when I authored
+                    more robust validation and test logic.  Thankfully though, my power-of-2 based
+                    approach <strong>does</strong> work, and it's a lot faster, so, who knows.  The
+                    modulus functionality was only implemented for a reference point, I didn't
+                    anticipate using it as the final "fast" version of the perfect hash solution, so
+                    I haven't investigated why it doesn't work properly any further.  It's a little
+                    disconcerting, though.
 
                 </p>
 
@@ -298,12 +410,358 @@ VOID Insert(ULONG Key, ULONG Value) { Table[PerfectHashFunction(Key)] = Value; }
 
                 <p>
 
-                    Work in progress.
+                    A few of the initial guiding sentiments regarding the design follow:
+
+                    <ul>
+
+                        <li>
+
+                            I wanted to be able to easily mix and match different algorithms, hash
+                            functions and masking types.  I figured this would make experimentation
+                            easier, and generally promote sensible de-coupling of internal
+                            components.  Thus, the main interface for creating a perfect hash table
+                            is parameterized by three enums for the desired algorithm, hash function
+                            and masking type.  This is then stored with the table, such that the
+                            loading component knows which implementations when setting up an
+                            interface to the hash table.
+
+                        </li>
+
+                    </ul>
+
+                    <ul>
+
+                        <li>
+
+                            The problem parallelizes incredibly well.  The more threads you can have
+                            looking for an acylic graph, the better.  There was no way I was
+                            implementing this <em>without</em> leveraging the awesome threadpool
+                            facilities provided by NT.  (In fact, the way that it is written, you
+                            actually can't solve the graph without using a threadpool.  You can
+                            dictate the level of concurrency you want, and specifying 1 means the
+                            threadpool only gets 1 thread, which makes debugging easier, but there
+                            is no way to isolate the solving process to avoid this.  This was an
+                            explicit choice.)  This decision has paid off, as our solving step is
+                            very performant and churns through graph attempts like no tomorrow.
+
+                        </li>
+
+                    </ul>
+
+                    <ul>
+
+                        <li>
+
+                            Memory map all the things.  All file system interaction is achieved via
+                            sections and memory maps.  There is a separate threadpool used for
+                            handling file-oriented work (such as saving the solution to disk in
+                            parallel whilst the main thread verifies it is correct &mdash; which
+                            it will be unless we've got internal bugs).  Memory mappings are used
+                            for the source .keys file, the resulting .pht1 file for the perfect
+                            hash table, and the .pht1:Info NTFS stream used to capture metadata
+                            about the perfect hash table (such as what algorithm, hash function,
+                            and masking function was used, sizes, stats etc).
+
+                        </li>
+
+                    </ul>
+
+                    <ul>
+
+
+                        <li>
+
+                            For handling testing, due to the limited time constraints, I went for a
+                            big-bang systems level "self-test".  Coupled with aggressive internal
+                            ASSERT()ing, this worked out pretty well.  A self-test .exe is provided,
+                            which, when pointed at a data directory and given a set of algorithm,
+                            hash and mask IDs, will process all *.keys files in the directory; for
+                            each one, a perfect hash file is created,
+
+                        </li>
+
+                    </ul>
+
+                </p>
+
+                <h1>Implementation Notes</h1>
+
+                <p>
+
+                    From an implementation perspective, I decided to develop the component as part
+                    of my <a href="https://github.com/tpn/tracer">tracer</a> project for two
+                    reasons: a) it already has a lot of scaffolding in place (especially for the
+                    boring bits) that I'd be able to re-use, which is useful when time-constrained,
+                    and b) it's actually a pretty neat project that I can see my self using down
+                    the track.
+
+                </p>
+
+                <p>
+
+                    The implementation is creatively-named <a
+                    href="https://github.com/tpn/tracer/tree/master/PerfectHashTable">PerfectHashTable</a>,
+                    and is a DLL.
+
+                </p>
+
+                <p>
+
+                    The <a
+                    href="https://github.com/tpn/tracer/tree/master/PerfectHashTableSelfTestExe">PerfectHashTableSelfTestExe</a>
+                    project, also very creatively-named, is the standalone self-test .exe.
+
+                </p>
+
+                <p>
+
+                    Development of the project was done in Visual Studio 2017 via the
+                    <a href="https://github.com/tpn/tracer/tree/master/PerfectHashTable.sln">PerfectHashTable.sln</a>
+                    solution, which includes Debug, Release, PGInstrument and PGOptimize
+                    configurations.
+
+                </p>
+
+                <p>
+
+                    The coding style and conventions are the same as the rest of the tracer project:
+                    Cutler Normal Form C, heavily commented, and generally very NT-esque in style.
+
+                </p>
+
+                <p>
+
+                    Components in the tracer project have an interesting restriction in that they
+                    can't use the C runtime library in any way (due to the need to potentially be
+                    remote injected into a target process, and not wanting to deal with varying
+                    levels of C runtime availability).  Instead, they make extensive, exclusive
+                    use of the NT runtime primitives afforded by <code>ntdll.dll</code>,
+                    <code>kernel32.dll</code>, and even <code>ntoskrnl.exe</code>.  This
+                    functionality is wrapped up by a component named
+                    <a href="https://github.com/tpn/tracer/tree/master/Rtl">Rtl</a> (inspired by the
+                    NT runtime library of the same name).  There is a huge structure named
+                    <a
+                    href="https://github.com/tpn/tracer/blob/7fc2741b27e5705f4dc93f5dbf1280e08d7dfa8a/Rtl/Rtl.h#L6380">RTL</a>,
+                    which contains the kitchen sink of things we need across all components, as well
+                    as function pointers to DDK-type functionality normally not available if you're
+                    including <code>&lt;Windows.h&gt;</code> (such as bitmaps, AVL tables, prefix
+                    tables, etc).
+
+                </p>
+
+                <p>
+
+                    The reason for mentioning this is that the first two parameters for every public
+                    function of the PerfectHashTable component are usually <code>Rtl</code> and
+                    <code>Allocator</code>.  E.g.:
+
+
+                </p>
+
+
+<pre class="code"><code class="language-c">_Use_decl_annotations_
+BOOLEAN
+CreatePerfectHashTable(
+    PRTL Rtl,
+    PALLOCATOR Allocator,
+    PPERFECT_HASH_TABLE_CONTEXT Context,
+    PERFECT_HASH_TABLE_ALGORITHM_ID AlgorithmId,
+    PERFECT_HASH_TABLE_MASK_FUNCTION_ID MaskFunctionId,
+    PERFECT_HASH_TABLE_HASH_FUNCTION_ID HashFunctionId,
+    PULARGE_INTEGER NumberOfTableElementsPointer,
+    PPERFECT_HASH_TABLE_KEYS Keys,
+    PCUNICODE_STRING HashTablePath
+    )</code></pre>
+
+                <p>
+
+                    The <a
+                    href="https://github.com/tpn/tracer/blob/7fc2741b27e5705f4dc93f5dbf1280e08d7dfa8a/Rtl/Memory.h#L464">ALLOCATOR</a>
+                    structure encapsulates the memory management functions like
+                    <code>Calloc()</code> and <code>Free()</code>, such that we're not dependent
+                    upon CRT linkage to equivalent functions.  Initially, it just had the basic set
+                    of routines required to mimic Python's <code>PyMemAllocatorEx</code> structure:
+                    <code>malloc()</code>, <code>calloc()</code>, <code>realloc()</code> and
+                    <code>free()</code>.  However, since then, it grew to support a plethora of
+                    routines, many of which driven by the TraceStore component (which offers an
+                    <code>ALLOCATOR</code>-based interface, such that all memory requests are
+                    fulfilled by memory-map backed stores), but also more general functions such
+                    as aligned memory allocators.
+
+                </p>
+
+                <p>
+
+                    Long story short, if your see <code>Rtl</code> our <code>Allocator</code>
+                    variables anywhere, it's just our runtime glue or memory allocator
+                    stuff.
+
+                </p>
+
+                <p>
+
+                    Moving on, all public functions get a SAL-annotated function pointer typedef in
+                    the main public header file (<a
+                    href="https://github.com/tpn/tracer/blob/master/PerfectHashTable/PerfectHashTable.h">PerfectHashTable.h</a>).
+                    Functions are defined for creating and destroying keys and perfect hash tables,
+                    creating and destroying contexts (a context is required to create a table), and
+                    loading a previously-created table.
+
+                <p>
+
+                    I use the same API pattern I used for the
+                    <a href="https://github.com/tpn/tracer/tree/master/StringTable2">StringTable2</a>
+                    component, which I discuss
+                    <a href="https://trent.me/is-prefix-of-string-in-table/#implementation-considerations">here</a>.
+                    This involves defining a structure named
+                    <a
+                    href="https://github.com/tpn/tracer/blob/515692eb7da838079f482e7ada27c6bda59617eb/PerfectHashTable/PerfectHashTable.h#L561">PERFECT_HASH_TABLE_API</a>,
+                    and an inline function,
+                    <a
+                    href="https://github.com/tpn/tracer/blob/515692eb7da838079f482e7ada27c6bda59617eb/PerfectHashTable/PerfectHashTable.h#L624">LoadPerfectHashTableApi()</a>.
+
+                </p>
+
+                <p>
+
+                    The structure looks like this:
+
+                </p>
+
+<pre class="code"><code class="language-c">typedef struct _Struct_size_bytes_(SizeOfStruct) _PERFECT_HASH_TABLE_API {
+
+    //
+    // Size of the structure, in bytes.  This is filled in automatically by
+    // LoadPerfectHashTableApi() based on the initial SizeOfAnyApi parameter.
+    //
+
+    _In_range_(sizeof(struct _PERFECT_HASH_TABLE_API),
+               sizeof(struct _PERFECT_HASH_TABLE_API_EX)) ULONG SizeOfStruct;
+
+    //
+    // Number of function pointers contained in the structure.  This is filled
+    // in automatically by LoadPerfectHashTableApi() based on the initial
+    // SizeOfAnyApi parameter divided by the size of a function pointer.
+    //
+
+    ULONG NumberOfFunctions;
+
+    //
+    // Begin function pointers.
+    //
+
+    union {
+        PVOID FirstFunctionPointer;
+        PSET_C_SPECIFIC_HANDLER SetCSpecificHandler;
+    };
+
+    PLOAD_PERFECT_HASH_TABLE_KEYS LoadPerfectHashTableKeys;
+    PDESTROY_PERFECT_HASH_TABLE_KEYS DestroyPerfectHashTableKeys;
+
+    PCREATE_PERFECT_HASH_TABLE_CONTEXT CreatePerfectHashTableContext;
+    PDESTROY_PERFECT_HASH_TABLE_CONTEXT DestroyPerfectHashTableContext;
+
+    PCREATE_PERFECT_HASH_TABLE CreatePerfectHashTable;
+    PLOAD_PERFECT_HASH_TABLE LoadPerfectHashTable;
+    PTEST_PERFECT_HASH_TABLE TestPerfectHashTable;
+
+    PINITIALIZE_PERFECT_HASH_TABLE_ALLOCATOR InitializePerfectHashAllocator;
+
+    PINITIALIZE_PERFECT_HASH_TABLE_ALLOCATOR_FROM_RTL_BOOTSTRAP
+        InitializePerfectHashAllocatorFromRtlBootstrap;
+
+} PERFECT_HASH_TABLE_API;
+typedef PERFECT_HASH_TABLE_API *PPERFECT_HASH_TABLE_API;
+
+</code></pre>
+
+                <p>
+
+                    And the loader routine looks like this:
+
+                </p>
+
+<pre class="code"><code class="language-c">FORCEINLINE
+BOOLEAN
+LoadPerfectHashTableApi(
+    _In_ PRTL Rtl,
+    _Inout_ HMODULE *ModulePointer,
+    _In_opt_ PUNICODE_STRING ModulePath,
+    _In_ ULONG SizeOfAnyApi,
+    _Out_writes_bytes_all_(SizeOfAnyApi) PPERFECT_HASH_TABLE_ANY_API AnyApi
+    )
+/*++
+
+Routine Description:
+
+    Loads the perfect hash table module and resolves all API functions for
+    either the PERFECT_HASH_TABLE_API or PERFECT_HASH_TABLE_API_EX structure.
+    The desired API is indicated by the SizeOfAnyApi parameter.
+
+    Example use:
+
+        PERFECT_HASH_TABLE_API_EX GlobalApi;
+        PPERFECT_HASH_TABLE_API_EX Api;
+
+        Success = LoadPerfectHashApi(Rtl,
+                                     NULL,
+                                     NULL,
+                                     sizeof(GlobalApi),
+                                     (PPERFECT_HASH_TABLE_ANY_API)&amp;GlobalApi);
+        ASSERT(Success);
+        Api = &amp;GlobalApi;
+
+    In this example, the extended API will be provided as our sizeof(GlobalApi)
+    will indicate the structure size used by PERFECT_HASH_TABLE_API_EX.
+
+Arguments:
+
+    Rtl - Supplies a pointer to an initialized RTL structure.
+
+    ModulePointer - Optionally supplies a pointer to an existing module handle
+        for which the API symbols are to be resolved.  May be NULL.  If not
+        NULL, but the pointed-to value is NULL, then this parameter will
+        receive the handle obtained by LoadLibrary() as part of this call.
+        If the string table module is no longer needed, but the program will
+        keep running, the caller should issue a FreeLibrary() against this
+        module handle.
+
+    ModulePath - Optionally supplies a pointer to a UNICODE_STRING structure
+        representing a path name of the string table module to be loaded.
+        If *ModulePointer is not NULL, it takes precedence over this parameter.
+        If NULL, and no module has been provided via *ModulePointer, loading
+        will be attempted via LoadLibraryA("PerfectHashTable.dll")'.
+
+    SizeOfAnyApi - Supplies the size, in bytes, of the underlying structure
+        pointed to by the AnyApi parameter.
+
+    AnyApi - Supplies the address of a structure which will receive resolved
+        API function pointers.  The API furnished will depend on the size
+        indicated by the SizeOfAnyApi parameter.
+
+Return Value:
+
+    TRUE on success, FALSE on failure.
+
+--*/
+</code></pre>
+
+                <p>
+
+                    This is a little quirky, but I've found it to be a useful way to
+                    dynamically load and use small components at runtime without requiring
+                    any static linking or dll export/import glue.
+
+                </p>
+
+
+                <p>
 
                 </p>
 
 
                 <hr/>
+
                 <!--
                 <h3>Contact</h3>
                 <p>
@@ -349,3 +807,4 @@ VOID Insert(ULONG Key, ULONG Value) { Table[PerfectHashFunction(Key)] = Value; }
 
     </body>
 </html>
+# vim:set ts=8 sw=4 sts=4 tw=78 et:
