@@ -421,9 +421,9 @@ VOID Insert(ULONG Key, ULONG Value) { Table[PerfectHashFunction(Key)] = Value; }
                             easier, and generally promote sensible de-coupling of internal
                             components.  Thus, the main interface for creating a perfect hash table
                             is parameterized by three enums for the desired algorithm, hash function
-                            and masking type.  This is then stored with the table, such that the
-                            loading component knows which implementations when setting up an
-                            interface to the hash table.
+                            and masking type, respectively.  This is then stored with the table, such
+                            that the loading component knows which implementations to use when setting
+                            up an interface to the hash table.
 
                         </li>
 
@@ -435,14 +435,26 @@ VOID Insert(ULONG Key, ULONG Value) { Table[PerfectHashFunction(Key)] = Value; }
 
                             The problem parallelizes incredibly well.  The more threads you can have
                             looking for an acylic graph, the better.  There was no way I was
-                            implementing this <em>without</em> leveraging the awesome threadpool
-                            facilities provided by NT.  (In fact, the way that it is written, you
-                            actually can't solve the graph without using a threadpool.  You can
+                            implementing this as a single-threaded solution; its rare to get a
+                            problem so well suited to a multithreaded approach, and the threadpool
+                            scaffolding provided by NT is sublime, so that was a no-brainer.
+                            <br/>
+
+                            <small>
+
+                            (In fact, the way that it is currently written, you actually can't solve
+                            the graph <strong>*without*</strong> using a threadpool.  You can
                             dictate the level of concurrency you want, and specifying 1 means the
                             threadpool only gets 1 thread, which makes debugging easier, but there
                             is no way to isolate the solving process to avoid this.  This was an
-                            explicit choice.)  This decision has paid off, as our solving step is
-                            very performant and churns through graph attempts like no tomorrow.
+                            explicit choice.)
+
+                            </small>
+
+                            <br/>
+
+                            The decision has paid off, though, as our solving part is very
+                            performant and churns through graph attempts like no tomorrow.
 
                         </li>
 
@@ -459,7 +471,7 @@ VOID Insert(ULONG Key, ULONG Value) { Table[PerfectHashFunction(Key)] = Value; }
                             it will be unless we've got internal bugs).  Memory mappings are used
                             for the source .keys file, the resulting .pht1 file for the perfect
                             hash table, and the .pht1:Info NTFS stream used to capture metadata
-                            about the perfect hash table (such as what algorithm, hash function,
+                            about the perfect hash table (such as which algorithm, hash function,
                             and masking function was used, sizes, stats etc).
 
                         </li>
@@ -476,7 +488,12 @@ VOID Insert(ULONG Key, ULONG Value) { Table[PerfectHashFunction(Key)] = Value; }
                             ASSERT()ing, this worked out pretty well.  A self-test .exe is provided,
                             which, when pointed at a data directory and given a set of algorithm,
                             hash and mask IDs, will process all *.keys files in the directory; for
-                            each one, a perfect hash file is created,
+                            each one, a perfect hash file is created, the on-disk version is then
+                            loaded and subsequently tested.  This is all handled by the routine
+                            <a
+                            href="https://github.com/tpn/tracer/blob/master/PerfectHashTable/SelfTestPerfectHashTable.c">
+                            SelfTestPerfectHashTable</a>, which also serves as a good example for
+                            how to exercise the entire system end-to-end.
 
                         </li>
 
@@ -490,10 +507,10 @@ VOID Insert(ULONG Key, ULONG Value) { Table[PerfectHashFunction(Key)] = Value; }
 
                     From an implementation perspective, I decided to develop the component as part
                     of my <a href="https://github.com/tpn/tracer">tracer</a> project for two
-                    reasons: a) it already has a lot of scaffolding in place (especially for the
-                    boring bits) that I'd be able to re-use, which is useful when time-constrained,
-                    and b) it's actually a pretty neat project that I can see my self using down
-                    the track.
+                    reasons: a) the tracer project already has a lot of scaffolding in place
+                    (especially for the boring bits) that I'd be able to re-use, which is useful
+                    when time-constrained, and b) a perfect hash table is actually a pretty
+                    neat component that I can see my self using down the track.
 
                 </p>
 
@@ -536,7 +553,7 @@ VOID Insert(ULONG Key, ULONG Value) { Table[PerfectHashFunction(Key)] = Value; }
                     remote injected into a target process, and not wanting to deal with varying
                     levels of C runtime availability).  Instead, they make extensive, exclusive
                     use of the NT runtime primitives afforded by <code>ntdll.dll</code>,
-                    <code>kernel32.dll</code>, and even <code>ntoskrnl.exe</code>.  This
+                    <code>kernel32.dll</code>, and <code>ntoskrnl.exe</code>.  This
                     functionality is wrapped up by a component named
                     <a href="https://github.com/tpn/tracer/tree/master/Rtl">Rtl</a> (inspired by the
                     NT runtime library of the same name).  There is a huge structure named
@@ -763,7 +780,7 @@ Return Value:
                     <a
                     href="https://github.com/tpn/tracer/blob/master/PerfectHashTable/PerfectHashTablePrivate.h">PerfectHashTablePrivate.h</a>,
                     which is available for inclusion by all of our internal .c files.  Pre-compiled
-                    headers are used, such that the only file a each individual .c file needs to
+                    headers are used, such that the only file each individual .c file needs to
                     include is <a
                     href="https://github.com/tpn/tracer/blob/master/PerfectHashTable/stdafx.h">stdafx.h</a>.
 
@@ -944,8 +961,10 @@ typedef PERFECT_HASH_TABLE_VTBL *PPERFECT_HASH_TABLE_VTBL;</code></pre>
                     amount of exposure between the public and private definitions of the table
                     interface.  It allows us to mix and match who provides what with regards to
                     the vtbl function pointers, based on the selected algorithm, hash function
-                    and masking type.  The PerfectHashTableConstants.h file exposes an internal
-                    routine named
+                    and masking type.  The
+                    <a
+                    href="https://github.com/tpn/tracer/blob/master/PerfectHashTable/PerfectHashTableConstants.h">PerfectHashTableConstants.h</a>
+                    file exposes an internal routine named
                     <a
                     href="https://github.com/tpn/tracer/blob/515692eb7da838079f482e7ada27c6bda59617eb/PerfectHashTable/PerfectHashTableConstants.h#L86">InitializeExtendedVtbl</a>,
                     which looks like this:
