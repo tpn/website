@@ -647,17 +647,14 @@ CreatePerfectHashTable(
                     of routines required to mimic Python's <code>PyMemAllocatorEx</code> structure:
                     <code>malloc()</code>, <code>calloc()</code>, <code>realloc()</code> and
                     <code>free()</code>.  However, since then, it grew to support a plethora of
-                    routines, many of which driven by the TraceStore component (which offers an
-                    <code>ALLOCATOR</code>-based interface, such that all memory requests are
-                    fulfilled by memory-map backed stores that track the address assignments and
-                    facilitate re-mapping in a separate process at the same address), but also
-                    more general functions such as aligned memory allocators.
+                    routines, many of which driven by the TraceStore component, but also more
+                    general functions, such as aligned memory allocation.
 
                 </p>
 
                 <p>
 
-                    Long story short, if your see <code>Rtl</code> our <code>Allocator</code>
+                    Short story long: if you see <code>Rtl</code> our <code>Allocator</code>
                     variables anywhere, it's just our runtime glue or memory allocator
                     stuff.
 
