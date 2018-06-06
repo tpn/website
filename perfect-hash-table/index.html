@@ -330,6 +330,14 @@ VOID Insert(ULONG Key, ULONG Value) { Table[PerfectHashFunction(Key)] = Value; }
 
                 <p>
 
+                    Consider a gambler who is going all-in on heads against the Universe in an
+                    infinite game of coin toss.  We are the Universe.  Play it long enough, and
+                    we'll eventually see a tail.
+
+                </p>
+
+                <p>
+
                     I made the following notes around day 3 of the project:
 
                 </p>
@@ -454,10 +462,225 @@ VOID Insert(ULONG Key, ULONG Value) { Table[PerfectHashFunction(Key)] = Value; }
                             functions and masking types.  I figured this would make experimentation
                             easier, and generally promote sensible de-coupling of internal
                             components.  Thus, the main interface for creating a perfect hash table
-                            is parameterized by three enums for the desired algorithm, hash function
-                            and masking type, respectively.  This is then stored with the table, such
-                            that the loading component knows which implementations to use when setting
-                            up an interface to the hash table.
+                            is parameterized by three enums for the desired
+
+                            <a href="https://github.com/tpn/tracer/blob/c7092c78aac4e01baf324815f7fbc888cdb6faa0/PerfectHashTable/PerfectHashTable.h#L62">
+                            algorithm</a>,
+
+                            <a
+                            href="https://github.com/tpn/tracer/blob/c7092c78aac4e01baf324815f7fbc888cdb6faa0/PerfectHashTable/PerfectHashTable.h#L111">
+                            hash function</a>, and
+
+                            <a
+                            href="https://github.com/tpn/tracer/blob/c7092c78aac4e01baf324815f7fbc888cdb6faa0/PerfectHashTable/PerfectHashTable.h#L170">
+                            masking type</a>, respectively.  These identifiers, depicted below, are
+                            also stored with the on-disk representation of the perfect hash table,
+                            such that the loading component knows which implementations to select
+                            when preparing an interface for use.
+
+                <a class="xref" name="enums"></a>
+                <div class="tab-box language box-enums">
+                    <ul class="tabs">
+                        <li data-content="content-enums-algorithm">Algorithm</li>
+                        <li data-content="content-enums-hash-function">Hash Function</li>
+                        <li data-content="content-enums-masking-type">Masking Type</li>
+                    </ul>
+                    <div class="content">
+<pre class="code content-enums-algorithm"><code class="language-c">//
+// Define an enumeration for identifying which backend algorithm variant to
+// use for creating the perfect hash table.
+//
+
+typedef enum _PERFECT_HASH_TABLE_ALGORITHM_ID {
+
+    //
+    // Explicitly define a null algorithm to take the 0-index slot.
+    // This makes enum validation easier.
+    //
+
+    PerfectHashTableNullAlgorithmId = 0,
+
+    //
+    // Begin valid algorithms.
+    //
+
+    PerfectHashTableDefaultAlgorithmId = 1,
+    PerfectHashTableChm01AlgorithmId = 1,
+
+    //
+    // End valid algorithms.
+    //
+
+    //
+    // N.B. Keep the next value last.
+    //
+
+    PerfectHashTableInvalidAlgorithmId,
+
+} PERFECT_HASH_TABLE_ALGORITHM_ID;
+typedef PERFECT_HASH_TABLE_ALGORITHM_ID *PPERFECT_HASH_TABLE_ALGORITHM_ID;
+
+//
+// Provide a simple inline algorithm validation routine.
+//
+
+FORCEINLINE
+BOOLEAN
+IsValidPerfectHashTableAlgorithmId(
+    _In_ PERFECT_HASH_TABLE_ALGORITHM_ID AlgorithmId
+    )
+{
+    return (
+        AlgorithmId &gt; PerfectHashTableNullAlgorithmId &amp;&amp;
+        AlgorithmId &lt; PerfectHashTableInvalidAlgorithmId
+    );
+}
+</code></pre>
+<pre class="code content-enums-hash-function"><code class="language-c">//
+// Define an enumeration for identifying which hash function variant to use.
+//
+
+typedef enum _PERFECT_HASH_TABLE_HASH_FUNCTION_ID {
+
+    //
+    // Explicitly define a null algorithm to take the 0-index slot.
+    // This makes enum validation easier.
+    //
+
+    PerfectHashTableNullHashFunctionId              = 0,
+
+    //
+    // Begin valid hash functions.
+    //
+
+    PerfectHashTableHashCrc32RotateFunctionId       = 1,
+    PerfectHashTableDefaultHashFunctionId           = 1,
+
+    PerfectHashTableHashJenkinsFunctionId           = 2,
+
+    //
+    // N.B. The following three hash functions are purposefully terrible from
+    //      the perspective of generating a good distribution of hash values.
+    //      They all have very simple operations and are intended to test the
+    //      theory that even with a poor hash function, once we find the right
+    //      seed, the hash quality is unimportant.
+    //
+
+    PerfectHashTableHashRotateXorFunctionId         = 3,
+    PerfectHashTableHashAddSubXorFunctionId         = 4,
+    PerfectHashTableHashXorFunctionId               = 5,
+
+    //
+    // End valid hash functions.
+    //
+
+    //
+    // N.B. Keep the next value last.
+    //
+
+    PerfectHashTableInvalidHashFunctionId,
+
+} PERFECT_HASH_TABLE_HASH_FUNCTION_ID;
+typedef PERFECT_HASH_TABLE_HASH_FUNCTION_ID
+      *PPERFECT_HASH_TABLE_HASH_FUNCTION_ID;
+
+//
+// Provide a simple inline hash function validation routine.
+//
+
+FORCEINLINE
+BOOLEAN
+IsValidPerfectHashTableHashFunctionId(
+    _In_ PERFECT_HASH_TABLE_HASH_FUNCTION_ID HashFunctionId
+    )
+{
+    return (
+        HashFunctionId &gt; PerfectHashTableNullHashFunctionId &amp;&amp;
+        HashFunctionId &lt; PerfectHashTableInvalidHashFunctionId
+    );
+}
+</code></pre>
+<pre class="code content-enums-masking-type"><code class="language-c">//
+// Define an enumeration for identifying the type of table masking used by the
+// underlying perfect hash table.  This has performance and size implications.
+// Modulus masking typically results in smaller tables at the expenses of slower
+// modulus-based hash functions.  Non-modulus masking requires power-of-2 sized
+// tables, which will be larger, but the resulting mask function can be done
+// by logical AND instructions, which are fast.
+//
+
+typedef enum _PERFECT_HASH_TABLE_MASK_FUNCTION_ID {
+
+    //
+    // Null masking type.
+    //
+
+    PerfectHashTableNullMaskFunctionId          = 0,
+
+    //
+    // Being valid masking types.
+    //
+
+    PerfectHashTableModulusMaskFunctionId       = 1,
+
+    PerfectHashTableAndMaskFunctionId           = 2,
+    PerfectHashTableDefaultMaskFunctionId       = 2,
+
+    PerfectHashTableXorAndMaskFunctionId        = 3,
+    PerfectHashTableFoldAutoMaskFunctionId      = 4,
+    PerfectHashTableFoldOnceMaskFunctionId      = 5,
+    PerfectHashTableFoldTwiceMaskFunctionId     = 6,
+    PerfectHashTableFoldThriceMaskFunctionId    = 7,
+
+    //
+    // End valid masking types.
+    //
+
+    //
+    // N.B. Keep the next value last.
+    //
+
+    PerfectHashTableInvalidMaskFunctionId,
+
+
+} PERFECT_HASH_TABLE_MASK_FUNCTION_ID;
+typedef PERFECT_HASH_TABLE_MASK_FUNCTION_ID
+      *PPERFECT_HASH_TABLE_MASK_FUNCTION_ID;
+
+//
+// Provide a simple inline masking type validation routine.
+//
+
+FORCEINLINE
+BOOLEAN
+IsValidPerfectHashTableMaskFunctionId(
+    _In_ PERFECT_HASH_TABLE_MASK_FUNCTION_ID MaskFunctionId
+    )
+{
+    return (
+        MaskFunctionId &gt; PerfectHashTableNullMaskFunctionId &amp;&amp;
+        MaskFunctionId &lt; PerfectHashTableInvalidMaskFunctionId
+    );
+}
+
+//
+// Masking tends to fall into one of two buckets: modulus and not-modulus.
+// Provide an inline routine that guarantees to match all current and future
+// modulus masking function IDs.
+//
+
+FORCEINLINE
+BOOLEAN
+IsModulusMasking(
+    _In_ PERFECT_HASH_TABLE_MASK_FUNCTION_ID MaskFunctionId
+    )
+{
+    return MaskFunctionId == PerfectHashTableModulusMaskFunctionId;
+}
+</code></pre>
+                            </div>
+                        </div>
+
 
                         </li>
 
@@ -1361,7 +1584,6 @@ Return Value:
                     </div>
                 </div>
 
-                <!--
                 <p>
 
                     I prefer this COM-style vtbl approach to the cmph project's approach, which
@@ -1451,7 +1673,6 @@ int cmph_dump(cmph_t *mphf, FILE *f)
 	return 0;
 }
 </code></pre>
-                -->
 
                 <p>
 

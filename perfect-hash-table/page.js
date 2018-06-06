@@ -4,4 +4,5 @@ $(function() {
     //initTabBox('.tab-box.language.box-intro');
     initTabBox('.tab-box.language.box-table-functions');
     initTabBox('.tab-box.language.box-chm01-structs');
+    initTabBox('.tab-box.language.box-enums');
 });
