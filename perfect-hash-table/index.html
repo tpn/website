@@ -218,6 +218,78 @@ VOID Insert(ULONG Key, ULONG Value) { Table[PerfectHashFunction(Key)] = Value; }
 
                             <a href="#code-walkthrough">Code Walkthrough</a>
 
+                            <ul>
+
+                                <li>
+
+                                    <a href="#test-data">Preparing Test Data</a>
+
+                                </li>
+
+                                <li>
+
+                                    <a href="#running-self-test">Running the Self-Test</a>
+
+                                </li>
+
+                                <li>
+
+                                    <a href="#the-info-stream">The <code>:Info</code> Stream</a>
+
+                                </li>
+
+                                <li>
+
+                                    <a href="#self-test-overview">Self-Test Overview</a>
+
+                                </li>
+
+                                <li>
+
+                                    <a href="#context-creation">Context Creation</a>
+
+                                    <ul>
+
+                                        <li>
+
+                                            <a href="#PERFECT_HASH_TABLE_CONTEXT">PERFECT_HASH_TABLE_CONTEXT</a>
+
+                                        </li>
+
+                                        <li>
+
+                                            <a href="#CreatePerfectHashTableContext">CreatePerfectHashTableContext()</a>
+
+                                        </li>
+
+                                    </ul>
+
+                                </li>
+
+                                <li>
+
+                                    <a href="#key-loading">Key Loading</a>
+
+                                    <ul>
+
+                                        <li>
+
+                                            <a href="#PERFECT_HASH_TABLE_KEYS">PERFECT_HASH_TABLE_KEYS</a>
+
+                                        </li>
+
+                                        <li>
+
+                                            <a href="#LoadPerfectHashTableKeys">LoadPerfectHashTableKeys()</a>
+
+                                        </li>
+
+                                    </ul>
+
+                                </li>
+
+                            </ul>
+
                         </li>
 
                     </ul>
@@ -1056,9 +1128,9 @@ Return Value:
                 <p>
 
                     The actual perfect hash table interface that implements the required
-                    <code>Insert()</code> and <code>Lookup</code> is actually exposed as a COM-esque
-                    vtbl structure named <a
-                    href="https://github.com/tpn/tracer/blob/515692eb7da838079f482e7ada27c6bda59617eb/PerfectHashTable/PerfectHashTable.h#L438">
+                    <code>Insert()</code> and <code>Lookup()</code> is actually exposed as a
+                    COM-style vtbl structure named
+                    <a href="https://github.com/tpn/tracer/blob/515692eb7da838079f482e7ada27c6bda59617eb/PerfectHashTable/PerfectHashTable.h#L438">
                     PERFECT_HASH_TABLE_VTBL</a>.  It's not technically a COM interface, as we don't
                     expose a <code>QueryInterface()</code> function pointer in the first slot, but
                     it has the same initial <code>IUnknown</code> layout, and leverages the
@@ -1464,7 +1536,7 @@ Arguments:
 
     Table - Supplies a pointer to the table for which the key is to be deleted.
 
-    Key - Supplies the key to insert.
+    Key - Supplies the key to delete.
 
     PreviousValue - Optionally supplies a pointer that will receive the previous
         value at the relevant table location prior to this deletion.  If no
@@ -2274,9 +2346,3538 @@ typedef GRAPH *PGRAPH;</code></pre>
 
                 <p>
 
-                    WIP.
+                    Let's examine the code by walking through the behavior of the
+                    <a href="https://github.com/tpn/tracer/blob/master/PerfectHashTable/SelfTestPerfectHashTable.c">
+                    SelfTestPerfectHashTable()</a> routine.
 
                 </p>
+
+                <a class="xref" name="test-data"></a>
+                <h2>Test Data</h2>
+
+                <p>
+
+                    To generate some test data, you have two options.  If you have Python and NumPy
+                    installed, you can generate a bunch of linear and random key files via the
+                    <a href="https://github.com/tpn/tracer/blob/master/PerfectHashTable/data/generate.py">generate.py</a>
+                    file that lives in the <code>data</code> subdirectory of the
+                    <code>PerfectHashTable</code> component.  Alternatively, you can check out a
+                    small git repository that houses some existing sample test data.
+
+                </p>
+
+                <h3>Python Generated</h3>
+
+                <p>
+
+                    The generate.py file and its output follows.  It will generate linear and random
+                    arrays of given sizes, saving a .txt representation of the values, a .keys
+                    representation of the binary data (which is the actual file we load as part of
+                    perfect hash table creation), and, if matplotlib is installed, a .png plot of
+                    the data, which allows a quick sanity check that the value distribution is what
+                    we expect.
+
+                </p>
+
+                <small>
+
+                    (Note: the random routine creates a double-sized array, then calls
+                    <code>np.unique()</code> against it to ensure all the key values are unique,
+                    then isolates the <code>[:size]</code> portion we're actually interested in.
+                    One side effect of calling <code>np.unique()</code> is that our resulting array
+                    is sorted.  We don't stipulate whether key files are required to be sorted at
+                    the moment, as it makes no difference to the underlying perfect hash table
+                    algorithm we're using.  i.e. we don't suffer the sort of pathological worst-case
+                    performance issues some data structures exhibit when inserting data in sorted
+                    order.  Nevertheless, if you look at the random files compared to the linear
+                    files, they're usually quite similar, given everything is sorted.)
+
+                </small>
+
+                <br/>
+
+                <div class="tab-box language box-generate">
+                    <ul class="tabs">
+                        <li data-content="content-generate-generate">generate.py</li>
+                        <li data-content="content-generate-output">Output</li>
+                    </ul>
+                    <div class="content">
+<pre class="code content-generate-generate"><code class="language-python">
+from __future__ import print_function
+
+import numpy as np
+
+try:
+
+    import matplotlib.pyplot as plt
+
+    # Turn off interactive mode to disable plots being displayed
+    # prior to saving them to disk.
+    plt.ioff()
+
+    def save_array_plot_to_png_file(filename, a):
+        plt.plot(a)
+        plt.savefig(filename)
+        print("Generated %s." % filename)
+
+except ImportError:
+
+    def save_array_plot_to_png_file(filename, a):
+        pass
+
+def save_array_to_text_file(filename, a):
+    with open(filename, 'wb') as f:
+        for i in a:
+            f.write(str(i).zfill(9).encode('ascii'))
+            f.write(b'\n')
+    print("Generated %s." % filename)
+
+def save_array_to_binary_file(filename, a):
+    fp = np.memmap(filename, dtype='uint32', mode='w+', shape=a.shape)
+    fp[:] = a[:]
+    del fp
+    print("Generated %s." % filename)
+
+def save_array(prefix, a):
+    l = len(a)
+    png_filename = '%s-%d.png' % (prefix, l)
+    text_filename = '%s-%d.txt' % (prefix, l)
+    binary_filename = '%s-%d.keys' % (prefix, l)
+    save_array_plot_to_png_file(png_filename, a)
+    save_array_to_text_file(text_filename, a)
+    save_array_to_binary_file(binary_filename, a)
+
+def gen_random_unique_array(size):
+    a = np.random.randint(0, (1 &lt;&lt; 32)-1, size * 2, dtype='uint32')
+    a = np.unique(a)[:size]
+    return a if len(a) == size else None
+
+def gen_linear_array(size):
+    a = np.linspace(0, size, num=size, dtype='uint32')
+    return a
+
+sizes = (
+    2000, 4000, 4050, 5000, 10000, 15000, 17000, 25000, 31000, 33000, 50000,
+    63000, 65500, 75000, 100000, 121000, 125000, 150000, 200000, 225000, 245000,
+    255000, 265000, 389161, 472374,
+)
+
+functions = (
+    ('linear', gen_linear_array),
+    ('random', gen_random_unique_array),
+)
+
+def main():
+    for (name, func) in functions:
+        for size in sizes:
+            a = func(size)
+            if a is None:
+                continue
+            save_array(name, a)
+
+if __name__ == '__main__':
+    main()
+</code></pre>
+<pre class="code content-generate-output"><code class="language-nasm"> (py35) C:\Users\Trent\Home\src\tracer\PerfectHashTable\data&gt;python generate.py
+Generated linear-2000.png.
+Generated linear-2000.txt.
+Generated linear-2000.keys.
+Generated linear-4000.png.
+Generated linear-4000.txt.
+Generated linear-4000.keys.
+Generated linear-4050.png.
+Generated linear-4050.txt.
+Generated linear-4050.keys.
+Generated linear-5000.png.
+Generated linear-5000.txt.
+Generated linear-5000.keys.
+Generated linear-10000.png.
+Generated linear-10000.txt.
+Generated linear-10000.keys.
+Generated linear-15000.png.
+Generated linear-15000.txt.
+Generated linear-15000.keys.
+Generated linear-17000.png.
+Generated linear-17000.txt.
+Generated linear-17000.keys.
+Generated linear-25000.png.
+Generated linear-25000.txt.
+Generated linear-25000.keys.
+Generated linear-31000.png.
+Generated linear-31000.txt.
+Generated linear-31000.keys.
+Generated linear-33000.png.
+Generated linear-33000.txt.
+Generated linear-33000.keys.
+Generated linear-50000.png.
+Generated linear-50000.txt.
+Generated linear-50000.keys.
+Generated linear-63000.png.
+Generated linear-63000.txt.
+Generated linear-63000.keys.
+Generated linear-65500.png.
+Generated linear-65500.txt.
+Generated linear-65500.keys.
+Generated linear-75000.png.
+Generated linear-75000.txt.
+Generated linear-75000.keys.
+Generated linear-100000.png.
+Generated linear-100000.txt.
+Generated linear-100000.keys.
+Generated linear-121000.png.
+Generated linear-121000.txt.
+Generated linear-121000.keys.
+Generated linear-125000.png.
+Generated linear-125000.txt.
+Generated linear-125000.keys.
+Generated linear-150000.png.
+Generated linear-150000.txt.
+Generated linear-150000.keys.
+Generated linear-200000.png.
+Generated linear-200000.txt.
+Generated linear-200000.keys.
+Generated linear-225000.png.
+Generated linear-225000.txt.
+Generated linear-225000.keys.
+Generated linear-245000.png.
+Generated linear-245000.txt.
+Generated linear-245000.keys.
+Generated linear-255000.png.
+Generated linear-255000.txt.
+Generated linear-255000.keys.
+Generated linear-265000.png.
+Generated linear-265000.txt.
+Generated linear-265000.keys.
+Generated linear-389161.png.
+Generated linear-389161.txt.
+Generated linear-389161.keys.
+Generated linear-472374.png.
+Generated linear-472374.txt.
+Generated linear-472374.keys.
+Generated random-2000.png.
+Generated random-2000.txt.
+Generated random-2000.keys.
+Generated random-4000.png.
+Generated random-4000.txt.
+Generated random-4000.keys.
+Generated random-4050.png.
+Generated random-4050.txt.
+Generated random-4050.keys.
+Generated random-5000.png.
+Generated random-5000.txt.
+Generated random-5000.keys.
+Generated random-10000.png.
+Generated random-10000.txt.
+Generated random-10000.keys.
+Generated random-15000.png.
+Generated random-15000.txt.
+Generated random-15000.keys.
+Generated random-17000.png.
+Generated random-17000.txt.
+Generated random-17000.keys.
+Generated random-25000.png.
+Generated random-25000.txt.
+Generated random-25000.keys.
+Generated random-31000.png.
+Generated random-31000.txt.
+Generated random-31000.keys.
+Generated random-33000.png.
+Generated random-33000.txt.
+Generated random-33000.keys.
+Generated random-50000.png.
+Generated random-50000.txt.
+Generated random-50000.keys.
+Generated random-63000.png.
+Generated random-63000.txt.
+Generated random-63000.keys.
+Generated random-65500.png.
+Generated random-65500.txt.
+Generated random-65500.keys.
+Generated random-75000.png.
+Generated random-75000.txt.
+Generated random-75000.keys.
+Generated random-100000.png.
+Generated random-100000.txt.
+Generated random-100000.keys.
+Generated random-121000.png.
+Generated random-121000.txt.
+Generated random-121000.keys.
+Generated random-125000.png.
+Generated random-125000.txt.
+Generated random-125000.keys.
+Generated random-150000.png.
+Generated random-150000.txt.
+Generated random-150000.keys.
+Generated random-200000.png.
+Generated random-200000.txt.
+Generated random-200000.keys.
+Generated random-225000.png.
+Generated random-225000.txt.
+Generated random-225000.keys.
+Generated random-245000.png.
+Generated random-245000.txt.
+Generated random-245000.keys.
+Generated random-255000.png.
+Generated random-255000.txt.
+Generated random-255000.keys.
+Generated random-265000.png.
+Generated random-265000.txt.
+Generated random-265000.keys.
+Generated random-389161.png.
+Generated random-389161.txt.
+Generated random-389161.keys.
+Generated random-472374.png.
+Generated random-472374.txt.
+Generated random-472374.keys.
+
+</code></pre>
+                    </div>
+                </div>
+
+                <h3>Git Clone</h3>
+
+                <p>
+
+                    If you don't have Python and NumPy installed or you can't get the
+                    <code>generate.py</code> to work, you can clone a small git repository
+                    named <a href="https://github.com/tpn/perfecthash">perfecthash</a>, which
+                    contains a <code>data</code> directory that has a test file in it named
+                    <code>mshtml-37209.keys</code>:
+
+                    <hr/>
+                    <pre>
+                    C:\Users\Trent\Home\src&gt; git clone https://github.com/tpn/perfecthash
+                    ...
+                    C:\Users\Trent\Home\src&gt; cd perfecthash\data
+                    C:\Users\Trent\Home\src\perfecthash\data&gt; dir
+                    ...
+
+                    </pre>
+                    <hr/>
+
+                </p>
+
+                <a class="xref" name="running-self-test"></a>
+                <h2>Running the Self-Test</h2>
+
+                <p>
+
+                    If you clone the <a href="https://github.com/tpn/tracer">tracer</a> project
+                    and open
+                    <a href="https://github.com/tpn/tracer/tree/master/PerfectHashTable.sln">PerfectHashTable.sln</a>
+                    in Visual Studio 2017, you should be able to build the project from scratch.
+                    Selecting the Debug build configuration will make the code easier to step
+                    through if you'd like to follow along with an interactive debugging session.
+
+                </p>
+
+                <p>
+
+                    Let's run the debug build of the self-test program against the data directory we
+                    prepared earlier.  (I'll use the <code>perfecthash\data</code> directory for now
+                    as it only has two key files in it, <code>mshtml-10.keys</code> and
+                    <code>mshtml-37209.keys</code>.)  It's worth noting up-front how
+                    <strong>not</strong> user friendly the<code>PerfectHashTableSelfTest.exe</code>
+                    program is.  It's the bare minimum command line wrapper around the
+                    <a href="https://github.com/tpn/tracer/blob/master/PerfectHashTable/SelfTestPerfectHashTable.c">
+                    SelfTestPerfectHashTable()</a> routine.  It takes five mandatory parameters:
+                    the test directory containing the *.keys files you wish to process, the
+                    algorithm ID, the hash function ID, the mask function ID, and the maximum
+                    concurrency (specifying 0 will use all cores).  (You can optionally add a
+                    dummy character as the final parameter which will print a little <code>Press
+                    any key to continue.</code> message and then wait for a keypress before
+                    exiting &mdash; this is useful when debugging via Visual Studio and you want the
+                    console window to stay open so you can review results.)  Usage:
+
+                    <hr/>
+                    <pre>C:\Users\Trent\Home\src\tracer&gt;x64\Debug\PerfectHashTableSelfTest.exe
+Usage: PerfectHashTableSelfTest.exe &lt;TestDataDirectory (must be fully-qualified)&gt;
+                                    &lt;AlgorithmId&gt;
+                                    &lt;HashFunctionId&gt;
+                                    &lt;MaskFunctionId&gt;
+                                    &lt;MaximumConcurrency (0-ncpu)&gt;
+                                    [PauseBeforeExit (can be any character)]
+E.g.: PerfectHashTableSelfTest.exe C:\Users\Trent\Home\src\perfecthash\data 1 1 2 0
+                    </pre>
+                    <hr/>
+                </p>
+
+                <p>
+
+                    Let's try run it against our <code>perfecthash\data</code> directory.  We'll use
+                    the CHM algorithm (1... the only option), the CRC32-Rotate hash function (1),
+                    the AND-based masking function (2), and a max concurrency of 0, which will
+                    default to all cores, which will be 4 on this Surface Book.
+
+                    <hr/>
+                    <pre>S:\tracer&gt;x64\Debug\PerfectHashTableSelfTest.exe S:\perfecthash\data 1 1 2 0
+
+    Starting perfect hash self-test for directory: S:\perfecthash\data.
+    Processing key file: mshtml-10.keys
+    Successfully created perfect hash table: S:\perfecthash\data\mshtml-10.pht1.
+    Successfully loaded perfect hash table: S:\perfecthash\data\mshtml-10.pht1.
+    Algorithm: Chm01 (1).
+    Hash Function: Crc32Rotate (1).
+    Mask Function: And (2).
+    Successfully tested perfect hash table.
+    Concurrency: 4.
+    Number of attempts: 1.
+    Number of failed attempts: 0.
+    Number of solutions found: 1.
+    Number of keys: 10.
+    Number of table elements (vertices): 32.
+    Seed 1: 1086980845.
+    Seed 2: 3416976708.
+    Seed 3: 2208417421.
+    Seed 4: 3947037297.
+    Cycles to solve: 178412.
+    Cycles to verify: 3924.
+    Cycles to prepare file: 821965.
+    Cycles to save file: 9093112.
+    Microseconds to solve: 63.
+    Microseconds to verify: 1.
+    Microseconds to prepare file: 292.
+    Microseconds to save file: 3238.
+
+    Processing key file: mshtml-37209.keys
+    Successfully created perfect hash table: S:\perfecthash\data\mshtml-37209.pht1.
+    Successfully loaded perfect hash table: S:\perfecthash\data\mshtml-37209.pht1.
+    Algorithm: Chm01 (1).
+    Hash Function: Crc32Rotate (1).
+    Mask Function: And (2).
+    Successfully tested perfect hash table.
+    Concurrency: 4.
+    Number of attempts: 3.
+    Number of failed attempts: 0.
+    Number of solutions found: 3.
+    Number of keys: 37209.
+    Number of table elements (vertices): 131072.
+    Seed 1: 43757427.
+    Seed 2: 283337092.
+    Seed 3: 1819527900.
+    Seed 4: 1437745965.
+    Cycles to solve: 71649060.
+    Cycles to verify: 6385313.
+    Cycles to prepare file: 41221291.
+    Cycles to save file: 51229166.
+    Microseconds to solve: 25516.
+    Microseconds to verify: 2274.
+    Microseconds to prepare file: 14680.
+    Microseconds to save file: 18244.
+
+</pre>
+                    <hr/>
+                </p>
+
+                <p>
+
+                    Your output should look similar to the output above.  There will be two new
+                    files, <code>mshtml-10.pht1</code> and <code>mshtml-37209.pht1</code> in that
+                    <code>perfecthash\data</code> directory.  The .pht1 file is the array of
+                    "assigned" values we use as part of index construction for the CHM algorithm.
+                    When the output says <em>Successfully loaded perfect hash table ...</em>, it
+                    is referring to the .pht1 files.
+
+                </p>
+
+                <p>
+
+                    The metadata for the perfect hash table is stored in an NTFS stream named
+                    <code>:Info</code> that is attached to the .pht1 file.  We can view this
+                    via the <code>Get-Item -Path mshtml-37209.pht1 -Stream *</code> PowerShell
+                    command:
+
+                    <hr/>
+                    <pre>PS S:\perfecthash\data&gt; Get-Item -Path mshtml-37209.pht1 -Stream *
+
+    PSPath        : Microsoft.PowerShell.Core\FileSystem::S:\perfecthash\data\mshtml-37209.pht1::$DATA
+    PSParentPath  : Microsoft.PowerShell.Core\FileSystem::S:\perfecthash\data
+    PSChildName   : mshtml-37209.pht1::$DATA
+    PSDrive       : S
+    PSProvider    : Microsoft.PowerShell.Core\FileSystem
+    PSIsContainer : False
+    FileName      : S:\perfecthash\data\mshtml-37209.pht1
+    Stream        : :$DATA
+    Length        : 524288
+
+    PSPath        : Microsoft.PowerShell.Core\FileSystem::S:\perfecthash\data\mshtml-37209.pht1:Info
+    PSParentPath  : Microsoft.PowerShell.Core\FileSystem::S:\perfecthash\data
+    PSChildName   : mshtml-37209.pht1:Info
+    PSDrive       : S
+    PSProvider    : Microsoft.PowerShell.Core\FileSystem
+    PSIsContainer : False
+    FileName      : S:\perfecthash\data\mshtml-37209.pht1
+    Stream        : Info
+    Length        : 256
+</pre>
+                    <hr/>
+
+                </p>
+
+                <p>
+
+                    You can see the normal file data in the first stream (the default file stream)
+                    named <code>$DATA</code>.  This is reported as length 524,288 bytes.  If we
+                    divide this by 4 (the <code>sizeof(ULONG)</code>), we get 131,072 &mdash; which
+                    corresponds to the number of vertices reported for the final table in the
+                    output:
+
+                    <hr/>
+                    <pre>...
+Number of table elements (vertices): 131072.
+...
+</pre><hr/>
+
+                </p>
+
+                <a class="xref" name="the-info-stream"></a>
+                <h3>The <code>:Info</code> Stream</h3>
+
+                <p>
+
+                    Following that is our custom <code>:Info</code> NTFS stream of length 256 bytes.
+                    As mentioned earlier, all of our file I/O is done through memory maps.  During
+                    the creation step, the <code>:Info</code> stream is created and mapped a base
+                    address accessible through <code>Table-&gt;InfoStreamBaseAddress</code> (we'll
+                    discuss the <code>Table</code> structure soon).  In our CHM implementation
+                    routine, we literally cast the base address to an <em>on-disk</em> structure
+                    named <code>GRAPH_INFO_ON_DISK</code>, which is required to embed a common
+                    header structure named <code>TABLE_INFO_ON_DISK_HEADER</code> as its first
+                    member.
+
+                </p>
+
+                <p>
+
+                    Let's look at these two header structures, as well as some initialization and
+                    finalization code in the CHM implementation that depicts how we work with them.
+                    The initialization code is taken from the
+                    <a href="https://github.com/tpn/tracer/blob/49df7b95dc499c56423af178dfd687b786aaa610/PerfectHashTable/Chm_01.c#L711">
+                    CreatePerfectHashTableImplChm01</a> routine, and the finalization code is taken
+                    from the
+                    <a href="https://github.com/tpn/tracer/blob/49df7b95dc499c56423af178dfd687b786aaa610/PerfectHashTable/Chm_01.c#L1470">
+                    FileWorkCallbackChm01</a>.
+
+                </p>
+
+                <div class="tab-box language box-ondisk">
+                    <ul class="tabs">
+                        <li data-content="content-ondisk-graph-struct">GRAPH_INFO_ON_DISK</li>
+                        <li data-content="content-ondisk-header-struct">TABLE_INFO_ON_DISK_HEADER</li>
+                        <li data-content="content-ondisk-chm01-initialization">Initialization</li>
+                        <li data-content="content-ondisk-chm01-finalization">Finalization</li>
+                    </ul>
+                    <div class="content">
+<pre class="code content-ondisk-graph-struct"><code class="language-c">//
+// Define an on-disk representation of the graph's information.  This is stored
+// in the NTFS stream extending from the backing file named :Info.  It is
+// responsible for storing information about the on-disk mapping such that it
+// can be reloaded from disk and used as a perfect hash table.  The structure
+// must always embed the TABLE_INFO_ON_DISK_HEADER structure such that the
+// generic loader routine can access on-disk versions saved by different algos
+// in order to extract the algorithm ID and determine a suitable loader func to
+// use.
+//
+
+typedef struct _Struct_size_bytes_(Header.SizeOfStruct) _GRAPH_INFO_ON_DISK {
+
+    //
+    // Include the required header.
+    //
+
+    TABLE_INFO_ON_DISK_HEADER Header;
+
+    //
+    // Additional information we capture is mostly just for informational
+    // and debugging purposes.
+    //
+
+    //
+    // Inline the GRAPH_DIMENSIONS structure.
+    //
+
+    union {
+
+        struct {
+            ULONG NumberOfEdges;
+            ULONG TotalNumberOfEdges;
+            ULONG NumberOfVertices;
+            BYTE NumberOfEdgesPowerOf2Exponent;
+            BYTE NumberOfEdgesNextPowerOf2Exponent;
+            BYTE NumberOfVerticesPowerOf2Exponent;
+            BYTE NumberOfVerticesNextPowerOf2Exponent;
+        };
+
+        GRAPH_DIMENSIONS Dimensions;
+    };
+
+} GRAPH_INFO_ON_DISK;
+C_ASSERT(sizeof(GRAPH_INFO_ON_DISK) &lt;= PAGE_SIZE);
+typedef GRAPH_INFO_ON_DISK *PGRAPH_INFO_ON_DISK;</code></pre>
+<pre class="code content-ondisk-header-struct"><code class="language-c">//
+// Metadata about a perfect hash table is stored in an NTFS stream named :Info
+// that is tacked onto the end of the perfect hash table's file name.  Define
+// a structure, TABLE_INFO_ON_DISK_HEADER, that literally represents the on-disk
+// layout of this metadata.  Each algorithm implementation must write out an
+// info record that conforms with this common header.  They are free to extend
+// it with additional details.
+//
+
+typedef union _TABLE_INFO_ON_DISK_HEADER_FLAGS {
+
+    struct {
+
+        //
+        // Unused bits.
+        //
+
+        ULONG Unused:32;
+
+    };
+
+    LONG AsLong;
+    ULONG AsULong;
+
+} TABLE_INFO_ON_DISK_HEADER_FLAGS;
+C_ASSERT(sizeof(TABLE_INFO_ON_DISK_HEADER_FLAGS) == sizeof(ULONG));
+
+typedef struct _Struct_size_bytes_(SizeOfStruct) _TABLE_INFO_ON_DISK_HEADER {
+
+    //
+    // A magic value used to identify the structure.
+    //
+
+    ULARGE_INTEGER Magic;
+
+    //
+    // Size of the structure, in bytes.
+    //
+    // N.B. We don't allocate this with a _Field_range_ SAL annotation as the
+    //      value will vary depending on which parameters were used to create
+    //      the table.
+    //
+
+    ULONG SizeOfStruct;
+
+    //
+    // Flags.
+    //
+
+    TABLE_INFO_ON_DISK_HEADER_FLAGS Flags;
+
+    //
+    // Algorithm that was used.
+    //
+
+    PERFECT_HASH_TABLE_ALGORITHM_ID AlgorithmId;
+
+    //
+    // Hash function that was used.
+    //
+
+    PERFECT_HASH_TABLE_HASH_FUNCTION_ID HashFunctionId;
+
+    //
+    // Masking type.
+    //
+
+    PERFECT_HASH_TABLE_MASK_FUNCTION_ID MaskFunctionId;
+
+    //
+    // Size of an individual key element, in bytes.
+    //
+
+    ULONG KeySizeInBytes;
+
+    //
+    // The concurrency level used to generate the hash.
+    //
+
+    ULONG Concurrency;
+
+    //
+    // Pad out to 8 bytes.
+    //
+
+    ULONG Padding;
+
+    //
+    // Number of keys in the input set.  This is used to size an appropriate
+    // array for storing values.
+    //
+
+    ULARGE_INTEGER NumberOfKeys;
+
+    //
+    // Final number of elements in the underlying table.  This will vary
+    // depending on how the graph was created.  If modulus masking is in use,
+    // this will reflect the number of keys (unless a custom table size was
+    // requested during creation).  Otherwise, this will be the number of keys
+    // rounded up to the next power of 2.  (That is, take the number of keys,
+    // round up to a power of 2, then round that up to the next power of 2.)
+    //
+
+    ULARGE_INTEGER NumberOfTableElements;
+
+    //
+    // Capture the hash and index details required by MaskHash(), MaskIndex()
+    // and Index() routines.
+    //
+
+    ULONG HashSize;
+    ULONG IndexSize;
+
+    ULONG HashShift;
+    ULONG IndexShift;
+
+    ULONG HashMask;
+    ULONG IndexMask;
+
+    ULONG HashFold;
+    ULONG IndexFold;
+
+    ULONG HashModulus;
+    ULONG IndexModulus;
+
+    //
+    // Seed data.
+    //
+
+    ULONG NumberOfSeeds;
+
+    union {
+        ULONG Seed1;
+        ULONG FirstSeed;
+    };
+
+    ULONG Seed2;
+    ULONG Seed3;
+
+    union {
+        ULONG Seed4;
+        ULONG LastSeed;
+    };
+
+    //
+    // Capture statistics about the perfect hash table solution that can be
+    // useful during analysis and performance comparisons.
+    //
+
+    //
+    // Number of attempts at solving the solution.
+    //
+
+    ULONGLONG NumberOfAttempts;
+
+    //
+    // Number of failed attempts at solving the solution.
+    //
+
+    ULONGLONG NumberOfFailedAttempts;
+
+    //
+    // If solutions are being sought in parallel, more than one thread may
+    // find a solution before it detects that someone else has already found
+    // a solution (in which case, it stops solving and returns from the pool
+    // callback).  This counter measures the number of solutions that were
+    // found in parallel.  It corresponds to the Context-&gt;FinishedCount value.
+    //
+    // With a good hashing function and large concurrency value, this value
+    // may often be relatively large.  E.g. with a concurrency level of 12, it
+    // would not be surprising to see 12 attempts reported, and 10 solutions
+    // found.  (Meaning that our concurrency level was a tad unnecessary, or
+    // our hash function is unnecessarily good (which usually means expensive).)
+    //
+    // N.B. Finding multiple solutions in parallel is harmless, if not a little
+    //      wasteful of CPU time.  The threads can detect if they are the first
+    //      ones to find a solution prior to continuing with the assignment
+    //      step, such that the assignment can be avoided if another thread has
+    //      beaten them to that point.
+    //
+
+    ULONGLONG NumberOfSolutionsFound;
+
+    //
+    // If a solution can't be found within a configurable threshold, a "table
+    // resize" event will be generated.  This results in doubling the number
+    // of vertices being used for the backing table and trying the solution
+    // again.  The following field captures how many times this occurred.
+    //
+
+    ULONGLONG NumberOfTableResizeEvents;
+
+    //
+    // This counter captures the sum of all prior attempts at solving the
+    // solution before giving up and resizing the table.  It excludes the
+    // attempts made by the winning table size (captured by NumberOfAttempts).
+    // It will be zero if no resize events occurred.  We don't keep a separate
+    // failed counter here, as the resize event implies all attempts failed.
+    //
+
+    ULONGLONG TotalNumberOfAttemptsWithSmallerTableSizes;
+
+    //
+    // The following counter captures the initial table size that was attempted
+    // in order to solve the solution.  It will differ from the final table size
+    // if there were resize events.  As we simply double the size of the table
+    // on each resize event, we can extrapolate the different table sizes that
+    // were tried prior to finding a winning one by looking at the initial size
+    // attempted and the number of resize events.
+    //
+
+    ULONGLONG InitialTableSize;
+
+    //
+    // The following counter captures the closest we came to solving the graph
+    // in previous attempts before a resize event occurred.  This is calculated
+    // by taking the number of edges and subtracting the value of the context's
+    // HighestDeletedEdgesCount counter.  The value represents the additional
+    // number of 1 degree edges we needed to delete in order to obtain an
+    // acyclic graph.  A very low number indicates that we came very close to
+    // solving it as there were very few hash collisions with the seed values
+    // we picked.  A very high number indicates we had no chance and there were
+    // collisions galore.
+    //
+
+    ULONGLONG ClosestWeCameToSolvingGraphWithSmallerTableSizes;
+
+    //
+    // Number of cycles it took to solve the solution for the winning thread.
+    // (This does not factor in the total cycle time consumed by all threads.)
+    //
+
+    ULARGE_INTEGER SolveCycles;
+
+    //
+    // Number of microseconds taken to solve the solution.
+    //
+
+    ULARGE_INTEGER SolveMicroseconds;
+
+    //
+    // Number of cycles taken to verify the solution.
+    //
+
+    ULARGE_INTEGER VerifyCycles;
+
+    //
+    // Number of microseconds taken to verify the solution.
+    //
+
+    ULARGE_INTEGER VerifyMicroseconds;
+
+    //
+    // Number of cycles taken to prepare the file.
+    //
+
+    ULARGE_INTEGER PrepareFileCycles;
+
+    //
+    // Number of microseconds taken to prepare the file.
+    //
+
+    ULARGE_INTEGER PrepareFileMicroseconds;
+
+    //
+    // Number of cycles taken to save the file.
+    //
+
+    ULARGE_INTEGER SaveFileCycles;
+
+    //
+    // Number of microseconds taken to save the file.
+    //
+
+    ULARGE_INTEGER SaveFileMicroseconds;
+
+} TABLE_INFO_ON_DISK_HEADER;
+typedef TABLE_INFO_ON_DISK_HEADER *PTABLE_INFO_ON_DISK_HEADER;</code></pre>
+<pre class="code content-ondisk-chm01-initialization"><code class="language-c">    //
+    // Save the on-disk representation of the graph information.  This is a
+    // smaller subset of data needed in order to load a previously-solved
+    // graph as a perfect hash table.  The data resides in an NTFS stream named
+    // :Info off the main perfect hash table file.  It will have been mapped for
+    // us already at Table-&gt;InfoStreamBaseAddress.
+    //
+
+    OnDiskInfo = (PGRAPH_INFO_ON_DISK)Table-&gt;InfoStreamBaseAddress;
+    ASSERT(OnDiskInfo);
+    OnDiskHeader = &amp;OnDiskInfo-&gt;Header;
+    OnDiskHeader-&gt;Magic.LowPart = TABLE_INFO_ON_DISK_MAGIC_LOWPART;
+    OnDiskHeader-&gt;Magic.HighPart = TABLE_INFO_ON_DISK_MAGIC_HIGHPART;
+    OnDiskHeader-&gt;SizeOfStruct = sizeof(*OnDiskInfo);
+    OnDiskHeader-&gt;Flags.AsULong = 0;
+    OnDiskHeader-&gt;Concurrency = Context-&gt;MaximumConcurrency;
+    OnDiskHeader-&gt;AlgorithmId = Context-&gt;AlgorithmId;
+    OnDiskHeader-&gt;MaskFunctionId = Context-&gt;MaskFunctionId;
+    OnDiskHeader-&gt;HashFunctionId = Context-&gt;HashFunctionId;
+    OnDiskHeader-&gt;KeySizeInBytes = sizeof(ULONG);
+    OnDiskHeader-&gt;HashSize = Table-&gt;HashSize;
+    OnDiskHeader-&gt;IndexSize = Table-&gt;IndexSize;
+    OnDiskHeader-&gt;HashShift = Table-&gt;HashShift;
+    OnDiskHeader-&gt;IndexShift = Table-&gt;IndexShift;
+    OnDiskHeader-&gt;HashMask = Table-&gt;HashMask;
+    OnDiskHeader-&gt;IndexMask = Table-&gt;IndexMask;
+    OnDiskHeader-&gt;HashFold = Table-&gt;HashFold;
+    OnDiskHeader-&gt;IndexFold = Table-&gt;IndexFold;
+    OnDiskHeader-&gt;HashModulus = Table-&gt;HashModulus;
+    OnDiskHeader-&gt;IndexModulus = Table-&gt;IndexModulus;
+    OnDiskHeader-&gt;NumberOfKeys.QuadPart = (
+        Table-&gt;Keys-&gt;NumberOfElements.QuadPart
+    );
+    OnDiskHeader-&gt;NumberOfSeeds = ((
+        FIELD_OFFSET(GRAPH, LastSeed) -
+        FIELD_OFFSET(GRAPH, FirstSeed)
+    ) / sizeof(ULONG)) + 1;
+
+    //
+    // This will change based on masking type and whether or not the caller
+    // has provided a value for NumberOfTableElements.  For now, keep it as
+    // the number of vertices.
+    //
+
+    OnDiskHeader-&gt;NumberOfTableElements.QuadPart = (
+        NumberOfVertices.QuadPart
+    );
+
+    CopyMemory(&amp;OnDiskInfo-&gt;Dimensions, Dim, sizeof(*Dim));</code></pre>
+<pre class="code content-ondisk-chm01-finalization"><code class="language-c">        case FileWorkSaveId: {
+
+            PULONG Dest;
+            PULONG Source;
+            PGRAPH Graph;
+            ULONG WaitResult;
+            BOOLEAN Success;
+            ULONGLONG SizeInBytes;
+            LARGE_INTEGER EndOfFile;
+            PPERFECT_HASH_TABLE Table;
+            PTABLE_INFO_ON_DISK_HEADER Header;
+
+            //
+            // Indicate the save event has completed upon return of this
+            // callback.
+            //
+
+            SetOnReturnEvent = SavedEvent;
+
+            //
+            // Initialize aliases.
+            //
+
+            Table = Context-&gt;Table;
+            Dest = (PULONG)Table-&gt;BaseAddress;
+            Graph = (PGRAPH)Context-&gt;SolvedContext;
+            Source = Graph-&gt;Assigned;
+            Header = Table-&gt;Header;
+
+            SizeInBytes = (
+                Header-&gt;NumberOfTableElements.QuadPart *
+                Header-&gt;KeySizeInBytes
+            );
+
+            //
+            // The graph has been solved.  Copy the array of assigned values
+            // to the mapped area we prepared earlier (above).
+            //
+
+            CopyMemory(Dest, Source, SizeInBytes);
+
+            //
+            // Save the seed values used by this graph.  (Everything else in
+            // the on-disk info representation was saved earlier.)
+            //
+
+            Header-&gt;Seed1 = Graph-&gt;Seed1;
+            Header-&gt;Seed2 = Graph-&gt;Seed2;
+            Header-&gt;Seed3 = Graph-&gt;Seed3;
+            Header-&gt;Seed4 = Graph-&gt;Seed4;
+
+            //
+            // Kick off a flush file buffers now before we wait on the verified
+            // event.  The flush will be a blocking call.  The wait on verified
+            // will be blocking if the event isn't signaled.  So, we may as well
+            // get some useful blocking work done, before potentially going into
+            // another wait state where we're not doing anything useful.
+            //
+
+            ASSERT(FlushFileBuffers(Table-&gt;FileHandle));
+
+            //
+            // Stop the save file timer here, after flushing the file buffers,
+            // but before we potentially wait on the verified state.
+            //
+
+            CONTEXT_END_TIMERS(SaveFile);
+
+            //
+            // Wait on the verification complete event.  This is done in the
+            // main thread straight after it dispatches our file work callback
+            // (that ended up here).  We need to block on this event as we want
+            // to save the timings for verification to the header.
+            //
+
+            WaitResult = WaitForSingleObject(Context-&gt;VerifiedEvent, INFINITE);
+            ASSERT(WaitResult == WAIT_OBJECT_0);
+
+            //
+            // When we mapped the array in the work item above, we used a size
+            // that was aligned with the system allocation granularity.  We now
+            // want to set the end of file explicitly to the exact size of the
+            // underlying array.  To do this, we unmap the view, delete the
+            // section, set the file pointer to where we want, set the end of
+            // file (which will apply the file pointer position as EOF), then
+            // close the file handle.
+            //
+
+            ASSERT(UnmapViewOfFile(Table-&gt;BaseAddress));
+            Table-&gt;BaseAddress = NULL;
+
+            ASSERT(CloseHandle(Table-&gt;MappingHandle));
+            Table-&gt;MappingHandle = NULL;
+
+            EndOfFile.QuadPart = SizeInBytes;
+
+            Success = SetFilePointerEx(Table-&gt;FileHandle,
+                                       EndOfFile,
+                                       NULL,
+                                       FILE_BEGIN);
+
+            ASSERT(Success);
+
+            ASSERT(SetEndOfFile(Table-&gt;FileHandle));
+
+            ASSERT(CloseHandle(Table-&gt;FileHandle));
+            Table-&gt;FileHandle = NULL;
+
+            //
+            // Stop the save file timers, then copy all the timer values into
+            // the header (before closing the :Info stream).
+            //
+
+            CONTEXT_SAVE_TIMERS_TO_HEADER(Solve);
+            CONTEXT_SAVE_TIMERS_TO_HEADER(Verify);
+            CONTEXT_SAVE_TIMERS_TO_HEADER(PrepareFile);
+            CONTEXT_SAVE_TIMERS_TO_HEADER(SaveFile);
+
+            //
+            // Save the number of attempts and number of finished solutions.
+            //
+
+            Header-&gt;NumberOfAttempts = Context-&gt;Attempts;
+            Header-&gt;NumberOfFailedAttempts = Context-&gt;FailedAttempts;
+            Header-&gt;NumberOfSolutionsFound = Context-&gt;FinishedCount;
+
+            //
+            // Finalize the :Info stream the same way we handled the backing
+            // file above; unmap, delete section, set file pointer, set eof,
+            // close file.
+            //
+
+            ASSERT(UnmapViewOfFile(Table-&gt;InfoStreamBaseAddress));
+            Table-&gt;InfoStreamBaseAddress = NULL;
+
+            ASSERT(CloseHandle(Table-&gt;InfoStreamMappingHandle));
+            Table-&gt;InfoStreamMappingHandle = NULL;
+
+            //
+            // The file size for the :Info stream will be the size of our
+            // on-disk info structure.
+            //
+
+            EndOfFile.QuadPart = sizeof(*OnDiskInfo);
+
+            Success = SetFilePointerEx(Table-&gt;InfoStreamFileHandle,
+                                       EndOfFile,
+                                       NULL,
+                                       FILE_BEGIN);
+
+            ASSERT(Success);
+
+            ASSERT(SetEndOfFile(Table-&gt;InfoStreamFileHandle));
+
+            ASSERT(CloseHandle(Table-&gt;InfoStreamFileHandle));
+            Table-&gt;InfoStreamFileHandle = NULL;
+
+            break;
+        }</code></pre>
+                    </div>
+                </div>
+
+                <p>
+
+                    So, to summarize, the <code>:Info</code> NTFS stream is memory mapped and then
+                    directly cast into a <code>GRAPH_INFO_ON_DISK</code> structure, which is
+                    required to embed the <code>TABLE_INFO_ON_DISK_HEADER</code> structure as its
+                    first element.  The
+                    <a
+                    href="https://github.com/tpn/tracer/blob/49df7b95dc499c56423af178dfd687b786aaa610/PerfectHashTable/LoadPerfectHashTable.c">
+                    LoadPerfectHashTable()</a> routine is then able to memory map the same
+                    <code>:Info</code> stream at a later point (or in a separate process), validate
+                    the header semantics, extract the algorithm ID, then call the algorithm
+                    implementation's custom loader routine.
+
+                </p>
+
+                <p>
+
+                    This is how we satisfy the original off-line generation requirement.  (That is,
+                    making sure the creation step persists something that can be loaded and used at
+                    an arbitrary future time, in a different process, potentially on a different
+                    machine.)
+
+                </p>
+
+                <a class="xref" name="SelfTestPerfectHashTable"></a>
+                <h2>SelfTestPerfectHashTable</h2>
+
+                <p>
+
+                    Let's step back and take a look at the self test routine, as this exercises all
+                    of the main public API routines, and serves as a good starting point.  I'll
+                    provide two code samples; the first is a vastly simplified pseudo-code depiction
+                    of the routine, sans all details other than the absolute bare minimum, the
+                    second is the full routine.
+
+                </p>
+
+                <div class="tab-box language box-self-test">
+                    <ul class="tabs">
+                        <li data-content="content-self-test-pseudo">Pseudo</li>
+                        <li data-content="content-self-test-full">Full</li>
+                    </ul>
+                    <div class="content">
+<pre class="code content-self-test-pseudo"><code class="language-c">
+BOOLEAN
+SelfTestPerfectHashTable(
+    PRTL Rtl,
+    PALLOCATOR Allocator,
+    PPERFECT_HASH_TABLE_ANY_API AnyApi,
+    PCUNICODE_STRING TestDataDirectory,
+    PULONG MaximumConcurrency,
+    PERFECT_HASH_TABLE_ALGORITHM_ID AlgorithmId,
+    PERFECT_HASH_TABLE_HASH_FUNCTION_ID HashFunctionId,
+    PERFECT_HASH_TABLE_MASK_FUNCTION_ID MaskFunctionId
+    )
+/*++
+
+Routine Description:
+
+    Performs a self-test of the entire PerfectHashTable component.
+
+Arguments:
+
+    Rtl - Supplies a pointer to an initialized RTL structure.
+
+    Allocator - Supplies a pointer to an initialized ALLOCATOR structure that
+        will be used for all memory allocations.
+
+    AnyApi - Supplies a pointer to an initialized PERFECT_HASH_TABLE_ANY_API
+        structure.  Note that this must be an instance of the extended API;
+        this is verified by looking at the Api-&amp;SizeOfStruct field and ensuring
+        it matches our expected size of the extended API structure.
+
+    TestDataDirectory - Supplies a pointer to a UNICODE_STRING structure that
+        represents a fully-qualified path of the test data directory.
+
+    MaximumConcurrency - Optionally supplies a pointer to a variable that
+        contains the desired maximum concurrency to be used for the underlying
+        threadpool.  If NULL, or non-NULL but points to a value of 0, then the
+        number of system processors will be used as a default value.
+
+        N.B. This value is passed directly to SetThreadpoolThreadMinimum() and
+             SetThreadpoolThreadMaximum().
+
+    AlgorithmId - Supplies the algorithm to use.
+
+    MaskFunctionId - Supplies the type of masking to use.
+
+    HashFunctionId - Supplies the hash function to use.
+
+Return Value:
+
+    TRUE on success, FALSE on failure.
+
+--*/
+{
+
+    //
+    // Enumerate over all keys in the test data directory.
+    //
+
+    for (KeysPath in FindFiles(TestDataDirectory, "*.keys")) {
+
+        //
+        // Create a new perfect hash table context.
+        //
+
+        Api-&gt;CreatePerfectHashTableContext(Rtl,
+                                           Allocator,
+                                           MaximumConcurrency,
+                                           &amp;Context);
+
+
+        //
+        // Load the keys file.
+        //
+
+        Api-&gt;LoadPerfectHashTableKeys(Rtl,
+                                      Allocator,
+                                      &amp;KeysPath,
+                                      &amp;Keys);
+
+        //
+        // Keys were loaded successfully.  Construct the equivalent path name
+        // for the backing perfect hash table when persisted to disk.  Although
+        // this can be automated for us as part of CreatePerfectHashTable(),
+        // having it backed by our memory simplifies things a little further
+        // down the track when we want to load the table via the path but have
+        // destroyed the original table that came from CreatePerfectHashTable().
+        //
+
+        CreateTablePathFromKeysPath(&amp;Keys, &amp;TablePath);
+
+        //
+        // We now have the fully-qualified path name of the backing perfect
+        // hash table file living in TablePath.  Continue with creation of the
+        // perfect hash table, using this path we've just created and the keys
+        // that were loaded.
+        //
+
+        Api-&gt;CreatePerfectHashTable(Rtl,
+                                    Allocator,
+                                    Context,
+                                    AlgorithmId,
+                                    MaskFunctionId,
+                                    HashFunctionId,
+                                    NULL,
+                                    Keys,
+                                    &amp;TablePath);
+
+        //
+        // Load the perfect hash table we just created.
+        //
+
+        Api-&gt;LoadPerfectHashTable(Rtl,
+                                     Allocator,
+                                     Keys,
+                                     &amp;TablePath,
+                                     &amp;Table);
+
+        //
+        // Table was loaded successfully from disk.  Obtain the names of all
+        // the enumeration IDs.  Currently these should always match the same
+        // enums provided as input parameters to this routine.
+        //
+
+        Api-&gt;GetAlgorithmName(Table-&gt;AlgorithmId, &amp;AlgorithmName);
+
+        Api-&gt;GetHashFunctionName(Table-&gt;HashFunctionId, &amp;HashFunctionName);
+
+        Api-&gt;GetMaskFunctionName(Table-&gt;MaskFunctionId, &amp;MaskFunctionName);
+
+        //
+        // Test the table.  The TRUE parameter corresponds to the DebugBreakOnFailure
+        // boolean parameter, indicating that we want an immediate __debugbreak() if
+        // a failure is detected.
+        //
+
+        Api-&gt;TestPerfectHashTable(Table, TRUE);
+
+        //
+        // Dump some stats from the header.
+        //
+
+        DumpHeaderStats(Table-&gt;Header);
+
+        //
+        // Destroy the table, keys, and context.
+        //
+
+        Table-&gt;Vtbl-&gt;Release(Table);
+
+        Api-&gt;DestroyPerfectHashTableKeys(&amp;Keys);
+
+        Api-&gt;DestroyPerfectHashTableContext(&amp;Context, NULL);
+
+    }
+}</code></pre>
+<pre class="code content-self-test-full"><code class="language-c">_Use_decl_annotations_
+BOOLEAN
+SelfTestPerfectHashTable(
+    PRTL Rtl,
+    PALLOCATOR Allocator,
+    PPERFECT_HASH_TABLE_ANY_API AnyApi,
+    PCUNICODE_STRING TestDataDirectory,
+    PULONG MaximumConcurrency,
+    PERFECT_HASH_TABLE_ALGORITHM_ID AlgorithmId,
+    PERFECT_HASH_TABLE_HASH_FUNCTION_ID HashFunctionId,
+    PERFECT_HASH_TABLE_MASK_FUNCTION_ID MaskFunctionId
+    )
+/*++
+
+Routine Description:
+
+    Performs a self-test of the entire PerfectHashTable component.
+
+Arguments:
+
+    Rtl - Supplies a pointer to an initialized RTL structure.
+
+    Allocator - Supplies a pointer to an initialized ALLOCATOR structure that
+        will be used for all memory allocations.
+
+    AnyApi - Supplies a pointer to an initialized PERFECT_HASH_TABLE_ANY_API
+        structure.  Note that this must be an instance of the extended API;
+        this is verified by looking at the Api-&gt;SizeOfStruct field and ensuring
+        it matches our expected size of the extended API structure.
+
+    TestDataDirectory - Supplies a pointer to a UNICODE_STRING structure that
+        represents a fully-qualified path of the test data directory.
+
+    MaximumConcurrency - Optionally supplies a pointer to a variable that
+        contains the desired maximum concurrency to be used for the underlying
+        threadpool.  If NULL, or non-NULL but points to a value of 0, then the
+        number of system processors will be used as a default value.
+
+        N.B. This value is passed directly to SetThreadpoolThreadMinimum() and
+             SetThreadpoolThreadMaximum().
+
+    AlgorithmId - Supplies the algorithm to use.
+
+    MaskFunctionId - Supplies the type of masking to use.
+
+    HashFunctionId - Supplies the hash function to use.
+
+Return Value:
+
+    TRUE on success, FALSE on failure.
+
+--*/
+{
+    PWSTR Dest;
+    PWSTR Source;
+    USHORT Length;
+    USHORT BaseLength;
+    USHORT NumberOfPages;
+    BOOLEAN Success;
+    BOOLEAN Failed;
+    BOOLEAN IsProcessTerminating = FALSE;
+    PWCHAR Buffer;
+    PWCHAR BaseBuffer;
+    PWCHAR WideOutput;
+    PWCHAR WideOutputBuffer;
+    HANDLE FindHandle = NULL;
+    HANDLE WideOutputHandle;
+    HANDLE ProcessHandle = NULL;
+    ULONG Failures;
+    ULONG BytesWritten;
+    ULONG WideCharsWritten;
+    ULONGLONG BufferSize;
+    ULONGLONG WideOutputBufferSize;
+    LONG_INTEGER AllocSize;
+    LARGE_INTEGER BytesToWrite;
+    LARGE_INTEGER WideCharsToWrite;
+    WIN32_FIND_DATAW FindData;
+    UNICODE_STRING SearchPath;
+    UNICODE_STRING KeysPath;
+    UNICODE_STRING TablePath;
+    PPERFECT_HASH_TABLE Table;
+    PPERFECT_HASH_TABLE_KEYS Keys;
+    PTABLE_INFO_ON_DISK_HEADER Header;
+    PPERFECT_HASH_TABLE_CONTEXT Context;
+    PPERFECT_HASH_TABLE_API Api;
+    PPERFECT_HASH_TABLE_API_EX ApiEx;
+    PUNICODE_STRING AlgorithmName;
+    PUNICODE_STRING HashFunctionName;
+    PUNICODE_STRING MaskFunctionName;
+    UNICODE_STRING Suffix = RTL_CONSTANT_STRING(L"*.keys");
+    UNICODE_STRING TableSuffix = RTL_CONSTANT_STRING(L"pht1");
+
+    //
+    // Validate arguments.
+    //
+
+    if (!ARGUMENT_PRESENT(Rtl)) {
+        return FALSE;
+    }
+
+    if (!ARGUMENT_PRESENT(Allocator)) {
+        return FALSE;
+    }
+
+    if (!ARGUMENT_PRESENT(AnyApi)) {
+
+        return FALSE;
+
+    } else {
+
+        Api = &amp;AnyApi-&gt;Api;
+
+        if (Api-&gt;SizeOfStruct == sizeof(*ApiEx)) {
+
+            ApiEx = &amp;AnyApi-&gt;ApiEx;
+
+        } else {
+
+            //
+            // The API should be the extended version.  (Otherwise, how did
+            // the caller even find this function?)
+            //
+
+            return FALSE;
+        }
+
+    }
+
+    if (!ARGUMENT_PRESENT(TestDataDirectory)) {
+        return FALSE;
+    }
+
+    if (!IsValidMinimumDirectoryUnicodeString(TestDataDirectory)) {
+        return FALSE;
+    }
+
+    if (!IsValidPerfectHashTableAlgorithmId(AlgorithmId)) {
+
+        return FALSE;
+
+    } else {
+
+
+    }
+
+    //
+    // Arguments have been validated, proceed.
+    //
+
+    //
+    // Create a buffer we can use for stdout, using a very generous buffer size.
+    //
+
+    NumberOfPages = 10;
+    Success = Rtl-&gt;CreateBuffer(Rtl,
+                                &amp;ProcessHandle,
+                                NumberOfPages,
+                                NULL,
+                                &amp;WideOutputBufferSize,
+                                &amp;WideOutputBuffer);
+
+    if (!Success) {
+        return FALSE;
+    }
+
+    WideOutput = WideOutputBuffer;
+
+    //
+    // Create a buffer we can use for temporary path construction.  We want it
+    // to be MAX_USHORT in size, so (1 &lt;&lt; 16) &gt;&gt; PAGE_SHIFT converts this into
+    // the number of pages we need.
+    //
+
+    NumberOfPages = (1 &lt;&lt; 16) &gt;&gt; PAGE_SHIFT;
+    Success = Rtl-&gt;CreateBuffer(Rtl,
+                                &amp;ProcessHandle,
+                                NumberOfPages,
+                                NULL,
+                                &amp;BufferSize,
+                                &amp;BaseBuffer);
+
+    if (!Success) {
+        return FALSE;
+    }
+
+    Buffer = BaseBuffer;
+
+    //
+    // Get a reference to the stdout handle.
+    //
+
+    WideOutputHandle = GetStdHandle(STD_OUTPUT_HANDLE);
+    ASSERT(WideOutputHandle);
+
+    //
+    // Calculate the size required for a new concatenated wide string buffer
+    // that combines the test data directory with the "*.keys" suffix.  The
+    // 2 * sizeof(*Dest) accounts for the joining slash and trailing NULL.
+    //
+
+    AllocSize.LongPart = TestDataDirectory-&gt;Length;
+    AllocSize.LongPart += Suffix.Length + (2 * sizeof(*Dest));
+
+    ASSERT(!AllocSize.HighPart);
+
+    SearchPath.Buffer = (PWSTR)Buffer;
+
+    if (!SearchPath.Buffer) {
+        goto Error;
+    }
+
+    //
+    // Copy incoming test data directory name.
+    //
+
+    Length = TestDataDirectory-&gt;Length;
+    CopyMemory(SearchPath.Buffer,
+               TestDataDirectory-&gt;Buffer,
+               Length);
+
+    //
+    // Advance our Dest pointer to the end of the directory name, write a
+    // slash, then copy the suffix over.
+    //
+
+    Dest = (PWSTR)RtlOffsetToPointer(SearchPath.Buffer, Length);
+    *Dest++ = L'\\';
+    CopyMemory(Dest, Suffix.Buffer, Suffix.Length);
+
+    //
+    // Wire up the search path length and maximum length variables.  The max
+    // length will be our AllocSize, length will be this value minus 2 to
+    // account for the trailing NULL.
+    //
+
+    SearchPath.MaximumLength = AllocSize.LowPart;
+    SearchPath.Length = AllocSize.LowPart - sizeof(*Dest);
+    ASSERT(SearchPath.Buffer[SearchPath.Length] == L'\0');
+
+    //
+    // Advance the buffer past this string allocation, up to the next 16-byte
+    // boundary.
+    //
+
+    Buffer = (PWSTR)(
+        RtlOffsetToPointer(
+            Buffer,
+            ALIGN_UP(SearchPath.MaximumLength, 16)
+        )
+    );
+
+    WIDE_OUTPUT_RAW(WideOutput,
+                    L"Starting perfect hash self-test for directory: ");
+    WIDE_OUTPUT_UNICODE_STRING(WideOutput, TestDataDirectory);
+    WIDE_OUTPUT_RAW(WideOutput, L".\n");
+    WIDE_OUTPUT_FLUSH();
+
+    //
+    // Create a find handle for the &lt;test data&gt;\*.keys search pattern we
+    // created.
+    //
+
+    FindHandle = FindFirstFileW(SearchPath.Buffer, &amp;FindData);
+
+    if (!FindHandle || FindHandle == INVALID_HANDLE_VALUE) {
+
+        ULONG LastError;
+
+        //
+        // Check to see if we failed because there were no files matching the
+        // wildcard *.keys in the test directory.  In this case, GetLastError()
+        // will report ERROR_FILE_NOT_FOUND.
+        //
+
+        LastError = GetLastError();
+
+        if (LastError == ERROR_FILE_NOT_FOUND) {
+
+            WIDE_OUTPUT_RAW(WideOutput,
+                            L"No files matching pattern '*.keys' found in "
+                            L"test data directory.\n");
+            WIDE_OUTPUT_FLUSH();
+
+            goto End;
+
+        } else {
+
+            //
+            // We failed for some other reason.
+            //
+
+            WIDE_OUTPUT_RAW(WideOutput,
+                            L"FindFirstFileW() failed with error code: ");
+            WIDE_OUTPUT_INT(WideOutput, LastError);
+            WIDE_OUTPUT_LF(WideOutput);
+            WIDE_OUTPUT_FLUSH();
+
+            goto Error;
+        }
+    }
+
+    //
+    // Initialize the fully-qualified keys path.
+    //
+
+    KeysPath.Buffer = Buffer;
+    CopyMemory(KeysPath.Buffer, TestDataDirectory-&gt;Buffer, Length);
+
+    //
+    // Advance our Dest pointer to the end of the directory name, then write
+    // a slash.
+    //
+
+    Dest = (PWSTR)RtlOffsetToPointer(KeysPath.Buffer, Length);
+    *Dest++ = L'\\';
+
+    //
+    // Update the length to account for the slash we just wrote, then make a
+    // copy of it in the variable BaseLength.
+    //
+
+    Length += sizeof(*Dest);
+    BaseLength = Length;
+
+    //
+    // Zero the failure count and begin the main loop.
+    //
+
+    Failures = 0;
+
+    do {
+
+        //
+        // Clear the failure flag at the top of every loop invocation.
+        //
+
+        Failed = FALSE;
+
+        WIDE_OUTPUT_RAW(WideOutput, L"Processing key file: ");
+        WIDE_OUTPUT_WCSTR(WideOutput, (PCWSZ)FindData.cFileName);
+        WIDE_OUTPUT_LF(WideOutput);
+        WIDE_OUTPUT_FLUSH();
+
+        //
+        // Create a new perfect hash table context.
+        //
+
+        Success = Api-&gt;CreatePerfectHashTableContext(Rtl,
+                                                     Allocator,
+                                                     MaximumConcurrency,
+                                                     &amp;Context);
+
+        if (!Success) {
+
+            //
+            // We can't do anything without a context.
+            //
+
+            WIDE_OUTPUT_RAW(WideOutput, L"Fatal: failed to create context.\n");
+            WIDE_OUTPUT_FLUSH();
+            Failures++;
+            break;
+        }
+
+        //
+        // Copy the filename over to the fully-qualified keys path.
+        //
+
+        Dest = (PWSTR)RtlOffsetToPointer(KeysPath.Buffer, BaseLength);
+        Source = (PWSTR)FindData.cFileName;
+
+        while (*Source) {
+            *Dest++ = *Source++;
+        }
+        *Dest = L'\0';
+
+        Length = (USHORT)RtlOffsetFromPointer(Dest, KeysPath.Buffer);
+        KeysPath.Length = Length;
+        KeysPath.MaximumLength = Length + sizeof(*Dest);
+        ASSERT(KeysPath.Buffer[KeysPath.Length &gt;&gt; 1] == L'\0');
+        ASSERT(&amp;KeysPath.Buffer[KeysPath.Length &gt;&gt; 1] == Dest);
+
+        Success = Api-&gt;LoadPerfectHashTableKeys(Rtl,
+                                                Allocator,
+                                                &amp;KeysPath,
+                                                &amp;Keys);
+
+        if (!Success) {
+
+            WIDE_OUTPUT_RAW(WideOutput, L"Failed to load keys for ");
+            WIDE_OUTPUT_UNICODE_STRING(WideOutput, &amp;KeysPath);
+            WIDE_OUTPUT_RAW(WideOutput, L".\n");
+            WIDE_OUTPUT_FLUSH();
+
+            Failures++;
+            goto DestroyContext;
+        }
+
+        //
+        // Keys were loaded successfully.  Construct the equivalent path name
+        // for the backing perfect hash table when persisted to disk.  Although
+        // this can be automated for us as part of CreatePerfectHashTable(),
+        // having it backed by our memory simplifies things a little further
+        // down the track when we want to load the table via the path but have
+        // destroyed the original table that came from CreatePerfectHashTable().
+        //
+
+        //
+        // Align the Dest pointer up to a 16-byte boundary.  (We add 1 to its
+        // current value to advance it past the terminating NULL of the keys
+        // path.)
+        //
+
+        Dest = (PWSTR)ALIGN_UP(Dest + 1, 16);
+
+        //
+        // We know the keys file ended with ".keys".  We're going to use the
+        // identical name for the backing hash table file, except replace the
+        // ".keys" extension at the end with ".pht1".  So, we can just copy the
+        // lengths used for KeysPath, plus the entire buffer, then just copy the
+        // new extension over the old one.  The 1 doesn't have any significance
+        // other than it padding out the extension length such that it matches
+        // the length of ".keys".  (Although it may act as a nice versioning
+        // tool down the track.)
+        //
+
+        TablePath.Length = KeysPath.Length;
+        TablePath.MaximumLength = KeysPath.MaximumLength;
+        TablePath.Buffer = Dest;
+
+        //
+        // Copy the keys path over.
+        //
+
+        CopyMemory(Dest, KeysPath.Buffer, KeysPath.MaximumLength);
+
+        //
+        // Advance the Dest pointer to the end of the buffer, then retreat it
+        // five characters, such that it's positioned on the 'k' of keys.
+        //
+
+        Dest += (KeysPath.MaximumLength &gt;&gt; 1) - 5;
+        ASSERT(*Dest == L'k');
+        ASSERT(*(Dest - 1) == L'.');
+
+        //
+        // Copy the "pht1" extension over "keys".
+        //
+
+        Source = TableSuffix.Buffer;
+        while (*Source) {
+            *Dest++ = *Source++;
+        }
+        *Dest = L'\0';
+
+        //
+        // Sanity check invariants.
+        //
+
+        ASSERT(TablePath.Buffer[TablePath.Length &gt;&gt; 1] == L'\0');
+        ASSERT(&amp;TablePath.Buffer[TablePath.Length &gt;&gt; 1] == Dest);
+
+        //
+        // We now have the fully-qualified path name of the backing perfect
+        // hash table file living in TablePath.  Continue with creation of the
+        // perfect hash table, using this path we've just created and the keys
+        // that were loaded.
+        //
+
+        Success = Api-&gt;CreatePerfectHashTable(Rtl,
+                                              Allocator,
+                                              Context,
+                                              AlgorithmId,
+                                              MaskFunctionId,
+                                              HashFunctionId,
+                                              NULL,
+                                              Keys,
+                                              &amp;TablePath);
+
+        if (!Success) {
+
+            WIDE_OUTPUT_RAW(WideOutput, L"Failed to create perfect hash "
+                                        L"table for keys: ");
+            WIDE_OUTPUT_UNICODE_STRING(WideOutput, &amp;KeysPath);
+            WIDE_OUTPUT_RAW(WideOutput, L".\n");
+            WIDE_OUTPUT_FLUSH();
+
+            Failed = TRUE;
+            Failures++;
+            goto DestroyKeys;
+        }
+
+        WIDE_OUTPUT_RAW(WideOutput, L"Successfully created perfect "
+                                    L"hash table: ");
+        WIDE_OUTPUT_UNICODE_STRING(WideOutput, &amp;TablePath);
+        WIDE_OUTPUT_RAW(WideOutput, L".\n");
+
+        //
+        // Load the perfect hash table we just created.
+        //
+
+        Success = Api-&gt;LoadPerfectHashTable(Rtl,
+                                            Allocator,
+                                            Keys,
+                                            &amp;TablePath,
+                                            &amp;Table);
+
+        if (!Success) {
+
+            WIDE_OUTPUT_RAW(WideOutput, L"Failed to load perfect hash table: ");
+            WIDE_OUTPUT_UNICODE_STRING(WideOutput, &amp;TablePath);
+            WIDE_OUTPUT_RAW(WideOutput, L".\n");
+            WIDE_OUTPUT_FLUSH();
+
+            Failures++;
+            goto DestroyKeys;
+
+        }
+
+        //
+        // Table was loaded successfully from disk.  Obtain the names of all
+        // the enumeration IDs.  Currently these should always match the same
+        // enums provided as input parameters to this routine.
+        //
+        // N.B. I'm being lazy with the ASSERT()s here instead of reporting the
+        //      error properly like we do with other failures.
+        //
+
+        ASSERT(Api-&gt;GetAlgorithmName(Table-&gt;AlgorithmId, &amp;AlgorithmName));
+
+        ASSERT(Api-&gt;GetHashFunctionName(Table-&gt;HashFunctionId,
+                                        &amp;HashFunctionName));
+
+        ASSERT(Api-&gt;GetMaskFunctionName(Table-&gt;MaskFunctionId,
+                                        &amp;MaskFunctionName));
+
+
+        WIDE_OUTPUT_RAW(WideOutput, L"Successfully loaded perfect "
+                                    L"hash table: ");
+        WIDE_OUTPUT_UNICODE_STRING(WideOutput, &amp;TablePath);
+        WIDE_OUTPUT_RAW(WideOutput, L".\n");
+
+        WIDE_OUTPUT_RAW(WideOutput, L"Algorithm: ");
+        WIDE_OUTPUT_UNICODE_STRING(WideOutput, AlgorithmName);
+        WIDE_OUTPUT_RAW(WideOutput, L" (");
+        WIDE_OUTPUT_INT(WideOutput, Table-&gt;AlgorithmId);
+        WIDE_OUTPUT_RAW(WideOutput, L").\n");
+
+        WIDE_OUTPUT_RAW(WideOutput, L"Hash Function: ");
+        WIDE_OUTPUT_UNICODE_STRING(WideOutput, HashFunctionName);
+        WIDE_OUTPUT_RAW(WideOutput, L" (");
+        WIDE_OUTPUT_INT(WideOutput, Table-&gt;HashFunctionId);
+        WIDE_OUTPUT_RAW(WideOutput, L").\n");
+
+        WIDE_OUTPUT_RAW(WideOutput, L"Mask Function: ");
+        WIDE_OUTPUT_UNICODE_STRING(WideOutput, MaskFunctionName);
+        WIDE_OUTPUT_RAW(WideOutput, L" (");
+        WIDE_OUTPUT_INT(WideOutput, Table-&gt;MaskFunctionId);
+        WIDE_OUTPUT_RAW(WideOutput, L").\n");
+
+        WIDE_OUTPUT_FLUSH();
+
+        //
+        // Test the table.
+        //
+
+        Success = Api-&gt;TestPerfectHashTable(Table, TRUE);
+
+        if (!Success) {
+
+            WIDE_OUTPUT_RAW(WideOutput, L"Test failed for perfect hash table "
+                                        L"loaded from disk: ");
+            WIDE_OUTPUT_UNICODE_STRING(WideOutput, &amp;TablePath);
+            WIDE_OUTPUT_RAW(WideOutput, L".\n");
+            WIDE_OUTPUT_FLUSH();
+
+            Failures++;
+            Failed = TRUE;
+            goto DestroyTable;
+        }
+
+        WIDE_OUTPUT_RAW(WideOutput, L"Successfully tested perfect hash "
+                                    L"table.\n");
+
+        //
+        // Initialize header alias.
+        //
+
+        Header = Table-&gt;Header;
+
+        //
+        // Define some helper macros here for dumping stats.
+        //
+
+#define STATS_INT(String, Name)                               \
+        WIDE_OUTPUT_RAW(WideOutput, String);                  \
+        WIDE_OUTPUT_INT(WideOutput, Table-&gt;Header-&gt;##Name##); \
+        WIDE_OUTPUT_RAW(WideOutput, L".\n")
+
+#define STATS_QUAD(String, Name)                                       \
+        WIDE_OUTPUT_RAW(WideOutput, String);                           \
+        WIDE_OUTPUT_INT(WideOutput, Table-&gt;Header-&gt;##Name##.QuadPart); \
+        WIDE_OUTPUT_RAW(WideOutput, L".\n")
+
+        if (Header-&gt;NumberOfTableResizeEvents &gt; 0) {
+
+            STATS_INT(L"Number of table resize events: ",
+                      NumberOfTableResizeEvents);
+
+            STATS_INT(L"Total number of attempts with smaller table sizes: ",
+                      TotalNumberOfAttemptsWithSmallerTableSizes);
+
+            STATS_INT(L"First table size attempted: ",
+                      InitialTableSize);
+
+            STATS_INT(L"Closest we came to solving the graph in previous "
+                      L"attempts by number of deleted edges away: ",
+                      ClosestWeCameToSolvingGraphWithSmallerTableSizes);
+
+        }
+
+        STATS_INT(L"Concurrency: ", Concurrency);
+        STATS_INT(L"Number of attempts: ", NumberOfAttempts);
+        STATS_INT(L"Number of failed attempts: ", NumberOfFailedAttempts);
+        STATS_INT(L"Number of solutions found: ", NumberOfSolutionsFound);
+
+        STATS_QUAD(L"Number of keys: ", NumberOfKeys);
+        STATS_QUAD(L"Number of table elements (vertices): ",
+                   NumberOfTableElements);
+
+        STATS_INT(L"Seed 1: ", Seed1);
+        STATS_INT(L"Seed 2: ", Seed2);
+        STATS_INT(L"Seed 3: ", Seed3);
+        STATS_INT(L"Seed 4: ", Seed4);
+
+
+        STATS_QUAD(L"Cycles to solve: ", SolveCycles);
+        STATS_QUAD(L"Cycles to verify: ", VerifyCycles);
+        STATS_QUAD(L"Cycles to prepare file: ", PrepareFileCycles);
+        STATS_QUAD(L"Cycles to save file: ", SaveFileCycles);
+
+        STATS_QUAD(L"Microseconds to solve: ", SolveMicroseconds);
+        STATS_QUAD(L"Microseconds to verify: ", VerifyMicroseconds);
+        STATS_QUAD(L"Microseconds to prepare file: ", PrepareFileMicroseconds);
+        STATS_QUAD(L"Microseconds to save file: ", SaveFileMicroseconds);
+
+
+        WIDE_OUTPUT_RAW(WideOutput, L"\n\n");
+        WIDE_OUTPUT_FLUSH();
+
+        //
+        // Destroy the table.
+        //
+
+DestroyTable:
+
+        Table-&gt;Vtbl-&gt;Release(Table);
+
+DestroyKeys:
+
+        Success = Api-&gt;DestroyPerfectHashTableKeys(&amp;Keys);
+        if (!Success) {
+
+            WIDE_OUTPUT_RAW(WideOutput, L"Failed to destroy keys for ");
+            WIDE_OUTPUT_UNICODE_STRING(WideOutput, &amp;KeysPath);
+            WIDE_OUTPUT_RAW(WideOutput, L".\n");
+            WIDE_OUTPUT_FLUSH();
+
+            Failures++;
+        }
+
+DestroyContext:
+
+        Success = Api-&gt;DestroyPerfectHashTableContext(&amp;Context, NULL);
+        if (!Success) {
+
+            //
+            // Failure to destroy a context is a fatal error that we can't
+            // recover from.  Bomb out now.
+            //
+
+            WIDE_OUTPUT_RAW(WideOutput, L"Fatal: failed to destroy context.\n");
+            WIDE_OUTPUT_FLUSH();
+
+            Failures++;
+            break;
+        }
+
+    } while (FindNextFile(FindHandle, &amp;FindData));
+
+    //
+    // Self test complete!
+    //
+
+    if (!Failures) {
+        Success = TRUE;
+        goto End;
+    }
+
+    //
+    // Intentional follow-on to Error.
+    //
+
+Error:
+
+    Success = FALSE;
+
+    //
+    // Intentional follow-on to End.
+    //
+
+End:
+
+    //
+    // We can't do much if any of these routines error out, hence the NOTHINGs.
+    //
+
+    if (WideOutputBuffer) {
+        if (!Rtl-&gt;DestroyBuffer(Rtl, ProcessHandle, &amp;WideOutputBuffer)) {
+            NOTHING;
+        }
+        WideOutput = NULL;
+    }
+
+    if (BaseBuffer) {
+        if (!Rtl-&gt;DestroyBuffer(Rtl, ProcessHandle, &amp;BaseBuffer)) {
+            NOTHING;
+        }
+        Buffer = NULL;
+    }
+
+    if (FindHandle) {
+        if (!FindClose(FindHandle)) {
+            NOTHING;
+        }
+        FindHandle = NULL;
+    }
+
+    return Success;
+}
+</code></pre>
+                    </div>
+                </div>
+
+                <p>
+
+                    The self-test routine creates a context, loads a key file, creates a perfect
+                    hash table using the context from the key file, tests the perfect hash table,
+                    then destroys it, the keys, and the context.  Let's take a look at each routine
+                    and any corresponding data structures involved.
+
+                </p>
+
+                <a class="xref" name="context-creation"></a>
+                <h2>Context Creation</h2>
+
+                <p>
+
+                    This routine is responsible for creating a
+                    <code>PERFECT_HASH_TABLE_CONTEXT</code> structure, which we use to encapsulate
+                    all of the details regarding the threadpool machinery we provide to the backend
+                    algorithm implementations such that solutions can be sought in parallel.  The
+                    context is passed to the <code>CreatePerfectHashTable()</code> routine (along
+                    with the keys we load in the next step).
+
+                </p>
+
+                <a class="xref" name="PERFECT_HASH_TABLE_CONTEXT"></a>
+                <h3>PERFECT_HASH_TABLE_CONTEXT</h3>
+
+                <p>
+
+                    The public header gets an opaque structure for the context.  We don't need to
+                    expose any internal details of the structure to consumers, other than providing
+                    with an opaque pointer they can subsequently pass to the creation routine, and
+                    then to the <code>DestroyPerfectHashTableContext()</code> routine once they're
+                    finished creating perfect hash tables.
+
+                </p>
+
+                <p>
+
+                    The structure is defined in the private header
+                    <a href="https://github.com/tpn/tracer/blob/master/PerfectHashTable/PerfectHashTablePrivate.h">PerfectHashTablePrivate.h</a>
+                    and looks like this:
+
+                </p>
+
+<pre class="code"><code class="language-c">//
+// Define a runtime context to encapsulate threadpool resources.  This is
+// passed to CreatePerfectHashTable() and allows for algorithms to search for
+// perfect hash solutions in parallel.
+//
+
+typedef union _PERFECT_HASH_TABLE_CONTEXT_FLAGS {
+    struct {
+        ULONG Unused:32;
+    };
+    LONG AsLong;
+    ULONG AsULong;
+} PERFECT_HASH_TABLE_CONTEXT_FLAGS;
+C_ASSERT(sizeof(PERFECT_HASH_TABLE_CONTEXT_FLAGS) == sizeof(ULONG));
+typedef PERFECT_HASH_TABLE_CONTEXT_FLAGS *PPERFECT_HASH_TABLE_CONTEXT_FLAGS;
+
+typedef struct _Struct_size_bytes_(SizeOfStruct) _PERFECT_HASH_TABLE_CONTEXT {
+
+    //
+    // Size of the structure, in bytes.
+    //
+
+    _Field_range_(==, sizeof(struct _PERFECT_HASH_TABLE_CONTEXT))
+        ULONG SizeOfStruct;
+
+    //
+    // Flags.
+    //
+
+    PERFECT_HASH_TABLE_CONTEXT_FLAGS Flags;
+
+    //
+    // The algorithm in use.
+    //
+
+    PERFECT_HASH_TABLE_ALGORITHM_ID AlgorithmId;
+
+    //
+    // The masking type in use.
+    //
+
+    PERFECT_HASH_TABLE_MASK_FUNCTION_ID MaskFunctionId;
+
+    //
+    // The hash function in use.
+    //
+
+    PERFECT_HASH_TABLE_HASH_FUNCTION_ID HashFunctionId;
+
+    //
+    // Pointer to an initialized RTL structure.
+    //
+
+    PRTL Rtl;
+
+    //
+    // Pointer to an initialized allocator.
+    //
+
+    PALLOCATOR Allocator;
+
+    //
+    // Pointer to the API structure in use.
+    //
+
+    PPERFECT_HASH_TABLE_ANY_API AnyApi;
+
+    //
+    // Pointer to the active perfect hash table.
+    //
+
+    struct _PERFECT_HASH_TABLE *Table;
+
+    //
+    // The highest number of deleted edges count encountered by a worker thread.
+    // This is useful when debugging a poorly performing hash/mask combo that is
+    // failing to find a solution.
+    //
+
+    volatile ULONG HighestDeletedEdgesCount;
+
+    //
+    // The number of attempts we'll make at trying to solve the graph before
+    // giving up and resizing with a larger underlying table.
+    //
+
+    ULONG ResizeTableThreshold;
+
+    //
+    // Limit on how many times a resize will be kicked off.
+    //
+
+    ULONG ResizeLimit;
+
+    //
+    // Define the events used to communicate various internal state changes
+    // between the CreatePerfectHashTable() function and the algorithm-specific
+    // creation routine.
+    //
+    // N.B. All of these events are created with the manual reset flag set to
+    //      TRUE, such that they stay signalled even after they have satisfied
+    //      a wait.
+    //
+
+    //
+    // A global "shutdown" event handle that threads can query to determine
+    // whether or not they should continue processing at various internal
+    // checkpoints.
+    //
+
+    union {
+        HANDLE ShutdownEvent;
+        PVOID FirstEvent;
+    };
+
+    //
+    // This event will be set if an algorithm was successful in finding a
+    // perfect hash.  Either it or the FailedEvent will be set; never both.
+    //
+
+    HANDLE SucceededEvent;
+
+    //
+    // This event will be set if an algorithm failed to find a perfect hash
+    // solution.  This may be due to the algorithm exhausting all possible
+    // options, hitting a time limit, or potentially as a result of being
+    // forcibly terminated or some other internal error.  It will never be
+    // set if SucceededEvent is also set.
+    //
+
+    HANDLE FailedEvent;
+
+    //
+    // The following event is required to be set by an algorithm's creation
+    // routine upon completion (regardless of success or failure).  This event
+    // is waited upon by the CreatePerfectHashTable() function, and thus, is
+    // critical in synchronizing the execution of parallel perfect hash solution
+    // finding.
+    //
+
+    HANDLE CompletedEvent;
+
+    //
+    // The following event is set when a worker thread detects that the number
+    // of attempts has exceeded a specified threshold, and that the main thread
+    // should cancel the current attempts and try again with a larger vertex
+    // table size.
+    //
+
+    HANDLE TryLargerTableSizeEvent;
+
+    //
+    // The following event is set when a worker thread has completed preparing
+    // the underlying backing file in order for the solved graph to be persisted
+    // to disk.
+    //
+
+    HANDLE PreparedFileEvent;
+
+    //
+    // The following event is set by the main thread when it has completed
+    // verification of the solved graph.  It is used to signal to the save
+    // file worker that verification has finished such that cycle counts can
+    // be captured in order to calculate the number of cycles and microseconds
+    // it took to verify the graph.
+    //
+
+    HANDLE VerifiedEvent;
+
+    //
+    // The following event is set when a worker thread has completed saving the
+    // solved graph to disk.
+    //
+
+    union {
+        HANDLE SavedFileEvent;
+        PVOID LastEvent;
+    };
+
+    //
+    // N.B. All events are created as named events, using the random object
+    //      name generation helper Rtl-&gt;CreateRandomObjectNames().  This will
+    //      fill out an array of PUNICODE_STRING pointers.  The next field
+    //      points to the first element of that array.  Subsequent fields
+    //      capture various book-keeping items about the random object names
+    //      allocation (provided by the Rtl routine).
+    //
+
+    PUNICODE_STRING ObjectNames;
+    PPUNICODE_STRING ObjectNamesPointerArray;
+    PWSTR ObjectNamesWideBuffer;
+    ULONG SizeOfObjectNamesWideBuffer;
+    ULONG NumberOfObjects;
+
+    //
+    // Number of attempts made by the algorithm to find a solution.
+    //
+
+    volatile ULONGLONG Attempts;
+
+    //
+    // Counters used for capturing performance information.  We capture both a
+    // cycle count, using __rdtsc(), plus a "performance counter" count, via
+    // QueryPerformanceCounter().  The former provides a finer resolution, but
+    // can't be used to calculate elapsed microseconds due to turbo boost and
+    // variable frequencies.  The latter provides a coarser resolution, but
+    // can be used to convert into elapsed microseconds (via the frequency,
+    // also captured below).
+    //
+
+    LARGE_INTEGER Frequency;
+
+    //
+    // Capture the time required to solve the perfect hash table.  This is not
+    // a sum of all cycles consumed by all worker threads; it is the cycles
+    // consumed between the "main" thread (i.e. the CreatePerfectHashTable()
+    // impl routine (CreatePerfectHashTableImplChm01())) dispatching parallel
+    // work to the threadpool, and a solution being found.
+    //
+
+    ULARGE_INTEGER SolveStartCycles;
+    LARGE_INTEGER SolveStartCounter;
+
+    ULARGE_INTEGER SolveEndCycles;
+    LARGE_INTEGER SolveEndCounter;
+
+    ULARGE_INTEGER SolveElapsedCycles;
+    ULARGE_INTEGER SolveElapsedMicroseconds;
+
+    //
+    // Capture the time required to verify the solution.  This involves walking
+    // the entire key set, applying the perfect hash function to derive an index
+    // into the Assigned array, and verifying that we only saw each index value
+    // at most once.
+    //
+    // This is a reasonably good measure of the combined performance of the
+    // chosen hash and mask algorithm, with lower cycles and counter values
+    // indicating better performance.
+    //
+
+    ULARGE_INTEGER VerifyStartCycles;
+    LARGE_INTEGER VerifyStartCounter;
+
+    ULARGE_INTEGER VerifyEndCycles;
+    LARGE_INTEGER VerifyEndCounter;
+
+    ULARGE_INTEGER VerifyElapsedCycles;
+    ULARGE_INTEGER VerifyElapsedMicroseconds;
+
+    //
+    // Capture the time required to prepare the backing .pht1 file in the file
+    // work threadpool.
+    //
+
+    ULARGE_INTEGER PrepareFileStartCycles;
+    LARGE_INTEGER PrepareFileStartCounter;
+
+    ULARGE_INTEGER PrepareFileEndCycles;
+    LARGE_INTEGER PrepareFileEndCounter;
+
+    ULARGE_INTEGER PrepareFileElapsedCycles;
+    ULARGE_INTEGER PrepareFileElapsedMicroseconds;
+
+    //
+    // Capture the time required to save the final Assigned array to the backing
+    // file prepared in an earlier step.  This is also dispatched to the file
+    // work thread pool, and consists of a memory copy from the assigned array
+    // of the graph to the base address of the backing file's memory map, then
+    // flushing the map, unmapping it, closing the section, and closing the
+    // file.
+    //
+
+    ULARGE_INTEGER SaveFileStartCycles;
+    LARGE_INTEGER SaveFileStartCounter;
+
+    ULARGE_INTEGER SaveFileEndCycles;
+    LARGE_INTEGER SaveFileEndCounter;
+
+    ULARGE_INTEGER SaveFileElapsedCycles;
+    ULARGE_INTEGER SaveFileElapsedMicroseconds;
+
+    //
+    // Number of failed attempts at solving the graph across all threads.
+    //
+
+    volatile ULONGLONG FailedAttempts;
+
+    //
+    // The main threadpool callback environment, used for solving perfect hash
+    // solutions in parallel.
+    //
+
+    TP_CALLBACK_ENVIRON MainCallbackEnv;
+    PTP_CLEANUP_GROUP MainCleanupGroup;
+    PTP_POOL MainThreadpool;
+    PTP_WORK MainWork;
+    SLIST_HEADER MainWorkListHead;
+    ULONG MinimumConcurrency;
+    ULONG MaximumConcurrency;
+
+    //
+    // The algorithm is responsible for registering an appropriate callback
+    // for main thread work items in this next field.
+    //
+
+    PPERFECT_HASH_TABLE_MAIN_WORK_CALLBACK MainWorkCallback;
+
+    //
+    // A threadpool for offloading file operations.
+    //
+
+    TP_CALLBACK_ENVIRON FileCallbackEnv;
+    PTP_CLEANUP_GROUP FileCleanupGroup;
+    PTP_POOL FileThreadpool;
+    PTP_WORK FileWork;
+    SLIST_HEADER FileWorkListHead;
+
+    //
+    // Provide a means for file work callbacks to indicate an error back to
+    // the creation routine by incrementing the following counter.
+    //
+
+    volatile ULONG FileWorkErrors;
+    volatile ULONG FileWorkLastError;
+
+    //
+    // The algorithm is responsible for registering an appropriate callback
+    // for file work threadpool work items in this next field.
+    //
+
+    PPERFECT_HASH_TABLE_FILE_WORK_CALLBACK FileWorkCallback;
+
+    //
+    // If a threadpool worker thread finds a perfect hash solution, it will
+    // enqueue a "Finished!"-type work item to a separate threadpool, captured
+    // by the following callback environment.  This allows for a separate
+    // threadpool worker to schedule the cancellation of other in-progress
+    // and outstanding perfect hash solution attempts without deadlocking.
+    //
+    // This threadpool environment is serviced by a single thread.
+    //
+    // N.B. This cleanup only refers to the main graph solving thread pool.
+    //      The file threadpool is managed by the implicit lifetime of the
+    //      algorithm's creation routine (e.g. CreatePerfectHashTableImplChm01).
+    //
+
+    TP_CALLBACK_ENVIRON FinishedCallbackEnv;
+    PTP_POOL FinishedThreadpool;
+    PTP_WORK FinishedWork;
+    SLIST_HEADER FinishedWorkListHead;
+
+    //
+    // If a worker thread successfully finds a perfect hash solution, it will
+    // push its solution to the FinishedListHead above, then submit a finished
+    // work item via SubmitThreadpoolWork(Context-&gt;FinishedWork).
+    //
+    // This callback will be processed by the finished group above, and provides
+    // a means for that thread to set the ShutdownEvent and cancel outstanding
+    // main work callbacks.
+    //
+    // N.B. Although we only need one solution, we don't prevent multiple
+    //      successful solutions from being pushed to the FinishedListHead.
+    //      Whatever the first solution is that the finished callback pops
+    //      off that list is the solution that wins.
+    //
+
+    volatile ULONGLONG FinishedCount;
+
+    //
+    // Similar to the Finished group above, provide an Error group that also
+    // consists of a single thread.  If a main threadpool worker thread runs
+    // into a fatal error that requires termination of all in-progress and
+    // outstanding threadpool work items, it can just dispatch a work item
+    // to this particular pool (e.g. SubmitThreadpoolWork(Context-&gt;ErrorWork)).
+    //
+    // There is no ErrorListHead as no error information is captured that needs
+    // communicating back to a central location.
+    //
+
+    TP_CALLBACK_ENVIRON ErrorCallbackEnv;
+    PTP_POOL ErrorThreadpool;
+    PTP_WORK ErrorWork;
+
+    //
+    // An opaque pointer that can be used by the algorithm to stash additional
+    // context.
+    //
+
+    PVOID AlgorithmContext;
+
+    //
+    // An opaque pointer that can be used by the hash function to stash
+    // additional context.
+    //
+
+    PVOID HashFunctionContext;
+
+    //
+    // An opaque pointer to the winning solution (i.e. the solved graph).
+    //
+
+    PVOID SolvedContext;
+
+} PERFECT_HASH_TABLE_CONTEXT;
+typedef PERFECT_HASH_TABLE_CONTEXT *PPERFECT_HASH_TABLE_CONTEXT;
+
+//
+// Define helper macros for marking start/end points for the context's
+// cycle/counter fields.  When starting, we put __rdtsc() last, and when
+// stopping we put it first, as its resolution is more sensitive than the
+// QueryPerformanceCounter() routine.
+//
+
+#define CONTEXT_START_TIMERS(Name)                           \
+    QueryPerformanceCounter(&amp;Context-&gt;##Name##StartCounter); \
+    Context-&gt;##Name##StartCycles.QuadPart = __rdtsc()
+
+#define CONTEXT_END_TIMERS(Name)                              \
+    Context-&gt;##Name##EndCycles.QuadPart = __rdtsc();          \
+    QueryPerformanceCounter(&amp;Context-&gt;##Name##EndCounter);    \
+    Context-&gt;##Name##ElapsedCycles.QuadPart = (               \
+        Context-&gt;##Name##EndCycles.QuadPart -                 \
+        Context-&gt;##Name##StartCycles.QuadPart                 \
+    );                                                        \
+    Context-&gt;##Name##ElapsedMicroseconds.QuadPart = (         \
+        Context-&gt;##Name##EndCounter.QuadPart -                \
+        Context-&gt;##Name##StartCounter.QuadPart                \
+    );                                                        \
+    Context-&gt;##Name##ElapsedMicroseconds.QuadPart *= 1000000; \
+    Context-&gt;##Name##ElapsedMicroseconds.QuadPart /= (        \
+        Context-&gt;Frequency.QuadPart                           \
+    )
+
+#define CONTEXT_SAVE_TIMERS_TO_HEADER(Name)                                    \
+    Header-&gt;##Name##Cycles.QuadPart = Context-&gt;##Name##ElapsedCycles.QuadPart; \
+    Header-&gt;##Name##Microseconds.QuadPart = (                                  \
+        Context-&gt;##Name##ElapsedMicroseconds.QuadPart                          \
+    )</code></pre>
+
+                <a class="xref" name="CreatePerfectHashTableContext"></a>
+                <h3>CreatePerfectHashTableContext()</h3>
+
+                <p>
+
+                    The creation routine is defined in
+                    <a href="https://github.com/tpn/tracer/blob/master/PerfectHashTable/CreatePerfectHashTableContext.c">CreatePerfectHashTableContext.c</a>.
+                    Pseudo and full code samples follow.
+
+                </p>
+
+                <div class="tab-box language box-create-context">
+                    <ul class="tabs">
+                        <li data-content="content-create-context-pseudo">Pseudo</li>
+                        <li data-content="content-create-context-full">Full</li>
+                    </ul>
+                    <div class="content">
+<pre class="code content-create-context-pseudo"><code class="language-c">_Use_decl_annotations_
+BOOLEAN
+CreatePerfectHashTableContext(
+    PRTL Rtl,
+    PALLOCATOR Allocator,
+    PULONG MaximumConcurrencyPointer,
+    PPERFECT_HASH_TABLE_CONTEXT *ContextPointer
+    )
+/*++
+
+Routine Description:
+
+    Creates and initializes a PERFECT_HASH_TABLE_CONTEXT structure, which
+    creates a main threadpool with a maximum of threads indicated by the
+    MaximumConcurrency parameter, if applicable.
+
+Arguments:
+
+    Rtl - Supplies a pointer to an initialized RTL structure.
+
+    Allocator - Supplies a pointer to an initialized ALLOCATOR structure that
+        will be used for all memory allocations.
+
+    AnyApi - Supplies a pointer to the active API structure in use.
+
+    MaximumConcurrency - Optionally supplies a pointer to a variable that
+        contains the desired maximum concurrency to be used for the underlying
+        threadpool.  If NULL, or non-NULL but points to a value of 0, then the
+        number of system processors will be used as a default value.
+
+        N.B. This value is passed directly to SetThreadpoolThreadMinimum() and
+             SetThreadpoolThreadMaximum().
+
+    ContextPointer - Supplies the address of a variable that receives the
+        address of the newly created PERFECT_HASH_TABLE_CONTEXT structure on
+        success, NULL on failure.
+
+Return Value:
+
+    TRUE on success, FALSE on failure.
+
+--*/
+{
+    BYTE Index;
+    BYTE NumberOfEvents;
+    ULONG LastError;
+    PHANDLE Event;
+    BOOLEAN Success;
+    PBYTE Buffer;
+    PBYTE ExpectedBuffer;
+    ULONG MaximumConcurrency;
+    ULONG NumberOfProcessors;
+    ULONG SizeOfNamesWideBuffer;
+    PWSTR NamesWideBuffer;
+    PTP_POOL Threadpool;
+    ULARGE_INTEGER AllocSize;
+    ULARGE_INTEGER ObjectNameArraySize;
+    ULARGE_INTEGER ObjectNamePointersArraySize;
+    PUNICODE_STRING Name;
+    PPUNICODE_STRING Names;
+    PPUNICODE_STRING Prefixes;
+    PPERFECT_HASH_TABLE_CONTEXT Context = NULL;
+
+    //
+    // Validate arguments.
+    //
+
+    if (!ARGUMENT_PRESENT(Rtl)) {
+        return FALSE;
+    }
+
+    if (!ARGUMENT_PRESENT(Allocator)) {
+        return FALSE;
+    }
+
+    if (!ARGUMENT_PRESENT(ContextPointer)) {
+        return FALSE;
+    }
+
+    //
+    // Default the maximum concurrency to 0 if a NULL pointer was provided.
+    //
+
+    if (ARGUMENT_PRESENT(MaximumConcurrencyPointer)) {
+
+        MaximumConcurrency = *MaximumConcurrencyPointer;
+
+    } else {
+
+        MaximumConcurrency = 0;
+
+    }
+
+    //
+    // Argument validation complete.  Clear the caller's pointer up-front and
+    // continue with creation.
+    //
+
+    *ContextPointer = NULL;
+
+    //
+    // Calculate the size required by the array of UNICODE_STRING structures
+    // that trail the context, then the array of addresses to those structures.
+    //
+
+    ObjectNameArraySize.QuadPart = (
+        (NumberOfContextObjectPrefixes * sizeof(UNICODE_STRING))
+    );
+
+    ObjectNamePointersArraySize.QuadPart = (
+        (NumberOfContextObjectPrefixes * sizeof(PUNICODE_STRING))
+    );
+
+    ASSERT(!ObjectNameArraySize.HighPart);
+    ASSERT(!ObjectNamePointersArraySize.HighPart);
+
+    //
+    // Calculate allocation size required by the structure.
+    //
+
+    AllocSize.QuadPart = (
+
+        //
+        // Account for the size of the context structure itself.
+        //
+
+        sizeof(PERFECT_HASH_TABLE_CONTEXT) +
+
+        //
+        // Account for the object name overhead.
+        //
+
+        ObjectNameArraySize.QuadPart +
+        ObjectNamePointersArraySize.QuadPart
+
+    );
+
+    //
+    // Sanity check we haven't overflowed.
+    //
+
+    ASSERT(!AllocSize.HighPart);
+
+    //
+    // Allocate space for the context.
+    //
+
+    Context = (PPERFECT_HASH_TABLE_CONTEXT)(
+        Allocator-&gt;Calloc(Allocator-&gt;Context,
+                          1,
+                          AllocSize.LowPart)
+    );
+
+    if (!Context) {
+        return FALSE;
+    }
+
+    //
+    // Allocation was successful, continue with initialization.
+    //
+
+    Context-&gt;SizeOfStruct = sizeof(*Context);
+    Context-&gt;Rtl = Rtl;
+    Context-&gt;Allocator = Allocator;
+    Context-&gt;Flags.AsULong = 0;
+
+    //
+    // The context structure will be trailed by an array of UNICODE_STRING
+    // structures that will be filled in by Rtl-&gt;CreateRandomObjectNames().
+    // This is then followed by an array of PUNICODE_STRING pointers, with
+    // each one initialized to point to the corresponding offset into the
+    // first array.  This is a bit quirky, but it's required by the Rtl
+    // method (which allows for prefixes to be ignored for certain objects
+    // if desired).
+    //
+
+    Buffer = (PBYTE)Context;
+    Buffer += sizeof(*Context);
+    Context-&gt;ObjectNames = (PUNICODE_STRING)Buffer;
+
+    Buffer += ObjectNameArraySize.LowPart;
+    Context-&gt;ObjectNamesPointerArray = (PPUNICODE_STRING)Buffer;
+
+    Buffer += ObjectNamePointersArraySize.LowPart;
+
+    //
+    // If our pointer arithmetic was correct, Buffer should match the base
+    // address of the context plus the total allocation size at this point.
+    // Assert this invariant now.
+    //
+
+    ExpectedBuffer = RtlOffsetToPointer(Context, AllocSize.LowPart);
+    ASSERT(Buffer == ExpectedBuffer);
+
+    //
+    // Wire up the pointer array to the object names.
+    //
+
+    Names = Context-&gt;ObjectNamesPointerArray;
+
+    for (Index = 0; Index &lt; NumberOfContextObjectPrefixes; Index++) {
+        Names[Index] = Context-&gt;ObjectNames + Index;
+    }
+
+    //
+    // Create the random object names for our underlying events.
+    //
+
+    Prefixes = (PPUNICODE_STRING)&amp;ContextObjectPrefixes;
+
+    Success = Rtl-&gt;CreateRandomObjectNames(Rtl,
+                                           Allocator,
+                                           Allocator,
+                                           NumberOfContextObjectPrefixes,
+                                           64,
+                                           NULL,
+                                           Context-&gt;ObjectNamesPointerArray,
+                                           Prefixes,
+                                           &amp;SizeOfNamesWideBuffer,
+                                           &amp;NamesWideBuffer);
+
+    if (!Success) {
+        goto Error;
+    }
+
+    //
+    // Wire up the wide buffer pointer and containing size.
+    //
+
+    Context-&gt;ObjectNamesWideBuffer = NamesWideBuffer;
+    Context-&gt;SizeOfObjectNamesWideBuffer = SizeOfNamesWideBuffer;
+    Context-&gt;NumberOfObjects = NumberOfContextObjectPrefixes;
+
+
+    //
+    // Initialize the event pointer to the first handle, and the name pointer
+    // to the first UNICODE_STRING pointer.  Obtain the number of events.
+    //
+
+    Event = (PHANDLE)&amp;Context-&gt;FirstEvent;
+    Name = &amp;Context-&gt;ObjectNames[0];
+    NumberOfEvents = GetNumberOfContextEvents(Context);
+
+    for (Index = 0; Index &lt; NumberOfEvents; Index++, Event++, Name++) {
+
+        //
+        // We want all of our events to be manual reset, such that they stay
+        // signaled even after they've satisfied a wait.
+        //
+
+        BOOLEAN ManualReset = TRUE;
+
+        *Event = Rtl-&gt;CreateEventW(NULL,
+                                   ManualReset,
+                                   FALSE,
+                                   Name-&gt;Buffer);
+
+        LastError = GetLastError();
+
+        if (!*Event || LastError == ERROR_ALREADY_EXISTS) {
+
+            //
+            // As the event names are random, a last error that indicates the
+            // name already exists is evident of a pretty serious problem.
+            // Treat this as a fatal.
+            //
+
+            goto Error;
+        }
+    }
+
+    //
+    // If the maximum concurrency is 0, default to the number of processors.
+    //
+
+    NumberOfProcessors = GetMaximumProcessorCount(ALL_PROCESSOR_GROUPS);
+
+    if (MaximumConcurrency == 0) {
+        MaximumConcurrency = NumberOfProcessors;
+    }
+
+    Context-&gt;MinimumConcurrency = MaximumConcurrency;
+    Context-&gt;MaximumConcurrency = MaximumConcurrency;
+
+    //
+    // Create the Main threadpool structures.  This threadpool creates a fixed
+    // number of threads equal to the maximum concurrency specified by the user
+    // (e.g. min threads is set to the same value as max threads).
+    //
+
+    Threadpool = Context-&gt;MainThreadpool = CreateThreadpool(NULL);
+    if (!Threadpool) {
+        goto Error;
+    }
+
+    if (!SetThreadpoolThreadMinimum(Threadpool, MaximumConcurrency)) {
+        goto Error;
+    }
+
+    SetThreadpoolThreadMaximum(Threadpool, MaximumConcurrency);
+
+    //
+    // Initialize the Main threadpool environment, set its priority to
+    // low, then associate it with the Main threadpool.
+    //
+
+    InitializeThreadpoolEnvironment(&amp;Context-&gt;MainCallbackEnv);
+    SetThreadpoolCallbackPriority(&amp;Context-&gt;MainCallbackEnv,
+                                  TP_CALLBACK_PRIORITY_LOW);
+    SetThreadpoolCallbackPool(&amp;Context-&gt;MainCallbackEnv,
+                              Context-&gt;MainThreadpool);
+
+    //
+    // Create a cleanup group for the Main threadpool and register it.
+    //
+
+    Context-&gt;MainCleanupGroup = CreateThreadpoolCleanupGroup();
+    if (!Context-&gt;MainCleanupGroup) {
+        goto Error;
+    }
+
+    SetThreadpoolCallbackCleanupGroup(&amp;Context-&gt;MainCallbackEnv,
+                                      Context-&gt;MainCleanupGroup,
+                                      CleanupCallback);
+
+    //
+    // Create a work object for the Main threadpool.
+    //
+
+    Context-&gt;MainWork = CreateThreadpoolWork(MainWorkCallback,
+                                             Context,
+                                             &amp;Context-&gt;MainCallbackEnv);
+
+    if (!Context-&gt;MainWork) {
+        goto Error;
+    }
+
+    //
+    // Initialize the main work list head.
+    //
+
+    InitializeSListHead(&amp;Context-&gt;MainWorkListHead);
+
+    //
+    // Create the File threadpool structures.  We currently use the default
+    // number of system threads for this threadpool.  We don't have to clamp
+    // it at the moment as we don't bulk-enqueue work items (that can cause
+    // the threadpool machinery to think more threads need to be created).
+    //
+
+    Threadpool = Context-&gt;FileThreadpool = CreateThreadpool(NULL);
+    if (!Threadpool) {
+        goto Error;
+    }
+
+    //
+    // Initialize the File threadpool environment and associate it with the
+    // File threadpool.
+    //
+
+    InitializeThreadpoolEnvironment(&amp;Context-&gt;FileCallbackEnv);
+    SetThreadpoolCallbackPool(&amp;Context-&gt;FileCallbackEnv,
+                              Context-&gt;FileThreadpool);
+
+    //
+    // Create a cleanup group for the File threadpool and register it.
+    //
+
+    Context-&gt;FileCleanupGroup = CreateThreadpoolCleanupGroup();
+    if (!Context-&gt;FileCleanupGroup) {
+        goto Error;
+    }
+
+    SetThreadpoolCallbackCleanupGroup(&amp;Context-&gt;FileCallbackEnv,
+                                      Context-&gt;FileCleanupGroup,
+                                      CleanupCallback);
+
+    //
+    // Create a work object for the File threadpool.
+    //
+
+    Context-&gt;FileWork = CreateThreadpoolWork(FileWorkCallback,
+                                             Context,
+                                             &amp;Context-&gt;FileCallbackEnv);
+
+    if (!Context-&gt;FileWork) {
+        goto Error;
+    }
+
+    //
+    // Initialize the main work list head.
+    //
+
+    InitializeSListHead(&amp;Context-&gt;FileWorkListHead);
+
+    //
+    // Create the Finished and Error threadpools and associated resources.
+    // These are slightly easier as we only have 1 thread maximum for each
+    // pool and no cleanup group is necessary.
+    //
+
+    Context-&gt;FinishedThreadpool = CreateThreadpool(NULL);
+    if (!Context-&gt;FinishedThreadpool) {
+        goto Error;
+    }
+
+    if (!SetThreadpoolThreadMinimum(Context-&gt;FinishedThreadpool, 1)) {
+        goto Error;
+    }
+
+    SetThreadpoolThreadMaximum(Context-&gt;FinishedThreadpool, 1);
+
+    Context-&gt;FinishedWork = CreateThreadpoolWork(FinishedWorkCallback,
+                                                 Context,
+                                                 &amp;Context-&gt;FinishedCallbackEnv);
+    if (!Context-&gt;FinishedWork) {
+        goto Error;
+    }
+
+    //
+    // Initialize the finished list head.
+    //
+
+    InitializeSListHead(&amp;Context-&gt;FinishedWorkListHead);
+
+    //
+    // Create the Error threadpool.
+    //
+
+    Context-&gt;ErrorThreadpool = CreateThreadpool(NULL);
+    if (!Context-&gt;ErrorThreadpool) {
+        goto Error;
+    }
+
+    if (!SetThreadpoolThreadMinimum(Context-&gt;ErrorThreadpool, 1)) {
+        goto Error;
+    }
+
+    SetThreadpoolThreadMaximum(Context-&gt;ErrorThreadpool, 1);
+
+    Context-&gt;ErrorWork = CreateThreadpoolWork(ErrorWorkCallback,
+                                              Context,
+                                              &amp;Context-&gt;ErrorCallbackEnv);
+    if (!Context-&gt;ErrorWork) {
+        goto Error;
+    }
+
+
+    //
+    // We're done!  Jump to the end of the routine to finish up.
+    //
+
+    Success = TRUE;
+    goto End;
+
+Error:
+
+    Success = FALSE;
+
+    //
+    // Call the destroy routine on the context if it is non-NULL.
+    //
+
+    if (Context) {
+
+        if (!DestroyPerfectHashTableContext(&amp;Context, NULL)) {
+
+            //
+            // There's nothing we can do here.
+            //
+
+            NOTHING;
+        }
+
+        //
+        // N.B. DestroyPerfectHashTableContext() should clear the Context
+        //      pointer.  Assert that invariant now.
+        //
+
+        ASSERT(Context == NULL);
+    }
+
+    //
+    // Intentional follow-on to End.
+    //
+
+End:
+
+    //
+    // Update the caller's pointer and return.
+    //
+    // N.B. Context could be NULL here, which is fine.
+    //
+
+    *ContextPointer = Context;
+
+    return Success;
+}
+
+</code></pre>
+<pre class="code content-create-context-full"><code class="language-c">_Use_decl_annotations_
+BOOLEAN
+CreatePerfectHashTableContext(
+    PRTL Rtl,
+    PALLOCATOR Allocator,
+    PULONG MaximumConcurrencyPointer,
+    PPERFECT_HASH_TABLE_CONTEXT *ContextPointer
+    )
+/*++
+
+Routine Description:
+
+    Creates and initializes a PERFECT_HASH_TABLE_CONTEXT structure, which
+    creates a main threadpool with a maximum of threads indicated by the
+    MaximumConcurrency parameter, if applicable.
+
+Arguments:
+
+    Rtl - Supplies a pointer to an initialized RTL structure.
+
+    Allocator - Supplies a pointer to an initialized ALLOCATOR structure that
+        will be used for all memory allocations.
+
+    AnyApi - Supplies a pointer to the active API structure in use.
+
+    MaximumConcurrency - Optionally supplies a pointer to a variable that
+        contains the desired maximum concurrency to be used for the underlying
+        threadpool.  If NULL, or non-NULL but points to a value of 0, then the
+        number of system processors will be used as a default value.
+
+        N.B. This value is passed directly to SetThreadpoolThreadMinimum() and
+             SetThreadpoolThreadMaximum().
+
+    ContextPointer - Supplies the address of a variable that receives the
+        address of the newly created PERFECT_HASH_TABLE_CONTEXT structure on
+        success, NULL on failure.
+
+Return Value:
+
+    TRUE on success, FALSE on failure.
+
+--*/
+{
+    BYTE Index;
+    BYTE NumberOfEvents;
+    ULONG LastError;
+    PHANDLE Event;
+    BOOLEAN Success;
+    PBYTE Buffer;
+    PBYTE ExpectedBuffer;
+    ULONG MaximumConcurrency;
+    ULONG NumberOfProcessors;
+    ULONG SizeOfNamesWideBuffer;
+    PWSTR NamesWideBuffer;
+    PTP_POOL Threadpool;
+    ULARGE_INTEGER AllocSize;
+    ULARGE_INTEGER ObjectNameArraySize;
+    ULARGE_INTEGER ObjectNamePointersArraySize;
+    PUNICODE_STRING Name;
+    PPUNICODE_STRING Names;
+    PPUNICODE_STRING Prefixes;
+    PPERFECT_HASH_TABLE_CONTEXT Context = NULL;
+
+    //
+    // Validate arguments.
+    //
+
+    if (!ARGUMENT_PRESENT(Rtl)) {
+        return FALSE;
+    }
+
+    if (!ARGUMENT_PRESENT(Allocator)) {
+        return FALSE;
+    }
+
+    if (!ARGUMENT_PRESENT(ContextPointer)) {
+        return FALSE;
+    }
+
+    //
+    // Default the maximum concurrency to 0 if a NULL pointer was provided.
+    //
+
+    if (ARGUMENT_PRESENT(MaximumConcurrencyPointer)) {
+
+        MaximumConcurrency = *MaximumConcurrencyPointer;
+
+    } else {
+
+        MaximumConcurrency = 0;
+
+    }
+
+    //
+    // Argument validation complete.  Clear the caller's pointer up-front and
+    // continue with creation.
+    //
+
+    *ContextPointer = NULL;
+
+    //
+    // Calculate the size required by the array of UNICODE_STRING structures
+    // that trail the context, then the array of addresses to those structures.
+    //
+
+    ObjectNameArraySize.QuadPart = (
+        (NumberOfContextObjectPrefixes * sizeof(UNICODE_STRING))
+    );
+
+    ObjectNamePointersArraySize.QuadPart = (
+        (NumberOfContextObjectPrefixes * sizeof(PUNICODE_STRING))
+    );
+
+    ASSERT(!ObjectNameArraySize.HighPart);
+    ASSERT(!ObjectNamePointersArraySize.HighPart);
+
+    //
+    // Calculate allocation size required by the structure.
+    //
+
+    AllocSize.QuadPart = (
+
+        //
+        // Account for the size of the context structure itself.
+        //
+
+        sizeof(PERFECT_HASH_TABLE_CONTEXT) +
+
+        //
+        // Account for the object name overhead.
+        //
+
+        ObjectNameArraySize.QuadPart +
+        ObjectNamePointersArraySize.QuadPart
+
+    );
+
+    //
+    // Sanity check we haven't overflowed.
+    //
+
+    ASSERT(!AllocSize.HighPart);
+
+    //
+    // Allocate space for the context.
+    //
+
+    Context = (PPERFECT_HASH_TABLE_CONTEXT)(
+        Allocator-&gt;Calloc(Allocator-&gt;Context,
+                          1,
+                          AllocSize.LowPart)
+    );
+
+    if (!Context) {
+        return FALSE;
+    }
+
+    //
+    // Allocation was successful, continue with initialization.
+    //
+
+    Context-&gt;SizeOfStruct = sizeof(*Context);
+    Context-&gt;Rtl = Rtl;
+    Context-&gt;Allocator = Allocator;
+    Context-&gt;Flags.AsULong = 0;
+
+    //
+    // The context structure will be trailed by an array of UNICODE_STRING
+    // structures that will be filled in by Rtl-&gt;CreateRandomObjectNames().
+    // This is then followed by an array of PUNICODE_STRING pointers, with
+    // each one initialized to point to the corresponding offset into the
+    // first array.  This is a bit quirky, but it's required by the Rtl
+    // method (which allows for prefixes to be ignored for certain objects
+    // if desired).
+    //
+
+    Buffer = (PBYTE)Context;
+    Buffer += sizeof(*Context);
+    Context-&gt;ObjectNames = (PUNICODE_STRING)Buffer;
+
+    Buffer += ObjectNameArraySize.LowPart;
+    Context-&gt;ObjectNamesPointerArray = (PPUNICODE_STRING)Buffer;
+
+    Buffer += ObjectNamePointersArraySize.LowPart;
+
+    //
+    // If our pointer arithmetic was correct, Buffer should match the base
+    // address of the context plus the total allocation size at this point.
+    // Assert this invariant now.
+    //
+
+    ExpectedBuffer = RtlOffsetToPointer(Context, AllocSize.LowPart);
+    ASSERT(Buffer == ExpectedBuffer);
+
+    //
+    // Wire up the pointer array to the object names.
+    //
+
+    Names = Context-&gt;ObjectNamesPointerArray;
+
+    for (Index = 0; Index &lt; NumberOfContextObjectPrefixes; Index++) {
+        Names[Index] = Context-&gt;ObjectNames + Index;
+    }
+
+    //
+    // Create the random object names for our underlying events.
+    //
+
+    Prefixes = (PPUNICODE_STRING)&amp;ContextObjectPrefixes;
+
+    Success = Rtl-&gt;CreateRandomObjectNames(Rtl,
+                                           Allocator,
+                                           Allocator,
+                                           NumberOfContextObjectPrefixes,
+                                           64,
+                                           NULL,
+                                           Context-&gt;ObjectNamesPointerArray,
+                                           Prefixes,
+                                           &amp;SizeOfNamesWideBuffer,
+                                           &amp;NamesWideBuffer);
+
+    if (!Success) {
+        goto Error;
+    }
+
+    //
+    // Wire up the wide buffer pointer and containing size.
+    //
+
+    Context-&gt;ObjectNamesWideBuffer = NamesWideBuffer;
+    Context-&gt;SizeOfObjectNamesWideBuffer = SizeOfNamesWideBuffer;
+    Context-&gt;NumberOfObjects = NumberOfContextObjectPrefixes;
+
+
+    //
+    // Initialize the event pointer to the first handle, and the name pointer
+    // to the first UNICODE_STRING pointer.  Obtain the number of events.
+    //
+
+    Event = (PHANDLE)&amp;Context-&gt;FirstEvent;
+    Name = &amp;Context-&gt;ObjectNames[0];
+    NumberOfEvents = GetNumberOfContextEvents(Context);
+
+    for (Index = 0; Index &lt; NumberOfEvents; Index++, Event++, Name++) {
+
+        //
+        // We want all of our events to be manual reset, such that they stay
+        // signaled even after they've satisfied a wait.
+        //
+
+        BOOLEAN ManualReset = TRUE;
+
+        *Event = Rtl-&gt;CreateEventW(NULL,
+                                   ManualReset,
+                                   FALSE,
+                                   Name-&gt;Buffer);
+
+        LastError = GetLastError();
+
+        if (!*Event || LastError == ERROR_ALREADY_EXISTS) {
+
+            //
+            // As the event names are random, a last error that indicates the
+            // name already exists is evident of a pretty serious problem.
+            // Treat this as a fatal.
+            //
+
+            goto Error;
+        }
+    }
+
+    //
+    // If the maximum concurrency is 0, default to the number of processors.
+    //
+
+    NumberOfProcessors = GetMaximumProcessorCount(ALL_PROCESSOR_GROUPS);
+
+    if (MaximumConcurrency == 0) {
+        MaximumConcurrency = NumberOfProcessors;
+    }
+
+    Context-&gt;MinimumConcurrency = MaximumConcurrency;
+    Context-&gt;MaximumConcurrency = MaximumConcurrency;
+
+    //
+    // Create the Main threadpool structures.  This threadpool creates a fixed
+    // number of threads equal to the maximum concurrency specified by the user
+    // (e.g. min threads is set to the same value as max threads).
+    //
+
+    Threadpool = Context-&gt;MainThreadpool = CreateThreadpool(NULL);
+    if (!Threadpool) {
+        goto Error;
+    }
+
+    if (!SetThreadpoolThreadMinimum(Threadpool, MaximumConcurrency)) {
+        goto Error;
+    }
+
+    SetThreadpoolThreadMaximum(Threadpool, MaximumConcurrency);
+
+    //
+    // Initialize the Main threadpool environment, set its priority to
+    // low, then associate it with the Main threadpool.
+    //
+
+    InitializeThreadpoolEnvironment(&amp;Context-&gt;MainCallbackEnv);
+    SetThreadpoolCallbackPriority(&amp;Context-&gt;MainCallbackEnv,
+                                  TP_CALLBACK_PRIORITY_LOW);
+    SetThreadpoolCallbackPool(&amp;Context-&gt;MainCallbackEnv,
+                              Context-&gt;MainThreadpool);
+
+    //
+    // Create a cleanup group for the Main threadpool and register it.
+    //
+
+    Context-&gt;MainCleanupGroup = CreateThreadpoolCleanupGroup();
+    if (!Context-&gt;MainCleanupGroup) {
+        goto Error;
+    }
+
+    SetThreadpoolCallbackCleanupGroup(&amp;Context-&gt;MainCallbackEnv,
+                                      Context-&gt;MainCleanupGroup,
+                                      CleanupCallback);
+
+    //
+    // Create a work object for the Main threadpool.
+    //
+
+    Context-&gt;MainWork = CreateThreadpoolWork(MainWorkCallback,
+                                             Context,
+                                             &amp;Context-&gt;MainCallbackEnv);
+
+    if (!Context-&gt;MainWork) {
+        goto Error;
+    }
+
+    //
+    // Initialize the main work list head.
+    //
+
+    InitializeSListHead(&amp;Context-&gt;MainWorkListHead);
+
+    //
+    // Create the File threadpool structures.  We currently use the default
+    // number of system threads for this threadpool.  We don't have to clamp
+    // it at the moment as we don't bulk-enqueue work items (that can cause
+    // the threadpool machinery to think more threads need to be created).
+    //
+
+    Threadpool = Context-&gt;FileThreadpool = CreateThreadpool(NULL);
+    if (!Threadpool) {
+        goto Error;
+    }
+
+    //
+    // Initialize the File threadpool environment and associate it with the
+    // File threadpool.
+    //
+
+    InitializeThreadpoolEnvironment(&amp;Context-&gt;FileCallbackEnv);
+    SetThreadpoolCallbackPool(&amp;Context-&gt;FileCallbackEnv,
+                              Context-&gt;FileThreadpool);
+
+    //
+    // Create a cleanup group for the File threadpool and register it.
+    //
+
+    Context-&gt;FileCleanupGroup = CreateThreadpoolCleanupGroup();
+    if (!Context-&gt;FileCleanupGroup) {
+        goto Error;
+    }
+
+    SetThreadpoolCallbackCleanupGroup(&amp;Context-&gt;FileCallbackEnv,
+                                      Context-&gt;FileCleanupGroup,
+                                      CleanupCallback);
+
+    //
+    // Create a work object for the File threadpool.
+    //
+
+    Context-&gt;FileWork = CreateThreadpoolWork(FileWorkCallback,
+                                             Context,
+                                             &amp;Context-&gt;FileCallbackEnv);
+
+    if (!Context-&gt;FileWork) {
+        goto Error;
+    }
+
+    //
+    // Initialize the main work list head.
+    //
+
+    InitializeSListHead(&amp;Context-&gt;FileWorkListHead);
+
+    //
+    // Create the Finished and Error threadpools and associated resources.
+    // These are slightly easier as we only have 1 thread maximum for each
+    // pool and no cleanup group is necessary.
+    //
+
+    Context-&gt;FinishedThreadpool = CreateThreadpool(NULL);
+    if (!Context-&gt;FinishedThreadpool) {
+        goto Error;
+    }
+
+    if (!SetThreadpoolThreadMinimum(Context-&gt;FinishedThreadpool, 1)) {
+        goto Error;
+    }
+
+    SetThreadpoolThreadMaximum(Context-&gt;FinishedThreadpool, 1);
+
+    Context-&gt;FinishedWork = CreateThreadpoolWork(FinishedWorkCallback,
+                                                 Context,
+                                                 &amp;Context-&gt;FinishedCallbackEnv);
+    if (!Context-&gt;FinishedWork) {
+        goto Error;
+    }
+
+    //
+    // Initialize the finished list head.
+    //
+
+    InitializeSListHead(&amp;Context-&gt;FinishedWorkListHead);
+
+    //
+    // Create the Error threadpool.
+    //
+
+    Context-&gt;ErrorThreadpool = CreateThreadpool(NULL);
+    if (!Context-&gt;ErrorThreadpool) {
+        goto Error;
+    }
+
+    if (!SetThreadpoolThreadMinimum(Context-&gt;ErrorThreadpool, 1)) {
+        goto Error;
+    }
+
+    SetThreadpoolThreadMaximum(Context-&gt;ErrorThreadpool, 1);
+
+    Context-&gt;ErrorWork = CreateThreadpoolWork(ErrorWorkCallback,
+                                              Context,
+                                              &amp;Context-&gt;ErrorCallbackEnv);
+    if (!Context-&gt;ErrorWork) {
+        goto Error;
+    }
+
+
+    //
+    // We're done!  Jump to the end of the routine to finish up.
+    //
+
+    Success = TRUE;
+    goto End;
+
+Error:
+
+    Success = FALSE;
+
+    //
+    // Call the destroy routine on the context if it is non-NULL.
+    //
+
+    if (Context) {
+
+        if (!DestroyPerfectHashTableContext(&amp;Context, NULL)) {
+
+            //
+            // There's nothing we can do here.
+            //
+
+            NOTHING;
+        }
+
+        //
+        // N.B. DestroyPerfectHashTableContext() should clear the Context
+        //      pointer.  Assert that invariant now.
+        //
+
+        ASSERT(Context == NULL);
+    }
+
+    //
+    // Intentional follow-on to End.
+    //
+
+End:
+
+    //
+    // Update the caller's pointer and return.
+    //
+    // N.B. Context could be NULL here, which is fine.
+    //
+
+    *ContextPointer = Context;
+
+    return Success;
+}
+</code></pre>
+                    </div>
+                </div>
+
+                <a class="xref" name="key-loading"></a>
+                <h2>Key Loading</h2>
+
+                <p>
+
+                    The key loader routine is one of our more simple routines.  It memory maps the
+                    given .keys file such that it can be accessed as a linear 1D array of
+                    <code>ULONG</code> values by the creation routines down the track.  It produces
+                    an instance of a <code>PERFECT_HASH_TABLE_KEYS</code> structure, for which an
+                    opaque pointer is returned to the caller.
+
+                </p>
+
+                <a class="xref" name="PERFECT_HASH_TABLE_KEYS"></a>
+                <h3>PERFECT_HASH_TABLE_KEYS</h3>
+
+                <a class="xref" name="LoadPerfectHashTableKeys"></a>
+                <h2>LoadPerfectHashTableKeys</h2>
+
+                <div class="tab-box language box-load-keys">
+                    <ul class="tabs">
+                        <li data-content="content-load-keys-pseudo">Pseudo</li>
+                        <li data-content="content-load-keys-full">Full</li>
+                    </ul>
+                    <div class="content">
+<pre class="code content-load-keys-pseudo"><code class="language-c">
+</code></pre>
+<pre class="code content-load-keys-full"><code class="language-c">
+</code></pre>
+                    </div>
+                </div>
 
                 <hr/>
 
