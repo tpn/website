@@ -7601,11 +7601,1183 @@ End:
     return Success;
 }
 </code></pre>
+
+                <a class="xref" name="CreatePerfectHashTableImplChm01"></a>
+                <h3>CreatePerfectHashTableImplChm01</h3>
+
                 <p>
 
-                </p>
+                <div class="tab-box language box-create-table-chm01-impl">
+                    <ul class="tabs">
+                        <!--<li data-content="content-create-table-chm01-impl-pseudo">Pseudo</li>-->
+                        <li data-content="content-create-table-chm01-impl-full">Full</li>
+                    </ul>
+                    <div class="content">
+<pre class="code content-create-table-chm01-impl-full"><code class="language-c">_Use_decl_annotations_
+BOOLEAN
+CreatePerfectHashTableImplChm01(
+    PPERFECT_HASH_TABLE Table
+    )
+/*++
+
+Routine Description:
+
+    Attempts to create a perfect hash table using the CHM algorithm and a
+    2-part random hypergraph.
+
+Arguments:
+
+    Table - Supplies a pointer to a partially-initialized PERFECT_HASH_TABLE
+        structure.
+
+Return Value:
+
+    TRUE on success, FALSE on failure.
+
+--*/
+{
+    PRTL Rtl;
+    USHORT Index;
+    PULONG Keys;
+    PGRAPH Graph;
+    PBYTE Buffer;
+    BOOLEAN Success;
+    USHORT PageSize;
+    USHORT PageShift;
+    ULONG_PTR LastPage;
+    ULONG_PTR ThisPage;
+    BYTE NumberOfEvents;
+    PVOID BaseAddress = NULL;
+    ULONG WaitResult;
+    GRAPH_INFO Info;
+    PBYTE Unusable;
+    ULONG LastError;
+    ULONG NumberOfKeys;
+    BOOLEAN CaughtException;
+    PALLOCATOR Allocator;
+    HANDLE ProcessHandle;
+    PHANDLE Event;
+    USHORT NumberOfGraphs;
+    USHORT NumberOfPagesPerGraph;
+    USHORT NumberOfGuardPages;
+    ULONG TotalNumberOfPages;
+    USHORT NumberOfBitmaps;
+    PGRAPH_DIMENSIONS Dim;
+    PSLIST_ENTRY ListEntry;
+    SYSTEM_INFO SystemInfo;
+    FILE_WORK_ITEM SaveFile;
+    FILE_WORK_ITEM PrepareFile;
+    PGRAPH_INFO_ON_DISK OnDiskInfo;
+    PTABLE_INFO_ON_DISK_HEADER OnDiskHeader;
+    ULONGLONG Closest;
+    ULONGLONG LastClosest;
+    ULONGLONG NextSizeInBytes;
+    ULONGLONG PrevSizeInBytes;
+    ULONGLONG FirstSizeInBytes;
+    ULONGLONG EdgesSizeInBytes;
+    ULONGLONG ValuesSizeInBytes;
+    ULONGLONG AssignedSizeInBytes;
+    ULONGLONG TotalBufferSizeInBytes;
+    ULONGLONG UsableBufferSizeInBytesPerBuffer;
+    ULONGLONG ExpectedTotalBufferSizeInBytes;
+    ULONGLONG ExpectedUsableBufferSizeInBytesPerBuffer;
+    ULONGLONG GraphSizeInBytesIncludingGuardPage;
+    PERFECT_HASH_TABLE_MASK_FUNCTION_ID MaskFunctionId;
+    ULARGE_INTEGER AllocSize;
+    ULARGE_INTEGER NumberOfEdges;
+    ULARGE_INTEGER NumberOfVertices;
+    ULARGE_INTEGER TotalNumberOfEdges;
+    ULARGE_INTEGER DeletedEdgesBitmapBufferSizeInBytes;
+    ULARGE_INTEGER VisitedVerticesBitmapBufferSizeInBytes;
+    ULARGE_INTEGER AssignedBitmapBufferSizeInBytes;
+    ULARGE_INTEGER IndexBitmapBufferSizeInBytes;
+    PPERFECT_HASH_TABLE_CONTEXT Context = Table-&gt;Context;
+    HANDLE Events[5];
+
+    //
+    // Validate arguments.
+    //
+
+    if (!ARGUMENT_PRESENT(Table)) {
+        return FALSE;
+    }
+
+    //
+    // The following label is jumped to by code later in this routine when we
+    // detect that we've exceeded a plausible number of attempts at finding a
+    // graph solution with the given number of vertices, and have bumped up
+    // the vertex count (by adjusting Table-&gt;RequestedNumberOfElements) and
+    // want to try again.
+    //
+
+RetryWithLargerTableSize:
+
+    //
+    // Initialize aliases.
+    //
+
+    Rtl = Table-&gt;Rtl;
+    Keys = (PULONG)Table-&gt;Keys-&gt;BaseAddress;;
+    Allocator = Table-&gt;Allocator;
+    Context = Table-&gt;Context;
+    MaskFunctionId = Context-&gt;MaskFunctionId;
+
+    //
+    // If no threshold has been set, use the default.
+    //
+
+    if (!Context-&gt;ResizeTableThreshold) {
+        Context-&gt;ResizeTableThreshold = GRAPH_SOLVING_ATTEMPTS_THRESHOLD;
+        Context-&gt;ResizeLimit = GRAPH_SOLVING_RESIZE_TABLE_LIMIT;
+    }
+
+    //
+    // Explicitly reset all events.  This ensures everything is back in the
+    // starting state if we happen to be attempting to solve the graph after
+    // a resize event.
+    //
+
+    Event = (PHANDLE)&amp;Context-&gt;FirstEvent;
+    NumberOfEvents = GetNumberOfContextEvents(Context);
+
+    for (Index = 0; Index &lt; NumberOfEvents; Index++, Event++) {
+
+        ASSERT(*Event &amp;&amp; *Event != INVALID_HANDLE_VALUE);
+        ASSERT(ResetEvent(*Event));
+
+    }
+
+    //
+    // The number of edges in our graph is equal to the number of keys in the
+    // input data set if modulus masking is in use.  It will be rounded up to
+    // a power of 2 otherwise.
+    //
+
+    NumberOfEdges.QuadPart = Table-&gt;Keys-&gt;NumberOfElements.QuadPart;
+
+    //
+    // Sanity check we're under MAX_ULONG.
+    //
+
+    ASSERT(!NumberOfEdges.HighPart);
+
+    NumberOfKeys = NumberOfEdges.LowPart;
+
+    //
+    // Determine the number of vertices.  If a caller has requested a certain
+    // table size, Table-&gt;RequestedNumberOfTableElements will be non-zero, and
+    // takes precedence.
+    //
+
+    if (Table-&gt;RequestedNumberOfTableElements.QuadPart) {
+
+        NumberOfVertices.QuadPart = (
+            Table-&gt;RequestedNumberOfTableElements.QuadPart
+        );
+
+        if (IsModulusMasking(MaskFunctionId)) {
+
+            //
+            // Nothing more to do with modulus masking; we'll verify the number
+            // of vertices below.
+            //
+
+            NOTHING;
+
+        } else {
+
+            //
+            // For non-modulus masking, make sure the number of vertices are
+            // rounded up to a power of 2.  The number of edges will be rounded
+            // up to a power of 2 from the number of keys.
+            //
+
+            NumberOfVertices.QuadPart = (
+                RoundUpPowerOf2(NumberOfVertices.LowPart)
+            );
+
+            NumberOfEdges.QuadPart = (
+                RoundUpPowerOf2(NumberOfEdges.LowPart)
+            );
+
+        }
+
+    } else {
+
+        //
+        // No table size was requested, so we need to determine how many
+        // vertices to use heuristically.  The main factor is what type of
+        // masking has been requested.  The chm.c implementation, which is
+        // modulus based, uses a size multiplier (c) of 2.09, and calculates
+        // the final size via ceil(nedges * (double)2.09).  We can avoid the
+        // need for doubles and linking with a math library (to get ceil())
+        // and just use ~2.25, which we can calculate by adding the result
+        // of right shifting the number of edges by 1 to the result of left
+        // shifting said edge count by 2 (simulating multiplication by 0.25).
+        //
+        // If we're dealing with modulus masking, this will be the exact number
+        // of vertices used.  For other types of masking, we need the edges size
+        // to be a power of 2, and the vertices size to be the next power of 2.
+        //
+
+        if (IsModulusMasking(MaskFunctionId)) {
+
+            NumberOfVertices.QuadPart = NumberOfEdges.QuadPart &lt;&lt; 1ULL;
+            NumberOfVertices.QuadPart += NumberOfEdges.QuadPart &gt;&gt; 2ULL;
+
+        } else {
+
+            //
+            // Round up the edges to a power of 2.
+            //
+
+            NumberOfEdges.QuadPart = RoundUpPowerOf2(NumberOfEdges.LowPart);
+
+            //
+            // Make sure we haven't overflowed.
+            //
+
+            ASSERT(!NumberOfEdges.HighPart);
+
+            //
+            // For the number of vertices, round the number of edges up to the
+            // next power of 2.
+            //
+
+            NumberOfVertices.QuadPart = (
+                RoundUpNextPowerOf2(NumberOfEdges.LowPart)
+            );
+
+        }
+    }
+
+    //
+    // Another sanity check we haven't exceeded MAX_ULONG.
+    //
+
+    ASSERT(!NumberOfVertices.HighPart);
+
+    //
+    // The r-graph (r = 2) nature of this implementation results in various
+    // arrays having twice the number of elements indicated by the edge count.
+    // Capture this number now, as we need it in various size calculations.
+    //
+
+    TotalNumberOfEdges.QuadPart = NumberOfEdges.QuadPart;
+    TotalNumberOfEdges.QuadPart &lt;&lt;= 1ULL;
+
+    //
+    // Another overflow sanity check.
+    //
+
+    ASSERT(!TotalNumberOfEdges.HighPart);
+
+    //
+    // Make sure vertices &gt; edges.
+    //
+
+    ASSERT(NumberOfVertices.QuadPart &gt; NumberOfEdges.QuadPart);
+
+    //
+    // Calculate the size required for the DeletedEdges bitmap buffer.  One
+    // bit is used per TotalNumberOfEdges.  Convert the bits into bytes by
+    // shifting right 3 (dividing by 8) then align it up to a 16 byte boundary.
+    // We add 1 before shifting to account 1-based bitmaps vs 0-based indices.
+    //
+
+    DeletedEdgesBitmapBufferSizeInBytes.QuadPart = (
+        ALIGN_UP(((ALIGN_UP(TotalNumberOfEdges.QuadPart + 1, 8)) &gt;&gt; 3), 16)
+    );
+
+    ASSERT(!DeletedEdgesBitmapBufferSizeInBytes.HighPart);
+
+    //
+    // Calculate the size required for the VisitedVertices bitmap buffer.  One
+    // bit is used per NumberOfVertices.  Convert the bits into bytes by
+    // shifting right 3 (dividing by 8) then align it up to a 16 byte boundary.
+    // We add 1 before shifting to account 1-based bitmaps vs 0-based indices.
+    //
+
+    VisitedVerticesBitmapBufferSizeInBytes.QuadPart = (
+        ALIGN_UP(((ALIGN_UP(NumberOfVertices.QuadPart + 1, 8)) &gt;&gt; 3), 16)
+    );
+
+    ASSERT(!VisitedVerticesBitmapBufferSizeInBytes.HighPart);
+
+    //
+    // Calculate the size required for the AssignedBitmap bitmap buffer.  One
+    // bit is used per NumberOfVertices.  Convert the bits into bytes by shifting
+    // right 3 (dividing by 8) then align it up to a 16 byte boundary.
+    // We add 1 before shifting to account 1-based bitmaps vs 0-based indices.
+    //
+
+    AssignedBitmapBufferSizeInBytes.QuadPart = (
+        ALIGN_UP(((ALIGN_UP(NumberOfVertices.QuadPart + 1, 8)) &gt;&gt; 3), 16)
+    );
+
+    ASSERT(!AssignedBitmapBufferSizeInBytes.HighPart);
+
+    //
+    // Calculate the size required for the IndexBitmap bitmap buffer.  One
+    // bit is used per NumberOfVertices.  Convert the bits into bytes by shifting
+    // right 3 (dividing by 8) then align it up to a 16 byte boundary.
+    // We add 1 before shifting to account 1-based bitmaps vs 0-based indices.
+    //
+
+    IndexBitmapBufferSizeInBytes.QuadPart = (
+        ALIGN_UP(((ALIGN_UP(NumberOfVertices.QuadPart + 1, 8)) &gt;&gt; 3), 16)
+    );
+
+    ASSERT(!IndexBitmapBufferSizeInBytes.HighPart);
+
+    //
+    // Calculate the sizes required for each of the arrays.  We collect them
+    // into independent variables as it makes carving up the allocated buffer
+    // easier down the track.
+    //
+
+    EdgesSizeInBytes = (
+        ALIGN_UP_POINTER(sizeof(*Graph-&gt;Edges) * TotalNumberOfEdges.QuadPart)
+    );
+
+    NextSizeInBytes = (
+        ALIGN_UP_POINTER(sizeof(*Graph-&gt;Next) * TotalNumberOfEdges.QuadPart)
+    );
+
+    FirstSizeInBytes = (
+        ALIGN_UP_POINTER(sizeof(*Graph-&gt;First) * NumberOfVertices.QuadPart)
+    );
+
+    PrevSizeInBytes = (
+        ALIGN_UP_POINTER(sizeof(*Graph-&gt;Prev) * TotalNumberOfEdges.QuadPart)
+    );
+
+    AssignedSizeInBytes = (
+        ALIGN_UP_POINTER(sizeof(*Graph-&gt;Assigned) * NumberOfVertices.QuadPart)
+    );
+
+    //
+    // Calculate the size required for the values array.  This is used as part
+    // of verification, where we essentially do Insert(Key, Key) in combination
+    // with bitmap tracking of assigned indices, which allows us to detect if
+    // there are any colliding indices, and if so, what was the previous key
+    // that mapped to the same index.
+    //
+
+    ValuesSizeInBytes = (
+        ALIGN_UP_POINTER(sizeof(*Graph-&gt;Values) * NumberOfVertices.QuadPart)
+    );
+
+    //
+    // Calculate the total size required for the underlying graph, such that
+    // we can allocate memory via a single call to the allocator.
+    //
+
+    AllocSize.QuadPart = ALIGN_UP_POINTER(
+
+        //
+        // Account for the size of the graph structure.
+        //
+
+        sizeof(GRAPH) +
+
+        //
+        // Account for the size of the Graph-&gt;Edges array, which is double
+        // sized.
+        //
+
+        EdgesSizeInBytes +
+
+        //
+        // Account for the size of the Graph-&gt;Next array; also double sized.
+        //
+
+        NextSizeInBytes +
+
+        //
+        // Account for the size of the Graph-&gt;First array.  This is sized
+        // proportional to the number of vertices.
+        //
+
+        FirstSizeInBytes +
+
+        //
+        // Account for the size of the Graph-&gt;Prev array, also double sized.
+        //
+
+        PrevSizeInBytes +
+
+        //
+        // Account for Graph-&gt;Assigned array of vertices.
+        //
+
+        AssignedSizeInBytes +
+
+        //
+        // Account for the Table-&gt;Values array of values for the perfect hash
+        // table, indexed via the result of the table's Index() method.
+        //
+
+        ValuesSizeInBytes +
+
+        //
+        // Account for the size of the bitmap buffer for Graph-&gt;DeletedEdges.
+        //
+
+        DeletedEdgesBitmapBufferSizeInBytes.QuadPart +
+
+        //
+        // Account for the size of the bitmap buffer for Graph-&gt;VisitedVertices.
+        //
+
+        VisitedVerticesBitmapBufferSizeInBytes.QuadPart +
+
+        //
+        // Account for the size of the bitmap buffer for Graph-&gt;AssignedBitmap.
+        //
+
+        AssignedBitmapBufferSizeInBytes.QuadPart +
+
+        //
+        // Account for the size of the bitmap buffer for Graph-&gt;IndexBitmap.
+        //
+
+        IndexBitmapBufferSizeInBytes.QuadPart +
+
+        //
+        // Keep a dummy 0 at the end such that the last item above can use an
+        // addition sign at the end of it, which minimizes the diff churn when
+        // adding a new size element.
+        //
+
+        0
+
+    );
+
+    //
+    // Capture the number of bitmaps here, where it's close to the lines above
+    // that indicate how many bitmaps we're dealing with.  The number of bitmaps
+    // accounted for above should match this number.  Visually confirm this any
+    // time a new bitmap buffer is accounted for.
+    //
+    // N.B. We ASSERT() in InitializeGraph() if we detect a mismatch between
+    //      Info-&gt;NumberOfBitmaps and a local counter incremented each time
+    //      we initialize a bitmap.
+    //
+
+    NumberOfBitmaps = 4;
+
+    //
+    // Sanity check the size hasn't overflowed.
+    //
+
+    ASSERT(!AllocSize.HighPart);
+
+    //
+    // Calculate the number of pages required by each graph, then extrapolate
+    // the number of guard pages and total number of pages.  We currently use
+    // 4KB for the page size (i.e. we're not using large pages).
+    //
+
+    PageSize = PAGE_SIZE;
+    PageShift = (USHORT)TrailingZeros(PageSize);
+    NumberOfGraphs = (USHORT)Context-&gt;MaximumConcurrency;
+    NumberOfPagesPerGraph = ROUND_TO_PAGES(AllocSize.LowPart) &gt;&gt; PageShift;
+    NumberOfGuardPages = (USHORT)Context-&gt;MaximumConcurrency;
+    TotalNumberOfPages = (
+        (NumberOfGraphs * NumberOfPagesPerGraph) +
+        NumberOfGuardPages
+    );
+    GraphSizeInBytesIncludingGuardPage = (
+        (ULONGLONG)PageSize +
+        ((ULONGLONG)NumberOfPagesPerGraph * (ULONGLONG)PageSize)
+    );
+
+    //
+    // Create multiple buffers separated by guard pages using a single call
+    // to VirtualAllocEx().
+    //
+
+    ProcessHandle = NULL;
+
+    Success = Rtl-&gt;CreateMultipleBuffers(Rtl,
+                                         &amp;ProcessHandle,
+                                         PageSize,
+                                         NumberOfGraphs,
+                                         NumberOfPagesPerGraph,
+                                         NULL,
+                                         NULL,
+                                         &amp;UsableBufferSizeInBytesPerBuffer,
+                                         &amp;TotalBufferSizeInBytes,
+                                         &amp;BaseAddress);
+
+    if (!Success) {
+        LastError = GetLastError();
+        return FALSE;
+    }
+
+    //
+    // N.B. Subsequent errors must 'goto Error' at this point to ensure our
+    //      cleanup logic kicks in.
+    //
+
+    //
+    // Assert the sizes returned by the buffer allocation match what we're
+    // expecting.
+    //
+
+    ExpectedTotalBufferSizeInBytes = (
+        (ULONGLONG)TotalNumberOfPages *
+        (ULONGLONG)PageSize
+    );
+
+    ExpectedUsableBufferSizeInBytesPerBuffer = (
+        (ULONGLONG)NumberOfPagesPerGraph *
+        (ULONGLONG)PageSize
+    );
+
+    ASSERT(TotalBufferSizeInBytes == ExpectedTotalBufferSizeInBytes);
+    ASSERT(UsableBufferSizeInBytesPerBuffer ==
+           ExpectedUsableBufferSizeInBytesPerBuffer);
+
+    //
+    // Initialize the GRAPH_INFO structure with all the sizes captured earlier.
+    // (We zero it first just to ensure any of the padding fields are cleared.)
+    //
+
+    ZeroStruct(Info);
+
+    Info.PageSize = PageSize;
+    Info.AllocSize = AllocSize.QuadPart;
+    Info.Context = Context;
+    Info.BaseAddress = BaseAddress;
+    Info.NumberOfPagesPerGraph = NumberOfPagesPerGraph;
+    Info.NumberOfGraphs = NumberOfGraphs;
+    Info.NumberOfBitmaps = NumberOfBitmaps;
+    Info.SizeOfGraphStruct = sizeof(GRAPH);
+    Info.EdgesSizeInBytes = EdgesSizeInBytes;
+    Info.NextSizeInBytes = NextSizeInBytes;
+    Info.FirstSizeInBytes = FirstSizeInBytes;
+    Info.PrevSizeInBytes = PrevSizeInBytes;
+    Info.AssignedSizeInBytes = AssignedSizeInBytes;
+    Info.ValuesSizeInBytes = ValuesSizeInBytes;
+    Info.AllocSize = AllocSize.QuadPart;
+    Info.FinalSize = UsableBufferSizeInBytesPerBuffer;
+
+    Info.DeletedEdgesBitmapBufferSizeInBytes = (
+        DeletedEdgesBitmapBufferSizeInBytes.QuadPart
+    );
+
+    Info.VisitedVerticesBitmapBufferSizeInBytes = (
+        VisitedVerticesBitmapBufferSizeInBytes.QuadPart
+    );
+
+    Info.AssignedBitmapBufferSizeInBytes = (
+        AssignedBitmapBufferSizeInBytes.QuadPart
+    );
+
+    Info.IndexBitmapBufferSizeInBytes = (
+        IndexBitmapBufferSizeInBytes.QuadPart
+    );
+
+    //
+    // Capture the system allocation granularity.  This is used to align the
+    // backing memory maps used for the table array.
+    //
+
+    GetSystemInfo(&amp;SystemInfo);
+    Info.AllocationGranularity = SystemInfo.dwAllocationGranularity;
+
+    //
+    // Copy the dimensions over.
+    //
+
+    Dim = &amp;Info.Dimensions;
+    Dim-&gt;NumberOfEdges = NumberOfEdges.LowPart;
+    Dim-&gt;TotalNumberOfEdges = TotalNumberOfEdges.LowPart;
+    Dim-&gt;NumberOfVertices = NumberOfVertices.LowPart;
+
+    Dim-&gt;NumberOfEdgesPowerOf2Exponent = (BYTE)(
+        TrailingZeros64(RoundUpPowerOf2(NumberOfEdges.LowPart))
+    );
+
+    Dim-&gt;NumberOfEdgesNextPowerOf2Exponent = (BYTE)(
+        TrailingZeros64(RoundUpNextPowerOf2(NumberOfEdges.LowPart))
+    );
+
+    Dim-&gt;NumberOfVerticesPowerOf2Exponent = (BYTE)(
+        TrailingZeros64(RoundUpPowerOf2(NumberOfVertices.LowPart))
+    );
+
+    Dim-&gt;NumberOfVerticesNextPowerOf2Exponent = (BYTE)(
+        TrailingZeros64(RoundUpNextPowerOf2(NumberOfVertices.LowPart))
+    );
+
+    //
+    // If non-modulus masking is active, initialize the edge and vertex masks.
+    //
+
+    if (!IsModulusMasking(MaskFunctionId)) {
+
+        Info.EdgeMask = NumberOfEdges.LowPart - 1;
+        Info.VertexMask = NumberOfVertices.LowPart - 1;
+
+        //
+        // Sanity check our masks are correct: their popcnts should match the
+        // exponent value identified above whilst filling out the dimensions
+        // structure.
+        //
+
+        ASSERT(_mm_popcnt_u32(Info.EdgeMask) ==
+               Dim-&gt;NumberOfEdgesPowerOf2Exponent);
+
+        ASSERT(_mm_popcnt_u32(Info.VertexMask) ==
+               Dim-&gt;NumberOfVerticesPowerOf2Exponent);
+
+    }
+
+    //
+    // Set the Modulus, Size, Shift, Mask and Fold fields of the table, such
+    // that the Hash and Mask vtbl functions operate correctly.
+    //
+    // N.B. Shift, Mask and Fold are meaningless for modulus masking.
+    //
+    // N.B. If you change these fields, you'll probably need to change something
+    //      in LoadPerfectHashTableImplChm01() too.
+    //
+
+    Table-&gt;HashModulus = NumberOfVertices.LowPart;
+    Table-&gt;IndexModulus = NumberOfEdges.LowPart;
+    Table-&gt;HashSize = NumberOfVertices.LowPart;
+    Table-&gt;IndexSize = NumberOfEdges.LowPart;
+    Table-&gt;HashShift = TrailingZeros(Table-&gt;HashSize);
+    Table-&gt;IndexShift = TrailingZeros(Table-&gt;IndexSize);
+    Table-&gt;HashMask = (Table-&gt;HashSize - 1);
+    Table-&gt;IndexMask = (Table-&gt;IndexSize - 1);
+    Table-&gt;HashFold = Table-&gt;HashShift &gt;&gt; 3;
+    Table-&gt;IndexFold = Table-&gt;IndexShift &gt;&gt; 3;
+
+    //
+    // If auto folding has been requested, set the appropriate function ID based
+    // on the table fold and update the vtbl.
+    //
+
+    if (MaskFunctionId == PerfectHashTableFoldAutoMaskFunctionId) {
+
+        ASSERT(Table-&gt;HashFold &gt;= 0 &amp;&amp; Table-&gt;HashFold &lt;= 4);
+
+        switch (Table-&gt;HashFold) {
+            case 4:
+            case 3:
+            case 2:
+                MaskFunctionId = PerfectHashTableFoldOnceMaskFunctionId;
+                break;
+
+            case 1:
+                MaskFunctionId = PerfectHashTableFoldTwiceMaskFunctionId;
+                break;
+
+            case 0:
+                MaskFunctionId = PerfectHashTableFoldThriceMaskFunctionId;
+                break;
+        }
+
+        Table-&gt;MaskFunctionId = MaskFunctionId;
+        Context-&gt;MaskFunctionId = MaskFunctionId;
+        Table-&gt;Vtbl-&gt;MaskHash = MaskHashRoutines[MaskFunctionId];
+        Table-&gt;Vtbl-&gt;MaskIndex = MaskIndexRoutines[MaskFunctionId];
+    }
+
+    //
+    // Save the on-disk representation of the graph information.  This is a
+    // smaller subset of data needed in order to load a previously-solved
+    // graph as a perfect hash table.  The data resides in an NTFS stream named
+    // :Info off the main perfect hash table file.  It will have been mapped for
+    // us already at Table-&gt;InfoStreamBaseAddress.
+    //
+
+    OnDiskInfo = (PGRAPH_INFO_ON_DISK)Table-&gt;InfoStreamBaseAddress;
+    ASSERT(OnDiskInfo);
+    OnDiskHeader = &amp;OnDiskInfo-&gt;Header;
+    OnDiskHeader-&gt;Magic.LowPart = TABLE_INFO_ON_DISK_MAGIC_LOWPART;
+    OnDiskHeader-&gt;Magic.HighPart = TABLE_INFO_ON_DISK_MAGIC_HIGHPART;
+    OnDiskHeader-&gt;SizeOfStruct = sizeof(*OnDiskInfo);
+    OnDiskHeader-&gt;Flags.AsULong = 0;
+    OnDiskHeader-&gt;Concurrency = Context-&gt;MaximumConcurrency;
+    OnDiskHeader-&gt;AlgorithmId = Context-&gt;AlgorithmId;
+    OnDiskHeader-&gt;MaskFunctionId = Context-&gt;MaskFunctionId;
+    OnDiskHeader-&gt;HashFunctionId = Context-&gt;HashFunctionId;
+    OnDiskHeader-&gt;KeySizeInBytes = sizeof(ULONG);
+    OnDiskHeader-&gt;HashSize = Table-&gt;HashSize;
+    OnDiskHeader-&gt;IndexSize = Table-&gt;IndexSize;
+    OnDiskHeader-&gt;HashShift = Table-&gt;HashShift;
+    OnDiskHeader-&gt;IndexShift = Table-&gt;IndexShift;
+    OnDiskHeader-&gt;HashMask = Table-&gt;HashMask;
+    OnDiskHeader-&gt;IndexMask = Table-&gt;IndexMask;
+    OnDiskHeader-&gt;HashFold = Table-&gt;HashFold;
+    OnDiskHeader-&gt;IndexFold = Table-&gt;IndexFold;
+    OnDiskHeader-&gt;HashModulus = Table-&gt;HashModulus;
+    OnDiskHeader-&gt;IndexModulus = Table-&gt;IndexModulus;
+    OnDiskHeader-&gt;NumberOfKeys.QuadPart = (
+        Table-&gt;Keys-&gt;NumberOfElements.QuadPart
+    );
+    OnDiskHeader-&gt;NumberOfSeeds = ((
+        FIELD_OFFSET(GRAPH, LastSeed) -
+        FIELD_OFFSET(GRAPH, FirstSeed)
+    ) / sizeof(ULONG)) + 1;
+
+    //
+    // This will change based on masking type and whether or not the caller
+    // has provided a value for NumberOfTableElements.  For now, keep it as
+    // the number of vertices.
+    //
+
+    OnDiskHeader-&gt;NumberOfTableElements.QuadPart = (
+        NumberOfVertices.QuadPart
+    );
+
+    CopyMemory(&amp;OnDiskInfo-&gt;Dimensions, Dim, sizeof(*Dim));
+
+    //
+    // Set the context's main work callback to our worker routine, and the algo
+    // context to our graph info structure.
+    //
+
+    Context-&gt;MainWorkCallback = ProcessGraphCallbackChm01;
+    Context-&gt;AlgorithmContext = &amp;Info;
+
+    //
+    // Set the context's file work callback to our worker routine.
+    //
+
+    Context-&gt;FileWorkCallback = FileWorkCallbackChm01;
+
+    //
+    // Prepare the initial "file preparation" work callback.  This will extend
+    // the backing file to the appropriate size.
+    //
+
+    ZeroStruct(PrepareFile);
+    PrepareFile.FileWorkId = FileWorkPrepareId;
+    InterlockedPushEntrySList(&amp;Context-&gt;FileWorkListHead,
+                              &amp;PrepareFile.ListEntry);
+
+    CONTEXT_START_TIMERS(PrepareFile);
+
+    SubmitThreadpoolWork(Context-&gt;FileWork);
+
+    //
+    // Capture initial cycles as reported by __rdtsc() and the performance
+    // counter.  The former is used to report a raw cycle count, the latter
+    // is used to convert to microseconds reliably (i.e. unaffected by turbo
+    // boosting).
+    //
+
+    QueryPerformanceFrequency(&amp;Context-&gt;Frequency);
+
+    CONTEXT_START_TIMERS(Solve);
+
+    //
+    // We're ready to create threadpool work for the graph.
+    //
+
+    Buffer = (PBYTE)BaseAddress;
+    Unusable = Buffer;
+
+    for (Index = 0; Index &lt; NumberOfGraphs; Index++) {
+
+        //
+        // Invariant check: at the top of the loop, Buffer and Unusable should
+        // point to the same address (which will be the base of the current
+        // graph being processed).  Assert this invariant now.
+        //
+
+        ASSERT(Buffer == Unusable);
+
+        //
+        // Carve out the graph pointer, and bump the unusable pointer past the
+        // graph's pages, such that it points to the first byte of the guard
+        // page.
+        //
+
+        Graph = (PGRAPH)Buffer;
+        Unusable = Buffer + UsableBufferSizeInBytesPerBuffer;
+
+        //
+        // Sanity check the page alignment logic.  If we subtract 1 byte from
+        // Unusable, it should reside on a different page.  Additionally, the
+        // two pages should be separated by at most a single page size.
+        //
+
+        ThisPage = ALIGN_DOWN(Unusable,   PageSize);
+        LastPage = ALIGN_DOWN(Unusable-1, PageSize);
+        ASSERT(LastPage &lt; ThisPage);
+        ASSERT((ThisPage - LastPage) == PageSize);
+
+        //
+        // Verify the guard page is working properly by wrapping an attempt to
+        // write to it in a structured exception handler that will catch the
+        // access violation trap.
+        //
+        // N.B. We only do this if we're not actively being debugged, as the
+        //      traps get dispatched to the debugger engine first as part of
+        //      the "first-pass" handling logic of the kernel.
+        //
+
+        if (!IsDebuggerPresent()) {
+
+            CaughtException = FALSE;
+
+            TRY_PROBE_MEMORY{
+
+                *Unusable = 1;
+
+            } CATCH_EXCEPTION_ACCESS_VIOLATION{
+
+                CaughtException = TRUE;
+
+            }
+
+            ASSERT(CaughtException);
+        }
+
+        //
+        // Guard page is working properly.  Push the graph onto the context's
+        // main work list head and submit the corresponding threadpool work.
+        //
+
+        InterlockedPushEntrySList(&amp;Context-&gt;MainWorkListHead,
+                                  &amp;Graph-&gt;ListEntry);
+        SubmitThreadpoolWork(Context-&gt;MainWork);
+
+        //
+        // Advance the buffer past the graph size and guard page.  Copy the
+        // same address to the Unusable variable as well, such that our top
+        // of the loop invariants hold true.
+        //
+
+        Buffer += GraphSizeInBytesIncludingGuardPage;
+        Unusable = Buffer;
+
+        //
+        // If our key set size is small and our maximum concurrency is large,
+        // we may have already solved the graph, in which case, we can stop
+        // submitting new solver attempts and just break out of the loop here.
+        //
+
+        if (!ShouldWeContinueTryingToSolveGraph(Context)) {
+            break;
+        }
+    }
+
+    //
+    // Wait on the context's events.
+    //
+
+    Events[0] = Context-&gt;SucceededEvent;
+    Events[1] = Context-&gt;CompletedEvent;
+    Events[2] = Context-&gt;ShutdownEvent;
+    Events[3] = Context-&gt;FailedEvent;
+    Events[4] = Context-&gt;TryLargerTableSizeEvent;
+
+    WaitResult = WaitForMultipleObjects(ARRAYSIZE(Events),
+                                        Events,
+                                        FALSE,
+                                        INFINITE);
+
+    //
+    // If the wait result indicates the try larger table size event was set,
+    // deal with that, first.
+    //
+
+    if (WaitResult == WAIT_OBJECT_0+4) {
+
+        //
+        // The number of attempts at solving this graph have exceeded the
+        // threshold.  Set the shutdown event in order to trigger all worker
+        // threads to abort their current attempts and wait on the main thread
+        // work to complete.
+        //
+
+        SetEvent(Context-&gt;ShutdownEvent);
+        WaitForThreadpoolWorkCallbacks(Context-&gt;MainWork, TRUE);
+
+        //
+        // Perform a blocking wait for the prepare file work to complete.  (It
+        // would be highly unlikely that this event hasn't been set yet.)
+        //
+
+        WaitResult = WaitForSingleObject(Context-&gt;PreparedFileEvent, INFINITE);
+
+        ASSERT(WaitResult == WAIT_OBJECT_0);
+
+        //
+        // There are no more threadpool callbacks running.  However, a thread
+        // could have finished a solution between the time the try larger table
+        // size event was set, and this point.  So, check the finished count
+        // first.  If it indicates a solution, jump to that handler code.
+        //
+
+        if (Context-&gt;FinishedCount &gt; 0) {
+            goto FinishedSolution;
+        }
+
+        //
+        // Destroy the existing buffer we allocated for this attempt.  We'll
+        // need a new, larger one to accomodate the resize.
+        //
+
+        ASSERT(Rtl-&gt;DestroyBuffer(Rtl, ProcessHandle, &amp;BaseAddress));
+
+        //
+        // Increment the resize counter and update the total number of attempts
+        // in the header.  Then, determine how close we came to solving the
+        // graph, and store that in the header as well if it's the best so far
+        // (or no previous version is present).
+        //
+
+        OnDiskHeader-&gt;NumberOfTableResizeEvents++;
+        OnDiskHeader-&gt;TotalNumberOfAttemptsWithSmallerTableSizes += (
+            Context-&gt;Attempts
+        );
+
+        Closest = NumberOfEdges.LowPart - Context-&gt;HighestDeletedEdgesCount;
+        LastClosest = (
+            OnDiskHeader-&gt;ClosestWeCameToSolvingGraphWithSmallerTableSizes
+        );
+
+        if (!LastClosest || Closest &lt; LastClosest) {
+
+            OnDiskHeader-&gt;ClosestWeCameToSolvingGraphWithSmallerTableSizes = (
+                Closest
+            );
+
+        }
+
+        //
+        // If this is our first resize, capture the initial size we used.
+        //
+
+        if (!OnDiskHeader-&gt;InitialTableSize) {
+
+            OnDiskHeader-&gt;InitialTableSize = NumberOfVertices.QuadPart;
+
+        }
+
+        //
+        // Reset the remaining counters.
+        //
+
+        Context-&gt;Attempts = 0;
+        Context-&gt;FailedAttempts = 0;
+        Context-&gt;HighestDeletedEdgesCount = 0;
+
+        //
+        // Double the vertex count.  If we have overflowed max ULONG, abort.
+        //
+
+        Table-&gt;RequestedNumberOfTableElements.QuadPart = (
+            NumberOfVertices.QuadPart
+        );
+
+        Table-&gt;RequestedNumberOfTableElements.QuadPart &lt;&lt;= 1ULL;
+
+        if (Table-&gt;RequestedNumberOfTableElements.HighPart) {
+            Success = FALSE;
+            goto End;
+        }
+
+        //
+        // Unmap the existing mapping and close the section.
+        //
+
+        ASSERT(UnmapViewOfFile(Table-&gt;BaseAddress));
+        Table-&gt;BaseAddress = NULL;
+
+        ASSERT(CloseHandle(Table-&gt;MappingHandle));
+        Table-&gt;MappingHandle = NULL;
+
+        //
+        // Jump back to the start and try again with a larger vertex count.
+        //
+
+        goto RetryWithLargerTableSize;
+    }
+
+    //
+    // The wait result did not indicate a resize event.  Ignore the wait
+    // result for now; determine if the graph solving was successful by the
+    // finished count of the context.  We'll corroborate that with whatever
+    // events have been signaled shortly.
+    //
+
+    Success = (Context-&gt;FinishedCount &gt; 0);
+
+    if (!Success) {
+
+        //
+        // Invariant check: if no worker thread registered a solved graph (i.e.
+        // Context-&gt;FinishedCount &gt; 0), then verify that the shutdown event was
+        // set.  If our WaitResult above indicates WAIT_OBJECT_2, we're done.
+        // If not, verify explicitly.
+        //
+
+        if (WaitResult != WAIT_OBJECT_0+2) {
+
+            //
+            // Manually test that the shutdown event has been signaled.
+            //
+
+            WaitResult = WaitForSingleObject(Context-&gt;ShutdownEvent, 0);
+
+            ASSERT(WaitResult == WAIT_OBJECT_0);
+        }
+
+        //
+        // Clean up the main thread work group members and clear the work field.
+        // This will block until all the worker threads have returned.  We need
+        // to put this in place prior to jumping to the End: label as that step
+        // will destroy the buffer we allocated earlier for the parallel graphs,
+        // which we mustn't do if any threads are still working.
+        //
+
+        Context-&gt;MainWork = NULL;
+        CloseThreadpoolCleanupGroupMembers(Context-&gt;MainCleanupGroup,
+                                           TRUE,
+                                           NULL);
+
+        //
+        // Perform the same operation for the file work threadpool.  Note that
+        // the only work we've dispatched to this pool at this point is the
+        // initial file preparation work.
+        //
+
+        Context-&gt;FileWork = NULL;
+        CloseThreadpoolCleanupGroupMembers(Context-&gt;FileCleanupGroup,
+                                           TRUE,
+                                           NULL);
+
+        goto End;
+    }
+
+    //
+    // Pop the winning graph off the finished list head.
+    //
+
+FinishedSolution:
+
+    ListEntry = InterlockedPopEntrySList(&amp;Context-&gt;FinishedWorkListHead);
+    ASSERT(ListEntry);
+
+    Graph = CONTAINING_RECORD(ListEntry, GRAPH, ListEntry);
+
+    //
+    // Note this graph as the one solved to the context.  This is used by the
+    // save file work callback we dispatch below.
+    //
+
+    Context-&gt;SolvedContext = Graph;
+
+    //
+    // Graphs always pass verification in normal circumstances.  The only time
+    // they don't is if there's an internal bug in our code.  So, knowing that
+    // the graph is probably correct, we can dispatch the file work required to
+    // save it to disk to the file work threadpool whilst we verify it has been
+    // solved correctly.
+    //
+
+    ZeroStruct(SaveFile);
+    SaveFile.FileWorkId = FileWorkSaveId;
+
+    //
+    // Before we dispatch the save file work, make sure the preparation has
+    // completed.
+    //
+
+    WaitResult = WaitForSingleObject(Context-&gt;PreparedFileEvent, INFINITE);
+    if (WaitResult != WAIT_OBJECT_0 || Context-&gt;FileWorkErrors &gt; 0) {
+        __debugbreak();
+        Success = FALSE;
+        goto End;
+    }
+
+    //
+    // Push this work item to the file work list head and submit the threadpool
+    // work for it.
+    //
+
+    CONTEXT_START_TIMERS(SaveFile);
+
+    InterlockedPushEntrySList(&amp;Context-&gt;FileWorkListHead, &amp;SaveFile.ListEntry);
+    SubmitThreadpoolWork(Context-&gt;FileWork);
+
+    //
+    // Capture another round of cycles and performance counter values, then
+    // continue with verification of the solution.
+    //
+
+    CONTEXT_START_TIMERS(Verify);
+
+    Success = VerifySolvedGraph(Graph);
+
+    CONTEXT_END_TIMERS(Verify);
+
+    //
+    // Set the verified event (regardless of whether or not we succeeded in
+    // verification).  The save file work will be waiting upon it in order to
+    // write the final timing details to the on-disk header.
+    //
+
+    SetEvent(Context-&gt;VerifiedEvent);
+
+    ASSERT(Success);
+
+    //
+    // Wait on the saved file event before returning.
+    //
+
+    WaitResult = WaitForSingleObject(Context-&gt;SavedFileEvent, INFINITE);
+    if (WaitResult != WAIT_OBJECT_0 || Context-&gt;FileWorkErrors &gt; 0) {
+        __debugbreak();
+        Success = FALSE;
+    }
+
+End:
+
+    //
+    // Destroy the buffer we created earlier.
+    //
+    // N.B. Although we used Rtl-&gt;CreateMultipleBuffers(), we can still free
+    //      the underlying buffer via Rtl-&gt;DestroyBuffer(), as only a single
+    //      VirtualAllocEx() call was dispatched for the entire buffer.
+    //
+
+    if (BaseAddress) {
+        Rtl-&gt;DestroyBuffer(Rtl, ProcessHandle, &amp;BaseAddress);
+    }
+
+    //
+    // Explicitly reset all events before returning.
+    //
+
+    Event = (PHANDLE)&amp;Context-&gt;FirstEvent;
+    NumberOfEvents = GetNumberOfContextEvents(Context);
+
+    for (Index = 0; Index &lt; NumberOfEvents; Index++, Event++) {
+
+        ASSERT(*Event &amp;&amp; *Event != INVALID_HANDLE_VALUE);
+        ASSERT(ResetEvent(*Event));
+
+    }
+
+    return Success;
+}</code></pre>
+                    </div>
+                </div>
 
                 <hr/>
+
+                WIP.
 
                 <!--
                 <h3>Contact</h3>

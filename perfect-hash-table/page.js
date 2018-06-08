@@ -11,4 +11,5 @@ $(function() {
     initTabBox('.tab-box.language.box-create-context');
     initTabBox('.tab-box.language.box-load-keys');
     initTabBox('.tab-box.language.box-create-table');
+    initTabBox('.tab-box.language.box-create-table-chm01-impl');
 });
