@@ -4888,172 +4888,24 @@ Return Value:
 
 --*/
 {
-    BYTE Index;
-    BYTE NumberOfEvents;
-    ULONG LastError;
-    PHANDLE Event;
-    BOOLEAN Success;
-    PBYTE Buffer;
-    PBYTE ExpectedBuffer;
-    ULONG MaximumConcurrency;
-    ULONG NumberOfProcessors;
-    ULONG SizeOfNamesWideBuffer;
-    PWSTR NamesWideBuffer;
-    PTP_POOL Threadpool;
-    ULARGE_INTEGER AllocSize;
-    ULARGE_INTEGER ObjectNameArraySize;
-    ULARGE_INTEGER ObjectNamePointersArraySize;
-    PUNICODE_STRING Name;
-    PPUNICODE_STRING Names;
-    PPUNICODE_STRING Prefixes;
-    PPERFECT_HASH_TABLE_CONTEXT Context = NULL;
 
-    //
-    // Validate arguments.
-    //
-
-    if (!ARGUMENT_PRESENT(Rtl)) {
-        return FALSE;
-    }
-
-    if (!ARGUMENT_PRESENT(Allocator)) {
-        return FALSE;
-    }
-
-    if (!ARGUMENT_PRESENT(ContextPointer)) {
-        return FALSE;
-    }
-
-    //
-    // Default the maximum concurrency to 0 if a NULL pointer was provided.
-    //
-
-    if (ARGUMENT_PRESENT(MaximumConcurrencyPointer)) {
-
-        MaximumConcurrency = *MaximumConcurrencyPointer;
-
-    } else {
-
-        MaximumConcurrency = 0;
-
-    }
-
-    //
-    // Argument validation complete.  Clear the caller's pointer up-front and
-    // continue with creation.
-    //
-
-    *ContextPointer = NULL;
-
-    //
-    // Calculate the size required by the array of UNICODE_STRING structures
-    // that trail the context, then the array of addresses to those structures.
-    //
-
-    ObjectNameArraySize.QuadPart = (
-        (NumberOfContextObjectPrefixes * sizeof(UNICODE_STRING))
-    );
-
-    ObjectNamePointersArraySize.QuadPart = (
-        (NumberOfContextObjectPrefixes * sizeof(PUNICODE_STRING))
-    );
-
-    ASSERT(!ObjectNameArraySize.HighPart);
-    ASSERT(!ObjectNamePointersArraySize.HighPart);
+    ValidateArguments();
 
     //
     // Calculate allocation size required by the structure.
     //
 
-    AllocSize.QuadPart = (
-
-        //
-        // Account for the size of the context structure itself.
-        //
-
-        sizeof(PERFECT_HASH_TABLE_CONTEXT) +
-
-        //
-        // Account for the object name overhead.
-        //
-
-        ObjectNameArraySize.QuadPart +
-        ObjectNamePointersArraySize.QuadPart
-
-    );
+    CalculateAllocationSize(&amp;AllocSize);
 
     //
-    // Sanity check we haven't overflowed.
+    // Allocate it.
     //
 
-    ASSERT(!AllocSize.HighPart);
-
-    //
-    // Allocate space for the context.
-    //
-
-    Context = (PPERFECT_HASH_TABLE_CONTEXT)(
-        Allocator-&gt;Calloc(Allocator-&gt;Context,
-                          1,
-                          AllocSize.LowPart)
-    );
-
-    if (!Context) {
-        return FALSE;
-    }
-
-    //
-    // Allocation was successful, continue with initialization.
-    //
-
-    Context-&gt;SizeOfStruct = sizeof(*Context);
-    Context-&gt;Rtl = Rtl;
-    Context-&gt;Allocator = Allocator;
-    Context-&gt;Flags.AsULong = 0;
-
-    //
-    // The context structure will be trailed by an array of UNICODE_STRING
-    // structures that will be filled in by Rtl-&gt;CreateRandomObjectNames().
-    // This is then followed by an array of PUNICODE_STRING pointers, with
-    // each one initialized to point to the corresponding offset into the
-    // first array.  This is a bit quirky, but it's required by the Rtl
-    // method (which allows for prefixes to be ignored for certain objects
-    // if desired).
-    //
-
-    Buffer = (PBYTE)Context;
-    Buffer += sizeof(*Context);
-    Context-&gt;ObjectNames = (PUNICODE_STRING)Buffer;
-
-    Buffer += ObjectNameArraySize.LowPart;
-    Context-&gt;ObjectNamesPointerArray = (PPUNICODE_STRING)Buffer;
-
-    Buffer += ObjectNamePointersArraySize.LowPart;
-
-    //
-    // If our pointer arithmetic was correct, Buffer should match the base
-    // address of the context plus the total allocation size at this point.
-    // Assert this invariant now.
-    //
-
-    ExpectedBuffer = RtlOffsetToPointer(Context, AllocSize.LowPart);
-    ASSERT(Buffer == ExpectedBuffer);
-
-    //
-    // Wire up the pointer array to the object names.
-    //
-
-    Names = Context-&gt;ObjectNamesPointerArray;
-
-    for (Index = 0; Index &lt; NumberOfContextObjectPrefixes; Index++) {
-        Names[Index] = Context-&gt;ObjectNames + Index;
-    }
+    Context = AllocateContext(AllocSize);
 
     //
     // Create the random object names for our underlying events.
     //
-
-    Prefixes = (PPUNICODE_STRING)&amp;ContextObjectPrefixes;
 
     Success = Rtl-&gt;CreateRandomObjectNames(Rtl,
                                            Allocator,
@@ -5066,27 +4918,10 @@ Return Value:
                                            &amp;SizeOfNamesWideBuffer,
                                            &amp;NamesWideBuffer);
 
-    if (!Success) {
-        goto Error;
-    }
 
     //
-    // Wire up the wide buffer pointer and containing size.
+    // Create named events.
     //
-
-    Context-&gt;ObjectNamesWideBuffer = NamesWideBuffer;
-    Context-&gt;SizeOfObjectNamesWideBuffer = SizeOfNamesWideBuffer;
-    Context-&gt;NumberOfObjects = NumberOfContextObjectPrefixes;
-
-
-    //
-    // Initialize the event pointer to the first handle, and the name pointer
-    // to the first UNICODE_STRING pointer.  Obtain the number of events.
-    //
-
-    Event = (PHANDLE)&amp;Context-&gt;FirstEvent;
-    Name = &amp;Context-&gt;ObjectNames[0];
-    NumberOfEvents = GetNumberOfContextEvents(Context);
 
     for (Index = 0; Index &lt; NumberOfEvents; Index++, Event++, Name++) {
 
@@ -5102,249 +4937,24 @@ Return Value:
                                    FALSE,
                                    Name-&gt;Buffer);
 
-        LastError = GetLastError();
-
-        if (!*Event || LastError == ERROR_ALREADY_EXISTS) {
-
-            //
-            // As the event names are random, a last error that indicates the
-            // name already exists is evident of a pretty serious problem.
-            // Treat this as a fatal.
-            //
-
-            goto Error;
-        }
     }
 
     //
-    // If the maximum concurrency is 0, default to the number of processors.
+    // Create our threadpools: main work, file work, finished, error.
     //
 
-    NumberOfProcessors = GetMaximumProcessorCount(ALL_PROCESSOR_GROUPS);
+    CreateMainWorkThreadpoolResources(Context);
 
-    if (MaximumConcurrency == 0) {
-        MaximumConcurrency = NumberOfProcessors;
-    }
+    CreateFileWorkThreadpoolResources(Context);
 
-    Context-&gt;MinimumConcurrency = MaximumConcurrency;
-    Context-&gt;MaximumConcurrency = MaximumConcurrency;
+    CreateFinishedWorkThreadpoolResources(Context);
 
-    //
-    // Create the Main threadpool structures.  This threadpool creates a fixed
-    // number of threads equal to the maximum concurrency specified by the user
-    // (e.g. min threads is set to the same value as max threads).
-    //
-
-    Threadpool = Context-&gt;MainThreadpool = CreateThreadpool(NULL);
-    if (!Threadpool) {
-        goto Error;
-    }
-
-    if (!SetThreadpoolThreadMinimum(Threadpool, MaximumConcurrency)) {
-        goto Error;
-    }
-
-    SetThreadpoolThreadMaximum(Threadpool, MaximumConcurrency);
-
-    //
-    // Initialize the Main threadpool environment, set its priority to
-    // low, then associate it with the Main threadpool.
-    //
-
-    InitializeThreadpoolEnvironment(&amp;Context-&gt;MainCallbackEnv);
-    SetThreadpoolCallbackPriority(&amp;Context-&gt;MainCallbackEnv,
-                                  TP_CALLBACK_PRIORITY_LOW);
-    SetThreadpoolCallbackPool(&amp;Context-&gt;MainCallbackEnv,
-                              Context-&gt;MainThreadpool);
-
-    //
-    // Create a cleanup group for the Main threadpool and register it.
-    //
-
-    Context-&gt;MainCleanupGroup = CreateThreadpoolCleanupGroup();
-    if (!Context-&gt;MainCleanupGroup) {
-        goto Error;
-    }
-
-    SetThreadpoolCallbackCleanupGroup(&amp;Context-&gt;MainCallbackEnv,
-                                      Context-&gt;MainCleanupGroup,
-                                      CleanupCallback);
-
-    //
-    // Create a work object for the Main threadpool.
-    //
-
-    Context-&gt;MainWork = CreateThreadpoolWork(MainWorkCallback,
-                                             Context,
-                                             &amp;Context-&gt;MainCallbackEnv);
-
-    if (!Context-&gt;MainWork) {
-        goto Error;
-    }
-
-    //
-    // Initialize the main work list head.
-    //
-
-    InitializeSListHead(&amp;Context-&gt;MainWorkListHead);
-
-    //
-    // Create the File threadpool structures.  We currently use the default
-    // number of system threads for this threadpool.  We don't have to clamp
-    // it at the moment as we don't bulk-enqueue work items (that can cause
-    // the threadpool machinery to think more threads need to be created).
-    //
-
-    Threadpool = Context-&gt;FileThreadpool = CreateThreadpool(NULL);
-    if (!Threadpool) {
-        goto Error;
-    }
-
-    //
-    // Initialize the File threadpool environment and associate it with the
-    // File threadpool.
-    //
-
-    InitializeThreadpoolEnvironment(&amp;Context-&gt;FileCallbackEnv);
-    SetThreadpoolCallbackPool(&amp;Context-&gt;FileCallbackEnv,
-                              Context-&gt;FileThreadpool);
-
-    //
-    // Create a cleanup group for the File threadpool and register it.
-    //
-
-    Context-&gt;FileCleanupGroup = CreateThreadpoolCleanupGroup();
-    if (!Context-&gt;FileCleanupGroup) {
-        goto Error;
-    }
-
-    SetThreadpoolCallbackCleanupGroup(&amp;Context-&gt;FileCallbackEnv,
-                                      Context-&gt;FileCleanupGroup,
-                                      CleanupCallback);
-
-    //
-    // Create a work object for the File threadpool.
-    //
-
-    Context-&gt;FileWork = CreateThreadpoolWork(FileWorkCallback,
-                                             Context,
-                                             &amp;Context-&gt;FileCallbackEnv);
-
-    if (!Context-&gt;FileWork) {
-        goto Error;
-    }
-
-    //
-    // Initialize the main work list head.
-    //
-
-    InitializeSListHead(&amp;Context-&gt;FileWorkListHead);
-
-    //
-    // Create the Finished and Error threadpools and associated resources.
-    // These are slightly easier as we only have 1 thread maximum for each
-    // pool and no cleanup group is necessary.
-    //
-
-    Context-&gt;FinishedThreadpool = CreateThreadpool(NULL);
-    if (!Context-&gt;FinishedThreadpool) {
-        goto Error;
-    }
-
-    if (!SetThreadpoolThreadMinimum(Context-&gt;FinishedThreadpool, 1)) {
-        goto Error;
-    }
-
-    SetThreadpoolThreadMaximum(Context-&gt;FinishedThreadpool, 1);
-
-    Context-&gt;FinishedWork = CreateThreadpoolWork(FinishedWorkCallback,
-                                                 Context,
-                                                 &amp;Context-&gt;FinishedCallbackEnv);
-    if (!Context-&gt;FinishedWork) {
-        goto Error;
-    }
-
-    //
-    // Initialize the finished list head.
-    //
-
-    InitializeSListHead(&amp;Context-&gt;FinishedWorkListHead);
-
-    //
-    // Create the Error threadpool.
-    //
-
-    Context-&gt;ErrorThreadpool = CreateThreadpool(NULL);
-    if (!Context-&gt;ErrorThreadpool) {
-        goto Error;
-    }
-
-    if (!SetThreadpoolThreadMinimum(Context-&gt;ErrorThreadpool, 1)) {
-        goto Error;
-    }
-
-    SetThreadpoolThreadMaximum(Context-&gt;ErrorThreadpool, 1);
-
-    Context-&gt;ErrorWork = CreateThreadpoolWork(ErrorWorkCallback,
-                                              Context,
-                                              &amp;Context-&gt;ErrorCallbackEnv);
-    if (!Context-&gt;ErrorWork) {
-        goto Error;
-    }
-
-
-    //
-    // We're done!  Jump to the end of the routine to finish up.
-    //
-
-    Success = TRUE;
-    goto End;
-
-Error:
-
-    Success = FALSE;
-
-    //
-    // Call the destroy routine on the context if it is non-NULL.
-    //
-
-    if (Context) {
-
-        if (!DestroyPerfectHashTableContext(&amp;Context, NULL)) {
-
-            //
-            // There's nothing we can do here.
-            //
-
-            NOTHING;
-        }
-
-        //
-        // N.B. DestroyPerfectHashTableContext() should clear the Context
-        //      pointer.  Assert that invariant now.
-        //
-
-        ASSERT(Context == NULL);
-    }
-
-    //
-    // Intentional follow-on to End.
-    //
-
-End:
-
-    //
-    // Update the caller's pointer and return.
-    //
-    // N.B. Context could be NULL here, which is fine.
-    //
+    CreateErrorWorkThreadpoolResources(Context);
 
     *ContextPointer = Context;
 
-    return Success;
-}
-
-</code></pre>
+    return TRUE;
+}</code></pre>
 <pre class="code content-create-context-full"><code class="language-c">_Use_decl_annotations_
 BOOLEAN
 CreatePerfectHashTableContext(
@@ -5863,6 +5473,112 @@ End:
                 <a class="xref" name="PERFECT_HASH_TABLE_KEYS"></a>
                 <h3>PERFECT_HASH_TABLE_KEYS</h3>
 
+<pre class="code"><code class="language-c">//
+// Cap the maximum key set size we're willing to process.
+//
+
+#define MAXIMUM_NUMBER_OF_KEYS 500000
+
+//
+// Define the PERFECT_HASH_TABLE_KEYS_FLAGS structure.
+//
+
+typedef union _PERFECT_HASH_TABLE_FLAGS_KEYS {
+    struct _Struct_size_bytes_(sizeof(ULONG)) {
+
+        //
+        // Unused bits.
+        //
+
+        ULONG Unused:32;
+    };
+
+    LONG AsLong;
+    ULONG AsULong;
+} PERFECT_HASH_TABLE_KEYS_FLAGS;
+C_ASSERT(sizeof(PERFECT_HASH_TABLE_KEYS_FLAGS) == sizeof(ULONG));
+typedef PERFECT_HASH_TABLE_KEYS_FLAGS *PPERFECT_HASH_TABLE_KEYS_FLAGS;
+
+//
+// Define the PERFECT_HASH_TABLE_KEYS structure.
+//
+
+typedef struct _Struct_size_bytes_(SizeOfStruct) _PERFECT_HASH_TABLE_KEYS {
+
+    //
+    // Reserve a slot for a vtable.  Currently unused.
+    //
+
+    PPVOID Vtbl;
+
+    //
+    // Size of the structure, in bytes.
+    //
+
+    _Field_range_(==, sizeof(struct _PERFECT_HASH_TABLE_KEYS))
+        ULONG SizeOfStruct;
+
+    //
+    // Flags.
+    //
+
+    PERFECT_HASH_TABLE_KEYS_FLAGS Flags;
+
+    //
+    // Pointer to an initialized RTL structure.
+    //
+
+    PRTL Rtl;
+
+    //
+    // Pointer to an initialized ALLOCATOR structure.
+    //
+
+    PALLOCATOR Allocator;
+
+    //
+    // Pointer to the API structure in use.
+    //
+
+    PPERFECT_HASH_TABLE_ANY_API AnyApi;
+
+    //
+    // Number of keys in the mapping.
+    //
+
+    ULARGE_INTEGER NumberOfElements;
+
+    //
+    // Handle to the underlying keys file.
+    //
+
+    HANDLE FileHandle;
+
+    //
+    // Handle to the memory mapping for the keys file.
+    //
+
+    HANDLE MappingHandle;
+
+    //
+    // Base address of the memory map.
+    //
+
+    union {
+        PVOID BaseAddress;
+        PULONG Keys;
+    };
+
+    //
+    // Fully-qualified, NULL-terminated path of the source keys file.
+    //
+
+    UNICODE_STRING Path;
+
+} PERFECT_HASH_TABLE_KEYS;
+typedef PERFECT_HASH_TABLE_KEYS *PPERFECT_HASH_TABLE_KEYS;
+</code></pre>
+
                 <a class="xref" name="LoadPerfectHashTableKeys"></a>
                 <h2>LoadPerfectHashTableKeys</h2>
 
@@ -5872,12 +5588,402 @@ End:
                         <li data-content="content-load-keys-full">Full</li>
                     </ul>
                     <div class="content">
-<pre class="code content-load-keys-pseudo"><code class="language-c">
-</code></pre>
-<pre class="code content-load-keys-full"><code class="language-c">
-</code></pre>
+<pre class="code content-load-keys-pseudo"><code class="language-c">_Use_decl_annotations_
+BOOLEAN
+LoadPerfectHashTableKeys(
+    PRTL Rtl,
+    PALLOCATOR Allocator,
+    PCUNICODE_STRING Path,
+    PPERFECT_HASH_TABLE_KEYS *KeysPointer
+    )
+/*++
+
+Routine Description:
+
+    Loads a keys file from the file system and returns a PERFECT_HASH_TABLE_KEYS
+    structure.
+
+Arguments:
+
+    Rtl - Supplies a pointer to an initialized RTL structure.
+
+    Allocator - Supplies a pointer to an initialized ALLOCATOR structure that
+        will be used for al memory allocations.
+
+    Path - Supplies a pointer to a UNICODE_STRING structure that represents
+        a fully-qualified path of the keys to use for the perfect hash table.
+
+        N.B. Path must be NULL-terminated, which is not normally required for
+             UNICODE_STRING structures.  Howver, the underlying buffer is passed
+             to CreateFileW(), which requires a NULL-terminated wstr.
+
+    KeysPointers - Supplies the address of a variable that will receive the
+        address of the newly created PERFECT_HASH_TABLE_KEYS structure if the
+        routine is successful, or NULL if the routine fails.
+
+Return Value:
+
+    TRUE on success, FALSE on failure.
+
+--*/
+{
+
+    ValidateArguments();
+
+    //
+    // Open the file, create a file mapping, then map it into memory.
+    //
+
+    FileHandle = Rtl-&gt;CreateFileW(
+        Path-&gt;Buffer,
+        GENERIC_READ,
+        FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,
+        NULL,
+        OPEN_EXISTING,
+        FILE_FLAG_SEQUENTIAL_SCAN | FILE_FLAG_OVERLAPPED,
+        NULL
+    );
+
+    //
+    // Verify file details such as size.
+    //
+
+    VerifyFileDetails();
+
+    //
+    // Create the file mapping.
+    //
+
+    MappingHandle = CreateFileMappingW(FileHandle,
+                                       NULL,
+                                       PAGE_READONLY,
+                                       FileInfo.EndOfFile.HighPart,
+                                       FileInfo.EndOfFile.LowPart,
+                                       NULL);
+
+    //
+    // Successfully created a file mapping.  Now map it into memory.
+    //
+
+    BaseAddress = MapViewOfFile(MappingHandle,
+                                FILE_MAP_READ,
+                                0,
+                                0,
+                                FileInfo.EndOfFile.LowPart);
+
+    //
+    // The file has been mapped successfully.  Calculate the size required for
+    // the keys structure and a copy of the Path's underlying unicode string
+    // buffer.
+    //
+
+    CalculateAllocSize(&amp;AllocSize);
+
+    //
+    // Allocate the structure.
+    //
+
+    Keys = AllocKeys(AllocSize);
+
+    //
+    // Initialize fields then duplicate the keys path.
+    //
+
+    InitializeFields(Keys);
+    CopyKeysPath(Keys, Path);
+
+    *KeysPointer = Keys;
+
+    return Success;
+}</code></pre>
+<pre class="code content-load-keys-full"><code class="language-c">_Use_decl_annotations_
+BOOLEAN
+LoadPerfectHashTableKeys(
+    PRTL Rtl,
+    PALLOCATOR Allocator,
+    PCUNICODE_STRING Path,
+    PPERFECT_HASH_TABLE_KEYS *KeysPointer
+    )
+/*++
+
+Routine Description:
+
+    Loads a keys file from the file system and returns a PERFECT_HASH_TABLE_KEYS
+    structure.
+
+Arguments:
+
+    Rtl - Supplies a pointer to an initialized RTL structure.
+
+    Allocator - Supplies a pointer to an initialized ALLOCATOR structure that
+        will be used for al memory allocations.
+
+    Path - Supplies a pointer to a UNICODE_STRING structure that represents
+        a fully-qualified path of the keys to use for the perfect hash table.
+
+        N.B. Path must be NULL-terminated, which is not normally required for
+             UNICODE_STRING structures.  Howver, the underlying buffer is passed
+             to CreateFileW(), which requires a NULL-terminated wstr.
+
+    KeysPointers - Supplies the address of a variable that will receive the
+        address of the newly created PERFECT_HASH_TABLE_KEYS structure if the
+        routine is successful, or NULL if the routine fails.
+
+Return Value:
+
+    TRUE on success, FALSE on failure.
+
+--*/
+{
+    BOOLEAN Success;
+    PVOID BaseAddress = NULL;
+    HANDLE FileHandle = NULL;
+    HANDLE MappingHandle = NULL;
+    LARGE_INTEGER AllocSize;
+    LARGE_INTEGER NumberOfElements;
+    FILE_STANDARD_INFO FileInfo;
+    PPERFECT_HASH_TABLE_KEYS Keys = NULL;
+
+    //
+    // Validate arguments.
+    //
+
+    if (!ARGUMENT_PRESENT(Rtl)) {
+        return FALSE;
+    }
+
+    if (!ARGUMENT_PRESENT(Allocator)) {
+        return FALSE;
+    }
+
+    if (!ARGUMENT_PRESENT(KeysPointer)) {
+        return FALSE;
+    }
+
+    if (!ARGUMENT_PRESENT(Path)) {
+        return FALSE;
+    }
+
+    if (!IsValidMinimumDirectoryNullTerminatedUnicodeString(Path)) {
+        return FALSE;
+    }
+
+    //
+    // Clear the caller's pointer up-front.
+    //
+
+    *KeysPointer = NULL;
+
+    //
+    // Open the file, create a file mapping, then map it into memory.
+    //
+
+    FileHandle = Rtl-&gt;CreateFileW(
+        Path-&gt;Buffer,
+        GENERIC_READ,
+        FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,
+        NULL,
+        OPEN_EXISTING,
+        FILE_FLAG_SEQUENTIAL_SCAN | FILE_FLAG_OVERLAPPED,
+        NULL
+    );
+
+    if (!FileHandle || FileHandle == INVALID_HANDLE_VALUE) {
+        return FALSE;
+    }
+
+    //
+    // N.B. Error handling should 'goto Error' from this point onward now that
+    //      we have resources that may need to be cleaned up.
+    //
+
+    Success = GetFileInformationByHandleEx(
+        FileHandle,
+        (FILE_INFO_BY_HANDLE_CLASS)FileStandardInfo,
+        &amp;FileInfo,
+        sizeof(FileInfo)
+    );
+
+    if (!Success) {
+        goto Error;
+    }
+
+    //
+    // Make sure the file is a multiple of our key size.
+    //
+
+    if (FileInfo.EndOfFile.QuadPart % 4ULL) {
+        goto Error;
+    }
+
+    //
+    // The number of elements in the key file can be ascertained by right
+    // shifting by 2.
+    //
+
+    NumberOfElements.QuadPart = FileInfo.EndOfFile.QuadPart &gt;&gt; 2;
+
+    //
+    // Sanity check the number of elements.  There shouldn't be more than
+    // MAX_ULONG.
+    //
+
+    ASSERT(!NumberOfElements.HighPart);
+
+    //
+    // Create the file mapping.
+    //
+
+    MappingHandle = CreateFileMappingW(FileHandle,
+                                       NULL,
+                                       PAGE_READONLY,
+                                       FileInfo.EndOfFile.HighPart,
+                                       FileInfo.EndOfFile.LowPart,
+                                       NULL);
+
+    if (!MappingHandle || MappingHandle == INVALID_HANDLE_VALUE) {
+        goto Error;
+    }
+
+    //
+    // Successfully created a file mapping.  Now map it into memory.
+    //
+
+    BaseAddress = MapViewOfFile(MappingHandle,
+                                FILE_MAP_READ,
+                                0,
+                                0,
+                                FileInfo.EndOfFile.LowPart);
+
+    if (!BaseAddress) {
+        goto Error;
+    }
+
+    //
+    // The file has been mapped successfully.  Calculate the size required for
+    // the keys structure and a copy of the Path's underlying unicode string
+    // buffer.
+    //
+
+    AllocSize.QuadPart = (
+
+        //
+        // Account for the keys structure size.
+        //
+
+        sizeof(*Keys) +
+
+        //
+        // Account for the length of the UNICODE_STRING buffer and terminating
+        // NULL.
+        //
+
+        Path-&gt;Length + sizeof(Path-&gt;Buffer[0])
+
+    );
+
+    //
+    // Sanity check our size.
+    //
+
+    ASSERT(!AllocSize.HighPart);
+
+    //
+    // Proceed with allocation.
+    //
+
+    Keys = (PPERFECT_HASH_TABLE_KEYS)(
+        Allocator-&gt;Calloc(Allocator-&gt;Context,
+                          1,
+                          AllocSize.LowPart)
+    );
+
+    if (!Keys) {
+        goto Error;
+    }
+
+    //
+    // Fill out the main structure details.
+    //
+
+    Keys-&gt;SizeOfStruct = sizeof(*Keys);
+    Keys-&gt;Rtl = Rtl;
+    Keys-&gt;Allocator = Allocator;
+    Keys-&gt;FileHandle = FileHandle;
+    Keys-&gt;MappingHandle = MappingHandle;
+    Keys-&gt;BaseAddress = BaseAddress;
+    Keys-&gt;NumberOfElements.QuadPart = NumberOfElements.QuadPart;
+
+    //
+    // Initialize the path length variables, point the buffer at the space after
+    // our structure, then copy the string over and NULL-terminate it.
+    //
+
+    Keys-&gt;Path.Length = Path-&gt;Length;
+    Keys-&gt;Path.MaximumLength = Path-&gt;Length + sizeof(Path-&gt;Buffer[0]);
+    Keys-&gt;Path.Buffer = (PWSTR)RtlOffsetToPointer(Keys, sizeof(*Keys));
+    CopyMemory(Keys-&gt;Path.Buffer, Path-&gt;Buffer, Path-&gt;Length);
+    Keys-&gt;Path.Buffer[Path-&gt;Length &gt;&gt; 1] = L'\0';
+
+    //
+    // We've completed initialization, indicate success and jump to the end.
+    //
+
+    Success = TRUE;
+
+    goto End;
+
+Error:
+
+    Success = FALSE;
+
+    //
+    // Clean up any resources we may have allocated.
+    //
+
+    if (BaseAddress) {
+        UnmapViewOfFile(BaseAddress);
+        BaseAddress = NULL;
+    }
+
+    if (MappingHandle) {
+        CloseHandle(MappingHandle);
+        MappingHandle = NULL;
+    }
+
+    if (FileHandle) {
+        CloseHandle(FileHandle);
+        FileHandle = NULL;
+    }
+
+    if (Keys) {
+        Allocator-&gt;FreePointer(Allocator-&gt;Context, &amp;Keys);
+    }
+
+    //
+    // Intentional follow-on to End.
+    //
+
+End:
+
+    //
+    // Update the caller's pointer and return.
+    //
+    // N.B. Keys could be NULL here, which is fine.
+    //
+
+    *KeysPointer = Keys;
+
+    return Success;
+}</code></pre>
                     </div>
                 </div>
+
+                <p>
+
+                    ... work in progress.
+
+                </p>
 
                 <hr/>
 

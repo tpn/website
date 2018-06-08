@@ -8,4 +8,6 @@ $(function() {
     initTabBox('.tab-box.language.box-generate');
     initTabBox('.tab-box.language.box-ondisk');
     initTabBox('.tab-box.language.box-self-test');
+    initTabBox('.tab-box.language.box-create-context');
+    initTabBox('.tab-box.language.box-load-keys');
 });
