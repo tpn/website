@@ -2837,7 +2837,7 @@ Number of table elements (vertices): 131072.
 
                     Following that is our custom <code>:Info</code> NTFS stream of length 256 bytes.
                     As mentioned earlier, all of our file I/O is done through memory maps.  During
-                    the creation step, the <code>:Info</code> stream is created and mapped a base
+                    the creation step, the <code>:Info</code> stream is created and mapped at a base
                     address accessible through <code>Table-&gt;InfoStreamBaseAddress</code> (we'll
                     discuss the <code>Table</code> structure soon).  In our CHM implementation
                     routine, we literally cast the base address to an <em>on-disk</em> structure
@@ -3446,7 +3446,7 @@ typedef TABLE_INFO_ON_DISK_HEADER *PTABLE_INFO_ON_DISK_HEADER;</code></pre>
                         <li data-content="content-self-test-full">Full</li>
                     </ul>
                     <div class="content">
-<pre class="code content-self-test-pseudo"><code class="language-c">
+<pre class="code content-self-test-pseudo"><code class="language-c">_Use_decl_annotations_
 BOOLEAN
 SelfTestPerfectHashTable(
     PRTL Rtl,
