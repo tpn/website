@@ -3114,7 +3114,9 @@ typedef struct _Struct_size_bytes_(SizeOfStruct) _TABLE_INFO_ON_DISK_HEADER {
     //      wasteful of CPU time.  The threads can detect if they are the first
     //      ones to find a solution prior to continuing with the assignment
     //      step, such that the assignment can be avoided if another thread has
-    //      beaten them to that point.
+    //      beaten them to that point.  They also check at regular intervals
+    /       during graph solving, and will do a fast-path exit as soon as they
+    //      detect another thread has found a solution.
     //
 
     ULONGLONG NumberOfSolutionsFound;
