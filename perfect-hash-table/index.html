@@ -210,6 +210,12 @@ VOID Insert(ULONG Key, ULONG Value) { Table[PerfectHashFunction(Key)] = Value; }
 
                         <li>
 
+                            <a href="#current-performance">Current Performance</a>
+
+                        </li>
+
+                        <li>
+
                             <a href="#implementation-notes">Implementation Notes</a>
 
                         </li>
@@ -885,6 +891,1288 @@ IsModulusMasking(
                     </ul>
 
                 </p>
+
+                <a class="xref" name="current-performance"></a>
+                <h1>Current Performance</h1>
+
+                <small>
+
+                    (Note: this section is an active work-in-progress.  It documents observed
+                    performance at the time of writing: 10th June, 2018.  It is the most recently
+                    authored section in this article, and thus, depicts newer code samples and
+                    implementation details compared to the subsequent sections.  (For example,
+                    the <code>FastIndex()</code> and <code>FastIndexUnsafe()</code> routines
+                    were only recently added as part of performance tuning and benchmarking work;
+                    these routines aren't mentioned in subsequent sections yet.)
+
+                </small>
+
+                <p>
+
+                    The performance of the solution can be evaulated in two distinct areas: the
+                    performance of the perfect hash table generation functionality, i.e. how quickly
+                    can we create a perfect hash table for any given key set, and the lookup
+                    performance of the resulting table, i.e. how many cycles does it take to look up
+                    a key (best case, worst case), how many memory references are made for a key
+                    lookup, etc.
+
+                </p>
+
+                <h4>Performance TL;DR</h4>
+
+                <p>
+
+                    <ul>
+
+                        <li>
+
+                            Generation is really fast.  Although the parallelism helps immensely, the
+                            underlying acyclic hypergraph algorithm described in the original papers
+                            deserves all of the credit.
+
+                        </li>
+
+                    </ul>
+
+                    <ul>
+
+                        <li>
+
+                            (That being said, I couldn't get their modulus-based algorithm to
+                             generate valid solutions, either in their original code or my
+                             reimplementation of their algorithm.  I'm glad I got my AND-based
+                             masking version working, otherwise this assignment would have been
+                             a disaster.)
+
+                        </li>
+
+                    </ul>
+
+                    <ul>
+
+                        <li>
+
+                            The hash function I use has three CRC32 instructions, one rotate, and
+                            one XOR.  The latency for just the hashing logic is sub 10 cycles, give
+                            or take.
+
+                        </li>
+
+                    </ul>
+
+                    <ul>
+
+                        <li>
+
+                            The Jenkins hash function, for comparison, clocks in at about 30 cycles
+                            for just the hashing logic.  If Jenkins is paired with the original
+                            modulus masking, the minimum latency jumps to over 100 cycles.
+
+                        </li>
+
+                    </ul>
+
+                    <ul>
+
+                        <li>
+
+                            I investigated even cheaper hash functions, such as simply XOR'ing
+                            the input with two random seeds.  They often work on smaller graphs,
+                            but the CRC32 + rotate + XOR already offers very attractive latency
+                            <strong>and</strong> good randomness, so it's a better general purpose
+                            option.  Also, reducing the hashing cost from sub 10 to, say, sub 6
+                            cycles &mdash; we're completely limited by the overhead of the current
+                            function signature and table layout at that point (i.e. we could shave
+                            off more if we passed the seeds in as parameters via r8 and r9 instead
+                            of constantly loading them from the table).
+
+                        </li>
+
+                    </ul>
+
+                    <ul>
+
+                        <li>
+
+                            The <code>FastIndex()</code> routine (i.e. what <code>Lookup()</code>
+                            and <code>Insert()</code> call in order to obtain the array offset for
+                            a given key) requires a minimum of two memory references within the
+                            assigned array in order to construct the final index.  All other memory
+                            references within the routine will be served from the L1 cache with high
+                            probability (e.g. the seed values).
+
+                        </li>
+
+                    </ul>
+
+                    <ul>
+
+                        <li>
+
+                            The best case scenario, where everything results in an L1 cache hit,
+                            is about 23 cycles of latency.  I think I could get this down to about
+                            15 cycles with an optimized LEAF_ENTRY routine written in assembly,
+                            however, it doesn't make sense to pursue that until more robust tools
+                            are in place for measuring performance.
+
+                        </li>
+
+                    </ul>
+
+                    <ul>
+
+                        <li>
+
+                            Worst case scenario is cache misses for both lookups, resulting in a
+                            fetch from main memory.  That'll be hundreds of cycles of penalty.
+                            Smaller table sizes should reduce the likelihood of misses on the lookup
+                            fast path, however, access patterns will factor heavily into this; if,
+                            say, the most frequent keys accessed fall within a smaller subset of the
+                            total key set &mdash; the penalty for a larger table is offset.  (E.g.
+                            90% of the lookups are on 10% of the keys.)  Making real-world key
+                            frequency metrics available during table creation would definitely
+                            add value when attempting to assess the cost of a larger table size.
+
+                        </li>
+
+                    </ul>
+
+                    <ul>
+
+                        <li>
+
+                            Additional areas I'd look to improve performance:
+
+                            <ul>
+
+                                <li>
+
+                                    Analysis of the values in the input key set.  What's the first
+                                    value, what's the last value, what's the minimum leading zeros,
+                                    maximum leading zeros, ditto for trailing zeros.  What's the
+                                    value distribution look like?  What's the gap between values
+                                    look like?  Certain patterns will emerge for target key sets
+                                    that will allow for specific optimizations (like shifting away
+                                    known min trailing zeros, etc).  I currently don't look at a
+                                    single key value during the creation step from the perspective
+                                    of directing the underlying algorithm.
+
+                                </li>
+
+                            </ul>
+
+                            <ul>
+
+                                <li>
+
+                                    Investigate prefetching.  We could potentially dispatch a
+                                    prefetch (especially a prefetch with write-intent in the
+                                    <code>Insert()</code> case) early enough to offset some of
+                                    the memory latency involved in the two-part vertex lookup.
+
+                                </li>
+
+                            </ul>
+
+                            <ul>
+
+                                <li>
+
+                                    Write a LEAF_ENTRY in assembly that has zero error checking, no
+                                    COM dependencies (returns the index in rax, not HRESULT + output
+                                    parameter), and takes the seed values in registers.  (Regarding
+                                    error checking: our <code>FastIndex()</code> routine still does
+                                    the sanity check that <code>Vertex1 != Vertex2</code> &mdash;
+                                    the only way to trigger an <code>E_FAIL</code> return code in
+                                    this case is passing in a key that isn't in the original input
+                                    set, <strong>AND</strong> having it trigger a collision with the
+                                    selected hash function and random seed data such that the same
+                                    value is produced for both values.  The chances of this are
+                                    very, very slim with reasonable hash functions and good seed
+                                    data.  So, we could omit the <code>S_OK</code> or
+                                    <code>E_FAIL</code> return codes in favor of returning the index
+                                    directly in rax.)
+
+                                </li>
+
+                            </ul>
+
+                            <ul>
+
+                                <li>
+
+                                    Currently, the user is responsible for providing the algorithm,
+                                    hash function and masking type to use in order to create the
+                                    table.  With the current work on benchmarking functions, this
+                                    could be improved such that the creation routine is given a goal
+                                    to maximize, e.g. lowest latency for <code>FastIndex()</code>,
+                                    and then it tries all known algo/hash/masking variants until it
+                                    finds the best solution.  This wouldn't take that much more
+                                    effort and would ensure that the most optimal combo is always
+                                    being picked for a given key set.
+
+                                </li>
+
+                            </ul>
+
+                        </li>
+
+                    </ul>
+
+                </p>
+
+                <a class="xref" name="generation-performance"></a>
+                <h2>Generation Performance</h2>
+
+                <p>
+
+                    Broadly speaking, generation performance is very good.  The parallel approach to
+                    searching for acyclic graphs has paid off quite nicely &mdash; the thing just
+                    flies.  The current implementation is incredibly defensive at the moment, too,
+                    and includes numerous expensive operations that could be relegated to a debug
+                    build or removed completely.
+
+                </p>
+
+                <p>
+
+                    For example, in order to check the incoming keys are unique, I simply allocate a
+                    512MB bitmap and set a bit for every key I see in the range of 0-MAX_ULONG.  I
+                    verify I only see every key once, and then as an extra check, count the number
+                    of set bits to ensure they match the reported number of keys.  This is overly
+                    defensive and very abusive to the cache.
+
+                </p>
+
+                <p>
+
+                    Similarly, once a graph has been found, an initial internal verification routine
+                    walks the entire graph and verifies none of the assigned indices for the entire
+                    key set appear more than once.  This happens before the final solution is saved
+                    to disk.  Then, after we load the table from the on-disk instance, we do another
+                    thorough system test, exercising all of the public API routines (e.g.
+                    <code>Index()</code>, <code>Lookup()</code>, <code>Insert()</code>, etc),
+                    verifying the table is behaving correctly and keys are being mapped to unique
+                    indices.
+
+                </p>
+
+                <p>
+
+                    Even with all this additional overhead in place, a solution is generally found
+                    within about 5 seconds on my machines, even for the largest key sets we support
+                    (currently around ~750,000 for no particular reason other than I haven't tested
+                    larger yet).  For the key set sizes more representative of our target domain
+                    (e.g. around 10,000 to 100,000), the generation time <em>feels</em> like it's
+                    basically instant, at least from the user perception of running the command
+                    line and waiting for it to report back that it solved the graph.
+
+                </p>
+
+                <p>
+
+                    One aspect worth noting is related to the initial hunch I expressed earlier:
+
+                </p>
+
+                <div class="blockquote"><small>
+
+                    ....  I envision there being much faster, non-mod based hash functions we
+                    can experiment with, that actually have relatively poor "randomness"
+                    qualities unless a particularly good seed is found.  Combined with the
+                    threadpool infrastructure for submitting iterations in parallel, I have a
+                    hunch that I'll be able to find some very fast hash functions that can still
+                    be solved in an acceptable amount of time.
+
+                </small></div>
+
+                <p>
+
+                    Just to elaborate a bit further on that note &mdash; I was anticipating a
+                    situation where, when fed some overly-simple hash functions, the graph solving
+                    would take far longer than the <em>99.9% probability of success by iteration 18
+                    </em> guarantees cited by the academic work on the subject.
+
+                <p>
+
+                    For example, assume we've got a 37,000 key set that solves on the first set of
+                    attempts (i.e. within 1..NCPU), when fed a good, but expensive, hashing
+                    function.
+
+                </p>
+
+                <p>
+
+                    I pictured a scenario whereby, if fed a poorer-but-cheaper hash function, a
+                    solution would be found in, say, 2 minutes.  Or 5 minutes.  Or basically any
+                    time period that falls within our gut feeling of being acceptable for the given
+                    input key set size.
+
+                </p>
+
+                <p>
+
+                    That hunch appears to be wrong; I have not seen any evidence of this in
+                    practice.  A graph will either be solved within the those first ~20 attempts,
+                    or it will never be solved.  On numerous occasions, I left the solver running
+                    overnight, such that I had 11 out of 12 cores searching for solutions at 5GHz
+                    for 8 hours, and... nada.  No solution was ever found.  We often got really
+                    close &mdash; I put in functionality to track the highest number of deleted
+                    edges we'd seen during solving, and remember seeing that we were regularly
+                    hitting 499,987 for a key set size of 500,000 (so 13 away from finding a
+                    solution).  Graphs would either solve very quickly, or not at all.
+
+                </p>
+
+                <p>
+
+                    Something else I found interesting is how quickly graphs would be solved
+                    once I implemented support for detecting when the attempts have exceeded
+                    a certain threshold (currently 100) and then resizing the table such that
+                    we double the number of underlying vertices, and re-trying the graph solving
+                    in parallel.  Once this was in place, graphs would always be rapidly solved.
+                    Supplying poor hash functions would result in a number of table resize events,
+                    but as soon as the right size was found, the graph would be solved within the
+                    first batch of attempts.
+
+                </p>
+
+                <a class="xref" name="lookup-performance"></a>
+                <h2>Lookup Performance</h2>
+
+                <p>
+
+                    Ironically, the most critical piece of this project &mdash; optimizing the
+                    performance of the <code>Insert()</code> and <code>Lookup()</code> routines
+                    &mdash; received the least amount of attention, at least in relation to the
+                    other components like the graph solving or threadpool scaffolding.
+
+                </p>
+
+                <p>
+
+                    The first hash function I half-heartedly wrote as a quick stop-gap, is,
+                    amusingly, still the best performing one in terms of offering the best trade-off
+                    between lookup latency and hash quality (with the latter being proportional to
+                    underlying table size).  (It uses three CRC32 instructions, a rotate, and an
+                    XOR.  I creatively gave it the moniker <code>Crc32Rotate</code>.)
+
+                </p>
+
+                <p>
+
+                    Smaller tables are ideal &mdash; the minimum table size we can hope for when
+                    using power-of-2 masking is the number of keys, rounded up to a power of two,
+                    yielding our edge count, and then rounding that up to the next power-of-2,
+                    yielding our vertices count, and thus, table size.
+
+                </p>
+
+                <p>
+
+                    If two hash functions yield a solution from the same vertices count, the
+                    function with the lower latency (cycles per lookup) is preferable, because
+                    there is simply no benefit to spending extra cycles in order to try improve
+                    the quality of the hash.
+
+                </p>
+
+                <p>
+
+                    However, the same isn't necessarily true for two hash functions that yield
+                    different table sizes.  Every power-of-2 increase in table size results in
+                    a larger memory footprint, which translates to a larger cache footprint,
+                    which translates to an increase likelihood of cache misses when looking
+                    up the two vertex values from the assigned array, which directly impacts
+                    performance.  The type of access pattern greatly affects performance in this
+                    scenario too; if a subset of keys are looked up far more frequently than
+                    the others, then they're likely to be in the cache versus not.  However, if
+                    the access pattern is truly random, the likelihood of a cache miss during
+                    lookup is increased, because there's a larger footprint of possible values
+                    the keys could be hashing to.
+
+                </p>
+
+                <p>
+
+                    In order to give the <code>Crc32Rotate</code> hash function something to
+                    be evaluated against, I eventually ended up authoring a version of the
+                    Jenkins hash, which is widely used and cited, and is the hash function
+                    used by the authors of the CMHP package.  I wasn't particularly attracted
+                    to it when first picking a hash function as it has long dependency chains
+                    in its instruction stream, which inhibit the out-of-order and superscalar
+                    nature of contemporary CPUs (the Jenkins hash was authored in the late 90s,
+                    for what it's worth).
+
+                </p>
+
+                <p>
+
+                    Let's take a look at both implementations before reviewing performance.
+                    We'll review the <code>FastIndex()</code> implementations of each routine,
+                    which inline the AND-based masking such that we don't have to make three
+                    function calls through the COM vtbl pipeline to perform what equates to a
+                    very simple instruction (<code>Value &amp; (TableSize - 1)</code>).  <small>
+                    (Note: the <code>FastIndex()</code> idiom was only added very recently as
+                    part of the benchmarking work; thus, it's not mentioned in the later code
+                    walkthrough sections yet.)</small>
+
+                </p>
+
+                <a class="xref" name="hash-functions"></a>
+                <div class="tab-box language box-hash-functions">
+                    <ul class="tabs">
+                        <li data-content="content-hash-functions-crc32rotate">Crc32Rotate</li>
+                        <li data-content="content-hash-functions-jenkins">Jenkins</li>
+                    </ul>
+                    <div class="content">
+<pre class="code content-hash-functions-crc32rotate"><code class="language-c">_Use_decl_annotations_
+HRESULT
+PerfectHashTableFastIndexImplChm01Crc32RotateHashAndMask(
+    PPERFECT_HASH_TABLE Table,
+    ULONG Key,
+    PULONG Index
+    )
+/*++
+
+Routine Description:
+
+    Looks up given key in a perfect hash table and returns its index.  This
+    is a fast version of the normal Index() routine that inlines the Crc32Rotate
+    hash function and AND masking.
+
+    N.B. If Key did not appear in the original set the hash table was created
+         from, the behavior of this routine is undefined.  (In practice, the
+         key will hash to either an existing key's location or an empty slot,
+         so there is potential for returning a non-unique index.)
+
+Arguments:
+
+    Table - Supplies a pointer to the table for which the key lookup is to be
+        performed.
+
+    Key - Supplies the key to look up.
+
+    Index - Receives the index associated with this key.  The index will be
+        between 0 and Table-&gt;HashSize-1, and can be safely used to offset
+        directly into an appropriately sized array (e.g. Table-&gt;Values[]).
+
+Return Value:
+
+    S_OK on success, E_FAIL if the underlying hash function returned a failure.
+    This will happen if the two hash values for a key happen to be identical.
+    It shouldn't happen once a perfect graph has been created (i.e. it only
+    happens when attempting to solve the graph).  The Index parameter will
+    be cleared in the case of E_FAIL.
+
+--*/
+{
+    ULONG A;
+    ULONG B;
+    ULONG C;
+    ULONG D;
+    ULONG Seed1;
+    ULONG Seed2;
+    ULONG Seed3;
+    ULONG Input;
+    PULONG Seeds;
+    ULONG Masked;
+    ULONG Vertex1;
+    ULONG Vertex2;
+    PULONG Assigned;
+    ULONG MaskedLow;
+    ULONG MaskedHigh;
+    ULONGLONG Combined;
+
+    //IACA_VC_START();
+
+    //
+    // Initialize aliases.
+    //
+
+    Seeds = &amp;Table-&gt;Header-&gt;FirstSeed;
+    Seed1 = Seeds[0];
+    Seed2 = Seeds[1];
+    Seed3 = Seeds[2];
+    Input = Key;
+    Assigned = Table-&gt;Data;
+
+    //
+    // Calculate the individual hash parts.
+    //
+
+    A = _mm_crc32_u32(Seed1, Input);
+    B = _mm_crc32_u32(Seed2, _rotl(Input, 15));
+    C = Seed3 ^ Input;
+    D = _mm_crc32_u32(B, C);
+
+    //IACA_VC_END();
+
+    Vertex1 = A;
+    Vertex2 = D;
+
+    if (Vertex1 == Vertex2) {
+        goto Error;
+    }
+
+    //
+    // Mask each hash value such that it falls within the confines of the
+    // number of vertices.
+    //
+
+    MaskedLow = Vertex1 &amp; Table-&gt;HashMask;
+    MaskedHigh = Vertex2 &amp; Table-&gt;HashMask;
+
+    //
+    // Obtain the corresponding vertex values for the masked high and low hash
+    // values.  These are derived from the "assigned" array that we construct
+    // during the creation routine's assignment step (GraphAssign()).
+    //
+
+    Vertex1 = Assigned[MaskedLow];
+    Vertex2 = Assigned[MaskedHigh];
+
+    //
+    // Combine the two values, then perform the index masking operation, such
+    // that our final index into the array falls within the confines of the
+    // number of edges, or keys, in the table.  That is, make sure the index
+    // value is between 0 and Table-&gt;Keys-&gt;NumberOfElements-1.
+    //
+
+    Combined = (ULONGLONG)Vertex1 + (ULONGLONG)Vertex2;
+
+    Masked = Combined &amp; Table-&gt;IndexMask;
+
+    //
+    // Update the caller's pointer and return success.  The resulting index
+    // value represents the array offset index for this given key in the
+    // underlying table, and is guaranteed to be unique amongst the original
+    // keys in the input set.
+    //
+
+    *Index = Masked;
+
+    //IACA_VC_END();
+
+    return S_OK;
+
+Error:
+
+    //
+    // Clear the caller's pointer and return failure.  We should only hit this
+    // point if the caller supplies a key that both: a) wasn't in the original
+    // input set, and b) happens to result in a hash value where both the high
+    // part and low part are identical, which is rare, but not impossible.
+    //
+
+    *Index = 0;
+    return E_FAIL;
+}</code></pre>
+<pre class="code content-hash-functions-jenkins"><code class="language-c">_Use_decl_annotations_
+HRESULT
+PerfectHashTableFastIndexImplChm01JenkinsHashAndMask(
+    PPERFECT_HASH_TABLE Table,
+    ULONG Key,
+    PULONG Index
+    )
+/*++
+
+Routine Description:
+
+    Looks up given key in a perfect hash table and returns its index.  This
+    is a fast version of the normal Index() routine that inlines the Jenkins
+    hash function and AND masking.
+
+    N.B. If Key did not appear in the original set the hash table was created
+         from, the behavior of this routine is undefined.  (In practice, the
+         key will hash to either an existing key's location or an empty slot,
+         so there is potential for returning a non-unique index.)
+
+Arguments:
+
+    Table - Supplies a pointer to the table for which the key lookup is to be
+        performed.
+
+    Key - Supplies the key to look up.
+
+    Index - Receives the index associated with this key.  The index will be
+        between 0 and Table-&gt;HashSize-1, and can be safely used to offset
+        directly into an appropriately sized array (e.g. Table-&gt;Values[]).
+
+Return Value:
+
+    S_OK on success, E_FAIL if the underlying hash function returned a failure.
+    This will happen if the two hash values for a key happen to be identical.
+    It shouldn't happen once a perfect graph has been created (i.e. it only
+    happens when attempting to solve the graph).  The Index parameter will
+    be cleared in the case of E_FAIL.
+
+--*/
+{
+    ULONG A;
+    ULONG B;
+    ULONG C;
+    ULONG D;
+    ULONG E;
+    ULONG F;
+    PBYTE Byte;
+    ULONG Seed1;
+    ULONG Seed2;
+    ULONG Input;
+    PULONG Seeds;
+    ULONG Masked;
+    ULONG Vertex1;
+    ULONG Vertex2;
+    PULONG Assigned;
+    ULONG MaskedLow;
+    ULONG MaskedHigh;
+    ULONGLONG Combined;
+
+    //
+    // Initialize aliases.
+    //
+
+    //IACA_VC_START();
+
+    Seeds = &amp;Table-&gt;Header-&gt;FirstSeed;
+    Seed1 = Seeds[0];
+    Seed2 = Seeds[1];
+    Input = Key;
+
+    Byte = (PBYTE)&amp;Input;
+
+    //
+    // Generate the first hash.
+    //
+
+    A = B = 0x9e3779b9;
+    C = Seed1;
+
+    A += (((ULONG)Byte[3]) &lt;&lt; 24);
+    A += (((ULONG)Byte[2]) &lt;&lt; 16);
+    A += (((ULONG)Byte[1]) &lt;&lt;  8);
+    A += ((ULONG)Byte[0]);
+
+    A -= B; A -= C; A ^= (C &gt;&gt; 13);
+    B -= C; B -= A; B ^= (A &lt;&lt;  8);
+    C -= A; C -= B; C ^= (B &gt;&gt; 13);
+    A -= B; A -= C; A ^= (C &gt;&gt; 12);
+    B -= C; B -= A; B ^= (A &lt;&lt; 16);
+    C -= A; C -= B; C ^= (B &gt;&gt;  5);
+    A -= B; A -= C; A ^= (C &gt;&gt;  3);
+    B -= C; B -= A; B ^= (A &lt;&lt; 10);
+    C -= A; C -= B; C ^= (B &gt;&gt; 15);
+
+    Vertex1 = C;
+
+    //
+    // Generate the second hash.
+    //
+
+    D = E = 0x9e3779b9;
+    F = Seed2;
+
+    D += (((ULONG)Byte[3]) &lt;&lt; 24);
+    D += (((ULONG)Byte[2]) &lt;&lt; 16);
+    D += (((ULONG)Byte[1]) &lt;&lt;  8);
+    D += ((ULONG)Byte[0]);
+
+    D -= E; D -= F; D ^= (F &gt;&gt; 13);
+    E -= F; E -= D; E ^= (D &lt;&lt;  8);
+    F -= D; F -= E; F ^= (E &gt;&gt; 13);
+    D -= E; D -= F; D ^= (F &gt;&gt; 12);
+    E -= F; E -= D; E ^= (D &lt;&lt; 16);
+    F -= D; F -= E; F ^= (E &gt;&gt;  5);
+    D -= E; D -= F; D ^= (F &gt;&gt;  3);
+    E -= F; E -= D; E ^= (D &lt;&lt; 10);
+    F -= D; F -= E; F ^= (E &gt;&gt; 15);
+
+    //IACA_VC_END();
+
+    Vertex2 = F;
+
+    if (Vertex1 == Vertex2) {
+        goto Error;
+    }
+
+    //
+    // Mask each hash value such that it falls within the confines of the
+    // number of vertices.
+    //
+
+    MaskedLow = Vertex1 &amp; Table-&gt;HashMask;
+    MaskedHigh = Vertex2 &amp; Table-&gt;HashMask;
+
+    //
+    // Obtain the corresponding vertex values for the masked high and low hash
+    // values.  These are derived from the "assigned" array that we construct
+    // during the creation routine's assignment step (GraphAssign()).
+    //
+
+    Assigned = Table-&gt;Data;
+
+    Vertex1 = Assigned[MaskedLow];
+    Vertex2 = Assigned[MaskedHigh];
+
+    //
+    // Combine the two values, then perform the index masking operation, such
+    // that our final index into the array falls within the confines of the
+    // number of edges, or keys, in the table.  That is, make sure the index
+    // value is between 0 and Table-&gt;Keys-&gt;NumberOfElements-1.
+    //
+
+    Combined = (ULONGLONG)Vertex1 + (ULONGLONG)Vertex2;
+
+    Masked = Combined &amp; Table-&gt;IndexMask;
+
+    //
+    // Update the caller's pointer and return success.  The resulting index
+    // value represents the array offset index for this given key in the
+    // underlying table, and is guaranteed to be unique amongst the original
+    // keys in the input set.
+    //
+
+    *Index = Masked;
+
+    //IACA_VC_END();
+
+    return S_OK;
+
+Error:
+
+    //
+    // Clear the caller's pointer and return failure.  We should only hit this
+    // point if the caller supplies a key that both: a) wasn't in the original
+    // input set, and b) happens to result in a hash value where both the high
+    // part and low part are identical, which is rare, but not impossible.
+    //
+
+    *Index = 0;
+    return E_FAIL;
+}</code></pre>
+                    </div>
+                </div>
+
+                <p>
+
+                    As you can see, the CRC32 routine is doing far less work to derive the
+                    two 32-bit hash values for a given input key.  The IACA profiles for each
+                    routine tell a similar story:
+
+                </p>
+
+                <div class="tab-box box-iaca language box-hash-functions-iaca">
+                    <ul class="tabs">
+                        <li data-content="content-hash-functions-iaca-crc32rotate">Crc32Rotate (IACA)</li>
+                        <li data-content="content-hash-functions-iaca-jenkins">Jenkins (IACA)</li>
+                    </ul>
+                    <div class="content">
+<pre class="code iaca content-hash-functions-iaca-crc32rotate"><code class="language-nasm">S:\tracer&gt;iaca x64\Release\PerfectHashTable.dll
+Intel(R) Architecture Code Analyzer
+Version -  v3.0-28-g1ba2cbb build date: 2017-10-23;17:30:24
+Analyzed File -  x64\Release\PerfectHashTable.dll
+Binary Format - 64Bit
+Architecture  -  SKL
+Analysis Type - Throughput
+
+Throughput Analysis Report
+--------------------------
+Block Throughput: 19.00 Cycles       Throughput Bottleneck: Backend
+Loop Count:  22
+Port Binding In Cycles Per Iteration:
+--------------------------------------------------------------------------------------------------
+|  Port  |   0   -  DV   |   1   |   2   -  D    |   3   -  D    |   4   |   5   |   6   |   7   |
+--------------------------------------------------------------------------------------------------
+| Cycles |  2.5     0.0  |  2.0  |  7.0     7.0  |  7.0     7.0  |  2.0  |  2.5  |  2.0  |  2.0  |
+--------------------------------------------------------------------------------------------------
+
+DV - Divider pipe (on port 0)
+D - Data fetch pipe (on ports 2 and 3)
+F - Macro Fusion with the previous instruction occurred
+* - instruction micro-ops not bound to a port
+^ - Micro Fusion occurred
+# - ESP Tracking sync uop was issued
+@ - SSE instruction followed an AVX256/AVX512 instruction, dozens of cycles penalty is expected
+X - instruction not supported, was not accounted in Analysis
+
+| Num Of   |                    Ports pressure in cycles                         |      |
+|  Uops    |  0  - DV    |  1   |  2  -  D    |  3  -  D    |  4   |  5   |  6   |  7   |
+-----------------------------------------------------------------------------------------
+|   1*     |             |      |             |             |      |      |      |      | mov rbx, r8
+|   1      |             |      | 1.0     1.0 |             |      |      |      |      | mov r9, qword ptr [rcx+0xc8]
+|   1*     |             |      |             |             |      |      |      |      | mov r10, rcx
+|   1      |             |      |             | 1.0     1.0 |      |      |      |      | mov edi, dword ptr [r9+0x64]
+|   1      |             |      | 1.0     1.0 |             |      |      |      |      | mov eax, dword ptr [r9+0x6c]
+|   1      |             |      |             | 1.0     1.0 |      |      |      |      | mov r11d, dword ptr [r9+0x68]
+|   1      |             | 0.5  |             |             |      |      | 0.5  |      | xor eax, edx
+|   0X     |             |      |             |             |      |      |      |      | crc32 edi, edx
+|   2      | 1.0         |      |             |             |      |      | 1.0  |      | rol edx, 0xf
+|   0X     |             |      |             |             |      |      |      |      | crc32 r11d, edx
+|   0X     |             |      |             |             |      |      |      |      | crc32 r11d, eax
+|   1*     |             |      |             |             |      |      |      |      | cmp edi, r11d
+|   0*F    |             |      |             |             |      |      |      |      | jnz 0x19
+|   2^     |             |      |             |             | 1.0  |      |      | 1.0  | mov dword ptr [r8], 0x0
+|   1      |             | 0.5  |             |             |      | 0.5  |      |      | mov eax, 0x80004005
+|   1      |             |      | 1.0     1.0 |             |      |      |      |      | mov rbx, qword ptr [rsp+0x8]
+|   1      |             |      |             | 1.0     1.0 |      |      |      |      | mov rdi, qword ptr [rsp+0x10]
+|   3^     |             |      | 1.0     1.0 |             |      |      |      |      | ret
+|   1      |             |      |             | 1.0     1.0 |      |      |      |      | mov r8, qword ptr [rcx+0x98]
+|   1      |             |      | 1.0     1.0 |             |      |      |      |      | mov ecx, dword ptr [rcx+0x44]
+|   1*     |             |      |             |             |      |      |      |      | mov eax, edi
+|   1#     |             | 0.5  |             | 1.0     1.0 |      | 0.5  |      |      | mov rdi, qword ptr [rsp+0x10]
+|   1      | 0.5         |      |             |             |      | 0.5  |      |      | and rax, rcx
+|   1*     |             |      |             |             |      |      |      |      | mov edx, r11d
+|   1      |             | 0.5  |             |             |      |      | 0.5  |      | and rdx, rcx
+|   1      |             |      | 1.0     1.0 |             |      |      |      |      | mov ecx, dword ptr [r8+rdx*4]
+|   2      | 0.5         |      |             | 1.0     1.0 |      | 0.5  |      |      | add ecx, dword ptr [r8+rax*4]
+|   1*     |             |      |             |             |      |      |      |      | xor eax, eax
+|   2^     | 0.5         |      | 1.0     1.0 |             |      | 0.5  |      |      | and ecx, dword ptr [r10+0x48]
+|   2^     |             |      |             |             | 1.0  |      |      | 1.0  | mov dword ptr [rbx], ecx
+|   1      |             |      |             | 1.0     1.0 |      |      |      |      | mov rbx, qword ptr [rsp+0x8]
+Total Num Of &#181;ops: 34
+</code></pre>
+<pre class="code iaca content-hash-functions-iaca-jenkins"><code class="language-nasm">S:\tracer&gt;iaca x64\Release\PerfectHashTable.dll
+Intel(R) Architecture Code Analyzer
+Version -  v3.0-28-g1ba2cbb build date: 2017-10-23;17:30:24
+Analyzed File -  x64\Release\PerfectHashTable.dll
+Binary Format - 64Bit
+Architecture  -  SKL
+Analysis Type - Throughput
+
+Throughput Analysis Report
+--------------------------
+Block Throughput: 42.00 Cycles       Throughput Bottleneck: Backend
+Loop Count:  22
+Port Binding In Cycles Per Iteration:
+--------------------------------------------------------------------------------------------------
+|  Port  |   0   -  DV   |   1   |   2   -  D    |   3   -  D    |   4   |   5   |   6   |   7   |
+--------------------------------------------------------------------------------------------------
+| Cycles | 21.0     0.0  | 22.0  |  7.5     7.5  |  7.5     7.5  |  2.0  | 22.0  | 22.0  |  2.0  |
+--------------------------------------------------------------------------------------------------
+
+DV - Divider pipe (on port 0)
+D - Data fetch pipe (on ports 2 and 3)
+F - Macro Fusion with the previous instruction occurred
+* - instruction micro-ops not bound to a port
+^ - Micro Fusion occurred
+# - ESP Tracking sync uop was issued
+@ - SSE instruction followed an AVX256/AVX512 instruction, dozens of cycles penalty is expected
+X - instruction not supported, was not accounted in Analysis
+
+| Num Of   |                    Ports pressure in cycles                         |      |
+|  Uops    |  0  - DV    |  1   |  2  -  D    |  3  -  D    |  4   |  5   |  6   |  7   |
+-----------------------------------------------------------------------------------------
+|   1      |             |      | 0.5     0.5 | 0.5     0.5 |      |      |      |      | mov r10, qword ptr [rcx+0xc8]
+|   1*     |             |      |             |             |      |      |      |      | mov eax, edx
+|   1      |             |      |             |             |      |      | 1.0  |      | shr eax, 0x10
+|   1*     |             |      |             |             |      |      |      |      | mov r11d, edx
+|   1*     |             |      |             |             |      |      |      |      | movzx edx, al
+|   1*     |             |      |             |             |      |      |      |      | mov rbx, rcx
+|   1      | 1.0         |      |             |             |      |      |      |      | shr r11d, 0x18
+|   1*     |             |      |             |             |      |      |      |      | mov eax, r9d
+|   1      |             |      | 0.5     0.5 | 0.5     0.5 |      |      |      |      | mov esi, dword ptr [r10+0x64]
+|   1*     |             |      |             |             |      |      |      |      | mov rdi, r8
+|   1      |             |      | 0.5     0.5 | 0.5     0.5 |      |      |      |      | mov r10d, dword ptr [r10+0x68]
+|   1      |             | 1.0  |             |             |      |      |      |      | mov r8d, 0x9e3779b9
+|   1      |             |      |             |             |      |      | 1.0  |      | shr eax, 0x8
+|   1*     |             |      |             |             |      |      |      |      | movzx ecx, al
+|   1*     |             |      |             |             |      |      |      |      | mov eax, esi
+|   1      | 1.0         |      |             |             |      |      |      |      | shr eax, 0xd
+|   1      |             |      |             |             |      |      | 1.0  |      | shl r11d, 0x8
+|   1      |             |      |             |             |      | 1.0  |      |      | add r11d, edx
+|   1*     |             |      |             |             |      |      |      |      | movzx r9d, r9b
+|   1*     |             |      |             |             |      |      |      |      | mov edx, r9d
+|   1      | 1.0         |      |             |             |      |      |      |      | shl r11d, 0x8
+|   1      |             | 1.0  |             |             |      |      |      |      | sub edx, esi
+|   1      |             |      |             |             |      | 1.0  |      |      | add r11d, ecx
+|   1*     |             |      |             |             |      |      |      |      | mov ecx, r8d
+|   1      |             |      |             |             |      |      | 1.0  |      | shl r11d, 0x8
+|   1      |             | 1.0  |             |             |      |      |      |      | sub ecx, esi
+|   1      |             |      |             |             |      | 1.0  |      |      | add edx, r11d
+|   1      |             | 1.0  |             |             |      |      |      |      | xor edx, eax
+|   1      |             |      |             |             |      | 1.0  |      |      | sub r9d, r10d
+|   1      | 1.0         |      |             |             |      |      |      |      | sub ecx, edx
+|   1*     |             |      |             |             |      |      |      |      | mov eax, edx
+|   1      |             |      |             |             |      |      | 1.0  |      | shl eax, 0x8
+|   1      |             | 1.0  |             |             |      |      |      |      | sub r8d, r10d
+|   1      |             |      |             |             |      | 1.0  |      |      | xor ecx, eax
+|   1      | 1.0         |      |             |             |      |      |      |      | add r9d, r11d
+|   1      |             | 1.0  |             |             |      |      |      |      | sub esi, ecx
+|   1*     |             |      |             |             |      |      |      |      | mov eax, ecx
+|   1      |             |      |             |             |      |      | 1.0  |      | shr eax, 0xd
+|   1      |             |      |             |             |      | 1.0  |      |      | sub esi, edx
+|   1      | 1.0         |      |             |             |      |      |      |      | xor esi, eax
+|   1      |             | 1.0  |             |             |      |      |      |      | sub edx, esi
+|   1*     |             |      |             |             |      |      |      |      | mov eax, esi
+|   1      |             |      |             |             |      |      | 1.0  |      | shr eax, 0xc
+|   1      |             |      |             |             |      | 1.0  |      |      | sub edx, ecx
+|   1      | 1.0         |      |             |             |      |      |      |      | xor edx, eax
+|   1      |             | 1.0  |             |             |      |      |      |      | sub ecx, esi
+|   1      |             |      |             |             |      | 1.0  |      |      | sub ecx, edx
+|   1*     |             |      |             |             |      |      |      |      | mov eax, edx
+|   1      |             |      |             |             |      |      | 1.0  |      | shl eax, 0x10
+|   1      | 1.0         |      |             |             |      |      |      |      | xor ecx, eax
+|   1      |             | 1.0  |             |             |      |      |      |      | sub esi, ecx
+|   1*     |             |      |             |             |      |      |      |      | mov eax, ecx
+|   1      |             |      |             |             |      |      | 1.0  |      | shr eax, 0x5
+|   1      |             |      |             |             |      | 1.0  |      |      | sub esi, edx
+|   1      | 1.0         |      |             |             |      |      |      |      | xor esi, eax
+|   1      |             | 1.0  |             |             |      |      |      |      | sub edx, esi
+|   1*     |             |      |             |             |      |      |      |      | mov eax, esi
+|   1      |             |      |             |             |      |      | 1.0  |      | shr eax, 0x3
+|   1      |             |      |             |             |      | 1.0  |      |      | sub edx, ecx
+|   1      | 1.0         |      |             |             |      |      |      |      | xor edx, eax
+|   1      |             | 1.0  |             |             |      |      |      |      | sub ecx, esi
+|   1      |             |      |             |             |      | 1.0  |      |      | sub ecx, edx
+|   1*     |             |      |             |             |      |      |      |      | mov eax, edx
+|   1      |             |      |             |             |      |      | 1.0  |      | shl eax, 0xa
+|   1      | 1.0         |      |             |             |      |      |      |      | xor ecx, eax
+|   1*     |             |      |             |             |      |      |      |      | mov eax, r10d
+|   1      |             |      |             |             |      |      | 1.0  |      | shr eax, 0xd
+|   1      |             | 1.0  |             |             |      |      |      |      | sub esi, ecx
+|   1      |             |      |             |             |      | 1.0  |      |      | xor r9d, eax
+|   1      | 1.0         |      |             |             |      |      |      |      | shr ecx, 0xf
+|   1      |             | 1.0  |             |             |      |      |      |      | sub r8d, r9d
+|   1      |             |      |             |             |      | 1.0  |      |      | sub esi, edx
+|   1*     |             |      |             |             |      |      |      |      | mov eax, r9d
+|   1      |             |      |             |             |      |      | 1.0  |      | xor esi, ecx
+|   1      | 1.0         |      |             |             |      |      |      |      | shl eax, 0x8
+|   1      |             | 1.0  |             |             |      |      |      |      | xor r8d, eax
+|   1      |             |      |             |             |      | 1.0  |      |      | sub r10d, r8d
+|   1*     |             |      |             |             |      |      |      |      | mov eax, r8d
+|   1      |             |      |             |             |      |      | 1.0  |      | sub r10d, r9d
+|   1      | 1.0         |      |             |             |      |      |      |      | shr eax, 0xd
+|   1      |             | 1.0  |             |             |      |      |      |      | xor r10d, eax
+|   1      |             |      |             |             |      | 1.0  |      |      | sub r9d, r10d
+|   1*     |             |      |             |             |      |      |      |      | mov eax, r10d
+|   1      |             |      |             |             |      |      | 1.0  |      | sub r9d, r8d
+|   1      | 1.0         |      |             |             |      |      |      |      | shr eax, 0xc
+|   1      |             | 1.0  |             |             |      |      |      |      | xor r9d, eax
+|   1      |             |      |             |             |      | 1.0  |      |      | sub r8d, r10d
+|   1      |             |      |             |             |      |      | 1.0  |      | sub r8d, r9d
+|   1*     |             |      |             |             |      |      |      |      | mov eax, r9d
+|   1      | 1.0         |      |             |             |      |      |      |      | shl eax, 0x10
+|   1      |             | 1.0  |             |             |      |      |      |      | xor r8d, eax
+|   1      |             |      |             |             |      | 1.0  |      |      | sub r10d, r8d
+|   1*     |             |      |             |             |      |      |      |      | mov eax, r8d
+|   1      |             |      |             |             |      |      | 1.0  |      | sub r10d, r9d
+|   1      | 1.0         |      |             |             |      |      |      |      | shr eax, 0x5
+|   1      |             | 1.0  |             |             |      |      |      |      | xor r10d, eax
+|   1      |             |      |             |             |      | 1.0  |      |      | sub r9d, r10d
+|   1*     |             |      |             |             |      |      |      |      | mov eax, r10d
+|   1      |             |      |             |             |      |      | 1.0  |      | sub r9d, r8d
+|   1      | 1.0         |      |             |             |      |      |      |      | shr eax, 0x3
+|   1      |             | 1.0  |             |             |      |      |      |      | sub r8d, r10d
+|   1      |             |      |             |             |      | 1.0  |      |      | xor r9d, eax
+|   1      |             |      |             |             |      |      | 1.0  |      | sub r8d, r9d
+|   1*     |             |      |             |             |      |      |      |      | mov eax, r9d
+|   1      | 1.0         |      |             |             |      |      |      |      | shl eax, 0xa
+|   1      |             | 1.0  |             |             |      |      |      |      | xor r8d, eax
+|   1      |             |      |             |             |      | 1.0  |      |      | sub r10d, r8d
+|   1      |             |      |             |             |      |      | 1.0  |      | shr r8d, 0xf
+|   1      | 1.0         |      |             |             |      |      |      |      | sub r10d, r9d
+|   1      |             | 1.0  |             |             |      |      |      |      | xor r10d, r8d
+|   1*     |             |      |             |             |      |      |      |      | cmp esi, r10d
+|   0*F    |             |      |             |             |      |      |      |      | jnz 0x1d
+|   2^     |             |      |             |             | 1.0  |      |      | 1.0  | mov dword ptr [rdi], 0x0
+|   1      |             |      |             |             |      | 1.0  |      |      | mov eax, 0x80004005
+|   1      |             |      | 0.5     0.5 | 0.5     0.5 |      |      |      |      | mov rbx, qword ptr [rsp+0x8]
+|   1      |             |      | 0.5     0.5 | 0.5     0.5 |      |      |      |      | mov rsi, qword ptr [rsp+0x10]
+|   1      |             |      | 0.5     0.5 | 0.5     0.5 |      |      |      |      | mov rdi, qword ptr [rsp+0x18]
+|   3^     |             |      | 0.5     0.5 | 0.5     0.5 |      |      |      |      | ret
+|   1      |             |      | 0.5     0.5 | 0.5     0.5 |      |      |      |      | mov edx, dword ptr [rbx+0x44]
+|   1      |             |      | 0.5     0.5 | 0.5     0.5 |      |      |      |      | mov r8, qword ptr [rbx+0x98]
+|   1*     |             |      |             |             |      |      |      |      | mov ecx, edx
+|   1*     |             |      |             |             |      |      |      |      | mov eax, r10d
+|   1      |             |      |             |             |      |      | 1.0  |      | and rcx, rax
+|   1*     |             |      |             |             |      |      |      |      | mov eax, esi
+|   1#     | 1.0         |      | 0.5     0.5 | 0.5     0.5 |      |      |      |      | mov rsi, qword ptr [rsp+0x10]
+|   1      |             | 1.0  |             |             |      |      |      |      | and rdx, rax
+|   1      |             |      | 0.5     0.5 | 0.5     0.5 |      |      |      |      | mov eax, dword ptr [r8+rcx*4]
+|   2      |             |      | 0.5     0.5 | 0.5     0.5 |      | 1.0  |      |      | add eax, dword ptr [r8+rdx*4]
+|   2^     |             |      | 0.5     0.5 | 0.5     0.5 |      |      | 1.0  |      | and eax, dword ptr [rbx+0x48]
+|   1      |             |      | 0.5     0.5 | 0.5     0.5 |      |      |      |      | mov rbx, qword ptr [rsp+0x8]
+|   2^     |             |      |             |             | 1.0  |      |      | 1.0  | mov dword ptr [rdi], eax
+|   1*     |             |      |             |             |      |      |      |      | xor eax, eax
+|   1      |             |      | 0.5     0.5 | 0.5     0.5 |      |      |      |      | mov rdi, qword ptr [rsp+0x18]
+Total Num Of &#181;ops: 138
+</code></pre>
+                    </div>
+                </div>
+
+                <h3>A Note on Modulus Masking</h3>
+                <p>
+
+                    For the sake of comparison, let's take a look at the IACA profile of the
+                    modulus-masking based approach used in the original academic papers.  (Note that
+                    I wasn't able to get their modulus-masking algorithm to generate valid graphs
+                    without collisions &mdash; both in the original CMPH project and my
+                    reimplementation of their algorithm.  So, the following routine isn't used
+                    anywhere.  It is useful for depicting the impact of the modulus operator,
+                    though.)
+
+                </p>
+
+                <p>
+
+                    Converting the AND-masking to a %-mask for the Jenkins results in a diff that
+                    looks like this:
+
+                </p>
+
+<pre class="code"><code class="language-diff">
+% diff -u JenkinsAnd.c JenkinsMod.c
+--- JenkinsAnd.c        2018-06-10 20:48:49.330504900 -0700
++++ JenkinsMod.c        2018-06-10 20:50:06.373304600 -0700
+@@ -1,6 +1,6 @@
+ _Use_decl_annotations_
+ HRESULT
+-PerfectHashTableFastIndexImplChm01JenkinsHashAndMask(
++PerfectHashTableFastIndexImplChm01JenkinsHashModMask(
+     PPERFECT_HASH_TABLE Table,
+     ULONG Key,
+     PULONG Index
+@@ -130,8 +130,8 @@
+     // number of vertices.
+     //
+
+-    MaskedLow = Vertex1 &amp; Table-&gt;HashMask;
+-    MaskedHigh = Vertex2 &amp; Table-&gt;HashMask;
++    MaskedLow = Vertex1 % Table-&gt;HashModulus;
++    MaskedHigh = Vertex2 % Table-&gt;HashModulus;
+
+     //
+     // Obtain the corresponding vertex values for the masked high and low hash
+@@ -153,7 +153,7 @@
+
+     Combined = (ULONGLONG)Vertex1 + (ULONGLONG)Vertex2;
+
+-    Masked = Combined &amp; Table-&gt;IndexMask;
++    Masked = Combined % Table-&gt;IndexModulus;
+
+     //
+     // Update the caller's pointer and return success.  The resulting index
+</code></pre>
+
+                <p>
+
+                    The IACA profile is as follows:
+
+                </p>
+
+                <div class="tab-box box-iaca language box-hash-functions-mod-iaca">
+                    <ul class="tabs">
+                        <li data-content="content-hash-functions-iaca-jenkins-mod">Jenkins-Modulus (IACA)</li>
+                    </ul>
+                    <div class="content">
+<pre class="code iaca content-hash-functions-iaca-jenkins-mod"><code class="language-nasm">S:\tracer&gt;iaca x64\Release\PerfectHashTable.dll
+Intel(R) Architecture Code Analyzer
+Version -  v3.0-28-g1ba2cbb build date: 2017-10-23;17:30:24
+Analyzed File -  x64\Release\PerfectHashTable.dll
+Binary Format - 64Bit
+Architecture  -  SKL
+Analysis Type - Throughput
+
+Throughput Analysis Report
+--------------------------
+Block Throughput: 119.00 Cycles       Throughput Bottleneck: Backend
+Loop Count:  22
+Port Binding In Cycles Per Iteration:
+--------------------------------------------------------------------------------------------------
+|  Port  |   0   -  DV   |   1   |   2   -  D    |   3   -  D    |   4   |   5   |   6   |   7   |
+--------------------------------------------------------------------------------------------------
+| Cycles | 30.0     0.0  | 28.0  |  7.0     7.0  |  7.0     7.0  |  2.0  | 29.0  | 29.0  |  2.0  |
+--------------------------------------------------------------------------------------------------
+
+DV - Divider pipe (on port 0)
+D - Data fetch pipe (on ports 2 and 3)
+F - Macro Fusion with the previous instruction occurred
+* - instruction micro-ops not bound to a port
+^ - Micro Fusion occurred
+# - ESP Tracking sync uop was issued
+@ - SSE instruction followed an AVX256/AVX512 instruction, dozens of cycles penalty is expected
+X - instruction not supported, was not accounted in Analysis
+
+| Num Of   |                    Ports pressure in cycles                         |      |
+|  Uops    |  0  - DV    |  1   |  2  -  D    |  3  -  D    |  4   |  5   |  6   |  7   |
+-----------------------------------------------------------------------------------------
+|   1      |             |      | 1.0     1.0 |             |      |      |      |      | mov r10, qword ptr [rcx+0xc8]
+|   1*     |             |      |             |             |      |      |      |      | mov r9d, edx
+|   1*     |             |      |             |             |      |      |      |      | mov eax, edx
+|   1*     |             |      |             |             |      |      |      |      | mov r11d, edx
+|   1      |             |      |             |             |      |      | 1.0  |      | shr eax, 0x10
+|   1*     |             |      |             |             |      |      |      |      | mov rdi, r8
+|   1*     |             |      |             |             |      |      |      |      | movzx edx, al
+|   1      |             | 1.0  |             |             |      |      |      |      | mov r8d, 0x9e3779b9
+|   1      |             |      |             | 1.0     1.0 |      |      |      |      | mov esi, dword ptr [r10+0x64]
+|   1*     |             |      |             |             |      |      |      |      | mov eax, r9d
+|   1      |             |      |             |             |      |      | 1.0  |      | shr eax, 0x8
+|   1*     |             |      |             |             |      |      |      |      | movzx ecx, al
+|   1*     |             |      |             |             |      |      |      |      | mov eax, esi
+|   1      | 1.0         |      |             |             |      |      |      |      | shr eax, 0xd
+|   1      |             |      |             |             |      |      | 1.0  |      | shr r11d, 0x18
+|   1      | 1.0         |      |             |             |      |      |      |      | shl r11d, 0x8
+|   1      |             | 1.0  |             |             |      |      |      |      | add r11d, edx
+|   1*     |             |      |             |             |      |      |      |      | movzx r9d, r9b
+|   1*     |             |      |             |             |      |      |      |      | mov edx, r9d
+|   1      |             |      |             |             |      |      | 1.0  |      | shl r11d, 0x8
+|   1      |             |      |             |             |      | 1.0  |      |      | sub edx, esi
+|   1      |             | 1.0  |             |             |      |      |      |      | add r11d, ecx
+|   1*     |             |      |             |             |      |      |      |      | mov ecx, r8d
+|   1      | 1.0         |      |             |             |      |      |      |      | shl r11d, 0x8
+|   1      |             |      |             |             |      | 1.0  |      |      | sub ecx, esi
+|   1      |             | 1.0  |             |             |      |      |      |      | add edx, r11d
+|   1      |             |      |             |             |      | 1.0  |      |      | xor edx, eax
+|   1      |             |      |             |             |      |      | 1.0  |      | sub ecx, edx
+|   1*     |             |      |             |             |      |      |      |      | mov eax, edx
+|   1      | 1.0         |      |             |             |      |      |      |      | shl eax, 0x8
+|   1      |             | 1.0  |             |             |      |      |      |      | xor ecx, eax
+|   1      |             |      |             |             |      | 1.0  |      |      | sub esi, ecx
+|   1*     |             |      |             |             |      |      |      |      | mov eax, ecx
+|   1      |             |      |             |             |      |      | 1.0  |      | shr eax, 0xd
+|   1      | 1.0         |      |             |             |      |      |      |      | sub esi, edx
+|   1      |             | 1.0  |             |             |      |      |      |      | xor esi, eax
+|   1      |             |      |             |             |      | 1.0  |      |      | sub edx, esi
+|   1*     |             |      |             |             |      |      |      |      | mov eax, esi
+|   1      |             |      |             |             |      |      | 1.0  |      | shr eax, 0xc
+|   1      | 1.0         |      |             |             |      |      |      |      | sub edx, ecx
+|   1      |             | 1.0  |             |             |      |      |      |      | xor edx, eax
+|   1      |             |      |             |             |      | 1.0  |      |      | sub ecx, esi
+|   1      |             |      |             |             |      |      | 1.0  |      | sub ecx, edx
+|   1*     |             |      |             |             |      |      |      |      | mov eax, edx
+|   1      | 1.0         |      |             |             |      |      |      |      | shl eax, 0x10
+|   1      |             | 1.0  |             |             |      |      |      |      | xor ecx, eax
+|   1      |             |      |             |             |      | 1.0  |      |      | sub esi, ecx
+|   1*     |             |      |             |             |      |      |      |      | mov eax, ecx
+|   1      |             |      |             |             |      |      | 1.0  |      | shr eax, 0x5
+|   1      | 1.0         |      |             |             |      |      |      |      | sub esi, edx
+|   1      |             | 1.0  |             |             |      |      |      |      | xor esi, eax
+|   1      |             |      |             |             |      | 1.0  |      |      | sub edx, esi
+|   1*     |             |      |             |             |      |      |      |      | mov eax, esi
+|   1      |             |      |             |             |      |      | 1.0  |      | shr eax, 0x3
+|   1      | 1.0         |      |             |             |      |      |      |      | sub edx, ecx
+|   1      |             | 1.0  |             |             |      |      |      |      | xor edx, eax
+|   1      |             |      |             |             |      | 1.0  |      |      | sub ecx, esi
+|   1      |             |      |             |             |      |      | 1.0  |      | sub ecx, edx
+|   1*     |             |      |             |             |      |      |      |      | mov eax, edx
+|   1      | 1.0         |      |             |             |      |      |      |      | shl eax, 0xa
+|   1      |             | 1.0  |             |             |      |      |      |      | xor ecx, eax
+|   1      |             |      |             |             |      | 1.0  |      |      | sub esi, ecx
+|   1      |             |      |             |             |      |      | 1.0  |      | shr ecx, 0xf
+|   1      | 1.0         |      |             |             |      |      |      |      | sub esi, edx
+|   1      |             | 1.0  |             |             |      |      |      |      | xor esi, ecx
+|   1      |             |      | 1.0     1.0 |             |      |      |      |      | mov ecx, dword ptr [r10+0x68]
+|   1      |             |      |             |             |      | 1.0  |      |      | sub r9d, ecx
+|   1      |             |      |             |             |      |      | 1.0  |      | sub r8d, ecx
+|   1*     |             |      |             |             |      |      |      |      | mov eax, ecx
+|   1      | 1.0         |      |             |             |      |      |      |      | add r9d, r11d
+|   1      |             |      |             |             |      |      | 1.0  |      | shr eax, 0xd
+|   1      |             | 1.0  |             |             |      |      |      |      | xor r9d, eax
+|   1      |             |      |             |             |      | 1.0  |      |      | sub r8d, r9d
+|   1*     |             |      |             |             |      |      |      |      | mov eax, r9d
+|   1      | 1.0         |      |             |             |      |      |      |      | shl eax, 0x8
+|   1      |             | 1.0  |             |             |      |      |      |      | xor r8d, eax
+|   1      |             |      |             |             |      | 1.0  |      |      | sub ecx, r8d
+|   1*     |             |      |             |             |      |      |      |      | mov eax, r8d
+|   1      |             |      |             |             |      |      | 1.0  |      | sub ecx, r9d
+|   1      | 1.0         |      |             |             |      |      |      |      | shr eax, 0xd
+|   1      |             | 1.0  |             |             |      |      |      |      | xor ecx, eax
+|   1      |             |      |             |             |      | 1.0  |      |      | sub r9d, ecx
+|   1*     |             |      |             |             |      |      |      |      | mov eax, ecx
+|   1      |             |      |             |             |      |      | 1.0  |      | sub r9d, r8d
+|   1      | 1.0         |      |             |             |      |      |      |      | shr eax, 0xc
+|   1      |             | 1.0  |             |             |      |      |      |      | xor r9d, eax
+|   1      |             |      |             |             |      | 1.0  |      |      | sub r8d, ecx
+|   1      |             |      |             |             |      |      | 1.0  |      | sub r8d, r9d
+|   1*     |             |      |             |             |      |      |      |      | mov eax, r9d
+|   1      | 1.0         |      |             |             |      |      |      |      | shl eax, 0x10
+|   1      |             | 1.0  |             |             |      |      |      |      | xor r8d, eax
+|   1      |             |      |             |             |      | 1.0  |      |      | sub ecx, r8d
+|   1*     |             |      |             |             |      |      |      |      | mov eax, r8d
+|   1      |             |      |             |             |      |      | 1.0  |      | sub ecx, r9d
+|   1      | 1.0         |      |             |             |      |      |      |      | shr eax, 0x5
+|   1      |             | 1.0  |             |             |      |      |      |      | xor ecx, eax
+|   1      |             |      |             |             |      | 1.0  |      |      | sub r9d, ecx
+|   1*     |             |      |             |             |      |      |      |      | mov eax, ecx
+|   1      |             |      |             |             |      |      | 1.0  |      | sub r9d, r8d
+|   1      | 1.0         |      |             |             |      |      |      |      | shr eax, 0x3
+|   1      |             | 1.0  |             |             |      |      |      |      | sub r8d, ecx
+|   1      |             |      |             |             |      | 1.0  |      |      | xor r9d, eax
+|   1      |             |      |             |             |      |      | 1.0  |      | sub r8d, r9d
+|   1*     |             |      |             |             |      |      |      |      | mov eax, r9d
+|   1      | 1.0         |      |             |             |      |      |      |      | shl eax, 0xa
+|   1      |             | 1.0  |             |             |      |      |      |      | xor r8d, eax
+|   1      |             |      |             |             |      | 1.0  |      |      | sub ecx, r8d
+|   1      |             |      |             |             |      |      | 1.0  |      | shr r8d, 0xf
+|   1      | 1.0         |      |             |             |      |      |      |      | sub ecx, r9d
+|   1      |             | 1.0  |             |             |      |      |      |      | xor ecx, r8d
+|   1*     |             |      |             |             |      |      |      |      | cmp esi, ecx
+|   0*F    |             |      |             |             |      |      |      |      | jnz 0x1d
+|   2^     |             |      |             |             | 1.0  |      |      | 1.0  | mov dword ptr [rdi], 0x0
+|   1      |             |      |             |             |      | 1.0  |      |      | mov eax, 0x80004005
+|   1      |             |      |             | 1.0     1.0 |      |      |      |      | mov rbx, qword ptr [rsp+0x8]
+|   1      |             |      | 1.0     1.0 |             |      |      |      |      | mov rsi, qword ptr [rsp+0x10]
+|   1      |             |      |             | 1.0     1.0 |      |      |      |      | mov rdi, qword ptr [rsp+0x18]
+|   3^     |             |      | 1.0     1.0 |             |      |      |      |      | ret
+|   1      |             |      |             | 1.0     1.0 |      |      |      |      | mov r10, qword ptr [rbx+0x98]
+|   1*     |             |      |             |             |      |      |      |      | xor edx, edx
+|   1*     |             |      |             |             |      |      |      |      | mov eax, ecx
+|   1      |             |      | 1.0     1.0 |             |      |      |      |      | mov ecx, dword ptr [rbx+0x58]
+|   0X     |             |      |             |             |      |      |      |      | div dword ptr [rbx+0x54]
+|   1*     |             |      |             |             |      |      |      |      | mov eax, esi
+|   1#     | 1.0         |      |             | 1.0     1.0 |      |      |      |      | mov rsi, qword ptr [rsp+0x10]
+|   1      |             |      | 1.0     1.0 |             |      |      |      |      | mov r9d, dword ptr [r10+rdx*4]
+|   1*     |             |      |             |             |      |      |      |      | xor edx, edx
+|   0X     |             |      |             |             |      |      |      |      | div dword ptr [rbx+0x54]
+|   1      |             |      |             | 1.0     1.0 |      |      |      |      | mov rbx, qword ptr [rsp+0x8]
+|   1      |             |      | 1.0     1.0 |             |      |      |      |      | mov eax, dword ptr [r10+rdx*4]
+|   1*     |             |      |             |             |      |      |      |      | xor edx, edx
+|   1      |             |      |             |             |      |      | 1.0  |      | add rax, r9
+|  32      | 9.0         | 7.0  |             |             |      | 9.0  | 7.0  |      | div rcx
+|   1*     |             |      |             |             |      |      |      |      | xor eax, eax
+|   2^     |             |      |             |             | 1.0  |      |      | 1.0  | mov dword ptr [rdi], edx
+|   1      |             |      |             | 1.0     1.0 |      |      |      |      | mov rdi, qword ptr [rsp+0x18]
+Total Num Of &#181;ops: 168
+</code></pre>
+                    </div>
+
+                </div>
+
+                <p>
+
+                    The three div operations bump the &#181;op count from 119 up to 168, a 1.4x
+                    increase.  The block throughput is even worse, jumping from 43 to 119, ~2.7x
+                    increase.  At 19 cycles, the CRC32-Rotate version is clearly in the lead, 2.2x
+                    better than Jenkins, and 6.2x better than Jenkins with modulus masking as per
+                    the original paper.
+
+                </p>
+
+                <h3>In Defense of Jenkins...</h3>
+
+                <p>
+
+                    It definitely produces a better quality hash than the CRC32-based routine.  This
+                    is evidenced by the fact that, against our 50 auto-generated linear/random key
+                    files of varying sizes &mdash; I've not seen Jenkins result in a single table
+                    resize event.
+
+                </p>
+
+                <p>
+
+                    On the other hand, on the same data set, the CRC32 routine will typically need
+                    to resort to around 15 table resize events in order to find a solution.  The
+                    affected 15 files are all the random ones (I've not seen any linear ones needing
+                    resizing, even the large ones).  There could be some pathological issue that is
+                    easily fixed, but I haven't investigated in detail, yet.  On all of the key sets
+                    that are more representative of our target, the CRC32 routine obtains a solution
+                    easily.
+
+                </p>
+
+                <h2></h2>
+
 
                 <a class="xref" name="implementation-notes"></a>
                 <h1>Implementation Notes</h1>

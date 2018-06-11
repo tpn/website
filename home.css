@@ -344,6 +344,12 @@ pre.code {
     margin: auto;
 }
 
+pre.code.iaca {
+    text-align: left;
+    max-width: 950px;
+    margin: auto;
+}
+
 .view-on-github {
     text-align: left;
     max-width: 750px;
@@ -355,6 +361,13 @@ pre.code {
     max-width: 770px;
     margin: auto;
 }
+
+.tab-box.box-iaca {
+    text-align: left;
+    max-width: 950px;
+    margin: auto;
+}
+
 /* override prism syntax highlighter theme */
 pre[class*="language-"] {
     border-radius: 0;
@@ -362,12 +375,15 @@ pre[class*="language-"] {
     background-color: #333;
     padding: 10px;
 }
+
 .tab-box {
 }
+
 .tab-box .tabs {
     margin: 0;
     padding: 0;
 }
+
 .tab-box .tabs > li {
     display: inline-block;
     cursor: pointer;
@@ -376,12 +392,43 @@ pre[class*="language-"] {
     color: #333;
     margin: 0;
 }
+
 .tab-active {
     background-color: #7f8c8d !important;
     color: #fff !important;
 }
+
 .tab-box .content {
 }
+
+
+/* tab-box-iaca */
+
+.tab-box-iaca {
+}
+
+.tab-box-iaca .tabs-iaca {
+    margin: 0;
+    padding: 0;
+}
+
+.tab-box-iaca .tabs-iaca > li {
+    display: inline-block;
+    cursor: pointer;
+    padding: 4px 6px;
+    background-color: #bdc3c7;
+    color: #333;
+    margin: 0;
+}
+
+.tab-iaca-active {
+    background-color: #7f8c8d !important;
+    color: #fff !important;
+}
+
+.tab-box-iaca .content-iaca {
+}
+
 .download {
 }
 .download-platform-icon {

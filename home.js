@@ -43,6 +43,36 @@ function initTabBox(selector) {
     showTab(null);
 }
 
+function initTabBoxIaca(selector) {
+    var tabBox = $(selector);
+    tabBox.find('.tabs-iaca').children().click(function() {
+        var contentId = $(this).data('content-iaca');
+        //showTab($(this).data('content'));
+        showTab(contentId);
+    });
+    function showTab(contentId) {
+        var allContent = tabBox.find('.content-iaca').children(),
+            allTabs = tabBox.find('.tabs-iaca').children();
+        allContent.hide();
+        allTabs.removeClass('tab-active-iaca');
+        var name = '.' + contentId;
+        var content = allContent.filter(name);
+        var tabFilter = function(i, el) {
+            var innerContent = $(el).data('content-iaca');
+            return (innerContent === contentId);
+            //return $(el).data('content') === contentId;
+        };
+        tab = allTabs.filter(tabFilter);
+        if (!content.length) {
+            content = allContent.first();
+            tab = allTabs.first();
+        }
+        content.show();
+        tab.addClass('tab-active-iaca');
+    }
+    showTab(null);
+}
+
 function beginLanguageTicker() {
     var langs = $('.language-options > li').map(function(i, e) { return $(e).text() });
     var current = 0;
