@@ -310,6 +310,22 @@ VOID Insert(ULONG Key, ULONG Value) { Table[PerfectHashFunction(Key)] = Value; }
 
                                 </li>
 
+                                <li>
+
+                                    <a href="#chm-algo-specific-details">Algorithm-Specific Implementation Details</a>
+
+                                    <ul>
+
+                                        <li>
+
+                                            <a href="#CreatePerfectHashTableImplChm01">CreatePerfectHashTableImplChm01()</a>
+
+                                        </li>
+
+                                    </ul>
+
+                                </li>
+
                             </ul>
 
                         </li>
@@ -6373,13 +6389,12 @@ typedef struct _Struct_size_bytes_(SizeOfStruct) _PERFECT_HASH_TABLE {
 typedef PERFECT_HASH_TABLE *PPERFECT_HASH_TABLE;</code></pre>
 
                 <a class="xref" name="CreatePerfectHashTable"></a>
-                <h3>CreatePerfectHashTable()</h3>
+                <h3><code>CreatePerfectHashTable()</code></h3>
 
                 <p>
 
                     The creation routine is the first point where we dispatch to algorithm-specific
-                    implementation routines.  <em>(Work in progress... pseudo version not written
-                    yet.)</em>
+                    implementation routines.
 
                 </p>
 
@@ -7624,11 +7639,44 @@ End:
     return Success;
 }
 </code></pre>
+                    </div>
+                </div>
+
+                <a class="xref" name="chm-algo-specific-details"></a>
+                <h1>Algorithm-Specific Implementation Details</h1>
+
+                <p>
+
+                    This section covers implementation details specific to our implementation of the
+                    CHM algorithm.
+
+                </p>
 
                 <a class="xref" name="CreatePerfectHashTableImplChm01"></a>
                 <h3>CreatePerfectHashTableImplChm01</h3>
 
                 <p>
+
+                    This is the implementation of our CHM algorithm's creation routine.  It is
+                    responsible for: determining the appropriate memory requirements for a given
+                    graph used to try solve the perfect hash, allocating and initializing the
+                    appropriate data structures, submitting threadpool work for file preparation,
+                    parallel graph solving, and file-saving (once a solution has been found), and
+                    verifying the found solution is actually correct.  Additionally, it has support
+                    for detecting <em>table resize</em> events, which will be signaled by a worker
+                    when it detects the number of attempts at solving a graph have exceeded a
+                    threshold.  This results in the routine doubling the number of vertices used for
+                    the underlying graph and re-attempting to solve.
+
+                </p>
+
+                <p>
+
+                    It makes extensive use of threadpools.  It can be viewed as the main "parent"
+                    coordinator thread, dispatching relevant work to the file-work and main-work
+                    threadpools as required.
+
+                </p>
 
                 <div class="tab-box language box-create-table-chm01-impl">
                     <ul class="tabs">
@@ -8794,15 +8842,11 @@ End:
     }
 
     return Success;
-}</code></pre>
+}
+</code></pre>
                     </div>
                 </div>
 
-                <p>
-
-                    Test test.
-
-                </p>
                 <hr/>
 
                 <a class="xref" name="appendix"></a>
@@ -8810,6 +8854,17 @@ End:
 
                 <a class="xref" name="CreateRandomObjectNames"></a>
                 <h3>Rtl-&gt;CreateRandomObjectNames()</h3>
+
+                <p>
+
+                    This helper routine is used to assist with the creation of event names that have
+                    a set of prefixes we specify (e.g.
+                    <code>PerfectHashTableContext_ShutdownEvent</code>), and then a configurable
+                    amount of trailing Base64-encoded random data, such that the final name is
+                    likely to be unique within the current session with high probability.
+
+                </p>
+
 <pre class="code"><code class="language-c">_Use_decl_annotations_
 BOOL
 CreateRandomObjectNames(
@@ -9194,10 +9249,29 @@ End:
     *SizeOfWideBufferInBytes = SizeOfWideBase64BufferInBytes;
 
     return Success;
-}</code></pre>
+}
+</code></pre>
 
                 <a class="xref" name="CreateMultipleBuffers"></a>
+
                 <h3>Rtl-&gt;CreateMultipleBuffers()</h3>
+
+                <p>
+
+                    This routine is used to create multiple buffers of equal sizes (where the size
+                    is specified in numbers of pages), separated by a "guard" page that has all
+                    permissions removed from it (such that any attempts to read or write to memory
+                    in that page will trap).
+
+                </p>
+
+                <p>
+
+                    It is used to allocate all memory required by concurrent graph solving using a
+                    single <code>VirtualAlloc()</code> call.
+
+                </p>
+
 <pre class="code"><code class="language-c">_Use_decl_annotations_
 BOOL
 CreateMultipleBuffers(
