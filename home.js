@@ -85,3 +85,21 @@ function beginLanguageTicker() {
     }, 200);
 }
 
+function isLocalhost() {
+    var result = (
+        location.hostname == "localhost" ||
+        location.hostname == "127.0.0.1" ||
+        location.hostname == ""
+    );
+    return result;
+}
+
+function maybeRedirectToHttps() {
+    if (isLocalhost() || location.protocol == "https:") {
+        return;
+    }
+
+    location.href = location.href.replace(/^http:/, 'https:');
+}
+
+maybeRedirectToHttps();
