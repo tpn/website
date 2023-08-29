@@ -1,0 +1,333 @@
+ 26M	ActivePerl-5.14.2.1402-MSWin32-x64-295342.msi
+ 25M	ActivePython-2.5.4.3-win32-x86.msi
+ 18M	ActivePython-2.5.4.4-hpux11.00-parisc.tar.gz
+ 24M	ActivePython-2.5.5.7-win32-x86.msi
+ 17M	ActivePython-2.6.1.1-aix5-powerpc.tar.gz
+ 20M	ActivePython-2.6.1.1-hpux11.00-parisc.tar.gz
+ 19M	ActivePython-2.6.1.1-solaris8-sparc64.tar.gz
+ 31M	ActivePython-2.6.1.1-win32-x86.msi
+ 31M	ActivePython-2.6.2.2-win32-x86.msi
+ 19M	ActivePython-2.6.4.8-aix-powerpc.tar.gz
+ 19M	ActivePython-2.6.4.8-aix-powerpc64.tar.gz
+ 21M	ActivePython-2.6.4.8-hpux11.00-parisc.tar.gz
+ 17M	ActivePython-2.6.4.8-solaris10-x86.tar.gz
+ 45M	ActivePython-2.6.5.12-win32-x86.msi
+ 45M	ActivePython-2.7.0.2-win32-x86.msi
+ 43M	ActivePython-2.7.2.5-win64-x64.msi
+ 20M	ActivePython-3.0.1.1-win32-x86.msi
+435M	DB2_V95_limited_CD_AIX.tar.gz
+552M	DB2_V95_limited_CD_HP-UX_IA64.tar.gz
+524M	DB2_V95_limited_CD_Linux_x86-64.tar.gz
+482M	DB2_V95_limited_CD_Linux_x86.tar.gz
+403M	DB2_V95_limited_CD_SUN_SPARC.tar.gz
+ 33K	Elevate.zip
+850M	FW900.2010_0403.93.iso
+740M	Ignite-UX-11-ALL_C.7.10.474.depot
+751M	Ignite-UX-11-ALL_C.7.12.519.depot
+304M	ParallelsDesktop-7.0.15052.710728.dmg
+209M	ParallelsDesktop-parallels-en_US-6.0.11994.637263.dmg
+203M	ParallelsDesktop-parallels-en_US-6.0.12094.676494.dmg
+204M	ParallelsDesktop-parallels-en_US-6.0.12106.692267.dmg
+197M	SMS2009u1.iso
+225M	SQLDeveloper_402_1521.app.zip
+624M	SS840.2010_0302.150-x64.iso
+2.1M	SeaToolsDOS110.iso
+4.4G	Snow_Leopard_10.6.1-10.6.2_SSE2_SSE3_Intel_AMD_by_Hazard.iso
+338M	VMware-Fusion-7.1.0-2314774.dmg
+417M	VMware-Installer-HP-USB-SD-Image-4.1-583772-009.iso
+353M	VMware-VMvisor-Installer-4.0.0.Update01-208167.x86_64-CD.iso
+300M	VMware-VMvisor-Installer-4.1.0-260247.x86_64.iso
+240M	VMware-VMvisor-InstallerCD-3.5.0_Update_3-123629.i386.iso
+509M	VMware-server-2.0.0-122956.x86_64.tar.gz
+451M	VMware-server-2.0.2-203138.x86_64.rpm
+452M	VMware-server-2.0.2-203138.x86_64.tar.gz
+ 38M	VMware-vix-1.6.2-203138.x86_64.tar.gz
+ 70M	VirtualBox-2.2.2-46594-SunOS.tar.gz
+631M	aix-4.3.3-2001-09-5765-c34-lcd4-0286-07-1of4.iso
+560M	aix-4.3.3-2001-09-5765-c34-lcd4-0286-07-2of4.iso
+403M	aix-4.3.3-2001-09-5765-c34-lcd4-0286-07-3of4.iso
+399M	aix-4.3.3-2001-09-5765-c34-lcd4-0286-07-4of4.iso
+592M	aix-5.2-2006-02_lcd4-1133-08-v1.iso
+545M	aix-5.2-2006-02_lcd4-1133-08-v2.iso
+618M	aix-5.2-2006-02_lcd4-1133-08-v3.iso
+404M	aix-5.2-2006-02_lcd4-1133-08-v4.iso
+436M	aix-5.2-2006-02_lcd4-1133-08-v5.iso
+544M	aix-5.2-2006-02_lcd4-1133-08-v6.iso
+540M	aix-5.2-2006-02_lcd4-1133-08-v7.iso
+632M	aix-5.2-expansion-pack_lcd4-1142-v1.iso
+630M	aix-5.2-expansion-pack_lcd4-1142-v2.iso
+ 77M	aix-5.2-expansion-pack_lcd4-1142-v3.iso
+1.2G	aix-5.2-update-2006-02_lcd4-7550-01.iso
+526M	aix-5.3-2005-10_lcd4-7463-04-v1.iso
+490M	aix-5.3-2005-10_lcd4-7463-04-v2.iso
+443M	aix-5.3-2005-10_lcd4-7463-04-v3.iso
+604M	aix-5.3-2005-10_lcd4-7463-04-v4.iso
+614M	aix-5.3-2005-10_lcd4-7463-04-v5.iso
+601M	aix-5.3-2005-10_lcd4-7463-04-v6.iso
+621M	aix-5.3-2005-10_lcd4-7463-04-v7.iso
+ 91M	aix-5.3-2005-10_lcd4-7463-04-v8.iso
+638M	aix-5.3-2008-05_lcd4-7463-12-v1.iso
+608M	aix-5.3-2008-05_lcd4-7463-12-v2.iso
+619M	aix-5.3-2008-05_lcd4-7463-12-v3.iso
+625M	aix-5.3-2008-05_lcd4-7463-12-v4.iso
+634M	aix-5.3-2008-05_lcd4-7463-12-v5.iso
+607M	aix-5.3-2008-05_lcd4-7463-12-v6.iso
+626M	aix-5.3-2008-05_lcd4-7463-12-v7.iso
+248M	aix-5.3-2008-05_lcd4-7463-12-v8.iso
+344M	aix-5.3-documentation_lcd4-7508-01.iso
+549M	aix-5.3-documentation_lcd4-7508-02-1of2.iso
+442M	aix-5.3-documentation_lcd4-7509-01.iso
+566M	aix-5.3-documentation_lcd4-7509-02-2of2.iso
+630M	aix-5.3-expansion-pack-2006-07_lcd4-7460-06-v1.iso
+488M	aix-5.3-expansion-pack-2006-07_lcd4-7460-06-v2.iso
+568M	aix-5.3-expansion-pack-2008-04_lcd4-7460-10-v1.iso
+583M	aix-5.3-expansion-pack-2008-04_lcd4-7460-10-v2.iso
+267M	aix-5.3-expansion-pack-2008-04_lcd4-7460-10-v3.iso
+595M	aix-5.3-update-2005-10-ml-5300-03-5765-g03-lcd4-7477-lcd4-7524-02-1of3.iso
+335M	aix-5.3-update-2005-10-ml-5300-03-5765-g03-lcd4-7477-lcd4-7525-02-2of3.iso
+374M	aix-5.3-update-2005-10-ml-5300-03-5765-g03-lcd4-7477-lcd8-0173-00-3of3.iso
+1.5G	aix-5.3-update-2006-07_lcd4-7546-02.iso
+628M	aix-5.3-update-2008-04_lcd4-7477-12-v1.iso
+635M	aix-5.3-update-2008-04_lcd4-7477-12-v2.iso
+627M	aix-5.3-update-2008-04_lcd4-7477-12-v3.iso
+595M	aix-5.3-update-2008-05-lcd4-7477-04-1of3.iso
+236M	aix-5.3-update-2008-05-lcd4-7477-04-2of3.iso
+374M	aix-5.3-update-2008-05-lcd4-7477-04-3of3.iso
+236M	aix-5.3-update_lcd4-7477-04-v2.iso
+374M	aix-5.3-update_lcd4-7477-04-v3.iso
+526M	aix-5.3_lcd4-7463-04-v1.iso
+490M	aix-5.3_lcd4-7463-04-v2.iso
+443M	aix-5.3_lcd4-7463-04-v3.iso
+604M	aix-5.3_lcd4-7463-04-v4.iso
+614M	aix-5.3_lcd4-7463-04-v5.iso
+601M	aix-5.3_lcd4-7463-04-v6.iso
+621M	aix-5.3_lcd4-7463-04-v7.iso
+ 91M	aix-5.3_lcd4-7463-04-v8.iso
+595M	aix-5.3_lcd4-7477-04-v1.iso
+310M	aix-5l-for-power-v5.2-documentation-cd-en_us-5765-e62-lcd4-1144-01.iso
+638M	aix-6.1-2008-05_lk4t-1482-02-v1.iso
+606M	aix-6.1-2008-05_lk4t-1482-02-v2.iso
+578M	aix-6.1-2008-05_lk4t-1482-02-v3.iso
+611M	aix-6.1-2008-05_lk4t-1482-02-v4.iso
+597M	aix-6.1-2008-05_lk4t-1482-02-v5.iso
+575M	aix-6.1-2008-05_lk4t-1482-02-v6.iso
+601M	aix-6.1-2008-05_lk4t-1482-02-v7.iso
+195M	aix-6.1-2008-05_lk4t-1482-02-v8.iso
+342M	aix-6.1-expansion-pack-2008-05-lcd8-0825-01-1of2.iso
+325M	aix-6.1-expansion-pack-2008-05-lcd8-0826-01-2of2.iso
+490M	aix-6.1-update-2008-05_lcd8-0910-00-1of2.iso
+571M	aix-6.1-update-2008-05_lcd8-0911-00-2of2.iso
+3.0G	aix-7.1-5765-g98-tl-7100-00-00-2010-09-lk4t-1710-lcd8-1491-00-1of2.iso
+2.3G	aix-7.1-5765-g98-tl-7100-00-00-2010-09-lk4t-1710-lcd8-1492-00-2of2.iso
+666M	aix-7.1-expansion-pack-5765-g98-2010-09-lcd8-1496-00.iso
+ 41M	aix-profile-manager-2010-09-lcd8-1511-00.iso
+428M	aix-toolbox-for-linux-applications-for-power-systems-featuring-gnu-software-2008-05-source-code-only_lcd4-1130-14.iso
+624M	aix-toolbox-for-linux-applications-for-power-systems-featuring-gnu-software-2008-05_lcd4-1077-19.iso
+427M	aix-toolbox-for-linux-for-power-systems-2008-11_lcd4-1130-15.iso
+ 64M	backbase-4.2.1
+272K	bzip2-1.0.5-hppa-11.11.depot.gz
+528K	bzr-svn-0.3.5.tar.gz.tar
+1.3M	bzr-svn-0.4.17.tar.gz.tar
+1.3M	bzr-svn-0.5.0.tar.gz.tar
+129M	cn_ct_en_fr_de_it_ja_ko_pt_ru_es_application_virtualization_4.5_for_terminal_services_dvd_x86_x15-08322.iso
+129M	cn_ct_nl_en_fr_de_it_ja_ko_pt_pp_es_application_virtualization_4.5_for_ts_cumulative_update_1_x86_cd_x15-51720.iso
+8.3M	coreutils-7.6-hppa-11.11.depot.gz
+ 10M	coreutils-8.4.tar.tar
+272K	crunchyfrog-0.3.3.tar.gz
+1.2G	ct_en_hyper_v_server_2008_r2_x64_dvd_x15-61714.iso
+1.6M	cyrus-sasl-2.1.22.tar.gz
+ 56M	db-4.7.25.tar.gz.tar
+ 19M	db-4.8.24-hppa-11.11.depot.gz
+118M	dfly-1.12.2_REL.iso.gz
+184M	dfly-img-2.2.0_REL.img.gz
+784K	diffutils-2.8.1.tar.tar
+ 33K	emulex.pro.zip
+ 48M	en_.net_framework_4_full_x86_x64_508940.exe
+121K	en_Visio_2003_reskit_tools.exe
+ 42M	en_antigen_for_exchange_with_antigen_spam_manager_with_service_pack_1_x86_cd_x13-94569.iso
+648M	en_desktop_optimization_pack_2008_r2_dvd_x64_x86_x15-09197.iso
+ 35M	en_developing_applications_for_sharepoint_2010_x64.exe
+428M	en_directx_sdk_2007_11.exe
+5.4M	en_enterprise_library_5.0,_source_code_x86_x64.msi
+ 11M	en_enterprise_library_5.0_x86_x64.msi
+3.1G	en_esp_1.0_client_disc_1_dvd_x14-17823.iso
+2.5G	en_esp_1.0_client_disc_2_dvd_x14-17827.iso
+5.6G	en_exchange_server_2007_with_service_pack_1_enterprise_and_standard_x64_dvd_x13-93829.iso
+252M	en_expression_studio_3_x86_cd_401336.iso
+284M	en_expression_studio_4_ultimate_x86_dvd_537032.iso
+2.2G	en_msdn_library_for_visual_studio_2008_service_pack_1_x86_dvd_x15-06188.iso
+560M	en_office_enterprise_2007_DVD_VL_X12-19574.iso
+227M	en_office_groove_2007_cd_X12-19198.iso
+650M	en_office_professional_plus_2010_x86_515486.exe
+ 88M	en_office_project_2007_service_pack_1_x86.exe
+219M	en_office_project_professional_2007_cd_X12-19204.iso
+512M	en_office_suite_2007_service_pack_1_x86_cd_x13-87877.iso
+102M	en_office_visio_2007_service_pack_1_x86.exe
+279M	en_office_visio_professional_2007_cd_X12-19212.iso
+400K	en_practices_project_linker_feb_2009_x86_x64.msi
+ 13M	en_prism_2.1_composite_application_guidance_for_wpf_and_silverlight_x86_x64.exe
+400K	en_project_linker_source_feb_2009_x86_x64.exe
+884M	en_project_professional_2010_with_sp1_x86_x64_dvd_730314.iso
+235M	en_project_professional_2010_x86_515560.exe
+557M	en_project_professional_2010_x86_x64_dvd_515554.iso
+624M	en_publisher_2010_x86_x64_dvd_515857.iso
+133M	en_softgrid_application_virtualization_for_ts_4.1_with_sp1_cd_X13-68940.iso
+441M	en_sql_2000_dev.iso
+2.7G	en_sql_2005_dev_all_dvd.iso
+331M	en_sql_server_2000_sp4.iso
+282M	en_sql_server_2005_sp2_x86_cd.iso
+3.0G	en_sql_server_2008_developer_x86_x64_ia64_dvd_x14-88839.iso
+4.1G	en_sql_server_2008_r2_developer_x86_x64_ia64_dvd_522665.iso
+1.1G	en_system_center_configuration_manager_2007_with_service_pack_1_x86_dvd_x14-66461.iso
+698M	en_system_center_operations_manager_2007_with_service_pack_1_x86_dvd_x14-05942.iso
+1.0G	en_visio_2010_with_sp1_x86_x64_dvd_730325.iso
+293M	en_visio_2010_x86_516534.exe
+688M	en_visio_2010_x86_x64_dvd_516304.iso
+464M	en_visio_professional_2013_with_sp1_x64_3910816.exe
+3.3G	en_visual_studio_2008_professional_x86_dvd_X14-26326.iso
+831M	en_visual_studio_2008_service_pack_1_x86_dvd_x15-12962.iso
+2.3G	en_visual_studio_2010_ultimate_x86_dvd_509116.iso
+1.5G	en_visual_studio_premium_2012_x86_dvd_2262337.iso
+585M	en_vs.net_2003_ent_full.exe
+561M	en_vs.net_2003_pro_full.exe
+2.7G	en_vs_2005_pro_dvd.iso
+570M	en_win_adv_svr_1.2.iso
+574M	en_win_srv_2003_r2_enterprise_cd1.iso
+121M	en_win_srv_2003_r2_enterprise_cd2.iso
+595M	en_win_srv_2003_r2_enterprise_with_sp2_cd1_X13-05460.iso
+121M	en_win_srv_2003_r2_enterprise_with_sp2_cd2_X13-68584.iso
+624M	en_win_srv_2003_r2_enterprise_x64_with_sp2_cd1_x13-06188.iso
+167M	en_win_srv_2003_r2_enterprise_x64_with_sp2_cd2_x13-68588.iso
+3.0G	en_windows_7_ultimate_x64_dvd_x15-65922.iso
+1.7G	en_windows_automated_installation_kit_for_windows_7_and_windows_server_2008_r2_x86_x64_ia64_dvd_400053.iso
+1.4G	en_windows_automated_installation_kit_x86_x64_ia64_dvd_349519.iso
+3.8M	en_windows_azure_software_development_kit_march_2009_ctp_x86.msi
+583M	en_windows_driver_kit_release_7_0_7000_1_dvd_x86_x64_ia64_x15-29102.iso
+2.6G	en_windows_server_2008_datacenter_enterprise_standard_sp2_x64_dvd_342336.iso
+1.8G	en_windows_server_2008_datacenter_enterprise_standard_without_hyperv_x86_dvd_X14-27006.iso
+2.4G	en_windows_server_2008_for_itanium_based_systems_sp2_ia64_dvd_342339.iso
+2.9G	en_windows_server_2008_r2_datacenter_enterprise_standard_web_rc_x64_dvd_347937.iso
+2.3G	en_windows_server_2008_r2_for_itanium_based_systems_ia64_dvd_x15-50378.iso
+2.8G	en_windows_server_2008_r2_standard_enterprise_datacenter_and_web_x64_dvd_x15-59754.iso
+1.9G	en_windows_storage_server_2008_embedded_basic_dvd_x86_x15-28320.iso
+3.2G	en_windows_storage_server_2008_embedded_basic_standard_enterprise_workgroup_dvd_x64_x15-49574.iso
+6.0M	en_windows_storage_server_2008_embedded_tools_cd_x64_x86_x15-62577.iso
+5.8M	en_windows_storage_server_2008_iscsi_cd_x64_x86_x15-49563.iso
+2.0M	en_windows_storage_server_2008_iscsi_tools_cd_x64_x86_x15-63368.iso
+937M	en_zh-tw_hyper-v_server_2008_x64_dvd_x14-87931.iso
+272K	expat-2.0.1-hppa-11.11.depot.gz
+ 75M	gcc-4.2.3-hppa-11.11.depot.gz
+ 17M	gcc-core-3.4.6.tar.tar
+ 32M	gcc-core-4.4.2.tar.tar
+ 73K	gdbm-1.8.3-hppa-11.11.depot.gz
+4.1M	gettext-0.17-hppa-11.11.depot.gz
+1.6M	gzip-1.3.9.tar
+1.8M	hgbook-en-20090521.pdf.gz
+1.9G	home.tar
+332M	hp-alpha-systems-firmware-update-v6.9-dec-2007-ag-rcfbt-bs.iso
+325M	hp-alpha-systems-firmware-update-v7.3-april-2007-ag-rcfbx-bs.iso
+553M	hp-hpux-11i-application-software-dec2002-1of4-5012-1973.iso
+529M	hp-hpux-11i-application-software-dec2002-2of4-5012-1974.iso
+544M	hp-hpux-11i-application-software-dec2002-3of4-5012-1975.iso
+411M	hp-hpux-11i-application-software-dec2002-4of4-5012-1976.iso
+366M	hp-integrity-servers-partner-portfolio-hp-ux-11i-solutions-2006-1of5.iso
+369M	hp-integrity-servers-partner-portfolio-linux-solutions-2006-2of5.iso
+174M	hp-integrity-servers-partner-portfolio-nonstop-solutions-2006-3of5.iso
+234M	hp-integrity-servers-partner-portfolio-openvms-solutions-2006-3of5.iso
+382M	hp-integrity-servers-partner-portfolio-windows-solutions-2006-5of5.iso
+519M	hp-tru64-unix-v5.1a-5.1b-new-hardware-delivery-7-nhd7-ag-rj1yk-be.iso
+315M	hp-tru64-unix-v5.1b-documentation-ag-rhb3e-be.iso
+645M	hp-tru64-unix-v5.1b-operating-system-vol-ag-rhb5e-be.iso
+620M	hp-tru64-unix-v5.1b3-associated-products-vol1-ag-rhb7h-be.iso
+598M	hp-tru64-unix-v5.1b3-associated-products-vol2-ag-rhb9j-be.iso
+166M	hp-tru64-unix-v5.1b3-open-source-sources-ag-rvc8c-be.iso
+194M	hp-tru64-unix-v5.1b3-patch-kit-ag-rvgcc-be.iso
+448M	hp-tru64-unix-v5.1b4-associated-products-dec2006-vol1-ag-rhb7j-be.iso
+492M	hp-tru64-unix-v5.1b4-associated-products-dec2006-vol2-ag-rhb9k-be.iso
+645M	hp-tru64-unix-v5.1b4-dec2006-os-vol1-ag-rhb5f-be.iso
+315M	hp-tru64-unix-v5.1b4-documentation-dec2006-ag-rh3bf-be.iso
+546M	hp-tru64-unix-v5.1b4-new-hardware-delivery-nhd7-dec2006-ag-rj1yl-be.iso
+147M	hp-tru64-unix-v5.1b4-open-source-sources-dec2006-ag-rvc8d-be.iso
+221M	hp-tru64-unix-v5.1b4-patch-kit-ag-rvgcd-be.iso
+4.1G	hpux-11iv3-application-software-mar2008-1of2-5013-8340.iso
+1.7G	hpux-11iv3-application-software-mar2008-2of2-5013-8341.iso
+759M	hpux-11iv3-documentation-library-mar2008-b3921-10045.iso
+2.8G	hpux-11iv3-non-oe-components-internet-express-version-a.10.00-mar2008-5013-8336.iso
+3.8G	hpux-11iv3-virtual-server-operating-environment-1of2-5013-8345.iso
+2.1G	hpux-11iv3-virtual-server-operating-environment-2of2-5013-8346.iso
+381M	hpvm-install-208167.iso
+634M	ibm-aix-information-center-v6.1-1of2.iso
+374M	ibm-aix-information-center-v6.1-2of2.iso
+7.9G	ibm-diagnostic-disk-pn53p2519.iso
+502M	ibm-machine-code-update-files-and-discovery-tool-v1.10.26.iso
+ 79M	ibm-mozilla-firefox-1.5.0.1201-for-aix-2008-05-lcd8-0536-04.iso
+ 94M	ibm-standalone-diagnostics-v6.1.2.0-for-powerpc-systems-lcd8-0835-02.iso
+9.1M	ibm-test-disc-used-in-conjunction-with-cdrom-diagnostics-pn81f8902.iso
+ 25K	id3-py_1.2.tar.gz
+6.3G	irix
+712M	l_mkl_11.1.3.174.tgz
+1.5M	libiconv-1.13.1-hppa-11.11.depot.gz
+400K	libidn-1.15-hppa-11.11.depot.gz
+496M	m_fcompxe_2013_sp1.3.166.dmg
+986M	mac-osx-snow-leopard-v10.6-2z691-6558-a.iso
+512B	mnt
+5.8M	moin-1.8.1.tar.gz
+4.3G	mu_visual_studio_2005_service_pack_1_dvd_x13-40126.iso
+245M	mu_visual_studio_2013_update_1_x86_3578457.iso
+947M	mu_windows_storage_server_2008_r2_embed_stand_ent_work_iscsi_software_target_3.3_x64_dvd_587719.iso
+7.0M	ncurses-5.7-hppa-11.11.depot.gz
+1.0M	openssh-5.2p1.tar.gz
+ 18M	openssl-0.9.8j.tar.gz.tar
+4.0M	openssl-0.9.8k-hppa-11.11.depot.gz
+3.8M	openssl-0.9.8k.tar.gz
+3.6M	openssl-0.9.8n.tar.tar
+3.9M	openssl-1.0.0-beta1.tar.gz
+3.9M	openssl-1.0.0.tar.tar
+687M	osol-0811.iso
+161M	osol-0906-ai-x86.iso
+677M	osol-0906-x86-2.iso
+4.0M	pdfminer-20100619p1.tar.gz
+ 37M	pwhe52.iso
+118M	pyparallel-0.1-3.3.5.zip
+ 11M	python-2.5.2-hppa-11.11.depot.gz
+528K	readline-6.0.004-hppa-11.11.depot.gz
+2.4G	rhel-5.2-server-ia64-dvd.iso
+2.3G	rhel-5.2-server-x86_64-dvd.iso
+3.0G	rhel-5.3-server-ia64-dvd.iso
+ 25M	root-carbon.tar
+6.1G	snowleopard_10a432_userdvd.dmg
+2.1G	sol-10-u10-ga2-sparc-dvd.iso
+2.1G	sol-10-u10-ga2-x86-dvd.iso
+2.1G	sol-10-u5-ga-x86-dvd.iso
+2.1G	sol-10-u6-ga1-x86-dvd.iso
+2.5G	sol-10-u7-ga-sparc-dvd.iso
+2.2G	sol-10-u7-ga-x86-dvd.iso
+2.5G	sol-10-u8-ga-sparc-dvd.iso
+2.4G	sol-10-u8-ga-x86-dvd.iso
+687M	sol-11-exp-201011-live-x86.iso
+452M	sol-11-exp-201011-text-sparc.iso
+650M	sol-9-905hw-ga-sparc-dvd-iso-a
+510M	sol-9-905hw-ga-sparc-dvd-iso-b
+816M	sol-9-905hw-ga-sparc-dvd-iso-c
+984M	sol-9-905hw-ga-sparc-dvd-iso-d
+3.0G	sol-nv-b104-sparc-dvd.iso
+3.2G	sol-nv-b109-x86-dvd.iso
+3.1G	sol-nv-b113-sparc-dvd.iso
+2.9G	sol9.iso
+2.8M	sqlite-3.6.10.tar.gz.gz
+1.3M	sqlite-amalgamation-3.6.10.tar.gz.gz
+105K	sscep.tar.gz
+5.1M	ssod.tar.gz
+400K	subvertpy-0.6.1.tar.gz.tar
+2.9M	tar-1.22.tar.tar
+400K	thrulay-0.9.tar.gz
+1.3M	top-3.8beta1.tar
+698M	ubuntu-11.04-desktop-amd64.iso
+979M	w_fcompxe_2013_sp1.3.202.exe
+272K	wget-1.12-hppa-11.11.depot.gz
+400K	zlib-1.2.1.tar.gz.gz
+272K	zlib-1.2.3-hppa-11.11.depot.gz
+528K	zlib-1.2.3.tar.gz
+2.1M	zlib-1.2.3.tar.gz.tar
+656K	zlib-1.2.5.tar.tar
+1.9M	zsh-4.3.10-hppa-11.11.depot.gz
