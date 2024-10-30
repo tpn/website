@@ -1,6 +1,11 @@
 project:
   type: website
-  output-dir: _site
+  output-dir: docs # Github Pages requires this
+  resources:
+    - static/is-prefix-of-string-in-table/
+  preview:
+    host: 0.0.0.0
+    port: 5204
 
 website:
   title: "Trent Nelson"
@@ -9,9 +14,17 @@ website:
   site-url: "https://trent.me"
   repo-url: "https://github.com/tpn/website"
   issue-url: "https://github.com/tpn/website/issues/new/choose"
+  #google-analytics: "UA-24686252-1"
+  google-analytics:
+    tracking-id: "G-8RPR4XKPEW"
+    anonymize-ip: false
+    version: 4
   repo-actions: [edit, issue]
+  twitter-card: true
+  open-graph: true
   page-navigation: true
   bread-crumbs: true
+  reader-mode: true
   search:
     show-item-context: true
     type: overlay
@@ -19,12 +32,22 @@ website:
     left:
       - href: index.qmd
         text: Home
-      - href: about.qmd
-        text: About
+    tools:
+      - icon: twitter
+        href: https://twitter.com/trentnelson
+        text: Twitter
+      - icon: github
+        href: https://github.com/tpn
+        text: GitHub
+      - icon: linkedin
+        href: https://www.linkedin.com/in/trent-p-nelson
+        text: LinkedIn
 
 format:
   html:
-    theme: cosmo
+    theme:
+      light: cosmos
+      dark: [cosmos, theme-dark.scss]
     css: styles.css
     toc: true
 
