@@ -18,10 +18,6 @@ I can be contacted via
 
 ---
 
-# Articles
-
-[Is Prefix Of String In Table?  A Journey Into SIMD Processing](is-prefix-of-string-in-table/).
-
 # Projects
 
 ## Recent

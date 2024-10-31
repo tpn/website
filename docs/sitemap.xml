@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://trent.me/is-prefix-of-string-in-table/</loc>
-    <lastmod>2018-06-01</lastmod>
-  </url>
-  <url>
-    <loc>https://trent.me/perfect-hash-table/</loc>
-    <lastmod>2018-06-10</lastmod>
-  </url>
-  <url>
-    <loc>https://trent.me/</loc>
-    <lastmod>2018-06-10</lastmod>
-  </url>
-  <url>
     <loc>https://trent.me/index.html</loc>
-    <lastmod>2024-10-30T23:42:33.315Z</lastmod>
+    <lastmod>2024-10-31T03:15:53.910Z</lastmod>
+  </url>
+  <url>
+    <loc>https://trent.me/articles/index.html</loc>
+    <lastmod>2024-10-31T01:48:19.897Z</lastmod>
+  </url>
+  <url>
+    <loc>https://trent.me/about.html</loc>
+    <lastmod>2024-10-21T18:55:54.197Z</lastmod>
+  </url>
+  <url>
+    <loc>https://trent.me/articles/is-prefix-of-string-in-table/index.html</loc>
+    <lastmod>2024-10-31T07:43:27.085Z</lastmod>
   </url>
 </urlset>

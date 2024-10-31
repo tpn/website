@@ -1,1 +1,13 @@
 /* css styles */
+
+@font-face {
+  font-family: Comic Mono NF;
+  font-weight: normal;
+  src: url(Comic.Mono.Bold.Nerd.Font.Complete.ttf);
+}
+
+@font-face {
+  font-family: Comic Mono NF;
+  font-weight: bold;
+  src: url(Comic.Mono.Nerd.Font.Complete.ttf);
+}

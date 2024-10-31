@@ -37,11 +37,11 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
 <link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="site_libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="site_libs/bootstrap/bootstrap-dark.min.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -110,6 +110,10 @@ gtag('config', 'G-8RPR4XKPEW', { 'anonymize_ip': false});
     <a class="nav-link active" href="./index.html" aria-current="page"> 
 <span class="menu-text">Home</span></a>
   </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./articles/index.html"> 
+<span class="menu-text">Articles</span></a>
+  </li>  
 </ul>
           </div> <!-- /navcollapse -->
             <div class="quarto-navbar-tools tools-wide">
@@ -132,12 +136,11 @@ gtag('config', 'G-8RPR4XKPEW', { 'anonymize_ip': false});
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">On this page</h2>
+    <h2 id="toc-title">Contents</h2>
    
   <ul>
-  <li><a href="#articles" id="toc-articles" class="nav-link active" data-scroll-target="#articles">Articles</a></li>
-  <li><a href="#projects" id="toc-projects" class="nav-link" data-scroll-target="#projects">Projects</a>
-  <ul class="collapse">
+  <li><a href="#projects" id="toc-projects" class="nav-link active" data-scroll-target="#projects">Projects</a>
+  <ul>
   <li><a href="#recent" id="toc-recent" class="nav-link" data-scroll-target="#recent">Recent</a></li>
   <li><a href="#not-so-recent" id="toc-not-so-recent" class="nav-link" data-scroll-target="#not-so-recent">Not So Recent</a></li>
   </ul></li>
@@ -168,15 +171,24 @@ gtag('config', 'G-8RPR4XKPEW', { 'anonymize_ip': false});
 
 </header>
 
-
+<nav id="TOC-body" role="doc-toc">
+    <h2 id="toc-title">Contents</h2>
+   
+  <ul>
+  <li><a href="#projects" id="toc-projects">Projects</a>
+  <ul>
+  <li><a href="#recent" id="toc-recent">Recent</a></li>
+  <li><a href="#not-so-recent" id="toc-not-so-recent">Not So Recent</a></li>
+  </ul></li>
+  <li><a href="#miscellaneous-repos" id="toc-miscellaneous-repos">Miscellaneous Repos</a></li>
+  <li><a href="#pdf-collections" id="toc-pdf-collections">PDF Collections</a></li>
+  <li><a href="#other" id="toc-other">Other</a></li>
+  </ul>
+</nav>
 <p>I’m a Systems Software Engineer currently residing in Washington State, USA. I have contributed software to the FreeBSD project (<a href="https://github.com/freebsd/freebsd-src/commit/fdbb382f1cbb42ab486d1f7812f0f78c0317b799#diff-bb6d5274442cdd13b81de7e39c3368fb">systat -ifstat</a>), am a core Python committer, and Apache Subversion committer. My main languages are C, C++, and Python.</p>
 <p>I’m also a private pilot, and have my tailwheel, complex, and high-performance endorsements. I enjoy aerobatics, and have been fortunate enough to fly with <a href="https://en.wikipedia.org/wiki/Patty_Wagstaff">Patty Wagstaff</a> in her Extra 300 back in 2017.</p>
 <p>I can be contacted via <a href="mailto:trent@trent.me">trent@trent.me</a>.</p>
 <hr>
-<section id="articles" class="level1">
-<h1>Articles</h1>
-<p><a href="is-prefix-of-string-in-table/">Is Prefix Of String In Table? A Journey Into SIMD Processing</a>.</p>
-</section>
 <section id="projects" class="level1">
 <h1>Projects</h1>
 <section id="recent" class="level2">
@@ -362,7 +374,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       return localAlternateSentinel;
     }
   }
-  const darkModeDefault = false;
+  const darkModeDefault = true;
   let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
   // Dark / light mode switch
   window.quartoToggleColorScheme = () => {

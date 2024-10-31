@@ -1,0 +1,10 @@
+---
+title: Articles
+subtitles: In-depth articles on various technical topics
+listing:
+  sort: "date desc"
+  contents: "*/index.qmd"
+  categories: true
+  feed: true
+page-layout: full
+---

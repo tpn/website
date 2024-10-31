@@ -28,8 +28,10 @@ website:
     type: overlay
   navbar:
     left:
-      - href: index.qmd
-        text: Home
+      - text: Home
+        href: index.qmd
+      - text: Articles
+        href: articles/index.qmd
     tools:
       - icon: twitter
         href: https://twitter.com/trentnelson
@@ -43,11 +45,22 @@ website:
 
 format:
   html:
+    #fig-cap-location: margin
+    #reference-location: margin
+    #citation-location: margin
     theme:
-      light: cosmos
-      dark: [cosmos, theme-dark.scss]
+      #dark: [journal, theme-dark.scss]
+      #light: journal
+      dark: [darkly, theme.scss, theme-dark.scss]
+      light: [flatly, theme.scss, theme-light.scss]
     css: styles.css
     toc: true
+    toc-depth: 5
+    #toc-expand: true
+    toc-location: right-body
+    toc-title: Contents
+    grid:
+      margin-width: 370px
 
 execute:
   after:
