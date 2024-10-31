@@ -1,0 +1,30 @@
+[
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Home",
+    "section": "",
+    "text": "I’m a Systems Software Engineer currently residing in Washington State, USA. I have contributed software to the FreeBSD project (systat -ifstat), am a core Python committer, and Apache Subversion committer. My main languages are C, C++, and Python.\nI’m also a private pilot, and have my tailwheel, complex, and high-performance endorsements. I enjoy aerobatics, and have been fortunate enough to fly with Patty Wagstaff in her Extra 300 back in 2017.\nI can be contacted via trent@trent.me."
+  },
+  {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "About",
+    "section": "",
+    "text": "About this site"
+  },
+  {
+    "objectID": "index.html#recent",
+    "href": "index.html#recent",
+    "title": "Home",
+    "section": "Recent",
+    "text": "Recent\n\nPerfectHash\nTracer\nPyParallel (GitHub)"
+  },
+  {
+    "objectID": "index.html#not-so-recent",
+    "href": "index.html#not-so-recent",
+    "title": "Home",
+    "section": "Not So Recent",
+    "text": "Not So Recent\n\nEnversion\nCQ Python\nPersonal Python Library ‘tpn’"
+  }
+]
