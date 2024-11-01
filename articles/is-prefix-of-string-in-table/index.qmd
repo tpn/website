@@ -52,17 +52,17 @@ fast as possible. That is, in a set of known strings, do any of them prefix
 match the incoming search string?
 
 A reference implementation was written in C as a
-[baseline](#IsPrefixOfCStrInArray), which simply looped through an array of
+[baseline](#isprefixofcstrinarray), which simply looped through an array of
 strings, comparing each one, byte-by-byte, looking for a prefix match. Prefix
 match performance ranged from 28 CPU cycles to 130, and negative match
 performance was around 74 cycles.
 
-A SIMD-friendly C structure called [`STRING_TABLE`](#STRING_TABLE) was
+A SIMD-friendly C structure called [`STRING_TABLE`](#string_table) was
 derived.  It is optimized for up to 16 strings, ideally of length less than or
 equal to 16 characters.  The table is created from the set of known strings
 up-front; it is sorted by length, ascending, and a unique character (with
 regards to other characters at the same byte offset) is then extracted, along
-with its index.  A 16-byte character array, [`STRING_SLOT`](#STRING_SLOT), is
+with its index.  A 16-byte character array, [`STRING_SLOT`](#string_slot), is
 used to capture the unique characters.  A 16-element array of unsigned
 characters, `SLOT_INDEX`, is used to capture the index.  Similarly, lengths
 are stored in the same fashion via `SLOT_LENGTHS`. Finally, a 16-element array
@@ -154,11 +154,11 @@ string "CAT":
 Match](resources/StringTable-NegativeMatch-v3.svg)](resources/StringTable-NegativeMatch-v3.svg)
 
 Ten iterations of a function named `IsPrefixOfStringInTable` were authored. The
-[tenth](#IsPrefixOfStringInTable_10) and final iteration was the fastest, prefix
+[tenth](#isprefixofstringintable_10) and final iteration was the fastest, prefix
 matching in as little as 19 cycles---a 4x improvement over the baseline.
 Negative matching took 11 cycles---a 6.7x improvement.
 
-An [assembly](#IsPrefixOfStringInTable_x64_2) version of the algorithm was
+An [assembly](#isprefixofstringintable_x64_2) version of the algorithm was
 authored specifically to optimize for the negative match case, and was able to
 do so in as little as 8 cycles, representing a 9x improvement over the baseline.
 (It was a little bit slower than the fastest C routine in the case of prefix
@@ -466,7 +466,7 @@ Return Value:
 ```
 
 All implementations discussed in this article adhere to that function signature.
-The [`STRING_TABLE`](#STRING_TABLE) structure will be discussed shortly.
+The [`STRING_TABLE`](#string_table) structure will be discussed shortly.
 
 ### The STRING_MATCH Structure
 
@@ -855,7 +855,7 @@ StringTable typedef STRING_TABLE
 
 The following diagram depicts an in-memory representation of the
 `STRING_TABLE` structure using our NTFS reserved prefix names. It is created
-via the [`CreateStringTable`](#CreateStringTable) routine, which we feature in
+via the [`CreateStringTable`](#createstringtable) routine, which we feature in
 the appendix of this article.
 
 [![STRING_TABLE Diagram](resources/StringTable.svg)](resources/StringTable.svg)
@@ -1498,7 +1498,7 @@ later in the article.
 
 #### IsPrefixOfCStrInArray {#isprefixofcstrinarray}
 
-[IsPrefixOfStringInTable_1 →](#IsPrefixOfStringInTable_1)
+[IsPrefixOfStringInTable_1 →](#isprefixofstringintable_1)
 
 Let's review the baseline implementation again, as that's what we're
 ultimately comparing ourselves against.  This version enumerates the string
@@ -1549,7 +1549,7 @@ IsPrefixOfCStrInArray(
 
 #### IsPrefixOfStringInTable_1 {#isprefixofstringintable_1}
 
-[← IsPrefixOfCStrInArray](#IsPrefixOfCStrInArray) | [IsPrefixOfStringInTable_2 →](#IsPrefixOfStringInTable_2)
+[← IsPrefixOfCStrInArray](#isprefixofcstrinarray) | [IsPrefixOfStringInTable_2 →](#isprefixofstringintable_2)
 
 This version is similar to the `IsPrefixOfCStrInArray` implementation, except
 it utilizes the slot length information provided by the `STRING_ARRAY`
@@ -2022,7 +2022,7 @@ StartXmm:
 
 #### IsPrefixOfStringInTable_2 {#isprefixofstringintable_2}
 
-[← IsPrefixOfStringInTable_1](#IsPrefixOfStringInTable_1) | [IsPrefixOfStringInTable_3 →](#IsPrefixOfStringInTable_3)
+[← IsPrefixOfStringInTable_1](#isprefixofstringintable_1) | [IsPrefixOfStringInTable_3 →](#isprefixofstringintable_3)
 
 ::: {.callout-note}
 This is is the first time we're seeing the full body of the SIMD-style
@@ -2374,7 +2374,7 @@ negative matching.
 
 #### IsPrefixOfStringInTable_3 {#isprefixofstringintable_3}
 
-[← IsPrefixOfStringInTable_2](#IsPrefixOfStringInTable_2) | [IsPrefixOfStringInTable_4 →](#IsPrefixOfStringInTable_4)
+[← IsPrefixOfStringInTable_2](#isprefixofstringintable_2) | [IsPrefixOfStringInTable_4 →](#isprefixofstringintable_4)
 
 For version 3, let's replace the call to `IsPrefixMatchAvx2` with our simpler
 version, `IsPrefixMatch`:
@@ -2749,7 +2749,7 @@ We'll also omit the `IsPrefixOfCStrInArray` routine from the graphs for now
 
 #### IsPrefixOfStringInTable_4 {#isprefixofstringintable_4}
 
-[← IsPrefixOfStringInTable_3](#IsPrefixOfStringInTable_3) | [IsPrefixOfStringInTable_5 →](#IsPrefixOfStringInTable_5)
+[← IsPrefixOfStringInTable_3](#isprefixofstringintable_3) | [IsPrefixOfStringInTable_5 →](#isprefixofstringintable_5)
 
 When I first wrote the initial string table code, I was experimenting with
 different strategies for loading the initial search string buffer. That
@@ -3356,7 +3356,7 @@ one.
 
 #### IsPrefixOfStringInTable_5 {#isprefixofstringintable_5}
 
-[← IsPrefixOfStringInTable_4](#IsPrefixOfStringInTable_4) | [IsPrefixOfStringInTable_6 →](#IsPrefixOfStringInTable_6)
+[← IsPrefixOfStringInTable_4](#isprefixofstringintable_4) | [IsPrefixOfStringInTable_6 →](#isprefixofstringintable_6)
 
 Version 5 is an interesting one. It's the first time we attempt to validate
 our claim that it's more efficient to give the CPU a bunch of independent
@@ -3894,7 +3894,7 @@ you're testing what you think you're testing.]
 
 #### IsPrefixOfStringInTable_6 {#isprefixofstringintable_6}
 
-[← IsPrefixOfStringInTable_5](#IsPrefixOfStringInTable_5) | [IsPrefixOfStringInTable_7 →](#IsPrefixOfStringInTable_7)
+[← IsPrefixOfStringInTable_5](#isprefixofstringintable_5) | [IsPrefixOfStringInTable_7 →](#isprefixofstringintable_7)
 
 Version 6 is boring.  We tweak the initial loading of the search string,
 explicitly loading it via an unaligned load.  If the underlying buffer is
@@ -4302,7 +4302,7 @@ checks, which isn’t too surprising.
 
 #### IsPrefixOfStringInTable_7 {#isprefixofstringintable_7}
 
-[← IsPrefixOfStringInTable_6](#IsPrefixOfStringInTable_6) | [IsPrefixOfStringInTable_8 →](#IsPrefixOfStringInTable_8)
+[← IsPrefixOfStringInTable_6](#isprefixofstringintable_6) | [IsPrefixOfStringInTable_8 →](#isprefixofstringintable_8)
 
 
 Version 7 tweaks version 6 a little bit.  We don't need the search string length
@@ -4671,7 +4671,7 @@ cycles, thus ending the short-lived reign of version 6.
 
 #### IsPrefixOfStringInTable_8 {#isprefixofstringintable_8}
 
-[← IsPrefixOfStringInTable_7](#IsPrefixOfStringInTable_7) | [IsPrefixOfStringInTable_9 →](#IsPrefixOfStringInTable_9)
+[← IsPrefixOfStringInTable_7](#isprefixofstringintable_7) | [IsPrefixOfStringInTable_9 →](#isprefixofstringintable_9)
 
 Version 8 is based off version 7, but omits the initial length test.  Again,
 it's another small change, but if version 5 was anything to go off, the less
@@ -5072,7 +5072,7 @@ shaves off a few more cycles for both prefix and negative matching.  Version
 
 #### IsPrefixOfStringInTable_9 {#isprefixofstringintable_9}
 
-[← IsPrefixOfStringInTable_8](#IsPrefixOfStringInTable_8) | [IsPrefixOfStringInTable_10 →](#IsPrefixOfStringInTable_10)
+[← IsPrefixOfStringInTable_8](#isprefixofstringintable_8) | [IsPrefixOfStringInTable_10 →](#isprefixofstringintable_10)
 
 Version 9 tweaks version 8 by simply using `return NO_MATCH_FOUND` after the
 initial bitmap check instead of `goto NoMatch`.  (The use of `goto` was a bit
@@ -5466,7 +5466,7 @@ keep it.
 
 #### IsPrefixOfStringInTable_10 {#isprefixofstringintable_10}
 
-[← IsPrefixOfStringInTable_9](#IsPrefixOfStringInTable_9) | [IsPrefixOfStringInTable_11 →](#IsPrefixOfStringInTable_11)
+[← IsPrefixOfStringInTable_9](#isprefixofstringintable_9) | [IsPrefixOfStringInTable_11 →](#isprefixofstringintable_11)
 
 At this point, we've exhausted all the small, easy tweaks.  Let's rewrite the
 inner loop that performs the character comparison and see how that affects
@@ -6139,7 +6139,7 @@ StringTable2!IsPrefixOfStringInTable_10:
 
 #### IsPrefixOfStringInTable_x64_1 {#isprefixofstringintable_x64_1}
 
-[IsPrefixOfStringInTable_x64_2 →](#IsPrefixOfStringInTable_x64_2)
+[IsPrefixOfStringInTable_x64_2 →](#isprefixofstringintable_x64_2)
 
 So, knowing what we now know about the venerable little `LEAF_ENTRY` trick,
 let's see if we can construct a simple routine in assembly that just deals
@@ -6304,7 +6304,7 @@ matching.
 
 #### IsPrefixOfStringInTable_x64_2 {#isprefixofstringintable_x64_2}
 
-[← IsPrefixOfStringInTable_x64_1](#IsPrefixOfStringInTable_x64_1) | [IsPrefixOfStringInTable_x64_3 →](#IsPrefixOfStringInTable_x64_3)
+[← IsPrefixOfStringInTable_x64_1](#isprefixofstringintable_x64_1) | [IsPrefixOfStringInTable_x64_3 →](#isprefixofstringintable_x64_3)
 
 The bad news is that we now need to implement the rest of the functionality
 within the constraints of a `LEAF_ENTRY`!
@@ -7330,7 +7330,7 @@ our iterations. Very peculiar! We'll investigate later.)
 
 #### IsPrefixOfStringInTable_x64_3 {#isprefixofstringintable_x64_3}
 
-[← IsPrefixOfStringInTable_x64_2](#IsPrefixOfStringInTable_x64_2) | [IsPrefixOfStringInTable_x64_4 →](#IsPrefixOfStringInTable_x64_4)
+[← IsPrefixOfStringInTable_x64_2](#isprefixofstringintable_x64_2) | [IsPrefixOfStringInTable_x64_4 →](#isprefixofstringintable_x64_4)
 
 <small>(We're nearly at the end of the first round of iterations, I
 promise!)</small>
@@ -8217,7 +8217,7 @@ Let's take a look at the iterations that came about after receiving feedback.
 
 #### IsPrefixOfStringInTable_11 {#isprefixofstringintable_11}
 
-[← IsPrefixOfStringInTable_10](#IsPrefixOfStringInTable_10) | [IsPrefixOfStringInTable_12 →](#IsPrefixOfStringInTable_12)
+[← IsPrefixOfStringInTable_10](#isprefixofstringintable_10) | [IsPrefixOfStringInTable_12 →](#isprefixofstringintable_12)
 
 Both [Fabian Giesen](https://twitter.com/rygorous) and [Wojciech
 Muła](https://twitter.com/pshufb) pointed out that we could use
@@ -8623,7 +8623,7 @@ Definitely a slight improvement over version 10 in most cases!
 
 #### IsPrefixOfStringInTable_x64_4 {#isprefixofstringintable_x64_4}
 
-[← IsPrefixOfStringInTable_x64_3](#IsPrefixOfStringInTable_x64_3) | [IsPrefixOfStringInTable_x64_5 →](#IsPrefixOfStringInTable_x64_5)
+[← IsPrefixOfStringInTable_x64_3](#isprefixofstringintable_x64_3) | [IsPrefixOfStringInTable_x64_5 →](#isprefixofstringintable_x64_5)
 
 Something I didn't know about `vptest` that Fabian pointed out is that it
 actually does two operations.  The first essentially does an AND of the two
@@ -9204,7 +9204,7 @@ stone.
 ---
 
 #### IsPrefixOfStringInTable_12 {#isprefixofstringintable_12}
-[← IsPrefixOfStringInTable_11](#IsPrefixOfStringInTable_11) | [IsPrefixOfStringInTable_13 →](#IsPrefixOfStringInTable_13)
+[← IsPrefixOfStringInTable_11](#isprefixofstringintable_11) | [IsPrefixOfStringInTable_13 →](#isprefixofstringintable_13)
 
 The `vptest` fast-path exit definitely yielded a repeatable and measurable
 gain for the assembly version. Let's replicate it in a C version.
@@ -9677,7 +9677,7 @@ identical, and the normal prefix matches are a tiny bit slower.
 ---
 
 #### IsPrefixOfStringInTable_13 {#isprefixofstringintable_13}
-[← IsPrefixOfStringInTable_12](#IsPrefixOfStringInTable_12) | [IsPrefixOfStringInTable_14 →](#IsPrefixOfStringInTable_14)
+[← IsPrefixOfStringInTable_12](#isprefixofstringintable_12) | [IsPrefixOfStringInTable_14 →](#isprefixofstringintable_14)
 
 [Another tip from
 Fabian:](https://twitter.com/rygorous/status/985737342156652544) we can tweak
@@ -10105,7 +10105,7 @@ Ah! A measurable, repeatable speed-up! Excellent!
 ---
 
 #### IsPrefixOfStringInTable_14 {#isprefixofstringintable_14}
-[← IsPrefixOfStringInTable_13](#IsPrefixOfStringInTable_13) | [IsPrefixOfStringInTable_15 →](#IsPrefixOfStringInTable_15)
+[← IsPrefixOfStringInTable_13](#isprefixofstringintable_13) | [IsPrefixOfStringInTable_15 →](#isprefixofstringintable_15)
 
 Let's give the C version the same chance as the assembly version with regards
 to negative matching; we'll take version 13 above and factor in the `vptest`
@@ -10667,9 +10667,9 @@ Return Value:
 
 We're really clutching at straws here obviously with regards to trying to eke
 out more performance.  The `_mm_testc_si128()` alteration was a tiny bit slower
-for [version 12](#IsPrefixOfStringInTable_12) across the board.  However, the
+for [version 12](#isprefixofstringintable_12) across the board.  However, the
 `vptest` (which is the underlying assembly instruction that maps to the
-`_mm_testc_si128()` intrinsic) [version 4](#IsPrefixOfStringInTable_x64_4) of
+`_mm_testc_si128()` intrinsic) [version 4](#isprefixofstringintable_x64_4) of
 our assembly was definitely a little bit faster than the other versions.
 Let's see how our final C version performs.
 
