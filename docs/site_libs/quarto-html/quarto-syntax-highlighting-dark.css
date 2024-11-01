@@ -26,8 +26,8 @@
   --quarto-hl-re-color: #8be9fd;
   --quarto-hl-sc-color: #ff79c6;
   --quarto-hl-ss-color: #f1fa8c;
-  --quarto-hl-st-color: tomato;
-  --quarto-hl-va-color: tomato;
+  --quarto-hl-st-color: PaleVioletRed;
+  --quarto-hl-va-color: PaleGreen;
   --quarto-hl-vs-color: tomato;
   --quarto-hl-wa-color: #ff5555;
 }
@@ -162,11 +162,11 @@ code span.ss {
 }
 
 code span.st {
-  color: tomato;
+  color: PaleVioletRed;
 }
 
 code span.va {
-  color: tomato;
+  color: PaleGreen;
 }
 
 code span.vs {

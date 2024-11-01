@@ -466,46 +466,46 @@ gtag('config', 'G-8RPR4XKPEW', { 'anonymize_ip': false});
 <span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="cf">ret</span>                                                 <span class="co">; Return NO_MATCH_FOUND.</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
-<pre><code>S:\Source\tracer&gt;iaca x64\Release\StringTable2.dll
-Intel(R) Architecture Code Analyzer
-Version -  v3.0-28-g1ba2cbb build date: 2017-10-23;17:30:24
-Analyzed File -  x64\Release\StringTable2.dll
-Binary Format - 64Bit
-Architecture  -  SKL
-Analysis Type - Throughput
-
-Throughput Analysis Report
---------------------------
-Block Throughput: 3.48 Cycles       Throughput Bottleneck: FrontEnd
-Loop Count:  24
-Port Binding In Cycles Per Iteration:
-----------------------------------------------------------------------------
-| Port   |  0  - DV  |  1  |  2  - D   |  3  - D   |  4  |  5  |  6  |  7  |
-----------------------------------------------------------------------------
-| Cycles | 2.0   0.0 | 1.0 | 3.5   3.5 | 3.5   3.5 | 0.0 | 3.0 | 2.0 | 0.0 |
-----------------------------------------------------------------------------
-
-DV - Divider pipe (on port 0)
-D - Data fetch pipe (on ports 2 and 3)
-* - instruction micro-ops not bound to a port
-^ - Micro Fusion occurred
-
-|    | Ports pressure in cycles        | |
-|μops|0DV| 1 | 2 - D | 3 - D |4| 5 | 6 |7|
--------------------------------------------
-| 1  |   |   |0.5 0.5|0.5 0.5| |   |   | | mov rax, qword ptr [rdx+0x8]
-| 2  |   |   |0.5 0.5|0.5 0.5| |1.0|   | | vpbroadcastb xmm4, byte ptr [rdx]
-| 1  |   |   |0.5 0.5|0.5 0.5| |   |   | | vmovdqa xmm3, xmmword ptr [rcx+0x20]
-| 1  |   |   |0.5 0.5|0.5 0.5| |   |   | | vmovdqu xmm0, xmmword ptr [rax]
-| 1  |1.0|   |       |       | |   |   | | vpcmpgtb xmm1, xmm3, xmm4
-| 2^ |   |   |0.5 0.5|0.5 0.5| |1.0|   | | vpshufb xmm5, xmm0, xmmword ptr [rcx+0x10]
-| 2^ |   |1.0|0.5 0.5|0.5 0.5| |   |   | | vpcmpeqb xmm5, xmm5, xmmword ptr [rcx]
-| 2  |1.0|   |       |       | |1.0|   | | vptest xmm1, xmm5
-| 1  |   |   |       |       | |   |1.0| | jnb 0x10
-| 1* |   |   |       |       | |   |   | | xor eax, eax
-| 1  |   |   |       |       | |   |1.0| | not al
-| 3^ |   |   |0.5 0.5|0.5 0.5| |   |   | | ret
-Total Num Of μops: 18</code></pre>
+<div class="sourceCode" id="cb2"><pre class="sourceCode asm code-with-copy"><code class="sourceCode asm"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">S:</span>\Source\tracer<span class="op">&gt;</span>iaca x64\Release\StringTable2<span class="op">.</span>dll</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>Intel<span class="op">(</span>R<span class="op">)</span> Architecture Code Analyzer</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>Version <span class="op">-</span>  v3<span class="op">.</span>0<span class="op">-</span><span class="dv">28</span><span class="op">-</span>g1ba2cbb build date<span class="op">:</span> <span class="dv">2017</span><span class="op">-</span><span class="dv">10</span><span class="op">-</span><span class="dv">23</span><span class="co">;17:30:24</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>Analyzed File <span class="op">-</span>  x64\Release\StringTable2<span class="op">.</span>dll</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>Binary Format <span class="op">-</span> <span class="dv">64</span><span class="er">Bit</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>Architecture  <span class="op">-</span>  SKL</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>Analysis Type <span class="op">-</span> Throughput</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>Throughput Analysis Report</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>--------------------------</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>Block Throughput<span class="op">:</span> <span class="fl">3.48</span> Cycles       Throughput Bottleneck<span class="op">:</span> FrontEnd</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="kw">Loop</span> Count<span class="op">:</span>  <span class="dv">24</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>Port Binding In Cycles Per Iteration<span class="op">:</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>----------------------------------------------------------------------------</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>| Port   <span class="op">|</span>  <span class="dv">0</span>  <span class="op">-</span> DV  <span class="op">|</span>  <span class="dv">1</span>  <span class="op">|</span>  <span class="dv">2</span>  <span class="op">-</span> D   <span class="op">|</span>  <span class="dv">3</span>  <span class="op">-</span> D   <span class="op">|</span>  <span class="dv">4</span>  <span class="op">|</span>  <span class="dv">5</span>  <span class="op">|</span>  <span class="dv">6</span>  <span class="op">|</span>  <span class="dv">7</span>  <span class="op">|</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>----------------------------------------------------------------------------</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>| Cycles <span class="op">|</span> <span class="fl">2.0</span>   <span class="fl">0.0</span> <span class="op">|</span> <span class="fl">1.0</span> <span class="op">|</span> <span class="fl">3.5</span>   <span class="fl">3.5</span> <span class="op">|</span> <span class="fl">3.5</span>   <span class="fl">3.5</span> <span class="op">|</span> <span class="fl">0.0</span> <span class="op">|</span> <span class="fl">3.0</span> <span class="op">|</span> <span class="fl">2.0</span> <span class="op">|</span> <span class="fl">0.0</span> <span class="op">|</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>----------------------------------------------------------------------------</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>DV <span class="op">-</span> Divider pipe <span class="op">(</span>on port <span class="dv">0</span><span class="op">)</span></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>D <span class="op">-</span> Data fetch pipe <span class="op">(</span>on ports <span class="dv">2</span> and <span class="dv">3</span><span class="op">)</span></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>* - instruction micro<span class="op">-</span>ops not bound to a port</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>^ - Micro Fusion occurred</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>|    | Ports pressure in cycles        <span class="op">|</span> <span class="op">|</span></span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>|μops<span class="op">|</span><span class="dv">0</span><span class="bn">D</span><span class="er">V</span><span class="op">|</span> <span class="dv">1</span> <span class="op">|</span> <span class="dv">2</span> <span class="op">-</span> D <span class="op">|</span> <span class="dv">3</span> <span class="op">-</span> D <span class="op">|</span><span class="dv">4</span><span class="op">|</span> <span class="dv">5</span> <span class="op">|</span> <span class="dv">6</span> <span class="op">|</span><span class="dv">7</span><span class="op">|</span></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>-------------------------------------------</span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>| 1  |   |   |0.5 0.5|0.5 0.5| |   |   | | <span class="kw">mov</span> <span class="kw">rax</span><span class="op">,</span> <span class="dt">qword</span> <span class="dt">ptr</span> <span class="op">[</span><span class="kw">rdx</span><span class="op">+</span><span class="bn">0x8</span><span class="op">]</span></span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>| 2  |   |   |0.5 0.5|0.5 0.5| |1.0|   | | <span class="kw">vpbroadcastb</span> <span class="kw">xmm4</span><span class="op">,</span> <span class="dt">byte</span> <span class="dt">ptr</span> <span class="op">[</span><span class="kw">rdx</span><span class="op">]</span></span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>| 1  |   |   |0.5 0.5|0.5 0.5| |   |   | | <span class="kw">vmovdqa</span> <span class="kw">xmm3</span><span class="op">,</span> <span class="dt">xmmword</span> <span class="dt">ptr</span> <span class="op">[</span><span class="kw">rcx</span><span class="op">+</span><span class="bn">0x20</span><span class="op">]</span></span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>| 1  |   |   |0.5 0.5|0.5 0.5| |   |   | | <span class="kw">vmovdqu</span> <span class="kw">xmm0</span><span class="op">,</span> <span class="dt">xmmword</span> <span class="dt">ptr</span> <span class="op">[</span><span class="kw">rax</span><span class="op">]</span></span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>| 1  |1.0|   |       |       | |   |   | | <span class="kw">vpcmpgtb</span> <span class="kw">xmm1</span><span class="op">,</span> <span class="kw">xmm3</span><span class="op">,</span> <span class="kw">xmm4</span></span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>| 2^ |   |   |0.5 0.5|0.5 0.5| |1.0|   | | <span class="kw">vpshufb</span> <span class="kw">xmm5</span><span class="op">,</span> <span class="kw">xmm0</span><span class="op">,</span> <span class="dt">xmmword</span> <span class="dt">ptr</span> <span class="op">[</span><span class="kw">rcx</span><span class="op">+</span><span class="bn">0x10</span><span class="op">]</span></span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>| 2^ |   |1.0|0.5 0.5|0.5 0.5| |   |   | | <span class="kw">vpcmpeqb</span> <span class="kw">xmm5</span><span class="op">,</span> <span class="kw">xmm5</span><span class="op">,</span> <span class="dt">xmmword</span> <span class="dt">ptr</span> <span class="op">[</span><span class="kw">rcx</span><span class="op">]</span></span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>| 2  |1.0|   |       |       | |1.0|   | | <span class="kw">vptest</span> <span class="kw">xmm1</span><span class="op">,</span> <span class="kw">xmm5</span></span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>| 1  |   |   |       |       | |   |1.0| | <span class="cf">jnb</span> <span class="bn">0x10</span></span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>| 1* |   |   |       |       | |   |   | | <span class="kw">xor</span> <span class="kw">eax</span><span class="op">,</span> <span class="kw">eax</span></span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>| 1  |   |   |       |       | |   |1.0| | <span class="kw">not</span> <span class="kw">al</span></span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>| 3^ |   |   |0.5 0.5|0.5 0.5| |   |   | | <span class="cf">ret</span></span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a>Total Num Of μops<span class="op">:</span> <span class="dv">18</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 </div>
@@ -5895,32 +5895,32 @@ Note
 </div>
 </div>
 <p>Now for the fun part! Let’s take a look at the disassembly of the initial part of version 10 responsible for the negative match logic and see if there are any improvements we can make.</p>
-<pre><code>0:000&gt; uf StringTable2!IsPrefixOfStringInTable_10
-StringTable2!IsPrefixOfStringInTable_10:
-00007fff`f69c1df0 48896c2418      mov     qword ptr [rsp+18h],rbp
-00007fff`f69c1df5 4889742420      mov     qword ptr [rsp+20h],rsi
-00007fff`f69c1dfa 4155            push    r13
-00007fff`f69c1dfc 4156            push    r14
-00007fff`f69c1dfe 4157            push    r15
-00007fff`f69c1e00 4883ec20        sub     rsp,20h
-00007fff`f69c1e04 c5fa6f5920      vmovdqu xmm3,xmmword ptr [rcx+20h]
-00007fff`f69c1e09 4c8b6a08        mov     r13,qword ptr [rdx+8]
-00007fff`f69c1e0d 4d8bf0          mov     r14,r8
-00007fff`f69c1e10 440fb63a        movzx   r15d,byte ptr [rdx]
-00007fff`f69c1e14 33ed            xor     ebp,ebp
-00007fff`f69c1e16 44883c24        mov     byte ptr [rsp],r15b
-00007fff`f69c1e1a 488bf1          mov     rsi,rcx
-00007fff`f69c1e1d c4e279780c24    vpbroadcastb xmm1,byte ptr [rsp]
-00007fff`f69c1e23 c4c17a6f6500    vmovdqu xmm4,xmmword ptr [r13]
-00007fff`f69c1e29 c4e259004110    vpshufb xmm0,xmm4,xmmword ptr [rcx+10h]
-00007fff`f69c1e2f c5f97411        vpcmpeqb xmm2,xmm0,xmmword ptr [rcx]
-00007fff`f69c1e33 c5e164c9        vpcmpgtb xmm1,xmm3,xmm1
-00007fff`f69c1e37 c5f1ef0d41320000 vpxor   xmm1,xmm1,xmmword ptr [StringTable2!_xmmffffffffffffffffffffffffffffffff (00007fff`f69c5080)]
-00007fff`f69c1e3f c5e9dbd1        vpand   xmm2,xmm2,xmm1
-00007fff`f69c1e43 c579d7c2        vpmovmskb r8d,xmm2
-00007fff`f69c1e47 c5fa7f5c2410    vmovdqu xmmword ptr [rsp+10h],xmm3
-00007fff`f69c1e4d 4585c0          test    r8d,r8d
-00007fff`f69c1e50 0f849a000000    je      StringTable2!IsPrefixOfStringInTable_10+0x100 (00007fff`f69c1ef0)</code></pre>
+<div class="sourceCode" id="cb41"><pre class="sourceCode asm code-with-copy"><code class="sourceCode asm"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>0:000&gt; uf StringTable2<span class="op">!</span>IsPrefixOfStringInTable_10</span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>StringTable2<span class="op">!</span>IsPrefixOfStringInTable_10<span class="op">:</span></span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>00007fff`f69c1df0 <span class="dv">48896</span><span class="er">c2418</span>      mov     <span class="dt">qword</span> <span class="dt">ptr</span> <span class="op">[</span><span class="kw">rsp</span><span class="op">+</span><span class="bn">18h</span><span class="op">],</span><span class="kw">rbp</span></span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>00007fff`f69c1df5 <span class="dv">4889742420</span>      mov     <span class="dt">qword</span> <span class="dt">ptr</span> <span class="op">[</span><span class="kw">rsp</span><span class="op">+</span><span class="bn">20h</span><span class="op">],</span><span class="kw">rsi</span></span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>00007fff`f69c1dfa <span class="dv">4155</span>            push    <span class="kw">r13</span></span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>00007fff`f69c1dfc <span class="dv">4156</span>            push    <span class="kw">r14</span></span>
+<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a>00007fff`f69c1dfe <span class="dv">4157</span>            push    <span class="kw">r15</span></span>
+<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a>00007fff`f69c1e00 <span class="dv">4883</span><span class="er">ec20</span>        sub     <span class="kw">rsp</span><span class="op">,</span><span class="bn">20h</span></span>
+<span id="cb41-9"><a href="#cb41-9" aria-hidden="true" tabindex="-1"></a>00007fff`f69c1e04 c5fa6f5920      vmovdqu <span class="kw">xmm3</span><span class="op">,</span><span class="dt">xmmword</span> <span class="dt">ptr</span> <span class="op">[</span><span class="kw">rcx</span><span class="op">+</span><span class="bn">20h</span><span class="op">]</span></span>
+<span id="cb41-10"><a href="#cb41-10" aria-hidden="true" tabindex="-1"></a>00007fff`f69c1e09 <span class="dv">4</span><span class="er">c8b6a08</span>        mov     <span class="kw">r13</span><span class="op">,</span><span class="dt">qword</span> <span class="dt">ptr</span> <span class="op">[</span><span class="kw">rdx</span><span class="op">+</span><span class="dv">8</span><span class="op">]</span></span>
+<span id="cb41-11"><a href="#cb41-11" aria-hidden="true" tabindex="-1"></a>00007fff`f69c1e0d <span class="dv">4</span><span class="bn">d</span><span class="er">8bf0</span>          mov     <span class="kw">r14</span><span class="op">,</span><span class="kw">r8</span></span>
+<span id="cb41-12"><a href="#cb41-12" aria-hidden="true" tabindex="-1"></a>00007fff`f69c1e10 <span class="dv">440</span><span class="er">fb63a</span>        movzx   <span class="kw">r15d</span><span class="op">,</span><span class="dt">byte</span> <span class="dt">ptr</span> <span class="op">[</span><span class="kw">rdx</span><span class="op">]</span></span>
+<span id="cb41-13"><a href="#cb41-13" aria-hidden="true" tabindex="-1"></a>00007fff`f69c1e14 <span class="dv">33</span><span class="er">ed</span>            xor     <span class="kw">ebp</span><span class="op">,</span><span class="kw">ebp</span></span>
+<span id="cb41-14"><a href="#cb41-14" aria-hidden="true" tabindex="-1"></a>00007fff`f69c1e16 <span class="dv">44883</span><span class="er">c24</span>        mov     <span class="dt">byte</span> <span class="dt">ptr</span> <span class="op">[</span><span class="kw">rsp</span><span class="op">],</span><span class="kw">r15b</span></span>
+<span id="cb41-15"><a href="#cb41-15" aria-hidden="true" tabindex="-1"></a>00007fff`f69c1e1a <span class="dv">488</span><span class="er">bf1</span>          mov     <span class="kw">rsi</span><span class="op">,</span><span class="kw">rcx</span></span>
+<span id="cb41-16"><a href="#cb41-16" aria-hidden="true" tabindex="-1"></a>00007fff`f69c1e1d c4e279780c24    vpbroadcastb <span class="kw">xmm1</span><span class="op">,</span><span class="dt">byte</span> <span class="dt">ptr</span> <span class="op">[</span><span class="kw">rsp</span><span class="op">]</span></span>
+<span id="cb41-17"><a href="#cb41-17" aria-hidden="true" tabindex="-1"></a>00007fff`f69c1e23 c4c17a6f6500    vmovdqu <span class="kw">xmm4</span><span class="op">,</span><span class="dt">xmmword</span> <span class="dt">ptr</span> <span class="op">[</span><span class="kw">r13</span><span class="op">]</span></span>
+<span id="cb41-18"><a href="#cb41-18" aria-hidden="true" tabindex="-1"></a>00007fff`f69c1e29 c4e259004110    vpshufb <span class="kw">xmm0</span><span class="op">,</span><span class="kw">xmm4</span><span class="op">,</span><span class="dt">xmmword</span> <span class="dt">ptr</span> <span class="op">[</span><span class="kw">rcx</span><span class="op">+</span><span class="bn">10h</span><span class="op">]</span></span>
+<span id="cb41-19"><a href="#cb41-19" aria-hidden="true" tabindex="-1"></a>00007fff`f69c1e2f c5f97411        vpcmpeqb <span class="kw">xmm2</span><span class="op">,</span><span class="kw">xmm0</span><span class="op">,</span><span class="dt">xmmword</span> <span class="dt">ptr</span> <span class="op">[</span><span class="kw">rcx</span><span class="op">]</span></span>
+<span id="cb41-20"><a href="#cb41-20" aria-hidden="true" tabindex="-1"></a>00007fff`f69c1e33 c5e164c9        vpcmpgtb <span class="kw">xmm1</span><span class="op">,</span><span class="kw">xmm3</span><span class="op">,</span><span class="kw">xmm1</span></span>
+<span id="cb41-21"><a href="#cb41-21" aria-hidden="true" tabindex="-1"></a>00007fff`f69c1e37 c5f1ef0d41320000 vpxor   <span class="kw">xmm1</span><span class="op">,</span><span class="kw">xmm1</span><span class="op">,</span><span class="dt">xmmword</span> <span class="dt">ptr</span> <span class="op">[</span>StringTable2<span class="op">!</span>_xmmffffffffffffffffffffffffffffffff <span class="op">(</span><span class="dv">00007</span><span class="er">fff</span><span class="st">`f69c5080)]</span></span>
+<span id="cb41-22"><a href="#cb41-22" aria-hidden="true" tabindex="-1"></a>00007fff`f69c1e3f c5e9dbd1        vpand   <span class="kw">xmm2</span><span class="op">,</span><span class="kw">xmm2</span><span class="op">,</span><span class="kw">xmm1</span></span>
+<span id="cb41-23"><a href="#cb41-23" aria-hidden="true" tabindex="-1"></a>00007fff`f69c1e43 c579d7c2        vpmovmskb <span class="kw">r8d</span><span class="op">,</span><span class="kw">xmm2</span></span>
+<span id="cb41-24"><a href="#cb41-24" aria-hidden="true" tabindex="-1"></a>00007fff`f69c1e47 c5fa7f5c2410    vmovdqu <span class="dt">xmmword</span> <span class="dt">ptr</span> <span class="op">[</span><span class="kw">rsp</span><span class="op">+</span><span class="bn">10h</span><span class="op">],</span><span class="kw">xmm3</span></span>
+<span id="cb41-25"><a href="#cb41-25" aria-hidden="true" tabindex="-1"></a>00007fff`f69c1e4d <span class="dv">4585</span><span class="er">c0</span>          test    <span class="kw">r8d</span><span class="op">,</span><span class="kw">r8d</span></span>
+<span id="cb41-26"><a href="#cb41-26" aria-hidden="true" tabindex="-1"></a>00007fff`f69c1e50 <span class="dv">0</span><span class="er">f849a000000</span>    je      StringTable2<span class="op">!</span>IsPrefixOfStringInTable_10<span class="op">+</span><span class="bn">0x100</span> <span class="op">(</span><span class="dv">00007</span><span class="er">fff</span><span class="st">`f69c1ef0)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>There’s a bit of cruft at the start regarding setting up the function’s prologue (pushing non-volatile registers to the stack, etc. ). That’s to be expected for C (and C++, and basically every language); as the programmer, you don’t have any <strong>direct</strong> control over how many registers a compiler uses for a routine, how much stack space it uses, which registers it uses when, etc.</p>
 <p>However, with assembly, we’re on the opposite end of the spectrum: we can control everything! We also have a little trick up our sleeves: the venerable <code>LEAF_ENTRY</code>.</p>
 <section id="windows-x64-abi-calling-conventions" class="level4">
@@ -5935,35 +5935,35 @@ StringTable2!IsPrefixOfStringInTable_10:
 <p>A <code>LEAF_ENTRY</code> can only be implemented in assembly. It is constrained in that it may not manipulate any of the non-volatile x64 registers (<code>rbx</code>, <code>rdi</code>, <code>rsi</code>, <code>rsp</code>, <code>rbp</code>, <code>r12</code>, <code>r13</code>, <code>r14</code>, <code>r15</code>, <code>xmm6-15</code>), nor may it <code>call</code> any other functions (since <code>call</code> implicitly modifies the stack pointer), nor may it have a structured exception handler (since handling an exception for a given stack frame also manipulates the stack pointer).</p>
 <p>The reason for these constraints is that <code>LEAF_ENTRY</code> routines do not have any unwind information generated for them in their runtime function entries. Unwind information is used by the kernel to, well, unwind the modifications made to non-volatile registers while traversing back up through the call stack looking for an exception handler in the event of an exception.</p>
 <p>For example, here’s the function entry and associated unwind information for the PGO build of the <code>IsPrefixOfStringInTable_10</code> function:</p>
-<pre><code>0:000&gt; .fnent StringTable2!IsPrefixOfStringInTable_10
-Debugger function entry 000001d8`2ea03cf8 for:
-(00007fff`f8411df0)   StringTable2!IsPrefixOfStringInTable_10
-Exact matches:
-    StringTable2!IsPrefixOfStringInTable_10 (struct _STRING_TABLE *,
-                                             struct _STRING *,
-                                             struct _STRING_MATCH *)
-
-BeginAddress      = 00000000`00001df0
-EndAddress        = 00000000`00001e59
-UnwindInfoAddress = 00000000`000054f8
-
-Unwind info at 00007fff`f84154f8, 14 bytes
-  version 1, flags 0, prolog 14, codes 8
-  00: offs 14, unwind op 4, op info 6   UWOP_SAVE_NONVOL FrameOffset: 58 reg: rsi.
-  02: offs 14, unwind op 4, op info 5   UWOP_SAVE_NONVOL FrameOffset: 50 reg: rbp.
-  04: offs 14, unwind op 2, op info 3   UWOP_ALLOC_SMALL.
-  05: offs 10, unwind op 0, op info f   UWOP_PUSH_NONVOL reg: r15.
-  06: offs e, unwind op 0, op info e    UWOP_PUSH_NONVOL reg: r14.
-  07: offs c, unwind op 0, op info d    UWOP_PUSH_NONVOL reg: r13.</code></pre>
+<div class="sourceCode" id="cb42"><pre class="sourceCode asm code-with-copy"><code class="sourceCode asm"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>0:000&gt; .fnent StringTable2<span class="op">!</span>IsPrefixOfStringInTable_10</span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>Debugger function entry <span class="dv">000001</span><span class="bn">d</span><span class="er">8</span><span class="st">`2ea03cf8 for:</span></span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>(00007fff`f8411df0<span class="op">)</span>   StringTable2<span class="op">!</span>IsPrefixOfStringInTable_10</span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>Exact matches<span class="op">:</span></span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>    StringTable2<span class="op">!</span>IsPrefixOfStringInTable_10 <span class="op">(</span>struct _STRING_TABLE <span class="op">*,</span></span>
+<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a>                                             struct _STRING <span class="op">*,</span></span>
+<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a>                                             struct _STRING_MATCH <span class="op">*)</span></span>
+<span id="cb42-8"><a href="#cb42-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-9"><a href="#cb42-9" aria-hidden="true" tabindex="-1"></a>BeginAddress      <span class="op">=</span> <span class="dv">00000000</span><span class="st">`00001df0</span></span>
+<span id="cb42-10"><a href="#cb42-10" aria-hidden="true" tabindex="-1"></a>EndAddress        <span class="op">=</span> <span class="dv">00000000</span><span class="st">`00001e59</span></span>
+<span id="cb42-11"><a href="#cb42-11" aria-hidden="true" tabindex="-1"></a>UnwindInfoAddress <span class="op">=</span> <span class="dv">00000000</span><span class="st">`000054f8</span></span>
+<span id="cb42-12"><a href="#cb42-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-13"><a href="#cb42-13" aria-hidden="true" tabindex="-1"></a>Unwind info <span class="kw">at</span> <span class="dv">00007</span><span class="er">fff</span><span class="st">`f84154f8, 14 bytes</span></span>
+<span id="cb42-14"><a href="#cb42-14" aria-hidden="true" tabindex="-1"></a>  version <span class="dv">1</span><span class="op">,</span> flags <span class="dv">0</span><span class="op">,</span> prolog <span class="dv">14</span><span class="op">,</span> codes <span class="dv">8</span></span>
+<span id="cb42-15"><a href="#cb42-15" aria-hidden="true" tabindex="-1"></a>  00: offs <span class="dv">14</span><span class="op">,</span> unwind op <span class="dv">4</span><span class="op">,</span> op info <span class="dv">6</span>   UWOP_SAVE_NONVOL FrameOffset<span class="op">:</span> <span class="dv">58</span> reg<span class="op">:</span> <span class="kw">rsi</span><span class="fu">.</span></span>
+<span id="cb42-16"><a href="#cb42-16" aria-hidden="true" tabindex="-1"></a>  02: offs <span class="dv">14</span><span class="op">,</span> unwind op <span class="dv">4</span><span class="op">,</span> op info <span class="dv">5</span>   UWOP_SAVE_NONVOL FrameOffset<span class="op">:</span> <span class="dv">50</span> reg<span class="op">:</span> <span class="kw">rbp</span><span class="fu">.</span></span>
+<span id="cb42-17"><a href="#cb42-17" aria-hidden="true" tabindex="-1"></a>  04: offs <span class="dv">14</span><span class="op">,</span> unwind op <span class="dv">2</span><span class="op">,</span> op info <span class="dv">3</span>   UWOP_ALLOC_SMALL<span class="op">.</span></span>
+<span id="cb42-18"><a href="#cb42-18" aria-hidden="true" tabindex="-1"></a>  05: offs <span class="dv">10</span><span class="op">,</span> unwind op <span class="dv">0</span><span class="op">,</span> op info f   UWOP_PUSH_NONVOL reg<span class="op">:</span> <span class="kw">r15</span><span class="fu">.</span></span>
+<span id="cb42-19"><a href="#cb42-19" aria-hidden="true" tabindex="-1"></a>  06: offs e<span class="op">,</span> unwind op <span class="dv">0</span><span class="op">,</span> op info e    UWOP_PUSH_NONVOL reg<span class="op">:</span> <span class="kw">r14</span><span class="fu">.</span></span>
+<span id="cb42-20"><a href="#cb42-20" aria-hidden="true" tabindex="-1"></a>  07: offs c<span class="op">,</span> unwind op <span class="dv">0</span><span class="op">,</span> op info d    UWOP_PUSH_NONVOL reg<span class="op">:</span> <span class="kw">r13</span><span class="fu">.</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>We can see that this routine manipulates six non-volatile registers in total, including the stack pointer. The first instructions of the routine constitute the function’s prologue; in the disassembly, you can see that three of the <code>rxx</code> registers are pushed to the stack, followed by the allocation of 0x20 (32) bytes of stack space:</p>
-<pre><code>0:000&gt; uf StringTable2!IsPrefixOfStringInTable_10
-StringTable2!IsPrefixOfStringInTable_10:
-00007fff`f69c1df0 48896c2418      mov     qword ptr [rsp+18h],rbp
-00007fff`f69c1df5 4889742420      mov     qword ptr [rsp+20h],rsi
-00007fff`f69c1dfa 4155            push    r13
-00007fff`f69c1dfc 4156            push    r14
-00007fff`f69c1dfe 4157            push    r15
-00007fff`f69c1e00 4883ec20        sub     rsp,20h</code></pre>
+<div class="sourceCode" id="cb43"><pre class="sourceCode asm code-with-copy"><code class="sourceCode asm"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>0:000&gt; uf StringTable2<span class="op">!</span>IsPrefixOfStringInTable_10</span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>StringTable2<span class="op">!</span>IsPrefixOfStringInTable_10<span class="op">:</span></span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>00007fff`f69c1df0 <span class="dv">48896</span><span class="er">c2418</span>      mov     <span class="dt">qword</span> <span class="dt">ptr</span> <span class="op">[</span><span class="kw">rsp</span><span class="op">+</span><span class="bn">18h</span><span class="op">],</span><span class="kw">rbp</span></span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>00007fff`f69c1df5 <span class="dv">4889742420</span>      mov     <span class="dt">qword</span> <span class="dt">ptr</span> <span class="op">[</span><span class="kw">rsp</span><span class="op">+</span><span class="bn">20h</span><span class="op">],</span><span class="kw">rsi</span></span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a>00007fff`f69c1dfa <span class="dv">4155</span>            push    <span class="kw">r13</span></span>
+<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a>00007fff`f69c1dfc <span class="dv">4156</span>            push    <span class="kw">r14</span></span>
+<span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a>00007fff`f69c1dfe <span class="dv">4157</span>            push    <span class="kw">r15</span></span>
+<span id="cb43-8"><a href="#cb43-8" aria-hidden="true" tabindex="-1"></a>00007fff`f69c1e00 <span class="dv">4883</span><span class="er">ec20</span>        sub     <span class="kw">rsp</span><span class="op">,</span><span class="bn">20h</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>It also cheekily uses the home parameter space for stashing <code>rbp</code> and <code>rsi</code> instead of pushing them to the stack. That’s fair game, though—this is the PGO build, so I’d expect it to use some extra tricks to shave off a few cycles here and there. I’d do the same if I were writing assembly. <em>(Side note: if you view the source of this page, there’s a commented-out section below that shows the runtime function entry for the release build of version 10; it uses nine registers instead of six and 40 bytes of stack space instead of 32. I wrote it before switching to using the PGO build for everything.)</em></p>
 <p>The home parameter space is a 32-byte area that immediately follows the return address (i.e., the value of <code>rsp</code> when the function is entered); it is mandated by the x64 calling convention on Windows and is primarily intended to provide scratch space for a routine to <em>home</em> its parameter registers (i.e., the registers used for the first four arguments of a function: <code>rcx</code>, <code>rdx</code>, <code>r8</code>, and <code>r9</code>). This allows the four volatile registers to be repurposed within a routine while still providing a way to refer to the parameters if needed. That’s its intended use—however, it’s not strictly enforced, so you can essentially treat this area as a free 32-byte scratch space if you’re writing assembly.</p>
 <div class="callout callout-style-default callout-note callout-titled">
@@ -6150,17 +6150,17 @@ StringTable2!IsPrefixOfStringInTable_10:
 <span id="cb44-106"><a href="#cb44-106" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb44-107"><a href="#cb44-107" aria-hidden="true" tabindex="-1"></a><span class="co">; vim:set tw=80 ts=8 sw=4 sts=4 et syntax=masm fo=croql comments=\:;           :</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Note how we don’t need to push anything to the stack since we didn’t manipulate any non-volatile registers. If an exception occurs within the body of our implementation (say we dereference a NULL pointer), the kernel knows it doesn’t have to undo any non-volatile register modifications (using offsets specified by the unwind information) because there isn’t any unwind information. It can simply advance to the frame before us (e. g. , <code>rsp</code> at the time of the fault, minus 8 bytes) as it continues its search for runtime function entries and associated unwind information. As you can see, the unwind info is effectively empty:</p>
-<pre><code>0:000&gt; .fnent StringTable2!IsPrefixOfStringInTable_x64_1
-Debugger function entry 000001f9`048edf98 for:
-Exact matches:
-    StringTable2!IsPrefixOfStringInTable_x64_1 (void)
-
-BeginAddress      = 00000000`00003290
-EndAddress        = 00000000`000032cb
-UnwindInfoAddress = 00000000`00004468
-
-Unwind info at 00007ffd`15594468, 4 bytes
-  version 1, flags 0, prolog 0, codes 0</code></pre>
+<div class="sourceCode" id="cb45"><pre class="sourceCode asm code-with-copy"><code class="sourceCode asm"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>0:000&gt; .fnent StringTable2<span class="op">!</span>IsPrefixOfStringInTable_x64_1</span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>Debugger function entry <span class="dv">000001</span><span class="er">f9</span><span class="st">`048edf98 for:</span></span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>Exact matches<span class="op">:</span></span>
+<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a>    StringTable2<span class="op">!</span>IsPrefixOfStringInTable_x64_1 <span class="op">(</span>void<span class="op">)</span></span>
+<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-6"><a href="#cb45-6" aria-hidden="true" tabindex="-1"></a>BeginAddress      <span class="op">=</span> <span class="dv">00000000</span><span class="st">`00003290</span></span>
+<span id="cb45-7"><a href="#cb45-7" aria-hidden="true" tabindex="-1"></a>EndAddress        <span class="op">=</span> <span class="dv">00000000</span><span class="st">`000032cb</span></span>
+<span id="cb45-8"><a href="#cb45-8" aria-hidden="true" tabindex="-1"></a>UnwindInfoAddress <span class="op">=</span> <span class="dv">00000000</span><span class="st">`00004468</span></span>
+<span id="cb45-9"><a href="#cb45-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-10"><a href="#cb45-10" aria-hidden="true" tabindex="-1"></a>Unwind info <span class="kw">at</span> <span class="dv">00007</span><span class="er">ffd</span><span class="st">`15594468, 4 bytes</span></span>
+<span id="cb45-11"><a href="#cb45-11" aria-hidden="true" tabindex="-1"></a>  version <span class="dv">1</span><span class="op">,</span> flags <span class="dv">0</span><span class="op">,</span> prolog <span class="dv">0</span><span class="op">,</span> codes <span class="dv">0</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 <section id="benchmark-x64-1" class="level4">
 <h4 class="anchored" data-anchor-id="benchmark-x64-1">Benchmark x64 1</h4>

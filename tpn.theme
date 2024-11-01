@@ -103,7 +103,7 @@
         "Diff": {
             "Added line": {
                 "selected-text-color": "#5fde38",
-                "text-color": "#50fa7b"
+                "text-color": "PaleGreen"
             },
             "Changed line (new)": {
                 "background-color": "#50fa7b",
@@ -116,7 +116,7 @@
             },
             "Removed line": {
                 "selected-text-color": "#e66eb4",
-                "text-color": "#ff79c6"
+                "text-color": "PaleVioletRed"
             }
         },
         "Doxygen": {
@@ -696,11 +696,11 @@
         },
         "String": {
             "selected-text-color": "tomato",
-            "text-color": "tomato"
+            "text-color": "PaleVioletRed"
         },
         "Variable": {
             "selected-text-color": "#8be9fd",
-            "text-color": "tomato"
+            "text-color": "PaleGreen"
         },
         "VerbatimString": {
             "selected-text-color": "#f1fa8c",

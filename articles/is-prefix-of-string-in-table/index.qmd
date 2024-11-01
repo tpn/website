@@ -102,7 +102,7 @@ ret                                                 ; Return NO_MATCH_FOUND.
 ```
 ## IACA
 
-```
+```asm
 S:\Source\tracer>iaca x64\Release\StringTable2.dll
 Intel(R) Architecture Code Analyzer
 Version -  v3.0-28-g1ba2cbb build date: 2017-10-23;17:30:24
@@ -5930,7 +5930,7 @@ Now for the fun part! Let’s take a look at the disassembly of the initial part
 of version 10 responsible for the negative match logic and see if there are
 any improvements we can make.
 
-```
+```asm
 0:000> uf StringTable2!IsPrefixOfStringInTable_10
 StringTable2!IsPrefixOfStringInTable_10:
 00007fff`f69c1df0 48896c2418      mov     qword ptr [rsp+18h],rbp
@@ -6002,7 +6002,7 @@ looking for an exception handler in the event of an exception.
 For example, here's the function entry and associated unwind information for
 the PGO build of the `IsPrefixOfStringInTable_10` function:
 
-```
+```asm
 0:000> .fnent StringTable2!IsPrefixOfStringInTable_10
 Debugger function entry 000001d8`2ea03cf8 for:
 (00007fff`f8411df0)   StringTable2!IsPrefixOfStringInTable_10
@@ -6031,7 +6031,7 @@ the function's prologue; in the disassembly, you can see that three of the
 `rxx` registers are pushed to the stack, followed by the allocation of 0x20
 (32) bytes of stack space:
 
-```
+```asm
 0:000> uf StringTable2!IsPrefixOfStringInTable_10
 StringTable2!IsPrefixOfStringInTable_10:
 00007fff`f69c1df0 48896c2418      mov     qword ptr [rsp+18h],rbp
@@ -6266,7 +6266,7 @@ the time of the fault, minus 8 bytes) as it continues its search for runtime
 function entries and associated unwind information.  As you can see, the
 unwind info is effectively empty:
 
-```
+```asm
 0:000> .fnent StringTable2!IsPrefixOfStringInTable_x64_1
 Debugger function entry 000001f9`048edf98 for:
 Exact matches:
