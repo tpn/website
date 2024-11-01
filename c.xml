@@ -243,8 +243,10 @@
     </list>
 
     <list name="tpntypes">
+      <item>CHARACTER_BITMAP</item>
       <item>IS_PREFIX_OF_STRING_IN_TABLE</item>
       <item>IS_STRING_IN_TABLE</item>
+      <item>LENGTH_INDEX_ENTRY</item>
       <item>LENGTH_INDEX_TABLE</item>
       <item>PALLOCATOR</item>
       <item>PCHARACTER_BITMAP</item>
@@ -256,7 +258,9 @@
       <item>PPSLOT_INDEX</item>
       <item>PPSLOT_LENGTHS</item>
       <item>PPSTRING_SLOT</item>
+      <item>PPSTRING_TABLE</item>
       <item>PRTL</item>
+      <item>PSLOT_BITMAPS</item>
       <item>PSTRING_ARRAY</item>
       <item>PSTRING_MATCH</item>
       <item>PSTRING_SLOT</item>
@@ -271,16 +275,22 @@
       <item>STRING_TABLE</item>
       <item>STRING_TABLE_FLAGS</item>
       <item>STRING_TABLE_INDEX</item>
+      <item>_SLOT_BITMAPS</item> <item>_LENGTH_INDEX_ENTRY</item>
+      <item>_LENGTH_INDEX_TABLE</item>
     </list>
 
     <list name="tpndefs">
       <item>MAX_STRING_TABLE_ENTRIES</item>
       <item>NO_MATCH_FOUND</item>
+      <item>STRING_TABLE_ALIGNMENT</item>
     </list>
 
     <list name="ntdefs">
       <item>ARGUMENT_PRESENT</item>
       <item>DECLSPEC_ALIGN</item>
+      <item>C_ASSERT</item>
+      <item>CONTAINING_RECORD</item>
+      <item>FIELD_OFFSET</item>
       <item>NT_ASSERT</item>
       <item>NT_VERIFY</item>
     </list>

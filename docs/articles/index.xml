@@ -263,7 +263,7 @@ background-color: null;
 font-style: inherit;">; Return NO_MATCH_FOUND.</span></span></code></pre></div>
 </div>
 <div id="tabset-1-2" class="tab-pane" aria-labelledby="tabset-1-2-tab">
-<pre class="plaintext"><code>S:\Source\tracer&gt;iaca x64\Release\StringTable2.dll
+<pre><code>S:\Source\tracer&gt;iaca x64\Release\StringTable2.dll
 Intel(R) Architecture Code Analyzer
 Version -  v3.0-28-g1ba2cbb build date: 2017-10-23;17:30:24
 Analyzed File -  x64\Release\StringTable2.dll
@@ -20593,7 +20593,7 @@ Note
 </div>
 </div>
 <p>Now for the fun part! Let’s take a look at the disassembly of the initial part of version 10 responsible for the negative match logic and see if there are any improvements we can make.</p>
-<pre class="plaintext"><code>0:000&gt; uf StringTable2!IsPrefixOfStringInTable_10
+<pre><code>0:000&gt; uf StringTable2!IsPrefixOfStringInTable_10
 StringTable2!IsPrefixOfStringInTable_10:
 00007fff`f69c1df0 48896c2418      mov     qword ptr [rsp+18h],rbp
 00007fff`f69c1df5 4889742420      mov     qword ptr [rsp+20h],rsi
@@ -20633,7 +20633,7 @@ StringTable2!IsPrefixOfStringInTable_10:
 <p>A <code>LEAF_ENTRY</code> can only be implemented in assembly. It is constrained in that it may not manipulate any of the non-volatile x64 registers (<code>rbx</code>, <code>rdi</code>, <code>rsi</code>, <code>rsp</code>, <code>rbp</code>, <code>r12</code>, <code>r13</code>, <code>r14</code>, <code>r15</code>, <code>xmm6-15</code>), nor may it <code>call</code> any other functions (since <code>call</code> implicitly modifies the stack pointer), nor may it have a structured exception handler (since handling an exception for a given stack frame also manipulates the stack pointer).</p>
 <p>The reason for these constraints is that <code>LEAF_ENTRY</code> routines do not have any unwind information generated for them in their runtime function entries. Unwind information is used by the kernel to, well, unwind the modifications made to non-volatile registers while traversing back up through the call stack looking for an exception handler in the event of an exception.</p>
 <p>For example, here’s the function entry and associated unwind information for the PGO build of the <code>IsPrefixOfStringInTable_10</code> function:</p>
-<pre class="plaintext"><code>0:000&gt; .fnent StringTable2!IsPrefixOfStringInTable_10
+<pre><code>0:000&gt; .fnent StringTable2!IsPrefixOfStringInTable_10
 Debugger function entry 000001d8`2ea03cf8 for:
 (00007fff`f8411df0)   StringTable2!IsPrefixOfStringInTable_10
 Exact matches:
@@ -20654,7 +20654,7 @@ Unwind info at 00007fff`f84154f8, 14 bytes
   06: offs e, unwind op 0, op info e    UWOP_PUSH_NONVOL reg: r14.
   07: offs c, unwind op 0, op info d    UWOP_PUSH_NONVOL reg: r13.</code></pre>
 <p>We can see that this routine manipulates six non-volatile registers in total, including the stack pointer. The first instructions of the routine constitute the function’s prologue; in the disassembly, you can see that three of the <code>rxx</code> registers are pushed to the stack, followed by the allocation of 0x20 (32) bytes of stack space:</p>
-<pre class="plaintext"><code>0:000&gt; uf StringTable2!IsPrefixOfStringInTable_10
+<pre><code>0:000&gt; uf StringTable2!IsPrefixOfStringInTable_10
 StringTable2!IsPrefixOfStringInTable_10:
 00007fff`f69c1df0 48896c2418      mov     qword ptr [rsp+18h],rbp
 00007fff`f69c1df5 4889742420      mov     qword ptr [rsp+20h],rsi
@@ -21245,7 +21245,7 @@ font-style: inherit;">,</span> _TEXT$00</span>
 background-color: null;
 font-style: inherit;">; vim:set tw=80 ts=8 sw=4 sts=4 et syntax=masm fo=croql comments=\:;           :</span></span></code></pre></div>
 <p>Note how we don’t need to push anything to the stack since we didn’t manipulate any non-volatile registers. If an exception occurs within the body of our implementation (say we dereference a NULL pointer), the kernel knows it doesn’t have to undo any non-volatile register modifications (using offsets specified by the unwind information) because there isn’t any unwind information. It can simply advance to the frame before us (e. g. , <code>rsp</code> at the time of the fault, minus 8 bytes) as it continues its search for runtime function entries and associated unwind information. As you can see, the unwind info is effectively empty:</p>
-<pre class="plaintext"><code>0:000&gt; .fnent StringTable2!IsPrefixOfStringInTable_x64_1
+<pre><code>0:000&gt; .fnent StringTable2!IsPrefixOfStringInTable_x64_1
 Debugger function entry 000001f9`048edf98 for:
 Exact matches:
     StringTable2!IsPrefixOfStringInTable_x64_1 (void)

@@ -25,3 +25,15 @@ pre {
 pre code {
     font-size: $font-size-monospace; // Apply custom font size to code inside pre
 }
+
+/* Override background color to inherit */
+/*
+p code:not(.sourceCode),li code:not(.sourceCode),td code:not(.sourceCode) {
+    background-color: #333333;
+    padding: .2em
+}
+
+:root {
+    --bs-code-color: "plum";
+}
+*/

@@ -45,6 +45,10 @@ website:
 
 format:
   html:
+    syntax-definitions:
+      - asm.xml
+      - c.xml
+    highlight-style: tpn.theme
     #fig-cap-location: margin
     #reference-location: margin
     #citation-location: margin
@@ -61,6 +65,9 @@ format:
     toc-title: Contents
     grid:
       margin-width: 370px
+
+#filters:
+  #- auto-dark
 
 execute:
   after:
