@@ -4304,7 +4304,6 @@ checks, which isn’t too surprising.
 
 [← IsPrefixOfStringInTable_6](#isprefixofstringintable_6) | [IsPrefixOfStringInTable_8 →](#isprefixofstringintable_8)
 
-
 Version 7 tweaks version 6 a little bit.  We don't need the search string length
 calculated so early in the routine.  Let's move it to later.
 
@@ -4313,7 +4312,54 @@ calculated so early in the routine.  Let's move it to later.
 ## Diff
 
 ```diff
+% diff -u IsPrefixOfStringInTable_6.c IsPrefixOfStringInTable_7.c
+--- IsPrefixOfStringInTable_6.c 2018-04-15 22:35:55.450273700 -0400
++++ IsPrefixOfStringInTable_7.c 2018-04-26 10:00:53.905933700 -0400
+@@ -18,7 +18,7 @@
 
+ _Use_decl_annotations_
+ STRING_TABLE_INDEX
+-IsPrefixOfStringInTable_6(
++IsPrefixOfStringInTable_7(
+     PSTRING_TABLE StringTable,
+     PSTRING String,
+     PSTRING_MATCH Match
+@@ -31,9 +31,10 @@
+     search string.  That is, whether any string in the table "starts with
+     or is equal to" the search string.
+
+-    This routine differs from version 3 in that we do an aligned load of the
+-    search string buffer without any SEH wrappers or alignment checks.  (Thus,
+-    this routine will fault if the buffer is unaligned.)
++    This routine is based off version 6, but alters when we calculate the
++    "search length" for the given string, which is done via the expression
++    'min(String->Length, 16)'.  We don't need this value until later in the
++    routine, when we're ready to start comparing strings.
+
+ Arguments:
+
+@@ -125,7 +126,6 @@
+     // Load the first 16-bytes of the search string into an XMM register.
+     //
+
+-    SearchLength = min(String->Length, 16);
+     Search.CharsXmm = _mm_loadu_si128((PXMMWORD)String->Buffer);
+
+     //
+@@ -213,6 +213,13 @@
+     }
+
+     //
++    // Calculate the "search length" of the incoming string, which ensures we
++    // only compare up to the first 16 characters.
++    //
++
++    SearchLength = min(String->Length, 16);
++
++    //
+     // A popcount against the mask will tell us how many slots we matched, and
+     // thus, need to compare.
+     //
 ```
 
 ## Full

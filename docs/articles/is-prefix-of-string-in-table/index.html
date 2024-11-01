@@ -186,8 +186,8 @@ gtag('config', 'G-8RPR4XKPEW', { 'anonymize_ip': false});
   <li><a href="#baseline-c-implementation" id="toc-baseline-c-implementation" class="nav-link" data-scroll-target="#baseline-c-implementation">Baseline C Implementation</a></li>
   <li><a href="#the-proposed-interface" id="toc-the-proposed-interface" class="nav-link" data-scroll-target="#the-proposed-interface">The Proposed Interface</a>
   <ul>
-  <li><a href="#the-isprefixofstringintable-function" id="toc-the-isprefixofstringintable-function" class="nav-link" data-scroll-target="#the-isprefixofstringintable-function">The <code>IsPrefixOfStringInTable</code> Function</a></li>
-  <li><a href="#the-string_match-structure" id="toc-the-string_match-structure" class="nav-link" data-scroll-target="#the-string_match-structure">The <code>STRING_MATCH</code> Structure</a></li>
+  <li><a href="#the-isprefixofstringintable-function" id="toc-the-isprefixofstringintable-function" class="nav-link" data-scroll-target="#the-isprefixofstringintable-function">The IsPrefixOfStringInTable Function</a></li>
+  <li><a href="#the-string_match-structure" id="toc-the-string_match-structure" class="nav-link" data-scroll-target="#the-string_match-structure">The STRING_MATCH Structure</a></li>
   </ul></li>
   <li><a href="#the-test-data" id="toc-the-test-data" class="nav-link" data-scroll-target="#the-test-data">The Test Data</a>
   <ul>
@@ -197,11 +197,11 @@ gtag('config', 'G-8RPR4XKPEW', { 'anonymize_ip': false});
   <li><a href="#requirements-and-design-decisions" id="toc-requirements-and-design-decisions" class="nav-link" data-scroll-target="#requirements-and-design-decisions">Requirements and Design Decisions</a></li>
   <li><a href="#the-data-structures" id="toc-the-data-structures" class="nav-link" data-scroll-target="#the-data-structures">The Data Structures</a>
   <ul>
-  <li><a href="#string_table" id="toc-string_table" class="nav-link" data-scroll-target="#string_table"><code>STRING_TABLE</code></a></li>
-  <li><a href="#string_array" id="toc-string_array" class="nav-link" data-scroll-target="#string_array"><code>STRING_ARRAY</code></a></li>
-  <li><a href="#STRING_SLOT" id="toc-STRING_SLOT" class="nav-link" data-scroll-target="#STRING_SLOT"><code>STRING_SLOT</code></a></li>
-  <li><a href="#SLOT_INDEX" id="toc-SLOT_INDEX" class="nav-link" data-scroll-target="#SLOT_INDEX"><code>SLOT_INDEX</code></a></li>
-  <li><a href="#CreateStringTable" id="toc-CreateStringTable" class="nav-link" data-scroll-target="#CreateStringTable">String Table Construction</a></li>
+  <li><a href="#string_table" id="toc-string_table" class="nav-link" data-scroll-target="#string_table">STRING_TABLE</a></li>
+  <li><a href="#string_array" id="toc-string_array" class="nav-link" data-scroll-target="#string_array">STRING_ARRAY</a></li>
+  <li><a href="#string_slot" id="toc-string_slot" class="nav-link" data-scroll-target="#string_slot">STRING_SLOT</a></li>
+  <li><a href="#slot_index" id="toc-slot_index" class="nav-link" data-scroll-target="#slot_index">SLOT_INDEX</a></li>
+  <li><a href="#createstringtable" id="toc-createstringtable" class="nav-link" data-scroll-target="#createstringtable">String Table Construction</a></li>
   </ul></li>
   <li><a href="#the-benchmark" id="toc-the-benchmark" class="nav-link" data-scroll-target="#the-benchmark">The Benchmark</a>
   <ul>
@@ -213,46 +213,46 @@ gtag('config', 'G-8RPR4XKPEW', { 'anonymize_ip': false});
   <ul>
   <li><a href="#c-implementations" id="toc-c-implementations" class="nav-link" data-scroll-target="#c-implementations">C Implementations</a>
   <ul class="collapse">
-  <li><a href="#IsPrefixOfCStrInArray" id="toc-IsPrefixOfCStrInArray" class="nav-link" data-scroll-target="#IsPrefixOfCStrInArray"><code>IsPrefixOfCStrInArray</code></a></li>
-  <li><a href="#IsPrefixOfStringInTable_1" id="toc-IsPrefixOfStringInTable_1" class="nav-link" data-scroll-target="#IsPrefixOfStringInTable_1"><code>IsPrefixOfStringInTable_1</code></a></li>
+  <li><a href="#isprefixofcstrinarray" id="toc-isprefixofcstrinarray" class="nav-link" data-scroll-target="#isprefixofcstrinarray">IsPrefixOfCStrInArray</a></li>
+  <li><a href="#isprefixofstringintable_1" id="toc-isprefixofstringintable_1" class="nav-link" data-scroll-target="#isprefixofstringintable_1">IsPrefixOfStringInTable_1</a></li>
   <li><a href="#benchmark-1" id="toc-benchmark-1" class="nav-link" data-scroll-target="#benchmark-1">Benchmark 1</a></li>
-  <li><a href="#IsPrefixMatch" id="toc-IsPrefixMatch" class="nav-link" data-scroll-target="#IsPrefixMatch"><code>IsPrefixMatch</code></a></li>
-  <li><a href="#IsPrefixMatchAvx2" id="toc-IsPrefixMatchAvx2" class="nav-link" data-scroll-target="#IsPrefixMatchAvx2"><code>IsPrefixMatchAvx2</code></a></li>
-  <li><a href="#IsPrefixOfStringInTable_2" id="toc-IsPrefixOfStringInTable_2" class="nav-link" data-scroll-target="#IsPrefixOfStringInTable_2"><code>IsPrefixOfStringInTable_2</code></a></li>
+  <li><a href="#isprefixmatch" id="toc-isprefixmatch" class="nav-link" data-scroll-target="#isprefixmatch">IsPrefixMatch</a></li>
+  <li><a href="#isprefixmatchavx2" id="toc-isprefixmatchavx2" class="nav-link" data-scroll-target="#isprefixmatchavx2">IsPrefixMatchAvx2</a></li>
+  <li><a href="#isprefixofstringintable_2" id="toc-isprefixofstringintable_2" class="nav-link" data-scroll-target="#isprefixofstringintable_2">IsPrefixOfStringInTable_2</a></li>
   <li><a href="#benchmark-2" id="toc-benchmark-2" class="nav-link" data-scroll-target="#benchmark-2">Benchmark 2</a></li>
-  <li><a href="#IsPrefixOfStringInTable_3" id="toc-IsPrefixOfStringInTable_3" class="nav-link" data-scroll-target="#IsPrefixOfStringInTable_3"><code>IsPrefixOfStringInTable_3</code></a></li>
+  <li><a href="#isprefixofstringintable_3" id="toc-isprefixofstringintable_3" class="nav-link" data-scroll-target="#isprefixofstringintable_3">IsPrefixOfStringInTable_3</a></li>
   <li><a href="#benchmark-3" id="toc-benchmark-3" class="nav-link" data-scroll-target="#benchmark-3">Benchmark 3</a></li>
-  <li><a href="#IsPrefixOfStringInTable_4" id="toc-IsPrefixOfStringInTable_4" class="nav-link" data-scroll-target="#IsPrefixOfStringInTable_4"><code>IsPrefixOfStringInTable_4</code></a></li>
+  <li><a href="#isprefixofstringintable_4" id="toc-isprefixofstringintable_4" class="nav-link" data-scroll-target="#isprefixofstringintable_4">IsPrefixOfStringInTable_4</a></li>
   <li><a href="#benchmark-4" id="toc-benchmark-4" class="nav-link" data-scroll-target="#benchmark-4">Benchmark 4</a></li>
-  <li><a href="#IsPrefixOfStringInTable_5" id="toc-IsPrefixOfStringInTable_5" class="nav-link" data-scroll-target="#IsPrefixOfStringInTable_5">IsPrefixOfStringInTable_5</a></li>
+  <li><a href="#isprefixofstringintable_5" id="toc-isprefixofstringintable_5" class="nav-link" data-scroll-target="#isprefixofstringintable_5">IsPrefixOfStringInTable_5</a></li>
   <li><a href="#benchmark-5" id="toc-benchmark-5" class="nav-link" data-scroll-target="#benchmark-5">Benchmark 5</a></li>
-  <li><a href="#IsPrefixOfStringInTable_6" id="toc-IsPrefixOfStringInTable_6" class="nav-link" data-scroll-target="#IsPrefixOfStringInTable_6"><code>IsPrefixOfStringInTable_6</code></a></li>
+  <li><a href="#isprefixofstringintable_6" id="toc-isprefixofstringintable_6" class="nav-link" data-scroll-target="#isprefixofstringintable_6">IsPrefixOfStringInTable_6</a></li>
   <li><a href="#benchmark-6" id="toc-benchmark-6" class="nav-link" data-scroll-target="#benchmark-6">Benchmark 6</a></li>
-  <li><a href="#IsPrefixOfStringInTable_7" id="toc-IsPrefixOfStringInTable_7" class="nav-link" data-scroll-target="#IsPrefixOfStringInTable_7"><code>IsPrefixOfStringInTable_7</code></a></li>
+  <li><a href="#isprefixofstringintable_7" id="toc-isprefixofstringintable_7" class="nav-link" data-scroll-target="#isprefixofstringintable_7">IsPrefixOfStringInTable_7</a></li>
   <li><a href="#benchmark-7" id="toc-benchmark-7" class="nav-link" data-scroll-target="#benchmark-7">Benchmark 7</a></li>
-  <li><a href="#IsPrefixOfStringInTable_8" id="toc-IsPrefixOfStringInTable_8" class="nav-link" data-scroll-target="#IsPrefixOfStringInTable_8"><code>IsPrefixOfStringInTable_8</code></a></li>
+  <li><a href="#isprefixofstringintable_8" id="toc-isprefixofstringintable_8" class="nav-link" data-scroll-target="#isprefixofstringintable_8">IsPrefixOfStringInTable_8</a></li>
   <li><a href="#benchmark-8" id="toc-benchmark-8" class="nav-link" data-scroll-target="#benchmark-8">Benchmark 8</a></li>
-  <li><a href="#IsPrefixOfStringInTable_9" id="toc-IsPrefixOfStringInTable_9" class="nav-link" data-scroll-target="#IsPrefixOfStringInTable_9"><code>IsPrefixOfStringInTable_9</code></a></li>
+  <li><a href="#isprefixofstringintable_9" id="toc-isprefixofstringintable_9" class="nav-link" data-scroll-target="#isprefixofstringintable_9">IsPrefixOfStringInTable_9</a></li>
   <li><a href="#benchmark-9" id="toc-benchmark-9" class="nav-link" data-scroll-target="#benchmark-9">Benchmark 9</a></li>
-  <li><a href="#IsPrefixOfStringInTable_10" id="toc-IsPrefixOfStringInTable_10" class="nav-link" data-scroll-target="#IsPrefixOfStringInTable_10"><code>IsPrefixOfStringInTable_10</code></a></li>
+  <li><a href="#isprefixofstringintable_10" id="toc-isprefixofstringintable_10" class="nav-link" data-scroll-target="#isprefixofstringintable_10">IsPrefixOfStringInTable_10</a></li>
   <li><a href="#benchmark-10" id="toc-benchmark-10" class="nav-link" data-scroll-target="#benchmark-10">Benchmark 10</a></li>
   </ul></li>
   <li><a href="#speeding-up-negative-matches-with-assembly" id="toc-speeding-up-negative-matches-with-assembly" class="nav-link" data-scroll-target="#speeding-up-negative-matches-with-assembly">Speeding Up Negative Matches with Assembly</a>
   <ul class="collapse">
   <li><a href="#windows-x64-abi-calling-conventions" id="toc-windows-x64-abi-calling-conventions" class="nav-link" data-scroll-target="#windows-x64-abi-calling-conventions">Windows x64 ABI Calling Conventions</a>
   <ul class="collapse">
-  <li><a href="#nested_entry" id="toc-nested_entry" class="nav-link" data-scroll-target="#nested_entry"><code>NESTED_ENTRY</code></a></li>
-  <li><a href="#leaf_entry" id="toc-leaf_entry" class="nav-link" data-scroll-target="#leaf_entry"><code>LEAF_ENTRY</code></a></li>
+  <li><a href="#nested_entry" id="toc-nested_entry" class="nav-link" data-scroll-target="#nested_entry">NESTED_ENTRY</a></li>
+  <li><a href="#leaf_entry" id="toc-leaf_entry" class="nav-link" data-scroll-target="#leaf_entry">LEAF_ENTRY</a></li>
   </ul></li>
   </ul></li>
   <li><a href="#assembly-implementations" id="toc-assembly-implementations" class="nav-link" data-scroll-target="#assembly-implementations">Assembly Implementations</a>
   <ul class="collapse">
-  <li><a href="#IsPrefixOfStringInTable_x64_1" id="toc-IsPrefixOfStringInTable_x64_1" class="nav-link" data-scroll-target="#IsPrefixOfStringInTable_x64_1"><code>IsPrefixOfStringInTable_x64_1</code></a></li>
+  <li><a href="#isprefixofstringintable_x64_1" id="toc-isprefixofstringintable_x64_1" class="nav-link" data-scroll-target="#isprefixofstringintable_x64_1">IsPrefixOfStringInTable_x64_1</a></li>
   <li><a href="#benchmark-x64-1" id="toc-benchmark-x64-1" class="nav-link" data-scroll-target="#benchmark-x64-1">Benchmark x64 1</a></li>
-  <li><a href="#IsPrefixOfStringInTable_x64_2" id="toc-IsPrefixOfStringInTable_x64_2" class="nav-link" data-scroll-target="#IsPrefixOfStringInTable_x64_2"><code>IsPrefixOfStringInTable_x64_2</code></a></li>
+  <li><a href="#isprefixofstringintable_x64_2" id="toc-isprefixofstringintable_x64_2" class="nav-link" data-scroll-target="#isprefixofstringintable_x64_2">IsPrefixOfStringInTable_x64_2</a></li>
   <li><a href="#benchmark-x64-2-negative-matching" id="toc-benchmark-x64-2-negative-matching" class="nav-link" data-scroll-target="#benchmark-x64-2-negative-matching">Benchmark x64 2: Negative Matching</a></li>
   <li><a href="#benchmark-x64-2-prefix-matching" id="toc-benchmark-x64-2-prefix-matching" class="nav-link" data-scroll-target="#benchmark-x64-2-prefix-matching">Benchmark x64 2: Prefix Matching</a></li>
-  <li><a href="#IsPrefixOfStringInTable_x64_3" id="toc-IsPrefixOfStringInTable_x64_3" class="nav-link" data-scroll-target="#IsPrefixOfStringInTable_x64_3"><code>IsPrefixOfStringInTable_x64_3</code></a></li>
+  <li><a href="#isprefixofstringintable_x64_3" id="toc-isprefixofstringintable_x64_3" class="nav-link" data-scroll-target="#isprefixofstringintable_x64_3">IsPrefixOfStringInTable_x64_3</a></li>
   <li><a href="#benchmark-x64-3" id="toc-benchmark-x64-3" class="nav-link" data-scroll-target="#benchmark-x64-3">Benchmark x64 3</a></li>
   </ul></li>
   <li><a href="#internet-feedback" id="toc-internet-feedback" class="nav-link" data-scroll-target="#internet-feedback">Internet Feedback</a></li>
@@ -261,17 +261,17 @@ gtag('config', 'G-8RPR4XKPEW', { 'anonymize_ip': false});
   <ul>
   <li><a href="#c-implementations-1" id="toc-c-implementations-1" class="nav-link" data-scroll-target="#c-implementations-1">C Implementations</a>
   <ul class="collapse">
-  <li><a href="#IsPrefixOfStringInTable_11" id="toc-IsPrefixOfStringInTable_11" class="nav-link" data-scroll-target="#IsPrefixOfStringInTable_11"><code>IsPrefixOfStringInTable_11</code></a></li>
+  <li><a href="#isprefixofstringintable_11" id="toc-isprefixofstringintable_11" class="nav-link" data-scroll-target="#isprefixofstringintable_11">IsPrefixOfStringInTable_11</a></li>
   <li><a href="#benchmark-11" id="toc-benchmark-11" class="nav-link" data-scroll-target="#benchmark-11">Benchmark 11</a></li>
-  <li><a href="#IsPrefixOfStringInTable_x64_4" id="toc-IsPrefixOfStringInTable_x64_4" class="nav-link" data-scroll-target="#IsPrefixOfStringInTable_x64_4"><code>IsPrefixOfStringInTable_x64_4</code></a></li>
+  <li><a href="#isprefixofstringintable_x64_4" id="toc-isprefixofstringintable_x64_4" class="nav-link" data-scroll-target="#isprefixofstringintable_x64_4">IsPrefixOfStringInTable_x64_4</a></li>
   <li><a href="#benchmark-x64-4" id="toc-benchmark-x64-4" class="nav-link" data-scroll-target="#benchmark-x64-4">Benchmark x64 4</a></li>
-  <li><a href="#IsPrefixOfStringInTable_12" id="toc-IsPrefixOfStringInTable_12" class="nav-link" data-scroll-target="#IsPrefixOfStringInTable_12"><code>IsPrefixOfStringInTable_12</code></a></li>
+  <li><a href="#isprefixofstringintable_12" id="toc-isprefixofstringintable_12" class="nav-link" data-scroll-target="#isprefixofstringintable_12">IsPrefixOfStringInTable_12</a></li>
   <li><a href="#benchmark-12" id="toc-benchmark-12" class="nav-link" data-scroll-target="#benchmark-12">Benchmark 12</a></li>
-  <li><a href="#IsPrefixOfStringInTable_13" id="toc-IsPrefixOfStringInTable_13" class="nav-link" data-scroll-target="#IsPrefixOfStringInTable_13"><code>IsPrefixOfStringInTable_13</code></a></li>
+  <li><a href="#isprefixofstringintable_13" id="toc-isprefixofstringintable_13" class="nav-link" data-scroll-target="#isprefixofstringintable_13">IsPrefixOfStringInTable_13</a></li>
   <li><a href="#benchmark-13" id="toc-benchmark-13" class="nav-link" data-scroll-target="#benchmark-13">Benchmark 13</a></li>
-  <li><a href="#IsPrefixOfStringInTable_14" id="toc-IsPrefixOfStringInTable_14" class="nav-link" data-scroll-target="#IsPrefixOfStringInTable_14"><code>IsPrefixOfStringInTable_14</code></a></li>
+  <li><a href="#isprefixofstringintable_14" id="toc-isprefixofstringintable_14" class="nav-link" data-scroll-target="#isprefixofstringintable_14">IsPrefixOfStringInTable_14</a></li>
   <li><a href="#benchmark-14" id="toc-benchmark-14" class="nav-link" data-scroll-target="#benchmark-14">Benchmark 14</a></li>
-  <li><a href="#IsPrefixOfStringInTable_x64_5" id="toc-IsPrefixOfStringInTable_x64_5" class="nav-link" data-scroll-target="#IsPrefixOfStringInTable_x64_5"><code>IsPrefixOfStringInTable_x64_5</code></a></li>
+  <li><a href="#isprefixofstringintable_x64_5" id="toc-isprefixofstringintable_x64_5" class="nav-link" data-scroll-target="#isprefixofstringintable_x64_5">IsPrefixOfStringInTable_x64_5</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -335,8 +335,8 @@ gtag('config', 'G-8RPR4XKPEW', { 'anonymize_ip': false});
   <li><a href="#baseline-c-implementation" id="toc-baseline-c-implementation">Baseline C Implementation</a></li>
   <li><a href="#the-proposed-interface" id="toc-the-proposed-interface">The Proposed Interface</a>
   <ul>
-  <li><a href="#the-isprefixofstringintable-function" id="toc-the-isprefixofstringintable-function">The <code>IsPrefixOfStringInTable</code> Function</a></li>
-  <li><a href="#the-string_match-structure" id="toc-the-string_match-structure">The <code>STRING_MATCH</code> Structure</a></li>
+  <li><a href="#the-isprefixofstringintable-function" id="toc-the-isprefixofstringintable-function">The IsPrefixOfStringInTable Function</a></li>
+  <li><a href="#the-string_match-structure" id="toc-the-string_match-structure">The STRING_MATCH Structure</a></li>
   </ul></li>
   <li><a href="#the-test-data" id="toc-the-test-data">The Test Data</a>
   <ul>
@@ -346,11 +346,11 @@ gtag('config', 'G-8RPR4XKPEW', { 'anonymize_ip': false});
   <li><a href="#requirements-and-design-decisions" id="toc-requirements-and-design-decisions">Requirements and Design Decisions</a></li>
   <li><a href="#the-data-structures" id="toc-the-data-structures">The Data Structures</a>
   <ul>
-  <li><a href="#string_table" id="toc-string_table"><code>STRING_TABLE</code></a></li>
-  <li><a href="#string_array" id="toc-string_array"><code>STRING_ARRAY</code></a></li>
-  <li><a href="#STRING_SLOT" id="toc-STRING_SLOT"><code>STRING_SLOT</code></a></li>
-  <li><a href="#SLOT_INDEX" id="toc-SLOT_INDEX"><code>SLOT_INDEX</code></a></li>
-  <li><a href="#CreateStringTable" id="toc-CreateStringTable">String Table Construction</a></li>
+  <li><a href="#string_table" id="toc-string_table">STRING_TABLE</a></li>
+  <li><a href="#string_array" id="toc-string_array">STRING_ARRAY</a></li>
+  <li><a href="#string_slot" id="toc-string_slot">STRING_SLOT</a></li>
+  <li><a href="#slot_index" id="toc-slot_index">SLOT_INDEX</a></li>
+  <li><a href="#createstringtable" id="toc-createstringtable">String Table Construction</a></li>
   </ul></li>
   <li><a href="#the-benchmark" id="toc-the-benchmark">The Benchmark</a>
   <ul>
@@ -362,46 +362,46 @@ gtag('config', 'G-8RPR4XKPEW', { 'anonymize_ip': false});
   <ul>
   <li><a href="#c-implementations" id="toc-c-implementations">C Implementations</a>
   <ul>
-  <li><a href="#IsPrefixOfCStrInArray" id="toc-IsPrefixOfCStrInArray"><code>IsPrefixOfCStrInArray</code></a></li>
-  <li><a href="#IsPrefixOfStringInTable_1" id="toc-IsPrefixOfStringInTable_1"><code>IsPrefixOfStringInTable_1</code></a></li>
+  <li><a href="#isprefixofcstrinarray" id="toc-isprefixofcstrinarray">IsPrefixOfCStrInArray</a></li>
+  <li><a href="#isprefixofstringintable_1" id="toc-isprefixofstringintable_1">IsPrefixOfStringInTable_1</a></li>
   <li><a href="#benchmark-1" id="toc-benchmark-1">Benchmark 1</a></li>
-  <li><a href="#IsPrefixMatch" id="toc-IsPrefixMatch"><code>IsPrefixMatch</code></a></li>
-  <li><a href="#IsPrefixMatchAvx2" id="toc-IsPrefixMatchAvx2"><code>IsPrefixMatchAvx2</code></a></li>
-  <li><a href="#IsPrefixOfStringInTable_2" id="toc-IsPrefixOfStringInTable_2"><code>IsPrefixOfStringInTable_2</code></a></li>
+  <li><a href="#isprefixmatch" id="toc-isprefixmatch">IsPrefixMatch</a></li>
+  <li><a href="#isprefixmatchavx2" id="toc-isprefixmatchavx2">IsPrefixMatchAvx2</a></li>
+  <li><a href="#isprefixofstringintable_2" id="toc-isprefixofstringintable_2">IsPrefixOfStringInTable_2</a></li>
   <li><a href="#benchmark-2" id="toc-benchmark-2">Benchmark 2</a></li>
-  <li><a href="#IsPrefixOfStringInTable_3" id="toc-IsPrefixOfStringInTable_3"><code>IsPrefixOfStringInTable_3</code></a></li>
+  <li><a href="#isprefixofstringintable_3" id="toc-isprefixofstringintable_3">IsPrefixOfStringInTable_3</a></li>
   <li><a href="#benchmark-3" id="toc-benchmark-3">Benchmark 3</a></li>
-  <li><a href="#IsPrefixOfStringInTable_4" id="toc-IsPrefixOfStringInTable_4"><code>IsPrefixOfStringInTable_4</code></a></li>
+  <li><a href="#isprefixofstringintable_4" id="toc-isprefixofstringintable_4">IsPrefixOfStringInTable_4</a></li>
   <li><a href="#benchmark-4" id="toc-benchmark-4">Benchmark 4</a></li>
-  <li><a href="#IsPrefixOfStringInTable_5" id="toc-IsPrefixOfStringInTable_5">IsPrefixOfStringInTable_5</a></li>
+  <li><a href="#isprefixofstringintable_5" id="toc-isprefixofstringintable_5">IsPrefixOfStringInTable_5</a></li>
   <li><a href="#benchmark-5" id="toc-benchmark-5">Benchmark 5</a></li>
-  <li><a href="#IsPrefixOfStringInTable_6" id="toc-IsPrefixOfStringInTable_6"><code>IsPrefixOfStringInTable_6</code></a></li>
+  <li><a href="#isprefixofstringintable_6" id="toc-isprefixofstringintable_6">IsPrefixOfStringInTable_6</a></li>
   <li><a href="#benchmark-6" id="toc-benchmark-6">Benchmark 6</a></li>
-  <li><a href="#IsPrefixOfStringInTable_7" id="toc-IsPrefixOfStringInTable_7"><code>IsPrefixOfStringInTable_7</code></a></li>
+  <li><a href="#isprefixofstringintable_7" id="toc-isprefixofstringintable_7">IsPrefixOfStringInTable_7</a></li>
   <li><a href="#benchmark-7" id="toc-benchmark-7">Benchmark 7</a></li>
-  <li><a href="#IsPrefixOfStringInTable_8" id="toc-IsPrefixOfStringInTable_8"><code>IsPrefixOfStringInTable_8</code></a></li>
+  <li><a href="#isprefixofstringintable_8" id="toc-isprefixofstringintable_8">IsPrefixOfStringInTable_8</a></li>
   <li><a href="#benchmark-8" id="toc-benchmark-8">Benchmark 8</a></li>
-  <li><a href="#IsPrefixOfStringInTable_9" id="toc-IsPrefixOfStringInTable_9"><code>IsPrefixOfStringInTable_9</code></a></li>
+  <li><a href="#isprefixofstringintable_9" id="toc-isprefixofstringintable_9">IsPrefixOfStringInTable_9</a></li>
   <li><a href="#benchmark-9" id="toc-benchmark-9">Benchmark 9</a></li>
-  <li><a href="#IsPrefixOfStringInTable_10" id="toc-IsPrefixOfStringInTable_10"><code>IsPrefixOfStringInTable_10</code></a></li>
+  <li><a href="#isprefixofstringintable_10" id="toc-isprefixofstringintable_10">IsPrefixOfStringInTable_10</a></li>
   <li><a href="#benchmark-10" id="toc-benchmark-10">Benchmark 10</a></li>
   </ul></li>
   <li><a href="#speeding-up-negative-matches-with-assembly" id="toc-speeding-up-negative-matches-with-assembly">Speeding Up Negative Matches with Assembly</a>
   <ul>
   <li><a href="#windows-x64-abi-calling-conventions" id="toc-windows-x64-abi-calling-conventions">Windows x64 ABI Calling Conventions</a>
   <ul>
-  <li><a href="#nested_entry" id="toc-nested_entry"><code>NESTED_ENTRY</code></a></li>
-  <li><a href="#leaf_entry" id="toc-leaf_entry"><code>LEAF_ENTRY</code></a></li>
+  <li><a href="#nested_entry" id="toc-nested_entry">NESTED_ENTRY</a></li>
+  <li><a href="#leaf_entry" id="toc-leaf_entry">LEAF_ENTRY</a></li>
   </ul></li>
   </ul></li>
   <li><a href="#assembly-implementations" id="toc-assembly-implementations">Assembly Implementations</a>
   <ul>
-  <li><a href="#IsPrefixOfStringInTable_x64_1" id="toc-IsPrefixOfStringInTable_x64_1"><code>IsPrefixOfStringInTable_x64_1</code></a></li>
+  <li><a href="#isprefixofstringintable_x64_1" id="toc-isprefixofstringintable_x64_1">IsPrefixOfStringInTable_x64_1</a></li>
   <li><a href="#benchmark-x64-1" id="toc-benchmark-x64-1">Benchmark x64 1</a></li>
-  <li><a href="#IsPrefixOfStringInTable_x64_2" id="toc-IsPrefixOfStringInTable_x64_2"><code>IsPrefixOfStringInTable_x64_2</code></a></li>
+  <li><a href="#isprefixofstringintable_x64_2" id="toc-isprefixofstringintable_x64_2">IsPrefixOfStringInTable_x64_2</a></li>
   <li><a href="#benchmark-x64-2-negative-matching" id="toc-benchmark-x64-2-negative-matching">Benchmark x64 2: Negative Matching</a></li>
   <li><a href="#benchmark-x64-2-prefix-matching" id="toc-benchmark-x64-2-prefix-matching">Benchmark x64 2: Prefix Matching</a></li>
-  <li><a href="#IsPrefixOfStringInTable_x64_3" id="toc-IsPrefixOfStringInTable_x64_3"><code>IsPrefixOfStringInTable_x64_3</code></a></li>
+  <li><a href="#isprefixofstringintable_x64_3" id="toc-isprefixofstringintable_x64_3">IsPrefixOfStringInTable_x64_3</a></li>
   <li><a href="#benchmark-x64-3" id="toc-benchmark-x64-3">Benchmark x64 3</a></li>
   </ul></li>
   <li><a href="#internet-feedback" id="toc-internet-feedback">Internet Feedback</a></li>
@@ -410,17 +410,17 @@ gtag('config', 'G-8RPR4XKPEW', { 'anonymize_ip': false});
   <ul>
   <li><a href="#c-implementations-1" id="toc-c-implementations-1">C Implementations</a>
   <ul>
-  <li><a href="#IsPrefixOfStringInTable_11" id="toc-IsPrefixOfStringInTable_11"><code>IsPrefixOfStringInTable_11</code></a></li>
+  <li><a href="#isprefixofstringintable_11" id="toc-isprefixofstringintable_11">IsPrefixOfStringInTable_11</a></li>
   <li><a href="#benchmark-11" id="toc-benchmark-11">Benchmark 11</a></li>
-  <li><a href="#IsPrefixOfStringInTable_x64_4" id="toc-IsPrefixOfStringInTable_x64_4"><code>IsPrefixOfStringInTable_x64_4</code></a></li>
+  <li><a href="#isprefixofstringintable_x64_4" id="toc-isprefixofstringintable_x64_4">IsPrefixOfStringInTable_x64_4</a></li>
   <li><a href="#benchmark-x64-4" id="toc-benchmark-x64-4">Benchmark x64 4</a></li>
-  <li><a href="#IsPrefixOfStringInTable_12" id="toc-IsPrefixOfStringInTable_12"><code>IsPrefixOfStringInTable_12</code></a></li>
+  <li><a href="#isprefixofstringintable_12" id="toc-isprefixofstringintable_12">IsPrefixOfStringInTable_12</a></li>
   <li><a href="#benchmark-12" id="toc-benchmark-12">Benchmark 12</a></li>
-  <li><a href="#IsPrefixOfStringInTable_13" id="toc-IsPrefixOfStringInTable_13"><code>IsPrefixOfStringInTable_13</code></a></li>
+  <li><a href="#isprefixofstringintable_13" id="toc-isprefixofstringintable_13">IsPrefixOfStringInTable_13</a></li>
   <li><a href="#benchmark-13" id="toc-benchmark-13">Benchmark 13</a></li>
-  <li><a href="#IsPrefixOfStringInTable_14" id="toc-IsPrefixOfStringInTable_14"><code>IsPrefixOfStringInTable_14</code></a></li>
+  <li><a href="#isprefixofstringintable_14" id="toc-isprefixofstringintable_14">IsPrefixOfStringInTable_14</a></li>
   <li><a href="#benchmark-14" id="toc-benchmark-14">Benchmark 14</a></li>
-  <li><a href="#IsPrefixOfStringInTable_x64_5" id="toc-IsPrefixOfStringInTable_x64_5"><code>IsPrefixOfStringInTable_x64_5</code></a></li>
+  <li><a href="#isprefixofstringintable_x64_5" id="toc-isprefixofstringintable_x64_5">IsPrefixOfStringInTable_x64_5</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -438,8 +438,8 @@ gtag('config', 'G-8RPR4XKPEW', { 'anonymize_ip': false});
 <section id="overview" class="level1">
 <h1>Overview</h1>
 <p>Goal: given a string, determine if it prefix-matches a set of known strings as fast as possible. That is, in a set of known strings, do any of them prefix match the incoming search string?</p>
-<p>A reference implementation was written in C as a <a href="#IsPrefixOfCStrInArray">baseline</a>, which simply looped through an array of strings, comparing each one, byte-by-byte, looking for a prefix match. Prefix match performance ranged from 28 CPU cycles to 130, and negative match performance was around 74 cycles.</p>
-<p>A SIMD-friendly C structure called <a href="#STRING_TABLE"><code>STRING_TABLE</code></a> was derived. It is optimized for up to 16 strings, ideally of length less than or equal to 16 characters. The table is created from the set of known strings up-front; it is sorted by length, ascending, and a unique character (with regards to other characters at the same byte offset) is then extracted, along with its index. A 16-byte character array, <a href="#STRING_SLOT"><code>STRING_SLOT</code></a>, is used to capture the unique characters. A 16-element array of unsigned characters, <code>SLOT_INDEX</code>, is used to capture the index. Similarly, lengths are stored in the same fashion via <code>SLOT_LENGTHS</code>. Finally, a 16-element array of <code>STRING_SLOTs</code> is used to capture up to the first 16 bytes of each string in the set.</p>
+<p>A reference implementation was written in C as a <a href="#isprefixofcstrinarray">baseline</a>, which simply looped through an array of strings, comparing each one, byte-by-byte, looking for a prefix match. Prefix match performance ranged from 28 CPU cycles to 130, and negative match performance was around 74 cycles.</p>
+<p>A SIMD-friendly C structure called <a href="#string_table"><code>STRING_TABLE</code></a> was derived. It is optimized for up to 16 strings, ideally of length less than or equal to 16 characters. The table is created from the set of known strings up-front; it is sorted by length, ascending, and a unique character (with regards to other characters at the same byte offset) is then extracted, along with its index. A 16-byte character array, <a href="#string_slot"><code>STRING_SLOT</code></a>, is used to capture the unique characters. A 16-element array of unsigned characters, <code>SLOT_INDEX</code>, is used to capture the index. Similarly, lengths are stored in the same fashion via <code>SLOT_LENGTHS</code>. Finally, a 16-element array of <code>STRING_SLOTs</code> is used to capture up to the first 16 bytes of each string in the set.</p>
 <p>An example of the memory layout of the <code>STRING_TABLE</code> structure at run time, using sample <a href="#ntfs-reserved-names">test data</a>, is depicted below. Note the width of each row is 16 bytes (128 bits), which is the size of an XMM register.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
@@ -516,8 +516,8 @@ gtag('config', 'G-8RPR4XKPEW', { 'anonymize_ip': false});
 <figcaption>StringTable Negative Match</figcaption>
 </figure>
 </div>
-<p>Ten iterations of a function named <code>IsPrefixOfStringInTable</code> were authored. The <a href="#IsPrefixOfStringInTable_10">tenth</a> and final iteration was the fastest, prefix matching in as little as 19 cycles—a 4x improvement over the baseline. Negative matching took 11 cycles—a 6.7x improvement.</p>
-<p>An <a href="#IsPrefixOfStringInTable_x64_2">assembly</a> version of the algorithm was authored specifically to optimize for the negative match case, and was able to do so in as little as 8 cycles, representing a 9x improvement over the baseline. (It was a little bit slower than the fastest C routine in the case of prefix matches, though, as can be seen below.)</p>
+<p>Ten iterations of a function named <code>IsPrefixOfStringInTable</code> were authored. The <a href="#isprefixofstringintable_10">tenth</a> and final iteration was the fastest, prefix matching in as little as 19 cycles—a 4x improvement over the baseline. Negative matching took 11 cycles—a 6.7x improvement.</p>
+<p>An <a href="#isprefixofstringintable_x64_2">assembly</a> version of the algorithm was authored specifically to optimize for the negative match case, and was able to do so in as little as 8 cycles, representing a 9x improvement over the baseline. (It was a little bit slower than the fastest C routine in the case of prefix matches, though, as can be seen below.)</p>
 <p>Feedback for an early draft of this article was then solicited via <a href="https://twitter.com/trentnelson/status/985715037934440448">Twitter</a>, resulting in four more iterations of the C version, and three more iterations of the assembly version. The PGO build of the fastest C version prefix matched in about 16 cycles (and also had the best “worst case input string” performance where three slots needed comparison), negative matching in about 26 cycles. The fifth iteration of the assembly version negative matched in about 6 cycles, a 3 and 1 cycle improvement, respectively.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
@@ -724,7 +724,7 @@ Note
 <h2 class="anchored" data-anchor-id="the-proposed-interface">The Proposed Interface</h2>
 <p>Let’s take a look at the interface we’re proposing, the <code>IsPrefixOfStringInTable</code> function, that this article is based upon:</p>
 <section id="the-isprefixofstringintable-function" class="level3">
-<h3 class="anchored" data-anchor-id="the-isprefixofstringintable-function">The <code>IsPrefixOfStringInTable</code> Function</h3>
+<h3 class="anchored" data-anchor-id="the-isprefixofstringintable-function">The IsPrefixOfStringInTable Function</h3>
 <div class="sourceCode" id="cb7"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">//</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co">// Our string table index is simply a char, with -1 indicating no match found.</span></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co">//</span></span>
@@ -774,10 +774,10 @@ Note
 <span id="cb7-47"><a href="#cb7-47" aria-hidden="true" tabindex="-1"></a><span class="co">    Index of the prefix match if one was found, NO_MATCH_FOUND if not.</span></span>
 <span id="cb7-48"><a href="#cb7-48" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-49"><a href="#cb7-49" aria-hidden="true" tabindex="-1"></a><span class="co">--*/</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>All implementations discussed in this article adhere to that function signature. The <a href="#STRING_TABLE"><code>STRING_TABLE</code></a> structure will be discussed shortly.</p>
+<p>All implementations discussed in this article adhere to that function signature. The <a href="#string_table"><code>STRING_TABLE</code></a> structure will be discussed shortly.</p>
 </section>
 <section id="the-string_match-structure" class="level3">
-<h3 class="anchored" data-anchor-id="the-string_match-structure">The <code>STRING_MATCH</code> Structure</h3>
+<h3 class="anchored" data-anchor-id="the-string_match-structure">The STRING_MATCH Structure</h3>
 <p>The <code>STRING_MATCH</code> structure is used to optionally communicate information about the prefix match back to the caller. The index and characters matched fields are often very useful when using the string table for text parsing; see the <a href="#other-applications">other applications</a> section below for an example.</p>
 <p>The structure is defined as follows:</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co">//</span></span>
@@ -895,7 +895,7 @@ Note
 <h1>The Data Structures</h1>
 <p>The primary data structure employed by this solution is the <code>STRING_TABLE</code> structure. It is composed of supporting structures: <code>STRING_SLOT</code>, <code>SLOT_INDEX</code>, and <code>SLOT_LENGTH</code>, and either embeds or points to the originating <code>STRING_ARRAY</code> structure from which it was created.</p>
 <section id="string_table" class="level2">
-<h2 class="anchored" data-anchor-id="string_table"><code>STRING_TABLE</code></h2>
+<h2 class="anchored" data-anchor-id="string_table">STRING_TABLE</h2>
 <p>Let’s review the <code>STRING_TABLE</code> <a href="https://github.com/tpn/tracer/blob/2018-04-18.2/StringTable2/StringTable.h#L194">view on GitHub</a> structure first and then touch on the supporting structures.</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-3-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-1" role="tab" aria-controls="tabset-3-1" aria-selected="true">C (Cutler Normal Form)</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-2" role="tab" aria-controls="tabset-3-2" aria-selected="false">C (Kernel Normal Form)</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-3" role="tab" aria-controls="tabset-3-3" aria-selected="false">MASM</a></li></ul>
@@ -1090,7 +1090,7 @@ Note
 </div>
 </div>
 </div>
-<p>The following diagram depicts an in-memory representation of the <code>STRING_TABLE</code> structure using our NTFS reserved prefix names. It is created via the <a href="#CreateStringTable"><code>CreateStringTable</code></a> routine, which we feature in the appendix of this article.</p>
+<p>The following diagram depicts an in-memory representation of the <code>STRING_TABLE</code> structure using our NTFS reserved prefix names. It is created via the <a href="#createstringtable"><code>CreateStringTable</code></a> routine, which we feature in the appendix of this article.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><a href="resources/StringTable.svg"><img src="resources/StringTable.svg" class="img-fluid figure-img" alt="STRING_TABLE Diagram"></a></p>
@@ -1101,7 +1101,7 @@ Note
 <p>The utility of the string table is maximized by ensuring a unique character is selected from every string; thus, we sort by length first. Note that the uniqueness is actually determined by offset:character pairs, with the offsets becoming the indices stored in the <em>UniqueIndex</em> slot. If you trace through the diagram above, you’ll see that the unique character in each slot matches the character in the corresponding string slot, indicated by the underlying index.</p>
 </section>
 <section id="string_array" class="level2">
-<h2 class="anchored" data-anchor-id="string_array"><code>STRING_ARRAY</code></h2>
+<h2 class="anchored" data-anchor-id="string_array">STRING_ARRAY</h2>
 <p>The string array captures a raw array representation of the underlying strings making up the string table. It is either embedded within the padding area at the end of the string table, or a separate allocation is made during string table creation. The main interface to creating a string table is via a <code>STRING_ARRAY</code> structure. The helper functions, <a href="https://github.com/tpn/tracer/blob/2018-04-18.2/StringTable2/CreateStringTable.c#L471"><code>CreateStringTableFromDelimitedString</code></a> and <a href="https://github.com/tpn/tracer/blob/2018-04-18.2/StringTable2/CreateStringTable.c#L595"><code>CreateStringTableFromDelimitedEnvironmentVariable</code></a>, simply break down their input into a <code>STRING_ARRAY</code> representation first before calling <a href="https://github.com/tpn/tracer/blob/2018-04-18.2/StringTable2/CreateStringTable.c#L51"><code>CreateStringTable</code></a>.</p>
 <div class="sourceCode" id="cb13"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">typedef</span> <span class="kw">struct</span> <span class="at">_Struct_size_bytes_</span><span class="op">(</span>SizeInQuadwords<span class="op">&gt;&gt;</span><span class="dv">3</span><span class="op">)</span> _STRING_ARRAY <span class="op">{</span></span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -1167,8 +1167,8 @@ Note
 </div>
 <p>And finally, we’re left with the smaller helper structs that we use to encapsulate the various innards of the string table. (I use unions that feature <code>XMMWORD</code> representations (which is a typedef of <code>__m128i</code>, representing an XMM register) as well as underlying byte/character representations, as I personally find it makes the resulting C code a bit nicer.)</p>
 </section>
-<section id="STRING_SLOT" class="level2">
-<h2 class="anchored" data-anchor-id="STRING_SLOT"><code>STRING_SLOT</code></h2>
+<section id="string_slot" class="level2">
+<h2 class="anchored" data-anchor-id="string_slot">STRING_SLOT</h2>
 <div class="sourceCode" id="cb14"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co">//</span></span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="co">// String tables are composed of a 16 element array of 16 byte string "slots",</span></span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="co">// which represent a unique character (with respect to other strings in the</span></span>
@@ -1182,8 +1182,8 @@ Note
 <span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a><span class="op">}</span> <span class="bu">STRING_SLOT</span><span class="op">,</span> <span class="op">*</span><span class="bu">PSTRING_SLOT</span><span class="op">,</span> <span class="op">**</span><span class="bu">PPSTRING_SLOT</span><span class="op">;</span></span>
 <span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a><span class="at">C_ASSERT</span><span class="op">(</span><span class="kw">sizeof</span><span class="op">(</span><span class="bu">STRING_SLOT</span><span class="op">)</span> <span class="op">==</span> <span class="dv">16</span><span class="op">);</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
-<section id="SLOT_INDEX" class="level2">
-<h2 class="anchored" data-anchor-id="SLOT_INDEX"><code>SLOT_INDEX</code></h2>
+<section id="slot_index" class="level2">
+<h2 class="anchored" data-anchor-id="slot_index">SLOT_INDEX</h2>
 <div class="sourceCode" id="cb15"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co">//</span></span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="co">// A 16 element array of 1 byte unsigned integers, used to capture the length</span></span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="co">// of each string slot in a single XMM 128-bit register.</span></span>
@@ -1195,8 +1195,8 @@ Note
 <span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a><span class="op">}</span> <span class="bu">SLOT_LENGTHS</span><span class="op">,</span> <span class="op">*</span>PSLOT_LENGTHS<span class="op">,</span> <span class="op">**</span><span class="bu">PPSLOT_LENGTHS</span><span class="op">;</span></span>
 <span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a><span class="at">C_ASSERT</span><span class="op">(</span><span class="kw">sizeof</span><span class="op">(</span><span class="bu">SLOT_LENGTHS</span><span class="op">)</span> <span class="op">==</span> <span class="dv">16</span><span class="op">);</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
-<section id="CreateStringTable" class="level2">
-<h2 class="anchored" data-anchor-id="CreateStringTable">String Table Construction</h2>
+<section id="createstringtable" class="level2">
+<h2 class="anchored" data-anchor-id="createstringtable">String Table Construction</h2>
 <p>The <a href="https://github.com/tpn/tracer/blob/2018-04-18.2/StringTable2/CreateStringTable.c#L147"><code>CreateSingleStringTable</code></a> routine is responsible for the construction of a new <code>STRING_TABLE</code>. It is here that we identify the unique set of characters (and their indices) to store in the first two fields of the string table.</p>
 <div class="sourceCode" id="cb16"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co">//</span></span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="co">// Define private types used by this module.</span></span>
@@ -1629,9 +1629,9 @@ Note
 <p>Additionally, with the benefit of writing this section introduction retroactively, iterations 4 and 5 aren’t testing what I initially thought they were testing. I’ve left them in as is; if anything, it demonstrates the importance of only changing one thing at a time and making sure you’re testing what you think you’re testing. I’ll discuss the errors with those iterations later in the article.</p>
 <section id="c-implementations" class="level3">
 <h3 class="anchored" data-anchor-id="c-implementations">C Implementations</h3>
-<section id="IsPrefixOfCStrInArray" class="level4">
-<h4 class="anchored" data-anchor-id="IsPrefixOfCStrInArray"><code>IsPrefixOfCStrInArray</code></h4>
-<p><a href="#IsPrefixOfStringInTable_1">IsPrefixOfStringInTable_1 →</a></p>
+<section id="isprefixofcstrinarray" class="level4">
+<h4 class="anchored" data-anchor-id="isprefixofcstrinarray">IsPrefixOfCStrInArray</h4>
+<p><a href="#isprefixofstringintable_1">IsPrefixOfStringInTable_1 →</a></p>
 <p>Let’s review the baseline implementation again, as that’s what we’re ultimately comparing ourselves against. This version enumerates the string array (and thus has a slightly different function signature than the <code>STRING_TABLE</code>-based functions) looking for prefix matches. No SIMD instructions are used. The timings captured should be proportional to the location of the test input string in the array. That is, it should take less time to prefix match strings that occur earlier in the array versus those that appear later.</p>
 <div class="sourceCode" id="cb17"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="at">_Use_decl_annotations_</span></span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="bu">STRING_TABLE_INDEX</span></span>
@@ -1669,9 +1669,9 @@ Note
 <span id="cb17-34"><a href="#cb17-34" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="ex">NO_MATCH_FOUND</span><span class="op">;</span></span>
 <span id="cb17-35"><a href="#cb17-35" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
-<section id="IsPrefixOfStringInTable_1" class="level4">
-<h4 class="anchored" data-anchor-id="IsPrefixOfStringInTable_1"><code>IsPrefixOfStringInTable_1</code></h4>
-<p><a href="#IsPrefixOfCStrInArray">← IsPrefixOfCStrInArray</a> | <a href="#IsPrefixOfStringInTable_2">IsPrefixOfStringInTable_2 →</a></p>
+<section id="isprefixofstringintable_1" class="level4">
+<h4 class="anchored" data-anchor-id="isprefixofstringintable_1">IsPrefixOfStringInTable_1</h4>
+<p><a href="#isprefixofcstrinarray">← IsPrefixOfCStrInArray</a> | <a href="#isprefixofstringintable_2">IsPrefixOfStringInTable_2 →</a></p>
 <p>This version is similar to the <code>IsPrefixOfCStrInArray</code> implementation, except it utilizes the slot length information provided by the <code>STRING_ARRAY</code> structure and conforms to our standard <code>IsPrefixOfStringInTable</code> function signature. It uses no SIMD instructions.</p>
 <div class="sourceCode" id="cb18"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="at">_Use_decl_annotations_</span></span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="bu">STRING_TABLE_INDEX</span></span>
@@ -1775,8 +1775,8 @@ Note
 <p>None of those details really apply to our second attempt at the <code>StringTable</code> component, detailed in this article. Our lengths are 8 bits, and we use unique characters in the initial negative match fast-path. However, the first version used an elaborate AVX2 prefix match routine geared toward matching long strings, attempting to use non-temporal streaming load instructions where possible (which would only make sense for a large number of long strings in specific cache-thrashing scenarios).</p>
 <p>Compare our simpler implementation, <code>IsPrefixMatch</code>, used from version 3 onward, to the far more elaborate (and unnecessary) <code>IsPrefixMatchAvx2</code>:</p>
 </section>
-<section id="IsPrefixMatch" class="level4">
-<h4 class="anchored" data-anchor-id="IsPrefixMatch"><code>IsPrefixMatch</code></h4>
+<section id="isprefixmatch" class="level4">
+<h4 class="anchored" data-anchor-id="isprefixmatch">IsPrefixMatch</h4>
 <div class="sourceCode" id="cb19"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>FORCEINLINE</span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="dt">BYTE</span></span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>IsPrefixMatch<span class="op">(</span></span>
@@ -1805,8 +1805,8 @@ Note
 <span id="cb19-26"><a href="#cb19-26" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> Matched<span class="op">;</span></span>
 <span id="cb19-27"><a href="#cb19-27" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
-<section id="IsPrefixMatchAvx2" class="level4">
-<h4 class="anchored" data-anchor-id="IsPrefixMatchAvx2"><code>IsPrefixMatchAvx2</code></h4>
+<section id="isprefixmatchavx2" class="level4">
+<h4 class="anchored" data-anchor-id="isprefixmatchavx2">IsPrefixMatchAvx2</h4>
 <p>The AVX2 routine is overkill, especially considering the emphasis we put on favoring short strings over longer ones in the requirements section. However, we want to put broad statements like that to the test, so let’s include it as our first SIMD implementation to see how it stacks up against the simpler versions.</p>
 <div class="sourceCode" id="cb20"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>FORCEINLINE</span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="dt">USHORT</span></span>
@@ -2102,9 +2102,9 @@ Note
 <span id="cb20-292"><a href="#cb20-292" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="ex">NO_MATCH_FOUND</span><span class="op">;</span></span>
 <span id="cb20-293"><a href="#cb20-293" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
-<section id="IsPrefixOfStringInTable_2" class="level4">
-<h4 class="anchored" data-anchor-id="IsPrefixOfStringInTable_2"><code>IsPrefixOfStringInTable_2</code></h4>
-<p><a href="#IsPrefixOfStringInTable_1">← IsPrefixOfStringInTable_1</a> | <a href="#IsPrefixOfStringInTable_3">IsPrefixOfStringInTable_3 →</a></p>
+<section id="isprefixofstringintable_2" class="level4">
+<h4 class="anchored" data-anchor-id="isprefixofstringintable_2">IsPrefixOfStringInTable_2</h4>
+<p><a href="#isprefixofstringintable_1">← IsPrefixOfStringInTable_1</a> | <a href="#isprefixofstringintable_3">IsPrefixOfStringInTable_3 →</a></p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -2454,9 +2454,9 @@ Note
 </div>
 <p>Eek! Our first SIMD attempt actually has worse prefix matching performance in most cases! The only area where it shows a performance improvement is in negative matching.</p>
 </section>
-<section id="IsPrefixOfStringInTable_3" class="level4">
-<h4 class="anchored" data-anchor-id="IsPrefixOfStringInTable_3"><code>IsPrefixOfStringInTable_3</code></h4>
-<p><a href="#IsPrefixOfStringInTable_2">← IsPrefixOfStringInTable_2</a> | <a href="#IsPrefixOfStringInTable_4">IsPrefixOfStringInTable_4 →</a></p>
+<section id="isprefixofstringintable_3" class="level4">
+<h4 class="anchored" data-anchor-id="isprefixofstringintable_3">IsPrefixOfStringInTable_3</h4>
+<p><a href="#isprefixofstringintable_2">← IsPrefixOfStringInTable_2</a> | <a href="#isprefixofstringintable_4">IsPrefixOfStringInTable_4 →</a></p>
 <p>For version 3, let’s replace the call to <code>IsPrefixMatchAvx2</code> with our simpler version, <code>IsPrefixMatch</code>:</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-4-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-1" role="tab" aria-controls="tabset-4-1" aria-selected="true">Diff</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-4-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-2" role="tab" aria-controls="tabset-4-2" aria-selected="false">Full</a></li></ul>
@@ -2823,9 +2823,9 @@ Note
 <p>Phew! We finally see superior performance across the board. This ends the short-lived tenure of version 2, which is demonstrably worse in every case.</p>
 <p>We’ll also omit the <code>IsPrefixOfCStrInArray</code> routine from the graphs for now (for the most part), as it has served its initial baseline purpose.</p>
 </section>
-<section id="IsPrefixOfStringInTable_4" class="level4">
-<h4 class="anchored" data-anchor-id="IsPrefixOfStringInTable_4"><code>IsPrefixOfStringInTable_4</code></h4>
-<p><a href="#IsPrefixOfStringInTable_3">← IsPrefixOfStringInTable_3</a> | <a href="#IsPrefixOfStringInTable_5">IsPrefixOfStringInTable_5 →</a></p>
+<section id="isprefixofstringintable_4" class="level4">
+<h4 class="anchored" data-anchor-id="isprefixofstringintable_4">IsPrefixOfStringInTable_4</h4>
+<p><a href="#isprefixofstringintable_3">← IsPrefixOfStringInTable_3</a> | <a href="#isprefixofstringintable_5">IsPrefixOfStringInTable_5 →</a></p>
 <p>When I first wrote the initial string table code, I was experimenting with different strategies for loading the initial search string buffer. That resulted in the file <a href="https://github.com/tpn/tracer/blob/v0.1.11/StringTable2/StringLoadStoreOperations.h"><code>StringLoadStoreOperations.h</code></a>, which defined a bunch of helper macros. I’ve included them below, but don’t spend too much time absorbing them—they’re not good practice, and they all become irrelevant as soon as we switch to <code>_mm_loadu_si128()</code> in a few versions. I’m including them because they set the scene for versions 4, 5, and 6.</p>
 <div class="sourceCode" id="cb24"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co">/*++</span></span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -3390,9 +3390,9 @@ Note
 <p>Version 3 is still in the lead with the <code>AlwaysMovsb</code>-based search string loading approach.</p>
 <p><small> <em>Narrator</em>: except the <a href="https://github.com/tpn/tracer/blob/v0.1.11/StringTable2/StringLoadStoreOperations.h#L112"><code>AlignmentCheck</code></a> macro was actually active, not the <a href="https://github.com/tpn/tracer/blob/v0.1.11/StringTable2/StringLoadStoreOperations.h#L112"><code>AlwaysMovsb</code></a> one. </small></p>
 </section>
-<section id="IsPrefixOfStringInTable_5" class="level4">
-<h4 class="anchored" data-anchor-id="IsPrefixOfStringInTable_5">IsPrefixOfStringInTable_5</h4>
-<p><a href="#IsPrefixOfStringInTable_4">← IsPrefixOfStringInTable_4</a> | <a href="#IsPrefixOfStringInTable_6">IsPrefixOfStringInTable_6 →</a></p>
+<section id="isprefixofstringintable_5" class="level4">
+<h4 class="anchored" data-anchor-id="isprefixofstringintable_5">IsPrefixOfStringInTable_5</h4>
+<p><a href="#isprefixofstringintable_4">← IsPrefixOfStringInTable_4</a> | <a href="#isprefixofstringintable_6">IsPrefixOfStringInTable_6 →</a></p>
 <p>Version 5 is an interesting one. It’s the first time we attempt to validate our claim that it’s more efficient to give the CPU a bunch of independent things to do up front, rather than adding more branches and attempting to terminate as early as possible.</p>
 <p>Note: we’ll also explicitly use the <code>LoadSearchStringIntoXmmRegister_AlwaysMovsb</code> macro here, instead of <code>LoadSearchStringIntoXmmRegister</code>, to make it clear that we’re actually relying on the <code>__movsb()</code>-based string loading routine.</p>
 <p><small> <em>Narrator</em>: can anyone spot the mistake with this logic? </small></p>
@@ -3910,9 +3910,9 @@ Note
 <p>That’s the end of version 5’s tenure. TL;DR: fewer branches &gt; more branches.</p>
 <p><small> <em>Narrator</em>: more accurate TL;DR: <code>__movsb()</code> is slow, and always make sure you’re testing what you think you’re testing.] </small></p>
 </section>
-<section id="IsPrefixOfStringInTable_6" class="level4">
-<h4 class="anchored" data-anchor-id="IsPrefixOfStringInTable_6"><code>IsPrefixOfStringInTable_6</code></h4>
-<p><a href="#IsPrefixOfStringInTable_5">← IsPrefixOfStringInTable_5</a> | <a href="#IsPrefixOfStringInTable_7">IsPrefixOfStringInTable_7 →</a></p>
+<section id="isprefixofstringintable_6" class="level4">
+<h4 class="anchored" data-anchor-id="isprefixofstringintable_6">IsPrefixOfStringInTable_6</h4>
+<p><a href="#isprefixofstringintable_5">← IsPrefixOfStringInTable_5</a> | <a href="#isprefixofstringintable_7">IsPrefixOfStringInTable_7 →</a></p>
 <p>Version 6 is boring. We tweak the initial loading of the search string, explicitly loading it via an unaligned load. If the underlying buffer is aligned on a 16-byte boundary, this is just as fast as an aligned load. If not, at least it doesn’t crash—it’s just slow.</p>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -4307,15 +4307,62 @@ Tip
 <p>We have a new winner! Version 3 had a good run, but it’s time to retire. Let’s tweak version 6 going forward.</p>
 <p><small> <em>Narrator</em>: this is actually testing <code>_mm_loadu_si128()</code> against the <code>AlignmentCheck</code> routine, which first calls <code>PointerToOffsetCrossesPageBoundary()</code>, and then checks the address alignment before calling <code>_mm_load_si128()</code>. Since unaligned loads are just as fast as aligned loads as long as the underlying buffer is aligned, all this shows is that it’s slightly faster to skip the pointer boundary and address alignment checks, which isn’t too surprising. </small></p>
 </section>
-<section id="IsPrefixOfStringInTable_7" class="level4">
-<h4 class="anchored" data-anchor-id="IsPrefixOfStringInTable_7"><code>IsPrefixOfStringInTable_7</code></h4>
-<p><a href="#IsPrefixOfStringInTable_6">← IsPrefixOfStringInTable_6</a> | <a href="#IsPrefixOfStringInTable_8">IsPrefixOfStringInTable_8 →</a></p>
+<section id="isprefixofstringintable_7" class="level4">
+<h4 class="anchored" data-anchor-id="isprefixofstringintable_7">IsPrefixOfStringInTable_7</h4>
+<p><a href="#isprefixofstringintable_6">← IsPrefixOfStringInTable_6</a> | <a href="#isprefixofstringintable_8">IsPrefixOfStringInTable_8 →</a></p>
 <p>Version 7 tweaks version 6 a little bit. We don’t need the search string length calculated so early in the routine. Let’s move it to later.</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-8-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-8-1" role="tab" aria-controls="tabset-8-1" aria-selected="true">Diff</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-8-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-8-2" role="tab" aria-controls="tabset-8-2" aria-selected="false">Full</a></li></ul>
 <div class="tab-content">
 <div id="tabset-8-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-8-1-tab">
-<div class="sourceCode" id="cb33"><pre class="sourceCode diff code-with-copy"><code class="sourceCode diff"></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb33"><pre class="sourceCode diff code-with-copy"><code class="sourceCode diff"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>% diff -u IsPrefixOfStringInTable_6.c IsPrefixOfStringInTable_7.c</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a><span class="kw">--- IsPrefixOfStringInTable_6.c 2018-04-15 22:35:55.450273700 -0400</span></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a><span class="dt">+++ IsPrefixOfStringInTable_7.c 2018-04-26 10:00:53.905933700 -0400</span></span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a><span class="dt">@@ -18,7 +18,7 @@</span></span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a> _Use_decl_annotations_</span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a> STRING_TABLE_INDEX</span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a><span class="st">-IsPrefixOfStringInTable_6(</span></span>
+<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a><span class="va">+IsPrefixOfStringInTable_7(</span></span>
+<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a>     PSTRING_TABLE StringTable,</span>
+<span id="cb33-11"><a href="#cb33-11" aria-hidden="true" tabindex="-1"></a>     PSTRING String,</span>
+<span id="cb33-12"><a href="#cb33-12" aria-hidden="true" tabindex="-1"></a>     PSTRING_MATCH Match</span>
+<span id="cb33-13"><a href="#cb33-13" aria-hidden="true" tabindex="-1"></a><span class="dt">@@ -31,9 +31,10 @@</span></span>
+<span id="cb33-14"><a href="#cb33-14" aria-hidden="true" tabindex="-1"></a>     search string.  That is, whether any string in the table "starts with</span>
+<span id="cb33-15"><a href="#cb33-15" aria-hidden="true" tabindex="-1"></a>     or is equal to" the search string.</span>
+<span id="cb33-16"><a href="#cb33-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-17"><a href="#cb33-17" aria-hidden="true" tabindex="-1"></a><span class="st">-    This routine differs from version 3 in that we do an aligned load of the</span></span>
+<span id="cb33-18"><a href="#cb33-18" aria-hidden="true" tabindex="-1"></a><span class="st">-    search string buffer without any SEH wrappers or alignment checks.  (Thus,</span></span>
+<span id="cb33-19"><a href="#cb33-19" aria-hidden="true" tabindex="-1"></a><span class="st">-    this routine will fault if the buffer is unaligned.)</span></span>
+<span id="cb33-20"><a href="#cb33-20" aria-hidden="true" tabindex="-1"></a><span class="va">+    This routine is based off version 6, but alters when we calculate the</span></span>
+<span id="cb33-21"><a href="#cb33-21" aria-hidden="true" tabindex="-1"></a><span class="va">+    "search length" for the given string, which is done via the expression</span></span>
+<span id="cb33-22"><a href="#cb33-22" aria-hidden="true" tabindex="-1"></a><span class="va">+    'min(String-&gt;Length, 16)'.  We don't need this value until later in the</span></span>
+<span id="cb33-23"><a href="#cb33-23" aria-hidden="true" tabindex="-1"></a><span class="va">+    routine, when we're ready to start comparing strings.</span></span>
+<span id="cb33-24"><a href="#cb33-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-25"><a href="#cb33-25" aria-hidden="true" tabindex="-1"></a> Arguments:</span>
+<span id="cb33-26"><a href="#cb33-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-27"><a href="#cb33-27" aria-hidden="true" tabindex="-1"></a><span class="dt">@@ -125,7 +126,6 @@</span></span>
+<span id="cb33-28"><a href="#cb33-28" aria-hidden="true" tabindex="-1"></a>     // Load the first 16-bytes of the search string into an XMM register.</span>
+<span id="cb33-29"><a href="#cb33-29" aria-hidden="true" tabindex="-1"></a>     //</span>
+<span id="cb33-30"><a href="#cb33-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-31"><a href="#cb33-31" aria-hidden="true" tabindex="-1"></a><span class="st">-    SearchLength = min(String-&gt;Length, 16);</span></span>
+<span id="cb33-32"><a href="#cb33-32" aria-hidden="true" tabindex="-1"></a>     Search.CharsXmm = _mm_loadu_si128((PXMMWORD)String-&gt;Buffer);</span>
+<span id="cb33-33"><a href="#cb33-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-34"><a href="#cb33-34" aria-hidden="true" tabindex="-1"></a>     //</span>
+<span id="cb33-35"><a href="#cb33-35" aria-hidden="true" tabindex="-1"></a><span class="dt">@@ -213,6 +213,13 @@</span></span>
+<span id="cb33-36"><a href="#cb33-36" aria-hidden="true" tabindex="-1"></a>     }</span>
+<span id="cb33-37"><a href="#cb33-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-38"><a href="#cb33-38" aria-hidden="true" tabindex="-1"></a>     //</span>
+<span id="cb33-39"><a href="#cb33-39" aria-hidden="true" tabindex="-1"></a><span class="va">+    // Calculate the "search length" of the incoming string, which ensures we</span></span>
+<span id="cb33-40"><a href="#cb33-40" aria-hidden="true" tabindex="-1"></a><span class="va">+    // only compare up to the first 16 characters.</span></span>
+<span id="cb33-41"><a href="#cb33-41" aria-hidden="true" tabindex="-1"></a><span class="va">+    //</span></span>
+<span id="cb33-42"><a href="#cb33-42" aria-hidden="true" tabindex="-1"></a><span class="va">+</span></span>
+<span id="cb33-43"><a href="#cb33-43" aria-hidden="true" tabindex="-1"></a><span class="va">+    SearchLength = min(String-&gt;Length, 16);</span></span>
+<span id="cb33-44"><a href="#cb33-44" aria-hidden="true" tabindex="-1"></a><span class="va">+</span></span>
+<span id="cb33-45"><a href="#cb33-45" aria-hidden="true" tabindex="-1"></a><span class="va">+    //</span></span>
+<span id="cb33-46"><a href="#cb33-46" aria-hidden="true" tabindex="-1"></a>     // A popcount against the mask will tell us how many slots we matched, and</span>
+<span id="cb33-47"><a href="#cb33-47" aria-hidden="true" tabindex="-1"></a>     // thus, need to compare.</span>
+<span id="cb33-48"><a href="#cb33-48" aria-hidden="true" tabindex="-1"></a>     //</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div id="tabset-8-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-8-2-tab">
 <div class="sourceCode" id="cb34"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="at">_Use_decl_annotations_</span></span>
@@ -4667,9 +4714,9 @@ Tip
 </div>
 <p>Tiny change, tiny performance improvement! Looks like this saves a couple of cycles, thus ending the short-lived reign of version 6.</p>
 </section>
-<section id="IsPrefixOfStringInTable_8" class="level4">
-<h4 class="anchored" data-anchor-id="IsPrefixOfStringInTable_8"><code>IsPrefixOfStringInTable_8</code></h4>
-<p><a href="#IsPrefixOfStringInTable_7">← IsPrefixOfStringInTable_7</a> | <a href="#IsPrefixOfStringInTable_9">IsPrefixOfStringInTable_9 →</a></p>
+<section id="isprefixofstringintable_8" class="level4">
+<h4 class="anchored" data-anchor-id="isprefixofstringintable_8">IsPrefixOfStringInTable_8</h4>
+<p><a href="#isprefixofstringintable_7">← IsPrefixOfStringInTable_7</a> | <a href="#isprefixofstringintable_9">IsPrefixOfStringInTable_9 →</a></p>
 <p>Version 8 is based off version 7, but omits the initial length test. Again, it’s another small change, but if version 5 was anything to go off, the less branches, the better.</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-9-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-9-1" role="tab" aria-controls="tabset-9-1" aria-selected="true">Diff</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-9-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-9-2" role="tab" aria-controls="tabset-9-2" aria-selected="false">Full</a></li></ul>
@@ -5063,9 +5110,9 @@ Tip
 </div>
 <p>Hey, look at that, another win across the board! Omitting the length test shaves off a few more cycles for both prefix and negative matching. Version 7’s one-round reign has come to a timely end.</p>
 </section>
-<section id="IsPrefixOfStringInTable_9" class="level4">
-<h4 class="anchored" data-anchor-id="IsPrefixOfStringInTable_9"><code>IsPrefixOfStringInTable_9</code></h4>
-<p><a href="#IsPrefixOfStringInTable_8">← IsPrefixOfStringInTable_8</a> | <a href="#IsPrefixOfStringInTable_10">IsPrefixOfStringInTable_10 →</a></p>
+<section id="isprefixofstringintable_9" class="level4">
+<h4 class="anchored" data-anchor-id="isprefixofstringintable_9">IsPrefixOfStringInTable_9</h4>
+<p><a href="#isprefixofstringintable_8">← IsPrefixOfStringInTable_8</a> | <a href="#isprefixofstringintable_10">IsPrefixOfStringInTable_10 →</a></p>
 <p>Version 9 tweaks version 8 by simply using <code>return NO_MATCH_FOUND</code> after the initial bitmap check instead of <code>goto NoMatch</code>. (The use of <code>goto</code> was a bit peculiar there anyway. We’re going to rewrite the body similarly for version 10, but let’s try to stick to making one change at a time.)</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-10-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-10-1" role="tab" aria-controls="tabset-10-1" aria-selected="true">Diff</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-10-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-10-2" role="tab" aria-controls="tabset-10-2" aria-selected="false">Full</a></li></ul>
@@ -5446,9 +5493,9 @@ Tip
 <p>This is an interesting one. The <code>return</code> versus <code>goto</code> appears to have cost us a tiny bit with the first few test inputs—only about 0.2 more cycles, which is negligible in the grand scheme of things. (Though let’s not pull on that thread too much, or the entire premise of the article might start to unravel!)</p>
 <p>Version 9 improves the negative match performance by a few cycles, so let’s keep it.</p>
 </section>
-<section id="IsPrefixOfStringInTable_10" class="level4">
-<h4 class="anchored" data-anchor-id="IsPrefixOfStringInTable_10"><code>IsPrefixOfStringInTable_10</code></h4>
-<p><a href="#IsPrefixOfStringInTable_9">← IsPrefixOfStringInTable_9</a> | <a href="#IsPrefixOfStringInTable_11">IsPrefixOfStringInTable_11 →</a></p>
+<section id="isprefixofstringintable_10" class="level4">
+<h4 class="anchored" data-anchor-id="isprefixofstringintable_10">IsPrefixOfStringInTable_10</h4>
+<p><a href="#isprefixofstringintable_9">← IsPrefixOfStringInTable_9</a> | <a href="#isprefixofstringintable_11">IsPrefixOfStringInTable_11 →</a></p>
 <p>At this point, we’ve exhausted all the small, easy tweaks. Let’s rewrite the inner loop that performs the character comparison and see how that affects performance.</p>
 <p>This should be an interesting one because the way it’s written now is… a bit odd. (I’ve clearly made some assumptions about optimal branch organization, to say the least.)</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
@@ -5927,11 +5974,11 @@ Note
 <h4 class="anchored" data-anchor-id="windows-x64-abi-calling-conventions">Windows x64 ABI Calling Conventions</h4>
 <p>First, some background. The Windows x64 ABI and calling convention dictate two types of functions: <a href="https://github.com/tpn/winsdk-10/blob/master/Include/10.0.16299.0/shared/macamd64.inc#L524"><code>NESTED_ENTRY</code></a> and <a href="https://github.com/tpn/winsdk-10/blob/master/Include/10.0.16299.0/shared/macamd64.inc#L353"><code>LEAF_ENTRY</code></a>.</p>
 <section id="nested_entry" class="level5">
-<h5 class="anchored" data-anchor-id="nested_entry"><code>NESTED_ENTRY</code></h5>
+<h5 class="anchored" data-anchor-id="nested_entry">NESTED_ENTRY</h5>
 <p><code>NESTED_ENTRY</code> is by far the most common; C and C++ functions are all implicitly <code>NESTED_ENTRY</code> functions. (The <code>LEAF_ENTRY</code> and <code>NESTED_ENTRY</code> symbols are MASM (<code>ml64.exe</code>) macro names, but the concept applies to all languages.)</p>
 </section>
 <section id="leaf_entry" class="level5">
-<h5 class="anchored" data-anchor-id="leaf_entry"><code>LEAF_ENTRY</code></h5>
+<h5 class="anchored" data-anchor-id="leaf_entry">LEAF_ENTRY</h5>
 <p>A <code>LEAF_ENTRY</code> can only be implemented in assembly. It is constrained in that it may not manipulate any of the non-volatile x64 registers (<code>rbx</code>, <code>rdi</code>, <code>rsi</code>, <code>rsp</code>, <code>rbp</code>, <code>r12</code>, <code>r13</code>, <code>r14</code>, <code>r15</code>, <code>xmm6-15</code>), nor may it <code>call</code> any other functions (since <code>call</code> implicitly modifies the stack pointer), nor may it have a structured exception handler (since handling an exception for a given stack frame also manipulates the stack pointer).</p>
 <p>The reason for these constraints is that <code>LEAF_ENTRY</code> routines do not have any unwind information generated for them in their runtime function entries. Unwind information is used by the kernel to, well, unwind the modifications made to non-volatile registers while traversing back up through the call stack looking for an exception handler in the event of an exception.</p>
 <p>For example, here’s the function entry and associated unwind information for the PGO build of the <code>IsPrefixOfStringInTable_10</code> function:</p>
@@ -6038,9 +6085,9 @@ StringTable2!IsPrefixOfStringInTable_10:
 </section>
 <section id="assembly-implementations" class="level3">
 <h3 class="anchored" data-anchor-id="assembly-implementations">Assembly Implementations</h3>
-<section id="IsPrefixOfStringInTable_x64_1" class="level4">
-<h4 class="anchored" data-anchor-id="IsPrefixOfStringInTable_x64_1"><code>IsPrefixOfStringInTable_x64_1</code></h4>
-<p><a href="#IsPrefixOfStringInTable_x64_2">IsPrefixOfStringInTable_x64_2 →</a></p>
+<section id="isprefixofstringintable_x64_1" class="level4">
+<h4 class="anchored" data-anchor-id="isprefixofstringintable_x64_1">IsPrefixOfStringInTable_x64_1</h4>
+<p><a href="#isprefixofstringintable_x64_2">IsPrefixOfStringInTable_x64_2 →</a></p>
 <p>So, knowing what we now know about the venerable little <code>LEAF_ENTRY</code> trick, let’s see if we can construct a simple routine in assembly that just deals with the negative match case.</p>
 <div class="sourceCode" id="cb44"><pre class="sourceCode asm code-with-copy"><code class="sourceCode asm"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="co">;++</span></span>
 <span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a><span class="co">;</span></span>
@@ -6175,9 +6222,9 @@ StringTable2!IsPrefixOfStringInTable_10:
 <p><small> (Note that when I first wrote this, I was comparing the assembly version against the release build (not the PGO build), which was clocking in at about 13-14 cycles for negative matching. So getting it down to ~7.5 from 13-14 was a bit more exciting. Damn the PGO build and its 10.9-ish cycles for negative matching!) </small></p>
 <p>The good news is that our theory about the performance of the <code>LEAF_ENTRY</code> looks like it’s paid off: we can reliably get about 7.5 cycles for negative matching.</p>
 </section>
-<section id="IsPrefixOfStringInTable_x64_2" class="level4">
-<h4 class="anchored" data-anchor-id="IsPrefixOfStringInTable_x64_2"><code>IsPrefixOfStringInTable_x64_2</code></h4>
-<p><a href="#IsPrefixOfStringInTable_x64_1">← IsPrefixOfStringInTable_x64_1</a> | <a href="#IsPrefixOfStringInTable_x64_3">IsPrefixOfStringInTable_x64_3 →</a></p>
+<section id="isprefixofstringintable_x64_2" class="level4">
+<h4 class="anchored" data-anchor-id="isprefixofstringintable_x64_2">IsPrefixOfStringInTable_x64_2</h4>
+<p><a href="#isprefixofstringintable_x64_1">← IsPrefixOfStringInTable_x64_1</a> | <a href="#isprefixofstringintable_x64_3">IsPrefixOfStringInTable_x64_3 →</a></p>
 <p>The bad news is that we now need to implement the rest of the functionality within the constraints of a <code>LEAF_ENTRY</code>!</p>
 <p>The problem with a <code>LEAF_ENTRY</code> for anything more than a trivial bit of code is that you only have a handful of volatile registers to work with, and no stack space can be used for register spilling or temporaries. (Technically I could use the home parameter space, but, eh, we’re already avoiding stack spills, why not make life harder for ourselves and try to avoid <strong>all</strong> memory spilling.)</p>
 <p>If you can’t spill to memory, your only option is really spilling to XMM registers via <code>vpinsr</code> and <code>vpextr</code> combinations, which, as you can see in the implementation of version 2 below, I have to do a lot.</p>
@@ -7136,9 +7183,9 @@ StringTable2!IsPrefixOfStringInTable_10:
 <p>The prefix matching performance isn’t too bad either! We’re definitely slower than the C version, ranging from about 4 cycles to 10 cycles in most cases, with the <code>$INDEX_ALLOCATION</code> input about 13 cycles slower.</p>
 <p><a id="oddities"></a> <small> (I’ve just noticed the pattern with regards to the first 8 entries, <code>$AttrDef</code> to <code>$Mft</code>, clocking in at about 18 and 24 cycles respectively. But the next four entries, <code>$Secure</code> to <code>$Cairo</code>, consistently clock in at about 24 and 34 cycles respectively. <code>$Secure</code> is the 9th slot, which puts it at memory offset 192 bytes from the start of the string table. And then the 18 and 24 cycle behavior returns for the last two items, <code>????</code> and <code>.</code>, which are at the end of the string table’s inner slot array. This pattern is prevalent in all of our iterations. Very peculiar! We’ll investigate later.) </small></p>
 </section>
-<section id="IsPrefixOfStringInTable_x64_3" class="level4">
-<h4 class="anchored" data-anchor-id="IsPrefixOfStringInTable_x64_3"><code>IsPrefixOfStringInTable_x64_3</code></h4>
-<p><a href="#IsPrefixOfStringInTable_x64_2">← IsPrefixOfStringInTable_x64_2</a> | <a href="#IsPrefixOfStringInTable_x64_4">IsPrefixOfStringInTable_x64_4 →</a></p>
+<section id="isprefixofstringintable_x64_3" class="level4">
+<h4 class="anchored" data-anchor-id="isprefixofstringintable_x64_3">IsPrefixOfStringInTable_x64_3</h4>
+<p><a href="#isprefixofstringintable_x64_2">← IsPrefixOfStringInTable_x64_2</a> | <a href="#isprefixofstringintable_x64_4">IsPrefixOfStringInTable_x64_4 →</a></p>
 <p><small>(We’re nearly at the end of the first round of iterations, I promise!)</small></p>
 <p>Seeing the performance of the second version in assembly, I decided to try whipping up a third version, which would switch from a <code>LEAF_ENTRY</code> to <code>NESTED_ENTRY</code> and use <code>rep cmps</code> for the byte comparison for long strings (instead of the byte-by-byte approach used now).</p>
 <p>In order to use <code>rep cmps</code>, you need to use two non-volatile registers, <code>rsi</code> (the source index) and <code>rdi</code> (the destination index). You also need to specify the direction of the comparison, which means mutating the flags, which are also classed as non-volatile, so they need to be pushed to the stack in the prologue and popped back off in the epilogue.</p>
@@ -7965,9 +8012,9 @@ StringTable2!IsPrefixOfStringInTable_10:
 <p>Let’s take a look at the iterations that came about after receiving feedback.</p>
 <section id="c-implementations-1" class="level3">
 <h3 class="anchored" data-anchor-id="c-implementations-1">C Implementations</h3>
-<section id="IsPrefixOfStringInTable_11" class="level4">
-<h4 class="anchored" data-anchor-id="IsPrefixOfStringInTable_11"><code>IsPrefixOfStringInTable_11</code></h4>
-<p><a href="#IsPrefixOfStringInTable_10">← IsPrefixOfStringInTable_10</a> | <a href="#IsPrefixOfStringInTable_12">IsPrefixOfStringInTable_12 →</a></p>
+<section id="isprefixofstringintable_11" class="level4">
+<h4 class="anchored" data-anchor-id="isprefixofstringintable_11">IsPrefixOfStringInTable_11</h4>
+<p><a href="#isprefixofstringintable_10">← IsPrefixOfStringInTable_10</a> | <a href="#isprefixofstringintable_12">IsPrefixOfStringInTable_12 →</a></p>
 <p>Both <a href="https://twitter.com/rygorous">Fabian Giesen</a> and <a href="https://twitter.com/pshufb">Wojciech Muła</a> pointed out that we could use <code>_mm_andnot_si128()</code> to avoid the need to invert the results of the <code>IncludeSlotsByLength</code> XMM register (via <code>_mm_xor_si128()</code>). Let’s try that.</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-14-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-14-1" role="tab" aria-controls="tabset-14-1" aria-selected="true">Diff</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-14-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-14-2" role="tab" aria-controls="tabset-14-2" aria-selected="false">Full</a></li></ul>
@@ -8362,9 +8409,9 @@ StringTable2!IsPrefixOfStringInTable_10:
 <p>Definitely a slight improvement over version 10 in most cases!</p>
 <hr>
 </section>
-<section id="IsPrefixOfStringInTable_x64_4" class="level4">
-<h4 class="anchored" data-anchor-id="IsPrefixOfStringInTable_x64_4"><code>IsPrefixOfStringInTable_x64_4</code></h4>
-<p><a href="#IsPrefixOfStringInTable_x64_3">← IsPrefixOfStringInTable_x64_3</a> | <a href="#IsPrefixOfStringInTable_x64_5">IsPrefixOfStringInTable_x64_5 →</a></p>
+<section id="isprefixofstringintable_x64_4" class="level4">
+<h4 class="anchored" data-anchor-id="isprefixofstringintable_x64_4">IsPrefixOfStringInTable_x64_4</h4>
+<p><a href="#isprefixofstringintable_x64_3">← IsPrefixOfStringInTable_x64_3</a> | <a href="#isprefixofstringintable_x64_5">IsPrefixOfStringInTable_x64_5 →</a></p>
 <p>Something I didn’t know about <code>vptest</code> that Fabian pointed out is that it actually does two operations. The first essentially does an AND of the two input registers and sets the zero flag (ZF=1) if the result is all 0s. We’ve been using that aspect in the assembly version up to now.</p>
 <p>However, it also does the equivalent of <code>(xmm0 and (not xmm1))</code>, and sets the carry flag (CY=1) if that expression evaluates to all zeros. That’s handy, because it’s exactly the expression we want to do!</p>
 <p>So, let’s take version 2 of our assembly routine, remove the <code>vpxor</code> bit, and re-arrange the <code>vptest</code> inputs such that we can do a <code>jnc</code> instead of <code>jnz</code>:</p>
@@ -8925,9 +8972,9 @@ StringTable2!IsPrefixOfStringInTable_10:
 <p>Nice, we’ve shaved an entire cycle off the negative match path! I say that both seriously and sarcastically. A single cycle, wow, stop the press! On the other hand, going from 8 cycles to 7 cycles is usually a lot harder than, say, going from 100,000 cycles to 80,000 cycles. We’re so close to the lower bound, additional cycle improvements are a lot like trying to get blood out of a stone.</p>
 <hr>
 </section>
-<section id="IsPrefixOfStringInTable_12" class="level4">
-<h4 class="anchored" data-anchor-id="IsPrefixOfStringInTable_12"><code>IsPrefixOfStringInTable_12</code></h4>
-<p><a href="#IsPrefixOfStringInTable_11">← IsPrefixOfStringInTable_11</a> | <a href="#IsPrefixOfStringInTable_13">IsPrefixOfStringInTable_13 →</a></p>
+<section id="isprefixofstringintable_12" class="level4">
+<h4 class="anchored" data-anchor-id="isprefixofstringintable_12">IsPrefixOfStringInTable_12</h4>
+<p><a href="#isprefixofstringintable_11">← IsPrefixOfStringInTable_11</a> | <a href="#isprefixofstringintable_13">IsPrefixOfStringInTable_13 →</a></p>
 <p>The <code>vptest</code> fast-path exit definitely yielded a repeatable and measurable gain for the assembly version. Let’s replicate it in a C version.</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-16-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-16-1" role="tab" aria-controls="tabset-16-1" aria-selected="true">Diff</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-16-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-16-2" role="tab" aria-controls="tabset-16-2" aria-selected="false">Full</a></li></ul>
@@ -9394,9 +9441,9 @@ StringTable2!IsPrefixOfStringInTable_10:
 <p>Eh, there’s not much in this one. The negative match fast path is basically identical, and the normal prefix matches are a tiny bit slower.</p>
 <hr>
 </section>
-<section id="IsPrefixOfStringInTable_13" class="level4">
-<h4 class="anchored" data-anchor-id="IsPrefixOfStringInTable_13"><code>IsPrefixOfStringInTable_13</code></h4>
-<p><a href="#IsPrefixOfStringInTable_12">← IsPrefixOfStringInTable_12</a> | <a href="#IsPrefixOfStringInTable_14">IsPrefixOfStringInTable_14 →</a></p>
+<section id="isprefixofstringintable_13" class="level4">
+<h4 class="anchored" data-anchor-id="isprefixofstringintable_13">IsPrefixOfStringInTable_13</h4>
+<p><a href="#isprefixofstringintable_12">← IsPrefixOfStringInTable_12</a> | <a href="#isprefixofstringintable_14">IsPrefixOfStringInTable_14 →</a></p>
 <p><a href="https://twitter.com/rygorous/status/985737342156652544">Another tip from Fabian:</a> we can tweak the loop logic further. Instead of shifting the bitmap right each iteration (and keeping a separate shift count), we can just leverage the <code>blsr</code> intrinsic, which stands for <em>reset lowest set bit</em>, and is equivalent to doing <code>x &amp; (x -1)</code>. This allows us to tweak the loop organization as well, such that we can simply do <code>while (Bitmap) { }</code> instead of the <code>do { } while (--Count)</code> approach we’ve been using.</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-17-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-17-1" role="tab" aria-controls="tabset-17-1" aria-selected="true">Diff</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-17-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-17-2" role="tab" aria-controls="tabset-17-2" aria-selected="false">Full</a></li></ul>
@@ -9810,9 +9857,9 @@ StringTable2!IsPrefixOfStringInTable_10:
 <p>Ah! A measurable, repeatable speed-up! Excellent!</p>
 <hr>
 </section>
-<section id="IsPrefixOfStringInTable_14" class="level4">
-<h4 class="anchored" data-anchor-id="IsPrefixOfStringInTable_14"><code>IsPrefixOfStringInTable_14</code></h4>
-<p><a href="#IsPrefixOfStringInTable_13">← IsPrefixOfStringInTable_13</a> | <a href="#IsPrefixOfStringInTable_15">IsPrefixOfStringInTable_15 →</a></p>
+<section id="isprefixofstringintable_14" class="level4">
+<h4 class="anchored" data-anchor-id="isprefixofstringintable_14">IsPrefixOfStringInTable_14</h4>
+<p><a href="#isprefixofstringintable_13">← IsPrefixOfStringInTable_13</a> | <a href="#isprefixofstringintable_15">IsPrefixOfStringInTable_15 →</a></p>
 <p>Let’s give the C version the same chance as the assembly version with regards to negative matching; we’ll take version 13 above and factor in the <code>vptest</code> logic from version 12.</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-18-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-18-1" role="tab" aria-controls="tabset-18-1" aria-selected="true">Diff (14 vs 13)</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-18-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-18-2" role="tab" aria-controls="tabset-18-2" aria-selected="false">Diff (14 vs 12)</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-18-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-18-3" role="tab" aria-controls="tabset-18-3" aria-selected="false">Full (14)</a></li></ul>
@@ -10361,7 +10408,7 @@ StringTable2!IsPrefixOfStringInTable_10:
 </div>
 </div>
 </div>
-<p>We’re really clutching at straws here obviously with regards to trying to eke out more performance. The <code>_mm_testc_si128()</code> alteration was a tiny bit slower for <a href="#IsPrefixOfStringInTable_12">version 12</a> across the board. However, the <code>vptest</code> (which is the underlying assembly instruction that maps to the <code>_mm_testc_si128()</code> intrinsic) <a href="#IsPrefixOfStringInTable_x64_4">version 4</a> of our assembly was definitely a little bit faster than the other versions. Let’s see how our final C version performs.</p>
+<p>We’re really clutching at straws here obviously with regards to trying to eke out more performance. The <code>_mm_testc_si128()</code> alteration was a tiny bit slower for <a href="#isprefixofstringintable_12">version 12</a> across the board. However, the <code>vptest</code> (which is the underlying assembly instruction that maps to the <code>_mm_testc_si128()</code> intrinsic) <a href="#isprefixofstringintable_x64_4">version 4</a> of our assembly was definitely a little bit faster than the other versions. Let’s see how our final C version performs.</p>
 </section>
 <section id="benchmark-14" class="level4">
 <h4 class="anchored" data-anchor-id="benchmark-14">Benchmark 14</h4>
@@ -10373,8 +10420,8 @@ StringTable2!IsPrefixOfStringInTable_10:
 </div>
 <p>Welp, at least it’s consistent! Like version 12, the <code>_mm_testc_si128()</code> change doesn’t really offer a compelling improvement for version 14. That makes version 13 officially our fastest C implementation for round 2.</p>
 </section>
-<section id="IsPrefixOfStringInTable_x64_5" class="level4">
-<h4 class="anchored" data-anchor-id="IsPrefixOfStringInTable_x64_5"><code>IsPrefixOfStringInTable_x64_5</code></h4>
+<section id="isprefixofstringintable_x64_5" class="level4">
+<h4 class="anchored" data-anchor-id="isprefixofstringintable_x64_5">IsPrefixOfStringInTable_x64_5</h4>
 <!-- vim:set ts=8 sw=2 sts=2 expandtab tw=78 -->
 
 
