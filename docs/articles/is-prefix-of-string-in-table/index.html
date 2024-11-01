@@ -913,7 +913,7 @@ Note
 <span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="co">// and SIMD instructions are used to try and achieve this.</span></span>
 <span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="co">//</span></span>
 <span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a><span class="kw">typedef</span> <span class="kw">struct</span> _STRING_TABLE <span class="op">{</span></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a><span class="kw">typedef</span> <span class="kw">struct</span> <span class="bu">_STRING_TABLE</span> <span class="op">{</span></span>
 <span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>    <span class="co">//</span></span>
 <span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>    <span class="co">// A slot where each individual element contains a uniquely-identifying</span></span>
@@ -1142,14 +1142,14 @@ Note
 <span id="cb13-37"><a href="#cb13-37" aria-hidden="true" tabindex="-1"></a>    <span class="co">// A pointer to the STRING_TABLE structure that "owns" us.</span></span>
 <span id="cb13-38"><a href="#cb13-38" aria-hidden="true" tabindex="-1"></a>    <span class="co">//</span></span>
 <span id="cb13-39"><a href="#cb13-39" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-40"><a href="#cb13-40" aria-hidden="true" tabindex="-1"></a>    <span class="kw">struct</span> _STRING_TABLE <span class="op">*</span>StringTable<span class="op">;</span></span>
+<span id="cb13-40"><a href="#cb13-40" aria-hidden="true" tabindex="-1"></a>    <span class="kw">struct</span> <span class="bu">_STRING_TABLE</span> <span class="op">*</span>StringTable<span class="op">;</span></span>
 <span id="cb13-41"><a href="#cb13-41" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-42"><a href="#cb13-42" aria-hidden="true" tabindex="-1"></a>    <span class="co">//</span></span>
 <span id="cb13-43"><a href="#cb13-43" aria-hidden="true" tabindex="-1"></a>    <span class="co">// The string array.  Number of elements in the array is governed by the</span></span>
 <span id="cb13-44"><a href="#cb13-44" aria-hidden="true" tabindex="-1"></a>    <span class="co">// NumberOfElements field above.</span></span>
 <span id="cb13-45"><a href="#cb13-45" aria-hidden="true" tabindex="-1"></a>    <span class="co">//</span></span>
 <span id="cb13-46"><a href="#cb13-46" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-47"><a href="#cb13-47" aria-hidden="true" tabindex="-1"></a>    <span class="dt">STRING</span> Strings<span class="op">[</span>ANYSIZE_ARRAY<span class="op">];</span></span>
+<span id="cb13-47"><a href="#cb13-47" aria-hidden="true" tabindex="-1"></a>    <span class="dt">STRING</span> Strings<span class="op">[</span><span class="at">ANYSIZE_ARRAY</span><span class="op">];</span></span>
 <span id="cb13-48"><a href="#cb13-48" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-49"><a href="#cb13-49" aria-hidden="true" tabindex="-1"></a><span class="op">}</span> <span class="bu">STRING_ARRAY</span><span class="op">,</span> <span class="op">*</span><span class="bu">PSTRING_ARRAY</span><span class="op">,</span> <span class="op">**</span>PPSTRING_ARRAY<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="callout callout-style-default callout-note callout-titled">

@@ -2220,7 +2220,9 @@ font-weight: bold;
 font-style: inherit;">typedef</span> <span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
-font-style: inherit;">struct</span> _STRING_TABLE <span class="op" style="color: #5E5E5E;
+font-style: inherit;">struct</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">_STRING_TABLE</span> <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">{</span></span>
 <span id="cb10-14"></span>
@@ -3196,7 +3198,9 @@ font-style: inherit;">//</span></span>
 <span id="cb13-40">    <span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
-font-style: inherit;">struct</span> _STRING_TABLE <span class="op" style="color: #5E5E5E;
+font-style: inherit;">struct</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">_STRING_TABLE</span> <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">*</span>StringTable<span class="op" style="color: #5E5E5E;
 background-color: null;
@@ -3219,7 +3223,9 @@ font-style: inherit;">//</span></span>
 background-color: null;
 font-style: inherit;">STRING</span> Strings<span class="op" style="color: #5E5E5E;
 background-color: null;
-font-style: inherit;">[</span>ANYSIZE_ARRAY<span class="op" style="color: #5E5E5E;
+font-style: inherit;">[</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">ANYSIZE_ARRAY</span><span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">];</span></span>
 <span id="cb13-48"></span>

@@ -275,7 +275,9 @@
       <item>STRING_TABLE</item>
       <item>STRING_TABLE_FLAGS</item>
       <item>STRING_TABLE_INDEX</item>
-      <item>_SLOT_BITMAPS</item> <item>_LENGTH_INDEX_ENTRY</item>
+      <item>_STRING_TABLE</item>
+      <item>_SLOT_BITMAPS</item>
+      <item>_LENGTH_INDEX_ENTRY</item>
       <item>_LENGTH_INDEX_TABLE</item>
     </list>
 
@@ -287,6 +289,7 @@
 
     <list name="ntdefs">
       <item>ARGUMENT_PRESENT</item>
+      <item>ANYSIZE_ARRAY</item>
       <item>DECLSPEC_ALIGN</item>
       <item>C_ASSERT</item>
       <item>CONTAINING_RECORD</item>
