@@ -30,10 +30,11 @@ Willets](https://twitter.com/KendallWillets) for their valuable
 early draft of this article.
 
 <!-- 15.6 + 48.53 + 2.42 + 33.85 + 42 + 49.67 + 11.55 + 9.12 + 12.95 + 4.87 -->
-Hours spent on this article to date: 230.56.
+Hours spent on this article to date: 230.56.  Hours spent porting this
+article from raw HTML to Markdown in 2024: about 16-20.  See
+[Colophon](#colophon) for more details.
 
-Hours spent porting this article from raw HTML to Markdown in 2024: about
-16-20.  See [Colophon](#colophon) for more details.
+[Hacker News discussion](https://news.ycombinator.com/item?id=17065991) | [Reddit discussion](https://www.reddit.com/r/programming/comments/8hns4s/a_journey_into_simd_string_processing_and_micro/)
 </small>
 
 ---
