@@ -7,7 +7,7 @@ comments: false
 
 # Intel Intrinsics Guide
 
- - [Intel Intrinsics Guide](intel-intrinsics-guide).
+ - [Intel Intrinsics Guide](/intel-intrinsics-guide).
 
 # Oak Ridge National Laboratory CUDA Training Series
 

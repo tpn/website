@@ -13,16 +13,6 @@ categories:
   - C
   - Assembly
   - MASM
-keywords:
-  - AVX2
-  - C
-  - Assembly
-  - SIMD
-  - MASM
-  - LEAF_ENTRY
-  - NESTED_ENTRY
-  - prologue
-  - epilogue
 author: Trent Nelson
 date: 05/04/2018
 
