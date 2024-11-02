@@ -1,0 +1,16 @@
+---
+title: Tools
+subtitles: Assorted tools and utilities
+toc: false
+comments: false
+---
+
+# Intel Intrinsics Guide
+
+ - [Intel Intrinsics Guide](intel-intrinsics-guide).
+
+# Oak Ridge National Laboratory CUDA Training Series
+
+ - [CUDA Training Series](https://www.olcf.ornl.gov/cuda-training-series/)
+ - [PDFs of the slides](https://github.com/tpn/pdfs/blob/master/CUDA%20Training%20Series%20-%20All%20%282020-2021%29.pdf)
+

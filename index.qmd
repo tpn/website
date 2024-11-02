@@ -1,56 +1,36 @@
 ---
-title: "Home"
-image: false
+title: "Trent Nelson"
+comments: false
+about:
+  template: jolla
+  image: resources/solo-9ca.jpg
+  links:
+    - icon: github
+      href: https://github.com/tpn
+      text: GitHub
+    - icon: twitter
+      href: https://twitter.com/trentnelson
+      text: Twitter
+    - icon: reddit
+      href: https://www.reddit.com/u/trentnelson/
+      text: Reddit
+    - icon: linkedin
+      href: https://www.linkedin.com/in/trent-p-nelson
+      text: LinkedIn
+    - icon: ycombinator
+      href: https://news.ycombinator.com/user?id=trentnelson
+      text: Hacker News
+    - icon: speaker-deck
+      href: https://speakerdeck.com/trent
+      text: SpeakerDeck
 ---
 
-I'm a Systems Software Engineer currently residing in Washington State, USA.  I 
-have contributed software to the FreeBSD project ([systat -ifstat](https://github.com/freebsd/freebsd-src/commit/fdbb382f1cbb42ab486d1f7812f0f78c0317b799#diff-bb6d5274442cdd13b81de7e39c3368fb)),
-am a core Python committer, and Apache Subversion committer.  My main languages
-are C, C++, and Python.
 
-I'm also a private pilot, and have my tailwheel, complex, and high-performance
-endorsements.  I enjoy aerobatics, and have been fortunate enough to fly with
-[Patty Wagstaff](https://en.wikipedia.org/wiki/Patty_Wagstaff) in her Extra 300
-back in 2017.
+Systems Software Engineer and Private Pilot (tailwheel, complex,
+high-performance, aerobatics).
 
-I can be contacted via
-[&#116;&#114;&#101;&#110;&#116;&#64;&#116;&#114;&#101;&#110;&#116;&#46;&#109;&#101;](mailto:&#116;&#114;&#101;&#110;&#116;&#64;&#116;&#114;&#101;&#110;&#116;&#46;&#109;&#101;).
-
----
-
-# Projects
-
-## Recent
-
-* [PerfectHash](https://github.com/tpn/perfecthash)
-* [Tracer](https://github.com/tpn/tracer)
-* [PyParallel](http://pyparallel.org) ([GitHub](https://github.com/pyparallel/pyparallel))
-
-## Not So Recent
-
-- [Enversion](https://github.com/tpn/enversion)
-- [CQ Python](https://github.com/tpn/cqpython)
-- [Personal Python Library 'tpn'](https://github.com/tpn/tpn)
-
-# Miscellaneous Repos
-
-- [Windows 10 SDKs](https://github.com/tpn/winsdk-10): handy collection of mostly the include files (and some debugger stuff) for Windows 10 DDKs/SDKs.
-- [CUDA Samples](https://github.com/tpn/cuda-samples): all the code samples that ship with each CUDA version.
-- [Agner](https://github.com/tpn/agner): collection of Agner Fog's tools that I try and keep up-to-date.
-- [Fonts](https://github.com/tpn/fonts): TrueType fonts I like using on Windows, especially Monaco.
-- [Wallpapers](https://github.com/tpn/wallpapers): collection of desktop wallpapers I've accumulated over the years.
+E-mail: [&#116;&#114;&#101;&#110;&#116;&#64;&#116;&#114;&#101;&#110;&#116;&#46;&#109;&#101;](mailto:&#116;&#114;&#101;&#110;&#116;&#64;&#116;&#114;&#101;&#110;&#116;&#46;&#109;&#101;).
 
 ---
 
-# PDF Collections
-
-- [Software/Technical](https://github.com/tpn/pdfs)
-- [General Aviation](https://github.com/tpn/pdfs-general-aviation)
-- [Flight Sim](https://github.com/tpn/pdfs-flightsim)
-
----
-
-# Other
-
-- [Intel Intrinsics Guide](intel-intrinsics-guide)
-
+[Articles](articles) | [Projects & Repositories](projects) | [Tools](tools)

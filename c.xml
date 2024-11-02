@@ -203,12 +203,14 @@
       <item>BOOLEAN</item>
       <item>BYTE</item>
       <item>CHAR</item>
+      <item>FALSE</item>
       <item>HMODULE</item>
       <item>HRESULT</item>
       <item>LARGE_INTEGER</item>
       <item>LONG</item>
       <item>LONGLONG</item>
       <item>LONG_PTR</item>
+      <item>NULL</item>
       <item>PBYTE</item>
       <item>PCHAR</item>
       <item>PCSTR</item>
@@ -224,10 +226,14 @@
       <item>PUNICODE_STRING</item>
       <item>PUSHORT</item>
       <item>PVOID</item>
+      <item>PXMMWORD</item>
+      <item>PYMMWORD</item>
+      <item>PZMMWORD</item>
       <item>RTL_AVL_TABLE</item>
       <item>RTL_BITMAP</item>
       <item>SHORT</item>
       <item>STRING</item>
+      <item>TRUE</item>
       <item>ULARGE_INTEGER</item>
       <item>ULONG</item>
       <item>ULONGLONG</item>
@@ -237,9 +243,6 @@
       <item>XMMWORD</item>
       <item>YMMWORD</item>
       <item>ZMMWORD</item>
-      <item>PXMMWORD</item>
-      <item>PYMMWORD</item>
-      <item>PZMMWORD</item>
     </list>
 
     <list name="tpntypes">
@@ -288,11 +291,13 @@
     </list>
 
     <list name="ntdefs">
-      <item>ARGUMENT_PRESENT</item>
+      <item>ALIGN_UP</item>
       <item>ANYSIZE_ARRAY</item>
-      <item>DECLSPEC_ALIGN</item>
-      <item>C_ASSERT</item>
+      <item>ARGUMENT_PRESENT</item>
+      <item>ARRAYSIZE</item>
       <item>CONTAINING_RECORD</item>
+      <item>C_ASSERT</item>
+      <item>DECLSPEC_ALIGN</item>
       <item>FIELD_OFFSET</item>
       <item>NT_ASSERT</item>
       <item>NT_VERIFY</item>

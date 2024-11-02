@@ -1,23 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>https://trent.me/tools/index.html</loc>
+    <lastmod>2024-11-02T02:54:32.343Z</lastmod>
+  </url>
+  <url>
     <loc>https://trent.me/index.html</loc>
-    <lastmod>2024-10-31T03:15:53.910Z</lastmod>
-  </url>
-  <url>
-    <loc>https://trent.me/articles/is-prefix-of-string-in-table/index.html</loc>
-    <lastmod>2024-11-01T19:39:05.994Z</lastmod>
-  </url>
-  <url>
-    <loc>https://trent.me/about.html</loc>
-    <lastmod>2024-10-21T18:55:54.197Z</lastmod>
+    <lastmod>2024-11-02T01:35:25.847Z</lastmod>
   </url>
   <url>
     <loc>https://trent.me/articles/index.html</loc>
-    <lastmod>2024-10-31T01:48:19.897Z</lastmod>
+    <lastmod>2024-11-02T00:04:37.171Z</lastmod>
   </url>
   <url>
-    <loc>https://trent.me/articles/is-prefix-of-string-in-table/test.html</loc>
-    <lastmod>2024-11-01T18:25:38.867Z</lastmod>
+    <loc>https://trent.me/syntax-highlighter-test.html</loc>
+    <lastmod>2024-11-02T02:50:54.031Z</lastmod>
+  </url>
+  <url>
+    <loc>https://trent.me/articles/is-prefix-of-string-in-table/index.html</loc>
+    <lastmod>2024-11-02T02:43:37.775Z</lastmod>
+  </url>
+  <url>
+    <loc>https://trent.me/projects/index.html</loc>
+    <lastmod>2024-11-02T02:54:38.613Z</lastmod>
   </url>
 </urlset>

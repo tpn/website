@@ -1,0 +1,39 @@
+---
+title: Projects & Repositories
+page-layout: full
+toc: false
+comments: false
+---
+
+## Recent
+
+* [PerfectHash](https://github.com/tpn/perfecthash)
+* [Tracer](https://github.com/tpn/tracer)
+* [PyParallel](http://pyparallel.org) ([GitHub](https://github.com/pyparallel/pyparallel))
+
+## Not So Recent
+
+- [Enversion](https://github.com/tpn/enversion)
+- [CQ Python](https://github.com/tpn/cqpython)
+- [Personal Python Library 'tpn'](https://github.com/tpn/tpn)
+
+# Miscellaneous Repos
+
+- [Windows 10 SDKs](https://github.com/tpn/winsdk-10): handy collection of
+  mostly the include files (and some debugger stuff) for Windows 10 DDKs/SDKs.
+- [CUDA Samples](https://github.com/tpn/cuda-samples): all the code samples that
+  ship with each CUDA version.
+- [Agner](https://github.com/tpn/agner): collection of Agner Fog's tools that I
+  try and keep up-to-date.
+- [Fonts](https://github.com/tpn/fonts): My favorite fonts.
+- [Wallpapers](https://github.com/tpn/wallpapers): collection of desktop
+  wallpapers I've accumulated over the years.
+
+---
+
+# PDF Collections
+
+- [Software/Technical](https://github.com/tpn/pdfs)
+- [General Aviation](https://github.com/tpn/pdfs-general-aviation)
+- [Flight Sim](https://github.com/tpn/pdfs-flightsim)
+

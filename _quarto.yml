@@ -3,11 +3,12 @@ project:
   output-dir: docs # Github Pages requires this
   preview:
     host: 0.0.0.0
-    port: 5204
+    port: 8080
+  post-render:
+    - post-render.sh
 
 website:
   title: "Trent Nelson"
-  image: "bluebg.jpg"
   favicon: "favicon.ico"
   site-url: "https://trent.me"
   repo-url: "https://github.com/tpn/website"
@@ -26,12 +27,20 @@ website:
   search:
     show-item-context: true
     type: overlay
+  comments:
+    giscus:
+      repo: tpn/website
+      category: Announcements
+      mapping: pathname
+      theme: dark
   navbar:
     left:
-      - text: Home
-        href: index.qmd
       - text: Articles
         href: articles/index.qmd
+      - text: Projects & Repos
+        href: projects/index.qmd
+      - text: Tools
+        href: tools/index.qmd
     tools:
       - icon: twitter
         href: https://twitter.com/trentnelson
@@ -64,12 +73,8 @@ format:
     toc-location: right-body
     toc-title: Contents
     grid:
-      margin-width: 370px
+      margin-width: 380px
 
 #filters:
   #- auto-dark
-
-execute:
-  after:
-    - ./post-render.sh
 
