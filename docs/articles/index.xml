@@ -20,10 +20,11 @@
 
 
 
-<p><small> Published: 4th May, 2018.</small></p><small>
+<p><small> Published: 4th May, 2018. Last updated: 1st November, 2024.</small></p><small>
 <p>Thanks to <a href="https://twitter.com/rygorous">Fabian Giesen</a>, <a href="https://twitter.com/pshufb">Wojciech Muła</a>, <a href="https://twitter.com/geofflangdale">Geoff Langdale</a>, <a href="https://twitter.com/lemire">Daniel Lemire</a>, and <a href="https://twitter.com/KendallWillets">Kendall Willets</a> for their valuable <a href="https://twitter.com/trentnelson/status/985715037934440448">feedback</a> on an early draft of this article.</p>
 <!-- 15.6 + 48.53 + 2.42 + 33.85 + 42 + 49.67 + 11.55 + 9.12 + 12.95 + 4.87 -->
-</small><p><small>Hours spent on this article to date: 230.56. </small></p>
+<p>Hours spent on this article to date: 230.56.</p>
+</small><p><small>Hours spent porting this article from raw HTML to Markdown in 2024: about 16-20. See Colophon for more details. </small></p>
 <hr>
 <section id="tldr" class="level1">
 <h1>TL;DR</h1>
@@ -64932,7 +64933,7 @@ font-style: inherit;">;</span></span></code></pre></div>
 <section id="benchmarks" class="level3">
 <h3 class="anchored" data-anchor-id="benchmarks">Benchmarks</h3>
 <p>All of the resources used to generate this article, including raw .csv data, supporting .svgs, etc., live in the <a href="https://github.com/tpn/website/tree/main/articles/is-prefix-of-string-in-table/resources">resources</a> directory.</p>
-<p>The charts were created in Excel. Each .csv data file was added as a new data source and imported, and then a PivotTable was created to generate the desired bar graph. This was then saved as PDF, which I then edited with <a href="https://inkscape.org/">Inkscape</a>, deletig the surrounding border, cropping the canvas to fit the diagram, and then saving as SVG.</p>
+<p>The charts were created in Excel. Each .csv data file was added as a new data source and imported, and then a PivotTable was created to generate the desired bar graph. This was then saved as PDF, which I then edited with <a href="https://inkscape.org/">Inkscape</a>, deleting the surrounding border, cropping the canvas to fit the diagram, and then saving as SVG.</p>
 <p>After saving as SVG, I then edited each chart in Vim and manually did some font corrections. Looking at my <code>.vimrc</code> file, I believe this was what I used:</p>
 <pre class="vim"><code>"
 " SVG helpers.

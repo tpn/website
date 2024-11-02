@@ -15,11 +15,11 @@ categories:
   - MASM
 author: Trent Nelson
 date: 05/04/2018
-
+last-modified: 11/01/2024
 ---
 
 <small>
-Published: 4th May, 2018.
+Published: 4th May, 2018.  Last updated: 1st November, 2024.
 
 Thanks to [Fabian Giesen](https://twitter.com/rygorous), [Wojciech
 Muła](https://twitter.com/pshufb), [Geoff
@@ -31,6 +31,9 @@ early draft of this article.
 
 <!-- 15.6 + 48.53 + 2.42 + 33.85 + 42 + 49.67 + 11.55 + 9.12 + 12.95 + 4.87 -->
 Hours spent on this article to date: 230.56.
+
+Hours spent porting this article from raw HTML to Markdown in 2024: about
+16-20.  See [Colophon](#colophon) for more details.
 </small>
 
 ---
@@ -16871,7 +16874,7 @@ typedef __m256i DECLSPEC_ALIGN(32) YMMWORD, *PYMMWORD, **PPYMMWORD;
 typedef __m512i DECLSPEC_ALIGN(64) ZMMWORD, *PZMMWORD, **PPZMMWORD;
 ```
 
-# Colophon
+# Colophon {#colophon}
 
 This article was originally written in [raw
 HTML](https://github.com/tpn/website/blob/45b2bf40005d602c4c4355d212efa752ffc8bfa3/is-prefix-of-string-in-table/index.html)
@@ -16922,7 +16925,7 @@ directory.
 The charts were created in Excel.  Each .csv data file was added as a new
 data source and imported, and then a PivotTable was created to generate the
 desired bar graph.  This was then saved as PDF, which I then edited with
-[Inkscape](https://inkscape.org/), deletig the surrounding border, cropping
+[Inkscape](https://inkscape.org/), deleting the surrounding border, cropping
 the canvas to fit the diagram, and then saving as SVG.
 
 After saving as SVG, I then edited each chart in Vim and manually did some font
