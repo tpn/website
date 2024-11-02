@@ -2462,8 +2462,6 @@ with this program; if not, write to the Free Software Foundation, Inc.,
       <item>zword</item>
       <item>short</item>
       <item>ptr</item>
-
-      <!-- MASM -->
       <item>xmmword</item>
       <item>ymmword</item>
       <item>zmmword</item>
@@ -2790,11 +2788,11 @@ with this program; if not, write to the Free Software Foundation, Inc.,
     <itemDatas>
       <itemData name="Normal Text" defStyleNum="dsNormal"/>
       <itemData name="Registers" defStyleNum="dsKeyword"/>
-      <itemData name="Instructions" defStyleNum="dsKeyword"/>
+      <itemData name="Instructions" defStyleNum="dsBuiltIn"/>
       <itemData name="Branch Instructions" defStyleNum="dsControlFlow"/>
       <itemData name="Unknown Instructions" defStyleNum="dsNormal"/>
-      <itemData name="NASM Keywords" defStyleNum="dsKeyword"/>
-      <itemData name="MASM Keywords" defStyleNum="dsKeyword"/>
+      <itemData name="NASM Keywords" defStyleNum="dsAttribute"/>
+      <itemData name="MASM Keywords" defStyleNum="dsAttribute"/>
       <itemData name="Comment" defStyleNum="dsComment"/>
       <itemData name="Label" defStyleNum="dsFunction"/>
       <itemData name="Data" defStyleNum="dsDataType"/>
@@ -2804,7 +2802,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
       <itemData name="Radix" defStyleNum="dsBaseN"/>
       <itemData name="Char" defStyleNum="dsChar"/>
       <itemData name="String" defStyleNum="dsString"/>
-      <itemData name="Preprocessor" defStyleNum="dsOthers"/>
+      <itemData name="Preprocessor" defStyleNum="dsPreprocessor"/>
       <itemData name="Symbol" defStyleNum="dsOperator"/>
       <itemData name="Unknown Symbol" defStyleNum="dsError"/>
       <itemData name="Bad Char" defStyleNum="dsError"/>

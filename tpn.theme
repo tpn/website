@@ -648,7 +648,7 @@
         },
         "Function": {
             "selected-text-color": "thistle",
-            "text-color": "thistle"
+            "text-color": "#87ceeb"
         },
         "Import": {
             "selected-text-color": "#ff79c6",
@@ -660,7 +660,8 @@
         },
         "Keyword": {
             "selected-text-color": "#ff79c6",
-            "text-color": "#ff79c6"
+            "text-color": "#ff79c6",
+            "text-name": "pale-gold"
         },
         "Normal": {
             "selected-text-color": "#f8f8f2",
@@ -679,8 +680,9 @@
             "text-color": "#C4ED54"
         },
         "Preprocessor": {
-            "selected-text-color": "#8067EE",
-            "text-color": "#8067EE"
+            "selected-text-color": "#a6e22e",
+            "text-color": "#a6e22e",
+            "color-name": "lime"
         },
         "RegionMarker": {
             "selected-text-color": "#8be9fd",
@@ -695,8 +697,8 @@
             "text-color": "#f1fa8c"
         },
         "String": {
-            "selected-text-color": "tomato",
-            "text-color": "PaleVioletRed"
+            "selected-text-color": "#e6db74",
+            "text-color": "#f92672"
         },
         "Variable": {
             "selected-text-color": "#8be9fd",

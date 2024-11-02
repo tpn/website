@@ -16,17 +16,17 @@
   --quarto-hl-er-color: #ff5555;
   --quarto-hl-ex-color: powderblue;
   --quarto-hl-fl-color: #bd93f9;
-  --quarto-hl-fu-color: thistle;
+  --quarto-hl-fu-color: #87ceeb;
   --quarto-hl-im-color: #ff79c6;
   --quarto-hl-in-color: #f1fa8c;
   --quarto-hl-kw-color: #ff79c6;
   --quarto-hl-op-color: PapayaWhip;
   --quarto-hl-ot-color: #C4ED54;
-  --quarto-hl-pp-color: #8067EE;
+  --quarto-hl-pp-color: #a6e22e;
   --quarto-hl-re-color: #8be9fd;
   --quarto-hl-sc-color: #ff79c6;
   --quarto-hl-ss-color: #f1fa8c;
-  --quarto-hl-st-color: PaleVioletRed;
+  --quarto-hl-st-color: #f92672;
   --quarto-hl-va-color: PaleGreen;
   --quarto-hl-vs-color: tomato;
   --quarto-hl-wa-color: #ff5555;
@@ -105,7 +105,7 @@ code span.fl {
 }
 
 code span.fu {
-  color: thistle;
+  color: #87ceeb;
 }
 
 code span.im {
@@ -146,7 +146,7 @@ code span.ot {
 }
 
 code span.pp {
-  color: #8067EE;
+  color: #a6e22e;
 }
 
 code span.re {
@@ -162,7 +162,7 @@ code span.ss {
 }
 
 code span.st {
-  color: PaleVioletRed;
+  color: #f92672;
 }
 
 code span.va {

@@ -165,6 +165,8 @@
       <item>_bzhi_u32</item>
       <item>_blsr_u32</item>
       <item>_blsr_u64</item>
+      <item>_blsmsk_u32</item>
+      <item>_blsmsk_u64</item>
       <item>_mm256_cmpeq_epi8</item>
       <item>_mm256_loadu_si256</item>
       <item>_mm256_movemask_epi8</item>
@@ -278,6 +280,7 @@
       <item>STRING_TABLE</item>
       <item>STRING_TABLE_FLAGS</item>
       <item>STRING_TABLE_INDEX</item>
+      <item>_STRING_ARRAY</item>
       <item>_STRING_TABLE</item>
       <item>_SLOT_BITMAPS</item>
       <item>_LENGTH_INDEX_ENTRY</item>
@@ -298,9 +301,12 @@
       <item>CONTAINING_RECORD</item>
       <item>C_ASSERT</item>
       <item>DECLSPEC_ALIGN</item>
+      <item>INIT_ONCE_STATIC_INIT</item>
       <item>FIELD_OFFSET</item>
+      <item>FORCEINLINE</item>
       <item>NT_ASSERT</item>
       <item>NT_VERIFY</item>
+      <item>RtlOffsetToPointer</item>
     </list>
 
     <list name="preprocessor">
