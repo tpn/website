@@ -698,7 +698,7 @@
         },
         "String": {
             "selected-text-color": "#e6db74",
-            "text-color": "PaleViolenRed"
+            "text-color": "PaleVioletRed"
         },
         "Variable": {
             "selected-text-color": "#8be9fd",
