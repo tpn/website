@@ -6,6 +6,9 @@ project:
     port: 8080
   post-render:
     - post-render.sh
+  render:
+    - "*.qmd"
+    - "!*pyscript.qmd"
 
 website:
   title: "Trent Nelson"
@@ -54,6 +57,7 @@ website:
 
 format:
   html:
+    link-external-icon: true
     syntax-definitions:
       - asm.xml
       - c.xml
