@@ -27,48 +27,61 @@ This article is sponsored by [Meta](https://meta.com) in collaboration with
 
 # Introduction
 
+Since it's inception, Python has had a
+[Global Interpreter Lock](
+https://docs.python.org/3/glossary.html#term-global-interpreter-lock),
+or GIL, that prevented more than one thread running Python code at the same
+time.
+
 Python 3.13, released in October 2024, is the first version of Python to
-introduce support for a "no-GIL" ([Global Interpreter
-Lock](https://docs.python.org/3/glossary.html#term-global-interpreter-lock)),
-*free-threaded* mode, where multiple Python threads can run simultaneously.
+introduce support for a "no-GIL" *free-threaded* mode, per
+[PEP-703 Making the Global Interpreter Lock Optional in CPython](
+https://peps.python.org/pep-0703/), unlocking the ability for multiple Python
+threads to run simultaneously.
 
 This allows, for the first time since the language's inception in December
 1989, a single Python process to saturate all CPU cores in parallel with
 pure Python code (i.e. not farming out to extension modules written in C, C++,
 or, more recently, Rust).
 
-This is huge.  Seriously.  I can’t overstate how exciting this is.  For
-decades, countless attempts have been made to solve this problem---my own
-[PyParallel](https://pyparallel.org) attempts included---but until now, no-one
-had prevailed in getting a solution integrated into CPython’s core.
+I can’t overstate how exciting this is!  For decades, countless attempts have
+been made to solve this problem---including my own efforts with
+[PyParallel](https://pyparallel.org)---but no-one had prevailed in getting a
+solution mainlined into CPython.  Until now!
 
 I will admit I am biased: I am a Python committer (though not directly involved
-in this work), I adore the language, and I spent years obsessing over the dream
-of a parallel Python.  It's a topic I'm incredibly passionate about, and this
-article will unabashedly proselytize the extraordinary engineering that finally
-made a free-threaded Python a reality.
+in this work), I adore the language, and have spent years obsessing over the
+dream of a parallel Python.  It's a topic I'm incredibly passionate about, and
+this article will unabashedly proselytize the extraordinary engineering that
+finally made a free-threaded Python a reality.
 
 Thankfully, it's not just blind, uninformed enthusiasm.  Over the past few
 months I've had the opportunity to extensively test-drive free-threaded Python
 to prepare for this article.  The verdict?  I think it's phenomenal.  Both the
-implementation and performance on real-world problems.  Problems that, until
-now, simply couldn't be tackled with Python alone.
+implementation and performance on real-world problems.  Free-threaded Python
+removes a significant limitation, making it possible to tackle a wide range of
+problems that were previously out of reach.  I genuinely believe this is the
+best thing to ever happen to the Python language over the last three decades,
+and it will solidify its position as one of the most dominant programming
+languages for the next three decades.  After all, we're not getting fewer
+cores.
 
-And this is essentially just the first-pass!  Python 3.14 will enable
-[PEP-659's Specializing Adaptive
-Interpreter](https://docs.python.org/3/whatsnew/3.11.html#whatsnew311-pep659)
-functionality to work in free-threaded mode, which will allow new
-multi-threaded code to benefit from the speedups delivered in Python 3.11 by
-the specialization functionality.  (It was disabled in free-threaded mode
-for Python 3.13 as the implementation wasn't thread safe.)
+And this is essentially just the first-pass!  Certain trade-offs had to be made
+to deliver the core functionality within a reasonable time frame---like
+disabling the non-thread-safe functionality introduced by
+[PEP-659 Specializing Adaptive Interpreter](
+https://docs.python.org/3/whatsnew/3.11.html#whatsnew311-pep659), which is the
+feature responsible for delivering large speedups in the last few prior
+releases.  However, this is on track to be re-enabled in free-threaded mode
+for Python 3.14, allowing multi-threaded code to also benefit from the same
+speedups single-threaded code has enjoyed the past few years.
 
 The goal of this article is to review the technical details of the
 implementation, with some comparisons to prior work such as PyParallel.  I'll
 then cover the types of problems that are now incredibly well-suited to be
-tackled with a free-threaded Python.  I'll then introduce a demo project I've
-created called [Parallelopedia](https://github.com/tpn/parallelopedia) which
-implements a whole bunch of interesting things aimed at demonstrating the cool
-stuff you can now do with free-threaded Python.
+tackled with a free-threaded Python, using a demo project I've created called
+[Parallelopedia](https://github.com/tpn/parallelopedia) to provide a basis for
+concrete examples of real-world problems.
 
 Finally, I'll demonstrate some examples of how [PyTorch](https://pytorch.org)
 can be used today with free-threaded Python, with particular focus on parallel
@@ -82,9 +95,9 @@ the plans for tackling that in the future.
 The motivation behind the PyTorch focus is simple: Meta's PyTorch folks,
 through their relationship with [Quansight](https://quansight.com), paid for
 my time to work on this article.  Meta was also heavily involved in supporting
-and funding the free-threaded Python efforts, too, again, thanks to their
-relationship with Quansight.  So special thanks goes out to Meta for all of
-their support with both free-threaded Python, and PyTorch overall.
+and funding the free-threaded Python efforts, too; this was also thanks to
+their relationship with Quansight.  So special thanks goes out to Meta for all
+of their support with both free-threaded Python, and PyTorch overall.
 
 And I'd be remiss if I didn't thank my friend, colleague, and twice-now boss
 [Dr. Travis Oliphant](https://en.wikipedia.org/wiki/Travis_Oliphant), CEO of
@@ -99,9 +112,19 @@ project with [Andrew James](https://github.com/amjames) for a few months before
 I started my new role as a Principle Engineer at NVIDIA on the Core CUDA
 Compute Libraries team in late January, 2025.
 
-Thank you Meta, Quansight, Travis, and James!
+Thank you Meta, Quansight, Travis, and James!  And thanks to all the folks
+involved in delivering free-threaded Python, including the Python Steering
+Council for taking a calculated risk and accepting
+[PEP-703 Making the Global Interpreter Lock Optional in CPython](
+https://peps.python.org/pep-0703/) in the first place.
 
 # Background
+
+The [Related Work](https://peps.python.org/pep-0703/#related-work) section of
+PEP-703 does a fantastic job of capturing all of the past attempts at improving
+Python's ability at simultaneously leveraging multiple CPU cores.
+
+I believe the first attempt was in 1996, when Greg Stein...
 
 Way back in October 2012, there was a discussion on the `python-ideas@` mailing
 list titled
@@ -242,6 +265,10 @@ svn+ssh access to svn.python.org, plus ssh access to the python.org boxes
 themselves if you wanted it/needed it (i.e. for buildbot master configuration).
 This was certainly more compelling than the ClearQuest consultancy I'd done in
 the past, that's for sure!
+
+As much as I love Git and Github, getting your pull request accepted for an
+open source project just doesn't have the same feel as getting offered commit
+privileges like back in the old days.
 
 ### Snakebite: The Open Source Network
 
