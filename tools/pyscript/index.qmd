@@ -1,0 +1,23 @@
+---
+title: PyScript Test
+subtitles: Assorted tools and utilities
+toc: false
+comments: false
+format:
+  html:
+    include-in-header:
+      - text: <link rel="stylesheet" href="https://pyscript.net/releases/2024.10.2/core.css">
+      - text: <script type="module" src="https://pyscript.net/releases/2024.10.2/core.js"></script>
+
+---
+
+<section class="pyscript">
+  Hello world! <br />
+  This is the current date and time, as computed by Python:
+  <script type="py">
+      from pyscript import display
+      from datetime import datetime
+      now = datetime.now()
+      display(now.strftime("%m/%d/%Y, %H:%M:%S"))
+  </script>
+</section>

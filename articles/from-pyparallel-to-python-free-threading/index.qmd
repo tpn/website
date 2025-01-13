@@ -1,0 +1,399 @@
+---
+title: "DRAFT: From PyParallel to Python Free-Threading"
+subtitle: "Optimally Exploiting Multiple Cores on Python"
+categories:
+  - Python
+  - PyParallel
+  - Free-threading
+  - No-GIL
+  - PyTorch
+author: "Trent Nelson"
+draft: true
+image: "images/python-free-threading.png"
+description: |
+  This article takes a look at the new no-GIL, free-threading functionality
+  introduced in Python 3.13, as well as how it compares and performs against
+  PyParallel's attempt at explointing multiple CPU cores over ten years ago.
+  A novel Wiki server is used to demonstrate the benefits afforded by the new
+  functionality, whereby large data structures (tens to hundreds of gigabytes)
+  are loaded in main memory and then accessed in parallel from Python---a feat
+  not previously possible with the contemporary `multiprocessing` approach.  We
+  finish by exploring the free-threading and PyTorch; what can currently be
+  achieved, and what's on the roadmap for the future.
+---
+
+This article is sponsored by [Meta](https://meta.com) in collaboration with
+[Quansight](https://quansight.com) and [OpenTeams](https://openteams.com).
+
+# Introduction
+
+Python 3.13, released in October 2024, is the first version of Python to
+introduce support for a "no-GIL" ([Global Interpreter
+Lock](https://docs.python.org/3/glossary.html#term-global-interpreter-lock)),
+*free-threaded* mode, where multiple Python threads can run simultaneously.
+
+This allows, for the first time since the language's inception in December
+1989, a single Python process to saturate all CPU cores in parallel with
+pure Python code (i.e. not farming out to extension modules written in C, C++,
+or, more recently, Rust).
+
+This is huge.  Seriously.  I can’t overstate how exciting this is.  For
+decades, countless attempts have been made to solve this problem---my own
+[PyParallel](https://pyparallel.org) attempts included---but until now, no-one
+had prevailed in getting a solution integrated into CPython’s core.
+
+I will admit I am biased: I am a Python committer (though not directly involved
+in this work), I adore the language, and I spent years obsessing over the dream
+of a parallel Python.  It's a topic I'm incredibly passionate about, and this
+article will unabashedly proselytize the extraordinary engineering that finally
+made a free-threaded Python a reality.
+
+Thankfully, it's not just blind, uninformed enthusiasm.  Over the past few
+months I've had the opportunity to extensively test-drive free-threaded Python
+to prepare for this article.  The verdict?  I think it's phenomenal.  Both the
+implementation and performance on real-world problems.  Problems that, until
+now, simply couldn't be tackled with Python alone.
+
+And this is essentially just the first-pass!  Python 3.14 will enable
+[PEP-659's Specializing Adaptive
+Interpreter](https://docs.python.org/3/whatsnew/3.11.html#whatsnew311-pep659)
+functionality to work in free-threaded mode, which will allow new
+multi-threaded code to benefit from the speedups delivered in Python 3.11 by
+the specialization functionality.  (It was disabled in free-threaded mode
+for Python 3.13 as the implementation wasn't thread safe.)
+
+The goal of this article is to review the technical details of the
+implementation, with some comparisons to prior work such as PyParallel.  I'll
+then cover the types of problems that are now incredibly well-suited to be
+tackled with a free-threaded Python.  I'll then introduce a demo project I've
+created called [Parallelopedia](https://github.com/tpn/parallelopedia) which
+implements a whole bunch of interesting things aimed at demonstrating the cool
+stuff you can now do with free-threaded Python.
+
+Finally, I'll demonstrate some examples of how [PyTorch](https://pytorch.org)
+can be used today with free-threaded Python, with particular focus on parallel
+inference (generation) on a shared model.  Load a model once in a single Python
+process, replicate it across GPUs of interest, and perform parallel inference
+from multiple threads without needing to mess around with `multiprocessing`.
+
+I'll also cover areas of PyTorch that don't yet work with free-threading, and
+the plans for tackling that in the future.
+
+The motivation behind the PyTorch focus is simple: Meta's PyTorch folks,
+through their relationship with [Quansight](https://quansight.com), paid for
+my time to work on this article.  Meta was also heavily involved in supporting
+and funding the free-threaded Python efforts, too, again, thanks to their
+relationship with Quansight.  So special thanks goes out to Meta for all of
+their support with both free-threaded Python, and PyTorch overall.
+
+And I'd be remiss if I didn't thank my friend, colleague, and twice-now boss
+[Dr. Travis Oliphant](https://en.wikipedia.org/wiki/Travis_Oliphant), CEO of
+Quansight and OpenTeams, primary creator of
+[NumPy](https://en.wikipedia.org/wiki/NumPy), founding contributor of
+[SciPy](https://en.wikipedia.org/wiki/SciPy), and one of the founders of
+Continuum.io---now [Anaconda](https://anaconda.com), with whom I worked many
+years ago.  After the abrupt layoffs at [Voltron
+Data](https://voltrondata.com/) in late September 2024, I reached out to Travis
+for work and he snapped me up instantly, putting me to work on the PyTorch
+project with [Andrew James](https://github.com/amjames) for a few months before
+I started my new role as a Principle Engineer at NVIDIA on the Core CUDA
+Compute Libraries team in late January, 2025.
+
+Thank you Meta, Quansight, Travis, and James!
+
+# Background
+
+Way back in October 2012, there was a discussion on the `python-ideas@` mailing
+list titled
+[asyncore: included batteries don't fit](https://mail.python.org/pipermail/python-ideas/2012-October/016311.html).
+The general discussion centered around providing better asynchronous I/O
+primitives in Python 3.14, and eventually led to the `async` and `yield from`
+keywords being introduced in Python 3.5, released around two years later in
+September 2015.
+
+That thread was also the genesis for [PyParallel](https://pyparallel.org); a
+fork of Python 3.3.5 that I created to implement a proof-of-concept version of
+the Python interpreter that tackled not only asynchronous I/O but also
+multi-core parallelism.  Specifically, my hunch was that parallelism within
+the Python interpreter could be achieved when framed through the lens of
+asynchronous I/O primitives, such as TCP/IP socket servers.
+
+::: {.callout-note}
+There's a comprehensive [backstory](#pyparallel-backstory) that I've placed
+toward the end such that I don't detract too much from the main purpose of this
+article, which is to focus on the exciting new primitives available to use via
+Python 3.13's free-threading facilities.
+:::
+
+# Appendix
+
+## PyParallel Backstory {#pyparallel-backstory}
+
+I'm not sure how interesting this section will be to readers, which is why I've
+stashed it at the end of the article.  The older I get---especially now that I
+have a daughter---the more cathartic it is reminiscing about the early parts of
+my career some nearly-two-decades-ago.
+
+This section captures the backstory behind PyParallel.  PyParallel was born out
+of a) my interest in asynchronous I/O and multithreaded programming, and b) my
+experience with Snakebite, an "open source network" I built with the goal to
+provide Python committer's access to all the different types of platforms
+Python ran on---especially all the UNIX derivatives from the late 90s to 00s
+for which I seemed to be genetically predisposed to overly romanticize.
+
+And I came up with the idea for Snakebite as a Python committer, where I found
+myself often frustrated at trying to debug buildbot breaks on platforms for
+which I had no access.  And becoming a Python committer was an artifact
+of my involvement with the Python language, particularly with regards to
+providing buildbots and help with Windows 64-bit Python builds in the early
+days where AMD64 was still a novelty.
+
+And I was led to Python by a random article by Eric S. Raymond, coupled with
+growing resentment toward Perl, which I found myself having to use when working
+with ClearQuest.
+
+That's the reverse chronological history in a nutshell.  The next few sections
+go into more detail chronologically.
+
+### Becoming a Python Committer
+
+From around 2000 to 2004, I was writing mostly C, C++, and Perl.  I had founded
+a company with a business partner, Jamie Echlin, called
+[OnResolve](https://web.archive.org/web/20080704070902/http://www.onresolve.com/home/),
+and provided consultancy for an IBM---formerly Rational---change management
+product called [ClearQuest](https://www.ibm.com/products/rational-clearquest),
+as well as a number of software products that extended the functionality of
+ClearQuest.  ClearQuest could be customized in two languages: Visual Basic, and
+Perl.  The most prominent software product Jamie and I created was OnMessage,
+which was a combination of C++ and Perl, and provided enhanced e-mail
+notification facilities for ClearQuest.  Jamie deserves much of the credit for
+what eventually became known as
+[OnMessage](https://web.archive.org/web/20080622060654/http://www.onresolve.com/products/onmessage/)
+---despite having a quirky Perl coding style I found difficult to work with, he
+absolutely laid the foundation for the product and the subsequent success we had
+with it.
+
+ClearQuest, and its version-control counterpart, ClearCase, were ubiquitous in
+all of the industries that had the most money in the early to mid 2000s.
+Particularly finance and oil.  No-one liked using either of them, they were
+expensive, required huge teams to maintain and administer, and with the advent
+of tools like Git and Github (albeit many years later), they are now relegated
+to the annals of history.
+
+I was relatively productive with Perl, but I didn't particularly like it.  And
+I absolutely loathed having to deal with other people's Perl code.  Around late
+2004 and 2005, Python arrived on my radar.  I remember reading Eric S.
+Raymond's [Why Python](https://www.linuxjournal.com/article/3882)
+article about Python, and it resonated strongly with me.  Coming from
+Perl, Python just felt simply magical.  It was intuitive, easy to read, not
+cryptic, easy to work with other people's code, powerful--particularly as a glue
+language.
+
+I adored it.  I tackled all new projects with Python.  I wrote a Python wrapper
+around ClearQuest named [cqpython](https://github.com/tpn/cqpython), which I
+used to carry out one of my most favorite projects to date: merging two
+ClearQuest databases into a single instance by auto-generating optimized SQL
+to conduct the merge at the database level.  (This was harder than it sounds,
+as all ClearQuest databases would start off with the same unique ID offsets,
+so two otherwise unrelated databases would have almost identical keys for
+different entities, which needed to be resolved efficiently at merge time.)
+
+By 2007-2008, I was bored of ClearQuest---it wasn't a fun product to work with,
+nor did it look like it would be a good career move to continue specializing in
+it; the prices were extortionate, a lot of companies were trying to move off it,
+and better, cheaper alternatives were popping up.
+
+However, it sure had been lucrative.  I was able to enjoy extended periods of
+not needing to work, and I spent that time on things I was finding really fun,
+like contributing to Python.  I set up a bunch of buildbots for Python, and
+was particularly interested in getting the 64-bit Windows Python builds "green"
+on the buildbots I had set up.  I think I even paid for the Verisign code
+signing certificate used for the Python.org official Windows binaries back then
+(this was still the Python 2.x days).
+
+This was back in the day where Martin von Löwis was still an active contributor
+for Python, and if I recall correctly, the release manager for the Python 2.x
+series.  Martin also maintained the Windows Python builds, a role that was
+eventually taken over by Steve Dower, who is still doing it to this day.
+
+In 2008, I was invited to become a Python committer.  I was thrilled.  I had
+
+### Snakebite: The Open Source Network
+
+### The python-ideas@ asyncore discussion
+
+#### My Hunch
+
+#### Offline Discussions with Guido
+
+### The Genesis of PyParallel
+
+#### Prior Attempts at Removing the GIL
+
+#### Removing the GIL without removing the GIL
+
+### Windows, Threading, and Asynchronous I/O
+
+The backstory behind that hunch warrants its own article, and I don't want to
+detract too much from the purpose of this article, which is to focus on the
+exciting new primitives available to use via Python 3.13's free-threading
+facilities.  Suffice to say that circa 2012, having done over a decade of
+multi-threaded and asynchronous I/O systems programming on UNIX and Windows by
+that stage, I had pretty strong ideas about how to best write high-performance
+parallel programs that optimally used multi-threading and asynchronous I/O
+primitives.
+
+And to the detriment of wide-spread adoption of PyParallel, I was convinced
+that the sublime facilities provided by the Windows NT kernel for
+multi-threading and asynchronous I/O
+
+
+without the restrictions imposed by the Python
+interpreter's *Global Interpreter Lock* (GIL).
+
+
+```python
+def get_page_offsets_for_key3(search_string):
+    results = []
+    items = titles.items(search_string)
+    if not items:
+        return results
+    for (key, value) in items:
+        v = value[0]
+        o = uint64(v if v > 0 else v*-1)
+        ix = offsets.searchsorted(o, side='right')
+        results.append((key, int(o-uint64_7), int(offsets[ix]-uint64_11)))
+    return results
+```
+
+# Colophon {#colophon}
+
+As much as I enjoy reading technical articles, I often find myself equally
+interested in the tools the author used in the production of the article.  In
+this final section, I attempt to capture details regarding the tools used to
+author this article, in no particular order.
+
+## Quarto & Markdown
+
+This article was written in Markdown using [Quarto](https://quarto.org).  The
+source code is
+[here](https://github.com/tpn/website/edit/main/articles/from-pyparallel-to-python-free-threading/index.qmd);
+there's also an *Edit this page* link on the top-right of the page, under the
+contents (assuming you're viewing the site on a wide-enough device).
+
+For the syntax color scheme, I copied the
+[`dracula.theme`](https://github.com/quarto-dev/quarto-cli/blob/80bf6b5848bf644de3a4d59e26b5eb067375986a/src/resources/pandoc/highlight-styles/dracula.theme)
+from the Quarto repository into
+[`tpn.theme`](https://github.com/tpn/website/blob/main/tpn.theme) and then
+just hacked on it until I was mostly content with the results.
+
+My whole [trent.me](https://trent.me) website uses Quarto, and is hosted
+publicly on Github at my [website](https://github.com/tpn/website) repo.
+I also leverage Github's hosting facilities via their "Pages" functionality,
+the configuration of which can be seen below.
+
+::: {.callout-tip collapse="true" appearance="simple" icon="false" title="Github Pages Configuration"}
+![Github Pages Configuration for tpn/website](images/github-tpn-website-pages.png){.lightbox}
+:::
+
+"Development" on the website (i.e. writing articles like this one) is done
+on a variety of boxes, typically all Linux/WSL2.  Quarto has a useful preview
+feature, so my local workflow is usually just something as simple as:
+
+```bash
+% cd ~/src/website
+% quarto preview
+```
+
+I edited this `index.qmd` page predominantly in vim, although I'd sometimes use
+VS Code and the Quarto extension with integrated previewing.  I generally turn
+Copilot off in vim when writing pure text, it's too distracting, and isn't
+geared toward writing new prose versus coding tasks, which is obviously its
+bread and butter.
+
+## AI Tooling
+
+In general, I for one welcome our new AI overlords.  I have heavily integrated
+Copilot and ChatGPT into my workflow now as a developer for the past two years
+or so, and I thoroughly enjoy leveraging both tools.
+
+### LM Studio
+
+[LM Studio](https://lmstudio.ai/) has also left a lasting impression and I've
+enjoyed experimenting with it a lot recently too.  This has been aided by
+having a local box at home with 256 GB RAM, 40 cores, four Tesla V100 32GB
+GPUs, and a 14TB RAID0 stripe---plenty of room to download all of these huge
+models coming out.
+
+A nice thing about LM Studio is that with a few clicks you can expose a local,
+OpenAI-compatible REST interface.  LM Studio is powered by
+[llama.cpp](https://github.com/ggerganov/llama.cpp).
+
+### Aider
+
+I came across [Aider](https://aider.chat) recently.  Aider is, to quote their
+website, directly, **AI pair programming in your terminal**.  It's pretty neat,
+and I played around with having it drive a little bit of the Python development
+in the [parallelopedia](https://github.com/tpn/parallelopedia) repo, and a lot
+of the development in the
+[parallelopedia-ui](https://github.com/tpn/parallelopedia-ui) repo, which is
+the React, Bootstrap, JavaScript/JSX web UI seen in this article.
+
+I'm not a web developer, I don't know how to write web apps, I don't care about
+code quality of web apps I do write (as I'm not writing anything other than
+demos or small little tools), so, whatever gets the job done is fine.  However,
+I am, by trade, a software engineer, so a lot of the core skill set still
+**commutes** when working in foreign domains.  *Especially* these days when you
+have AI an alt-tab away, or, in the case of Aider, available in a terminal to
+carry out your development requests.
+
+The biggest issue I had with Aider was honestly just biting the bullet and
+just trying it.  **Begin, the rest is easy** as they say.  It's definitely
+not perfect--I had to jump in and fix things a few times every session I had
+with it, but we're talking maybe five interventions within a 3-4 hour coding
+session, give or take.  It was particularly good at generating scaffolding that
+I could hack further with a single sentence.  And it was really good at writing
+an entire Python unit test module for me based on a single-sentence.
+
+To get started with Aider:
+
+```bash
+% python -m pip install aider-install
+% aider-install
+# Restart shell, or `export PATH=$HOME/.local/bin:$PATH`
+% which aider
+/home/trent/.local/bin/aider
+# I've got my OpenAI keys in a GPG-encrypted file ~/.zsh/openai_key.asc.
+% which init_openai_key
+init_openai_key () {
+    if [ -f ~/.zsh/openai_key.asc ]
+    then
+        export OPENAI_API_KEY=$(
+            gpg -d --batch --quiet ~/.zsh/openai_key.asc
+        )
+    fi
+}
+% init_openai_key
+% aider --model gpt-4o --vim
+```
+It was trivial to point it at a local model hosted by LM Studio, too:
+
+```bash
+% aider --model lm_studio/qwen2.5-coder-32b-instruct@fp16 --vim
+```
+
+By default, Aider keeps a Markdown transcript of your sessions in a file named
+`.aider.chat.history.md` in the root of the repository you're working with.  I
+have included the transcript from my
+[parallelopedia-ui](https://github.com/tpn/parallelopedia-ui) repo below.  I
+haven't edited it, so it contains all my mistakes and errors and whatnot.
+
+::: {.callout-tip collapse="true" appearance="simple" icon="false" title="Aider Chat History"}
+{{< include _aider.chat.history.md >}}
+:::
+
+## PyTorch, Deep Neural Networks, LLMs, and Andrej Karpathy's YouTube Series
+
+# Comments
+
+<!-- vim:set ts=8 sw=2 sts=2 expandtab textwidth=79 -->

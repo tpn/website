@@ -198,7 +198,7 @@ window.Quarto = {
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         
-    <h5 class="quarto-listing-category-title">Categories</h5><div class="quarto-listing-category category-default"><div class="category" data-category="">All <span class="quarto-category-count">(1)</span></div><div class="category" data-category="AVX2">AVX2 <span class="quarto-category-count">(1)</span></div><div class="category" data-category="Assembly">Assembly <span class="quarto-category-count">(1)</span></div><div class="category" data-category="C">C <span class="quarto-category-count">(1)</span></div><div class="category" data-category="MASM">MASM <span class="quarto-category-count">(1)</span></div><div class="category" data-category="SIMD">SIMD <span class="quarto-category-count">(1)</span></div></div></div>
+    <h5 class="quarto-listing-category-title">Categories</h5><div class="quarto-listing-category category-default"><div class="category" data-category="">All <span class="quarto-category-count">(2)</span></div><div class="category" data-category="AVX2">AVX2 <span class="quarto-category-count">(1)</span></div><div class="category" data-category="Assembly">Assembly <span class="quarto-category-count">(1)</span></div><div class="category" data-category="C">C <span class="quarto-category-count">(1)</span></div><div class="category" data-category="Free-threading">Free-threading <span class="quarto-category-count">(1)</span></div><div class="category" data-category="MASM">MASM <span class="quarto-category-count">(1)</span></div><div class="category" data-category="No-GIL">No-GIL <span class="quarto-category-count">(1)</span></div><div class="category" data-category="PyParallel">PyParallel <span class="quarto-category-count">(1)</span></div><div class="category" data-category="PyTorch">PyTorch <span class="quarto-category-count">(1)</span></div><div class="category" data-category="Python">Python <span class="quarto-category-count">(1)</span></div><div class="category" data-category="SIMD">SIMD <span class="quarto-category-count">(1)</span></div></div></div>
 <!-- main -->
 <main class="content column-page-left" id="quarto-document-content">
 
@@ -227,7 +227,49 @@ window.Quarto = {
 
 <div class="quarto-listing quarto-listing-container-default" id="listing-listing">
 <div class="list quarto-listing-default">
-<div class="quarto-post image-right" data-index="0" data-categories="AVX2,SIMD,C,Assembly,MASM" data-listing-date-sort="1525417200000" data-listing-file-modified-sort="1730582704133" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="784" data-listing-word-count-sort="156664">
+<div class="quarto-post image-right" data-index="0" data-categories="Python,PyParallel,Free-threading,No-GIL,PyTorch" data-listing-file-modified-sort="1736734306838" data-listing-reading-time-sort="13" data-listing-word-count-sort="2496">
+<div class="thumbnail">
+<p><a href="../articles/from-pyparallel-to-python-free-threading/index.html" class="no-external"></a></p><a href="../articles/from-pyparallel-to-python-free-threading/index.html" class="no-external">
+<p><img loading="lazy" src="../articles/from-pyparallel-to-python-free-threading/images/python-free-threading.png" class="thumbnail-image"></p>
+</a><p><a href="../articles/from-pyparallel-to-python-free-threading/index.html" class="no-external"></a></p>
+</div>
+<div class="body">
+<h3 class="no-anchor listing-title">
+<a href="../articles/from-pyparallel-to-python-free-threading/index.html" class="no-external">DRAFT: From PyParallel to Python Free-Threading</a>
+</h3>
+<div class="listing-subtitle">
+<a href="../articles/from-pyparallel-to-python-free-threading/index.html" class="no-external">Optimally Exploiting Multiple Cores on Python</a>
+</div>
+<div class="listing-categories">
+<div class="listing-category" onclick="window.quartoListingCategory('Python'); return false;">
+Python
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('PyParallel'); return false;">
+PyParallel
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('Free-threading'); return false;">
+Free-threading
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('No-GIL'); return false;">
+No-GIL
+</div>
+<div class="listing-category" onclick="window.quartoListingCategory('PyTorch'); return false;">
+PyTorch
+</div>
+</div>
+<div class="listing-description">
+<a href="../articles/from-pyparallel-to-python-free-threading/index.html" class="no-external">This article takes a look at the new no-GIL, free-threading functionality introduced in Python 3.13, as well as how it compares and performs against PyParallel’s attempt at explointing multiple CPU cores over ten years ago. A novel Wiki server is used to demonstrate the benefits afforded by the new functionality, whereby large data structures (tens to hundreds of gigabytes) are loaded in main memory and then accessed in parallel from Python—a feat not previously possible with the contemporary <code>multiprocessing</code> approach. We finish by exploring the free-threading and PyTorch; what can currently be achieved, and what’s on the roadmap for the future. </a>
+</div>
+</div>
+<div class="metadata">
+<p><a href="../articles/from-pyparallel-to-python-free-threading/index.html" class="no-external"></a></p><a href="../articles/from-pyparallel-to-python-free-threading/index.html" class="no-external">
+<div class="listing-author">
+Trent Nelson
+</div>
+</a>
+</div>
+</div>
+<div class="quarto-post image-right" data-index="1" data-categories="AVX2,SIMD,C,Assembly,MASM" data-listing-date-sort="1525417200000" data-listing-file-modified-sort="1730582704133" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="784" data-listing-word-count-sort="156664">
 <div class="thumbnail">
 <p><a href="../articles/is-prefix-of-string-in-table/index.html" class="no-external"></a></p><a href="../articles/is-prefix-of-string-in-table/index.html" class="no-external">
 <p class="card-img-top"><img src="is-prefix-of-string-in-table/resources/StringTable.svg" alt="The STRING_TABLE Structure"  class="thumbnail-image card-img"/></p>
