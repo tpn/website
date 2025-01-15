@@ -63956,6 +63956,18 @@ map &lt;leader&gt;v
 <h1>Background</h1>
 <p>The <a href="https://peps.python.org/pep-0703/#related-work">Related Work</a> section of PEP-703 does a fantastic job of capturing all of the past attempts at improving Python’s ability at simultaneously leveraging multiple CPU cores.</p>
 <p>I believe the first attempt was in 1996, when Greg Stein…</p>
+<p>…</p>
+<p>David Beazley’s <a href="https://dabeaz.blogspot.com/2011/08/inside-look-at-gil-removal-patch-of.html">An Inside Look at the GIL Removal Path of Lore</a>.</p>
+<p>Larry Hasting’s <a href="https://github.com/larryhastings/gilectomy/tree/gilectomy">Gilectomy</a>.</p>
+<p>The hilarious Reddit post by user <a href="https://reddit.com/u/corysama">/u/corysama</a> in the thread <a href="https://www.reddit.com/r/gamedev/comments/xddlp/comment/c5lg7px/?utm_source=share&amp;utm_medium=web3x&amp;utm_name=web3xcss&amp;utm_term=1&amp;utm_content=share_button">Describe what developing for each console you’ve developed for is like.</a>. With regards to PS2 development, the following comment always stood out to me:</p>
+<blockquote class="blockquote">
+<p>There are so many amazing things you can do, but everything requires backflips through invisible blades of segfault.</p>
+</blockquote>
+<p>That absolutely encompasses the first few months of developing PyParallel. And then all subsequent months. Larry Hasting’s has a similar sentiment in the Gilectomy <a href="https://github.com/larryhastings/gilectomy/tree/gilectomy">README</a>, with the first sentence proudly stating:</p>
+<blockquote class="blockquote">
+<p>Welcome to the exciting world of segfaults and massive slowdowns!</p>
+</blockquote>
+<p>…</p>
 <p>Way back in October 2012, there was a discussion on the <code>python-ideas@</code> mailing list titled <a href="https://mail.python.org/pipermail/python-ideas/2012-October/016311.html">asyncore: included batteries don’t fit</a>. The general discussion centered around providing better asynchronous I/O primitives in Python 3.14, and eventually led to the <code>async</code> and <code>yield from</code> keywords being introduced in Python 3.5, released around two years later in September 2015.</p>
 <p>That thread was also the genesis for <a href="https://pyparallel.org">PyParallel</a>; a fork of Python 3.3.5 that I created to implement a proof-of-concept version of the Python interpreter that tackled not only asynchronous I/O but also multi-core parallelism. Specifically, my hunch was that parallelism within the Python interpreter could be achieved when framed through the lens of asynchronous I/O primitives, such as TCP/IP socket servers.</p>
 <div class="callout callout-style-default callout-note callout-titled">
@@ -70210,8 +70222,9 @@ You can use /undo to undo and discard each aider commit.</p>
   <category>Free-threading</category>
   <category>No-GIL</category>
   <category>PyTorch</category>
+  <category>asyncio</category>
   <guid>https://trent.me/articles/from-pyparallel-to-python-free-threading/</guid>
-  <pubDate>Mon, 13 Jan 2025 17:39:27 GMT</pubDate>
+  <pubDate>Wed, 15 Jan 2025 23:53:47 GMT</pubDate>
   <media:content url="https://trent.me/articles/from-pyparallel-to-python-free-threading/images/python-free-threading.png" medium="image" type="image/png" height="82" width="144"/>
 </item>
 </channel>

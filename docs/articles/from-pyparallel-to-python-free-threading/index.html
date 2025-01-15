@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Trent Nelson">
-<meta name="description" content="This article takes a look at the new no-GIL, free-threading functionality introduced in Python 3.13, as well as how it compares and performs against PyParallel’s attempt at explointing multiple CPU cores over ten years ago. A novel Wiki server is used to demonstrate the benefits afforded by the new functionality, whereby large data structures (tens to hundreds of gigabytes) are loaded in main memory and then accessed in parallel from Python—a feat not previously possible with the contemporary multiprocessing approach. We finish by exploring the free-threading and PyTorch; what can currently be achieved, and what’s on the roadmap for the future.">
+<meta name="description" content="This article takes a look at the new no-GIL, free-threading functionality introduced in Python 3.13, as well as how it compares and performs against PyParallel’s attempt at explointing multiple CPU cores over ten years ago. Using a demo project named Parallelopedia, we demonstrate the benefits afforded by the new functionality, whereby large data structures (tens to hundreds of gigabytes) are loaded in main memory and then accessed in parallel from Python—a feat not previously possible with the contemporary multiprocessing approach. Additionally, we investigate multi-threaded, parallel inference (generation) of transformer-based Deep Neural Networks via PyTorch, and explorer the limits of what can and can’t currently be done, as well as a roadmap for future PyTorch support.">
 
 <title>DRAFT: From PyParallel to Python Free-Threading – Trent Nelson</title>
 <style>
@@ -122,13 +122,13 @@ gtag('config', 'G-8RPR4XKPEW', { 'anonymize_ip': false});
 
 <link rel="stylesheet" href="../../styles.css">
 <meta property="og:title" content="DRAFT: From PyParallel to Python Free-Threading – Trent Nelson">
-<meta property="og:description" content="This article takes a look at the new no-GIL, free-threading functionality introduced in Python 3.13, as well as how it compares and performs against PyParallel’s attempt at explointing multiple CPU cores over ten years ago. A novel Wiki server is used to demonstrate the benefits afforded by the new functionality, whereby large data structures (tens to hundreds of gigabytes) are loaded in main memory and then accessed in parallel from Python—a feat not previously possible with the contemporary multiprocessing approach. We finish by exploring the free-threading and PyTorch; what can currently be achieved, and what’s on the roadmap for the future.">
+<meta property="og:description" content="This article takes a look at the new no-GIL, free-threading functionality introduced in Python 3.13, as well as how it compares and performs against PyParallel’s attempt at explointing multiple CPU cores over ten years ago. Using a demo project named Parallelopedia, we demonstrate the benefits afforded by the new functionality, whereby large data structures (tens to hundreds of gigabytes) are loaded in main memory and then accessed in parallel from Python—a feat not previously possible with the contemporary multiprocessing approach. Additionally, we investigate multi-threaded, parallel inference (generation) of transformer-based Deep Neural Networks via PyTorch, and explorer the limits of what can and can’t currently be done, as well as a roadmap for future PyTorch support.">
 <meta property="og:image" content="https://trent.me/articles/from-pyparallel-to-python-free-threading/images/python-free-threading.png">
 <meta property="og:site_name" content="Trent Nelson">
 <meta property="og:image:height" content="1024">
 <meta property="og:image:width" content="1792">
 <meta name="twitter:title" content="DRAFT: From PyParallel to Python Free-Threading – Trent Nelson">
-<meta name="twitter:description" content="This article takes a look at the new no-GIL, free-threading functionality introduced in Python 3.13, as well as how it compares and performs against PyParallel’s attempt at explointing multiple CPU cores over ten years ago. A novel Wiki server is used to demonstrate the benefits afforded by the new functionality, whereby large data structures (tens to hundreds of gigabytes) are loaded in main memory and then accessed in parallel from Python—a feat not previously possible with the contemporary multiprocessing approach. We finish by exploring the free-threading and PyTorch; what can currently be achieved, and what’s on the roadmap for the future.">
+<meta name="twitter:description" content="This article takes a look at the new no-GIL, free-threading functionality introduced in Python 3.13, as well as how it compares and performs against PyParallel’s attempt at explointing multiple CPU cores over ten years ago. Using a demo project named Parallelopedia, we demonstrate the benefits afforded by the new functionality, whereby large data structures (tens to hundreds of gigabytes) are loaded in main memory and then accessed in parallel from Python—a feat not previously possible with the contemporary multiprocessing approach. Additionally, we investigate multi-threaded, parallel inference (generation) of transformer-based Deep Neural Networks via PyTorch, and explorer the limits of what can and can’t currently be done, as well as a roadmap for future PyTorch support.">
 <meta name="twitter:image" content="https://trent.me/articles/from-pyparallel-to-python-free-threading/images/python-free-threading.png">
 <meta name="twitter:image-height" content="1024">
 <meta name="twitter:image-width" content="1792">
@@ -230,19 +230,20 @@ gtag('config', 'G-8RPR4XKPEW', { 'anonymize_ip': false});
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
 <h1 class="title">DRAFT: From PyParallel to Python Free-Threading</h1>
-<p class="subtitle lead">Optimally Exploiting Multiple Cores on Python</p>
+<p class="subtitle lead">Optimally Exploiting Multiple Cores with Python</p>
   <div class="quarto-categories">
     <div class="quarto-category">Python</div>
     <div class="quarto-category">PyParallel</div>
     <div class="quarto-category">Free-threading</div>
     <div class="quarto-category">No-GIL</div>
     <div class="quarto-category">PyTorch</div>
+    <div class="quarto-category">asyncio</div>
   </div>
   </div>
 
 <div>
   <div class="description">
-    <p>This article takes a look at the new no-GIL, free-threading functionality introduced in Python 3.13, as well as how it compares and performs against PyParallel’s attempt at explointing multiple CPU cores over ten years ago. A novel Wiki server is used to demonstrate the benefits afforded by the new functionality, whereby large data structures (tens to hundreds of gigabytes) are loaded in main memory and then accessed in parallel from Python—a feat not previously possible with the contemporary <code>multiprocessing</code> approach. We finish by exploring the free-threading and PyTorch; what can currently be achieved, and what’s on the roadmap for the future.</p>
+    <p>This article takes a look at the new no-GIL, free-threading functionality introduced in Python 3.13, as well as how it compares and performs against PyParallel’s attempt at explointing multiple CPU cores over ten years ago. Using a demo project named Parallelopedia, we demonstrate the benefits afforded by the new functionality, whereby large data structures (tens to hundreds of gigabytes) are loaded in main memory and then accessed in parallel from Python—a feat not previously possible with the contemporary <code>multiprocessing</code> approach. Additionally, we investigate multi-threaded, parallel inference (generation) of transformer-based Deep Neural Networks via PyTorch, and explorer the limits of what can and can’t currently be done, as well as a roadmap for future PyTorch support.</p>
   </div>
 </div>
 
@@ -323,6 +324,18 @@ gtag('config', 'G-8RPR4XKPEW', { 'anonymize_ip': false});
 <h1>Background</h1>
 <p>The <a href="https://peps.python.org/pep-0703/#related-work">Related Work</a> section of PEP-703 does a fantastic job of capturing all of the past attempts at improving Python’s ability at simultaneously leveraging multiple CPU cores.</p>
 <p>I believe the first attempt was in 1996, when Greg Stein…</p>
+<p>…</p>
+<p>David Beazley’s <a href="https://dabeaz.blogspot.com/2011/08/inside-look-at-gil-removal-patch-of.html">An Inside Look at the GIL Removal Path of Lore</a>.</p>
+<p>Larry Hasting’s <a href="https://github.com/larryhastings/gilectomy/tree/gilectomy">Gilectomy</a>.</p>
+<p>The hilarious Reddit post by user <a href="https://reddit.com/u/corysama">/u/corysama</a> in the thread <a href="https://www.reddit.com/r/gamedev/comments/xddlp/comment/c5lg7px/?utm_source=share&amp;utm_medium=web3x&amp;utm_name=web3xcss&amp;utm_term=1&amp;utm_content=share_button">Describe what developing for each console you’ve developed for is like.</a>. With regards to PS2 development, the following comment always stood out to me:</p>
+<blockquote class="blockquote">
+<p>There are so many amazing things you can do, but everything requires backflips through invisible blades of segfault.</p>
+</blockquote>
+<p>That absolutely encompasses the first few months of developing PyParallel. And then all subsequent months. Larry Hasting’s has a similar sentiment in the Gilectomy <a href="https://github.com/larryhastings/gilectomy/tree/gilectomy">README</a>, with the first sentence proudly stating:</p>
+<blockquote class="blockquote">
+<p>Welcome to the exciting world of segfaults and massive slowdowns!</p>
+</blockquote>
+<p>…</p>
 <p>Way back in October 2012, there was a discussion on the <code>python-ideas@</code> mailing list titled <a href="https://mail.python.org/pipermail/python-ideas/2012-October/016311.html">asyncore: included batteries don’t fit</a>. The general discussion centered around providing better asynchronous I/O primitives in Python 3.14, and eventually led to the <code>async</code> and <code>yield from</code> keywords being introduced in Python 3.5, released around two years later in September 2015.</p>
 <p>That thread was also the genesis for <a href="https://pyparallel.org">PyParallel</a>; a fork of Python 3.3.5 that I created to implement a proof-of-concept version of the Python interpreter that tackled not only asynchronous I/O but also multi-core parallelism. Specifically, my hunch was that parallelism within the Python interpreter could be achieved when framed through the lens of asynchronous I/O primitives, such as TCP/IP socket servers.</p>
 <div class="callout callout-style-default callout-note callout-titled">
@@ -2496,7 +2509,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <input type="hidden" id="giscus-base-theme" value="dark">
 <input type="hidden" id="giscus-alt-theme" value="dark">
 </div> <!-- /content -->
-<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/tpn/website/edit/main/articles/from-pyparallel-to-python-free-threading/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/tpn/website/issues/new/choose" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer><script>var lightboxQuarto = GLightbox({"loop":false,"closeEffect":"zoom","openEffect":"zoom","selector":".lightbox","descPosition":"bottom"});
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/tpn/website/edit/main/articles/from-pyparallel-to-python-free-threading/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/tpn/website/issues/new/choose" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer><script>var lightboxQuarto = GLightbox({"loop":false,"openEffect":"zoom","selector":".lightbox","descPosition":"bottom","closeEffect":"zoom"});
 (function() {
   let previousOnload = window.onload;
   window.onload = () => {

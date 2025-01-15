@@ -1,12 +1,13 @@
 ---
 title: "DRAFT: From PyParallel to Python Free-Threading"
-subtitle: "Optimally Exploiting Multiple Cores on Python"
+subtitle: "Optimally Exploiting Multiple Cores with Python"
 categories:
   - Python
   - PyParallel
   - Free-threading
   - No-GIL
   - PyTorch
+  - asyncio
 author: "Trent Nelson"
 draft: true
 image: "images/python-free-threading.png"
@@ -14,12 +15,14 @@ description: |
   This article takes a look at the new no-GIL, free-threading functionality
   introduced in Python 3.13, as well as how it compares and performs against
   PyParallel's attempt at explointing multiple CPU cores over ten years ago.
-  A novel Wiki server is used to demonstrate the benefits afforded by the new
-  functionality, whereby large data structures (tens to hundreds of gigabytes)
-  are loaded in main memory and then accessed in parallel from Python---a feat
-  not previously possible with the contemporary `multiprocessing` approach.  We
-  finish by exploring the free-threading and PyTorch; what can currently be
-  achieved, and what's on the roadmap for the future.
+  Using a demo project named Parallelopedia, we demonstrate the benefits
+  afforded by the new functionality, whereby large data structures (tens to
+  hundreds of gigabytes) are loaded in main memory and then accessed in
+  parallel from Python---a feat not previously possible with the contemporary
+  `multiprocessing` approach.  Additionally, we investigate multi-threaded,
+  parallel inference (generation) of transformer-based Deep Neural Networks
+  via PyTorch, and explorer the limits of what can and can't currently be
+  done, as well as a roadmap for future PyTorch support.
 ---
 
 This article is sponsored by [Meta](https://meta.com) in collaboration with
@@ -125,6 +128,32 @@ PEP-703 does a fantastic job of capturing all of the past attempts at improving
 Python's ability at simultaneously leveraging multiple CPU cores.
 
 I believe the first attempt was in 1996, when Greg Stein...
+
+...
+
+David Beazley's [An Inside Look at the GIL Removal Path of Lore](
+https://dabeaz.blogspot.com/2011/08/inside-look-at-gil-removal-patch-of.html).
+
+Larry Hasting's
+[Gilectomy](https://github.com/larryhastings/gilectomy/tree/gilectomy).
+
+The hilarious Reddit post by user [/u/corysama](https://reddit.com/u/corysama)
+in the thread
+[Describe what developing for each console you've developed for is like.](
+https://www.reddit.com/r/gamedev/comments/xddlp/comment/c5lg7px/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button).
+With regards to PS2 development, the following comment always stood out to me:
+
+> There are so many amazing things you can do, but everything requires
+> backflips through invisible blades of segfault.
+
+That absolutely encompasses the first few months of developing PyParallel.  And
+then all subsequent months.  Larry Hasting's has a similar sentiment in the
+Gilectomy [README](https://github.com/larryhastings/gilectomy/tree/gilectomy),
+with the first sentence proudly stating:
+
+> Welcome to the exciting world of segfaults and massive slowdowns!
+
+...
 
 Way back in October 2012, there was a discussion on the `python-ideas@` mailing
 list titled
