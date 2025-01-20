@@ -1,2 +1,4 @@
 /.quarto/
 .aider*
+.ipynb_checkpoints/
+node_modules/
