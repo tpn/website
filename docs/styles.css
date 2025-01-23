@@ -36,3 +36,20 @@
 .navbar {
     background-image: url('resources/bluebg.jpg');
 }
+
+.content p {
+    text-align: justify;
+}
+
+.struct-layout {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr); /* 8 bytes width */
+    /*gap: 2px;*/
+    /*border: 1px solid black;*/
+}
+.struct-cell {
+    /*border: 1px solid gray;*/
+    text-align: center;
+    /* Add padding to the right only. */
+    padding-right: 5px;
+}

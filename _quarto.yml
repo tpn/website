@@ -58,7 +58,7 @@ website:
 
 format:
   html:
-    link-external-icon: true
+    #link-external-icon: true
     syntax-definitions:
       - asm.xml
       - c.xml

@@ -49,14 +49,14 @@ or, more recently, Rust).
 
 I can’t overstate how exciting this is!  For decades, countless attempts have
 been made to solve this problem---including my own efforts with
-[PyParallel](https://pyparallel.org)---but no-one had prevailed in getting a
+[PyParallel](https://pyparallel.org)---but no-one has prevailed in getting a
 solution mainlined into CPython.  Until now!
 
 I will admit I am biased: I am a Python committer (though not directly involved
 in this work), I adore the language, and have spent years obsessing over the
 dream of a parallel Python.  It's a topic I'm incredibly passionate about, and
-this article will unabashedly proselytize the extraordinary engineering that
-finally made a free-threaded Python a reality.
+this article will unabashedly proselytize the extraordinary engineering efforts
+that finally made a free-threaded Python a reality.
 
 Thankfully, it's not just blind, uninformed enthusiasm.  Over the past few
 months I've had the opportunity to extensively test-drive free-threaded Python
@@ -127,12 +127,329 @@ The [Related Work](https://peps.python.org/pep-0703/#related-work) section of
 PEP-703 does a fantastic job of capturing all of the past attempts at improving
 Python's ability at simultaneously leveraging multiple CPU cores.
 
-I believe the first attempt was in 1996, when Greg Stein...
+## Greg Stein's Free Threaded Patch (1996)
+
+The first attempt to remove the GIL was by Greg Stein in 1996, with a
+[patch](
+http://www.python.org/ftp/python/contrib-09-Dec-1999/System/threading.tar.gz)
+against Python 1.4.
+
+The slowdown to single-threaded code as a result of this patch was
+prohibitively brutal, and the patch was never accepted.  Fast-forward 15 years
+or so, and David Beazley wrote a detailed post in August 2011 about Greg
+Stein's work in an article titled:
+[An Inside Look at the GIL Removal Path of Lore](
+https://dabeaz.blogspot.com/2011/08/inside-look-at-gil-removal-patch-of.html).
+As part of this article, Dave obtains the original Python 1.4 source, applies
+Greg Stein's patches, and takes the resulting free-threaded Python for a run.
+Dave confirms that, indeed, the slowdown introduced by this approach---where
+every increment and decrement reference results in either an interlocked op
+or a mutex lock and unlock---is prohibitively expensive.
+
+In writing this article, I reviewed Dave's article again, and attempted to
+download Python 1.4 so that I could apply Greg's patches as well.
+Unfortunately, the download link Dave cites now 404s, so I googled
+*"download Python 1.4 source"*, and, funnily enough, the first hit is a Github repo
+titled [tpn/python-1.4](https://github.com/tpn/python-1.4) that, 'lo and
+behold, is a repo I put together twelve years ago doing exactly that:
+
+ - [Importing the original Python 1.4
+   source](https://github.com/tpn/python-1.4/commit/c6ef13ae4c089eaf8c39942655d65953e6849469)
+ - [Applying Greg's
+   patches](https://github.com/tpn/python-1.4/commit/5c17e33224e2b57948ab594280a006d7648347e6)
+
+### Python 1.4
+
+#### Objects and VarObjects
+
+Python's main object structure, the `PyObject`, hasn't changed much over the
+years.  For non-container objects (i.e. scalars such as integers, floats, etc.)
+the structure is simply a reference count and a pointer to a type object:
+
+```c
+typedef struct {
+    int ob_refcnt;
+    PyTypeObject *ob_type;
+} PyObject;
+```
+
+Container objects--otherwise known as *"variable"* objects--are represented
+via the `PyVarObject` structure.  These structures *"inherit"* the base
+`PyObject` layout, and then add an additional field for tracking the number
+of elements contained by the object: the `ob_size` field.  In Python 1.4, the
+structure looked like this:
+
+```c
+typedef struct {
+    int ob_refcnt;
+    PyTypeObject *ob_type;
+    int ob_size;
+} PyVarObject;
+```
+
+::: {.callout-note}
+The actual C header code for defining these structures is more baroque; the
+relevant Python 1.4 [Include/object.h](
+https://github.com/tpn/python-1.4/blob/c6ef13ae4c089eaf8c39942655d65953e6849469/Include/object.h#L104)
+code looks like this:
+
+```c
+#define PyObject_HEAD \
+    int ob_refcnt; \
+    struct _typeobject *ob_type;
+#define PyObject_HEAD_INIT(type) 1, type,
+
+#define PyObject_VAR_HEAD \
+    PyObject_HEAD \
+    int ob_size; /* Number of items in variable part */
+typedef struct _object {
+    PyObject_HEAD
+} PyObject;
+
+typedef struct {
+    PyObject_VAR_HEAD
+} varobject;
+```
+:::
+
+#### Reference Counting
+
+There was no cyclic garbage collection in Python 1.4--that feature wasn't added
+until Python 2.0 around the October 2000 timeframe.  Reference counting was the
+only means for Python to reclaim the memory used by objects that were no longer
+needed.  The reference count was stored in the `ob_refcnt` field.  Incrementing
+the reference simply added one to the existing value.  Decrementing the
+reference subtracted one and checked to see if the resulting value was zero,
+and, if it was, the object would be deallocated via `_Py_Dealloc()`.
+
+The relevant Python 1.4 [Include/object.h](
+https://github.com/tpn/python-1.4/blob/c6ef13ae4c089eaf8c39942655d65953e6849469/Include/object.h#L349C1-L354C18)
+code used two macros named `Py_INCREF()` and `Py_DECREF()`, which looked like
+this:
+
+```c
+#define Py_INCREF(op) ((op)->ob_refcnt++)
+#define Py_DECREF(op)           \
+    if (--(op)->ob_refcnt != 0) \
+        ;                       \
+    else                        \
+        _Py_Dealloc(op)
+```
+
+These operations are inherently unsafe in a multi-threaded environment.  If
+two or more separate threads are incrementing or decrementing reference counts
+to the same object in parallel, the results are effectively undefined, as there
+is no guarantee as to the correctness of the underlying value.
+
+The solution for protecting against this was the Global Interpreter Lock, which
+ensured that only one thread could be running Python code at any given time.
+
+Thus, if you're embarking on an attempt to avoid this restriction, such that
+you can have multiple Python threads executing Python code simultaneously (i.e.
+on multi-core systems), the first thing you need to do is figure out how you're
+going to handle making reference counting thread-safe.
+
+### Greg's Free-Threaded Approach
+
+Greg's approach tried the most logical solution: make reference counting
+a thread-safe operation.  He did this by using interlocked increment and
+decrement operations against the `ob_refcnt` field on NT (Windows) systems.
+On Linux, a mutex lock was used to protect the reference count.
+
+Using a `WITH_FREE_THREAD` macro to gate his changes, Greg modified the
+[reference counting logic](
+https://github.com/tpn/python-1.4/commit/5c17e33224e2b57948ab594280a006d7648347e6#diff-87272721a5cf1cd9915d6f503f6a7bbefa2f26c935c7ce83ca78706afd0ad05aR353-R371)
+to `Include/object.h` as follows:
+
+```c
+#ifdef WITH_FREE_THREAD
+#define Py_INCREF(op) Py_SafeIncr(&(op)->ob_refcnt)
+#define Py_DECREF(op)                       \
+    if (Py_SafeDecr(&(op)->ob_refcnt) != 0) \
+        ;                                   \
+    else                                    \
+        _Py_Dealloc(op)
+#else /* !WITH_FREE_THREAD */
+#define Py_INCREF(op) ((op)->ob_refcnt++)
+#define Py_DECREF(op)           \
+    if (--(op)->ob_refcnt != 0) \
+        ;                       \
+    else                        \
+        _Py_Dealloc(op)
+#endif /* !WITH_FREE_THREAD */
+```
+
+So, `Py_INCREF(op)` became a call to `Py_SafeIncr()`, and `Py_DECREF(op)`
+became a call to `Py_SafeDecr()`.  On Windows, these routines were simply
+wrappers around the `InterlockedIncrement` and `InterlockedDecrement`
+intrinsics, respectively, defined [here](
+https://github.com/tpn/python-1.4/commit/5c17e33224e2b57948ab594280a006d7648347e6#diff-9ed9e47e6055e8799816e87f812a456d9d5f37bf32a1973377777184266ff39fR93-R94):
+
+```c
+#define Py_SafeIncr(pint)   InterlockedIncrement((long *)(pint))
+#define Py_SafeDecr(pint)   InterlockedDecrement((long *)(pint))
+```
+
+On non-NT systems, the `Py_SafeIncr()` and `Py_SafeDecr()` routines were
+aliased to `_Py_SafeIncr()` and `_Py_SafeDecr()`, respectively, which were
+implemented in [Python/pymutex.c](
+https://github.com/tpn/python-1.4/commit/5c17e33224e2b57948ab594280a006d7648347e6#diff-3cb31d5133324b025a026d66a2800f91d58736e296776e9f3c24360106eff142R51-R71)
+as follows:
+
+```c
+/* mutexes for the subsystems */
+PyMutex * _Py_RefMutex;
+PyMutex * _Py_ListMutex;
+PyMutex * _Py_MappingMutex;
+PyMutex * _Py_CritMutex;
 
 ...
 
-David Beazley's [An Inside Look at the GIL Removal Path of Lore](
-https://dabeaz.blogspot.com/2011/08/inside-look-at-gil-removal-patch-of.html).
+int _Py_SafeIncr(pint)
+    int *pint;
+{
+    int result;
+    PyMutex_Lock(_Py_RefMutex);
+    result = ++*pint;
+    PyMutex_Unlock(_Py_RefMutex);
+    return result;
+}
+
+int _Py_SafeDecr(pint)
+    int *pint;
+{
+    int result;
+    PyMutex_Lock(_Py_RefMutex);
+    result = --*pint;
+    PyMutex_Unlock(_Py_RefMutex);
+    return result;
+}
+```
+
+Oof!  That's a single global mutex `_Py_RefMutex` protecting all reference
+counts for all objects.  (N.B. `PyMutex` was a slim wrapper around
+`pthread_mutex_t`, and the lock and unlock operations simply called out to
+`pthread_mutex_lock()` and `pthread_mutex_unlock()` respectively.)
+
+Compared to simply incrementing a value in memory by one, obtaining a mutex
+lock and then unlocking the mutex is orders of magnitude more expensive, so
+it's not surprising that this approach to removing the GIL introduced brutal
+slowdowns---not just to new multi-threaded code, but to existing single-threaded
+code that wasn't even taking advantage of the fact that there was now no GIL
+in place.
+
+I hadn't even heard of Python back in 1996---I was only in tenth grade at the
+time, and I don't think I even knew what Windows NT was at that point, let
+alone Linux or FreeBSD.  Nor did I have any aspirations to be a software
+engineer---I was gung-ho on becoming an F/A-18 Hornet fighter pilot in the
+Royal Australian Air Force (RAAF).
+
+Getting back on track: Greg's work tackled a lot of other important concepts
+like separating global state into per-thread state (something that is still
+relied upon today), as well as injecting pooled mutexes into builtin container
+types like `list` and `dict` objects.
+
+However, the performance impact to single-threaded code was deemed too great,
+and as such, Greg's work never made it into mainline Python.
+
+## PyParallel
+
+In October 2012, there was a discussion on the `python-ideas@` mailing list
+titled [asyncore: included batteries don't fit](
+https://mail.python.org/pipermail/python-ideas/2012-October/016311.html).
+The general discussion centered around providing better asynchronous I/O
+primitives in Python 3.4, and eventually led to the `async` and `yield from`
+keywords being introduced in Python 3.5, released around two years later in
+September 2015.
+
+That thread was also the genesis for [PyParallel](https://pyparallel.org); a
+fork of Python 3.3.5 that I created to implement a proof-of-concept version of
+the Python interpreter that tackled not only asynchronous I/O but also
+multi-core parallelism.
+
+There's a comprehensive [backstory](#pyparallel-backstory) section on
+PyParallel at the end of this article that goes into more detail.  For now, I
+just want to focus on the implementation details of PyParallel compared to
+Greg Stein's earlier work, before discussing the free-threading implementation
+we now have today in Python 3.13t.
+
+I remember reading David Beazley's [article](
+https://dabeaz.blogspot.com/2011/08/inside-look-at-gil-removal-patch-of.html)
+and a couple of YouTube videos he'd also done on the topic of the GIL.  I made
+sure to review Greg's approach to see what didn't work in the past.  Clearly,
+introducing fine-grained per-object synchronization for reference counts was
+prohibitively expensive---the interlocked increment and decrement operations
+alone were bad enough; the global `pthread_mutex_t` reference count approach
+never stood a chance.
+
+So, what else could we try?  My hunch was that there was a way to achieve
+parallelism within the Python interpreter when framed through the lens of
+asynchronous I/O primitives, such as a TCP/IP socket server.  For example,
+why couldn't a simple HTTP server be written in such a way that multiple
+threads could respond to incoming client requests on multiple cores
+simultaneously?
+
+If you think about the type of server-side computation that is required to
+process an incoming HTTP request, it's just pretty vanilla Python code.  Sure,
+you may create a lot of temporary Python objects in servicing the request, but
+they're only short-lived.  Once you send a response back to the client, you
+don't need any of those objects anymore.  And you're generally not mutating
+global state, so you don't need any thread synchronization primitives during
+request processing.  The underlying operating system's kernel is handling all
+of that for you behind the scenes (i.e. you can safely `accept()` on multiple
+threads against the same `sockaddr_in` on Linux, or `AcceptEx()` against a
+single completion port on Windows).
+
+So, as it pertained to reference counting, garbage collection, and memory
+allocation and deallocation---all thread-sensitive things that need to be
+handled very carefully in a GIL-less Python---with PyParallel, I explored the
+notion of: *what if we just didn't do any of that in parallel thread contexts*?
+
+Instead of trying to remove the GIL, let's keep the GIL, and instead,
+introduce a new concept of a *parallel thread*.  Because if we can come up with
+an efficient way to determine if we're a *parallel thread* at any given time,
+we can instrument all the thread-sensitive calls like `Py_INCREF()` and
+`Py_DECREF()` such that:
+
+ - If we're not a *parallel thread* (i.e. we're holding the GIL), just do what
+   we normally do.
+ - If we are a *parallel thread*, do something else.
+
+That's the crux of PyParallel's approach to achieving simultaneous
+multi-threading: instrument everything thread sensitive to detect if we're
+a *parallel thread*, and do something else if we are.
+
+For reference counting, the *do something else* was literally: do nothing.
+
+Again, I was keen on targetting the very narrow domain of an asynchronous I/O
+based TCP/IP socket server, like a HTTP server, where none of the objects that
+are created as part of servicing the request need to persist once we've sent
+bytes back on the wire to the client.
+
+So who cares about reference counts?  We know when the parallel context starts
+and ends: it starts when we call the user's `data_received()` routine, and it
+ends when that routine returns bytes which we then send back to the client.
+
+Each parallel thread can have a thread-local, simple block allocator, that is
+responsible for furnishing all memory allocation requests thanks to us having
+instrumented calls like `PyObject_New` and `PyMem_Malloc`.  Block allocators
+are about the simplest memory allocator you can have: you have a pre-allocated
+block of memory (say, 4KB, or one page), a request comes in for 120 bytes,
+you capture the address of the current block pointer, increment it by 120
+bytes, then return the captured address.
+
+How do you free memory?  Easy!  You don't!  Again, socket-server callbacks are
+pretty short-lived; you're not allocating gobs of memory that has an ambiguous
+lifetime.  You're doing lots of little allocations with very clear lifetimes:
+the allocations will cease to exist once the callback returns.
+
+How do you handle garbage collection?  Easy!  You don't!  As you're not
+mutating global state, any cyclic references you construct during the parallel
+thread callback will be magically taken care of when the callback completes,
+by virtue of the fact you're simply resetting the block allocator back to the
+start of the first block.  By not relying on reference counts to hit zero to
+trigger deallocation, you don't need to worry about reference cycles.
+
 
 Larry Hasting's
 [Gilectomy](https://github.com/larryhastings/gilectomy/tree/gilectomy).
@@ -154,28 +471,6 @@ with the first sentence proudly stating:
 > Welcome to the exciting world of segfaults and massive slowdowns!
 
 ...
-
-Way back in October 2012, there was a discussion on the `python-ideas@` mailing
-list titled
-[asyncore: included batteries don't fit](https://mail.python.org/pipermail/python-ideas/2012-October/016311.html).
-The general discussion centered around providing better asynchronous I/O
-primitives in Python 3.14, and eventually led to the `async` and `yield from`
-keywords being introduced in Python 3.5, released around two years later in
-September 2015.
-
-That thread was also the genesis for [PyParallel](https://pyparallel.org); a
-fork of Python 3.3.5 that I created to implement a proof-of-concept version of
-the Python interpreter that tackled not only asynchronous I/O but also
-multi-core parallelism.  Specifically, my hunch was that parallelism within
-the Python interpreter could be achieved when framed through the lens of
-asynchronous I/O primitives, such as TCP/IP socket servers.
-
-::: {.callout-note}
-There's a comprehensive [backstory](#pyparallel-backstory) that I've placed
-toward the end such that I don't detract too much from the main purpose of this
-article, which is to focus on the exciting new primitives available to use via
-Python 3.13's free-threading facilities.
-:::
 
 # Appendix
 
