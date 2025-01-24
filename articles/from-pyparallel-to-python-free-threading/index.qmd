@@ -132,16 +132,23 @@ Python's ability at simultaneously leveraging multiple CPU cores.
 The first attempt to remove the GIL was by Greg Stein in 1996, with a
 [patch](
 http://www.python.org/ftp/python/contrib-09-Dec-1999/System/threading.tar.gz)
-against Python 1.4.
+against Python 1.4.  (1996!  I hadn't even heard of Python back in 1996---I was
+only in tenth grade at the time.)
 
-The slowdown to single-threaded code as a result of this patch was
-prohibitively brutal, and the patch was never accepted.  Fast-forward 15 years
-or so, and David Beazley wrote a detailed post in August 2011 about Greg
-Stein's work in an article titled:
-[An Inside Look at the GIL Removal Path of Lore](
+Unfortunately, Greg's approach introduced some pretty severe overhead.  With
+the patches applied, *all* Python code was slowed down by about 40%,
+regardless of whether it was single-threaded or multi-threaded code.
+
+That severe of a slowdown was prohibitively expensive, and the changes were never
+mainlined.
+
+Fast-forward 15 years or so, and David Beazley wrote a detailed post in August
+2011 about Greg Stein's work in an article titled: [An Inside Look at the GIL
+Removal Patch of Lore](
 https://dabeaz.blogspot.com/2011/08/inside-look-at-gil-removal-patch-of.html).
 As part of this article, Dave obtains the original Python 1.4 source, applies
 Greg Stein's patches, and takes the resulting free-threaded Python for a run.
+
 Dave confirms that, indeed, the slowdown introduced by this approach---where
 every increment and decrement reference results in either an interlocked op
 or a mutex lock and unlock---is prohibitively expensive.
@@ -187,7 +194,7 @@ typedef struct {
 } PyVarObject;
 ```
 
-::: {.callout-note}
+::: {.callout-note collapse="true" appearance="simple" icon="false" title="Actual C Header Code"}
 The actual C header code for defining these structures is more baroque; the
 relevant Python 1.4 [Include/object.h](
 https://github.com/tpn/python-1.4/blob/c6ef13ae4c089eaf8c39942655d65953e6849469/Include/object.h#L104)
@@ -338,21 +345,22 @@ slowdowns---not just to new multi-threaded code, but to existing single-threaded
 code that wasn't even taking advantage of the fact that there was now no GIL
 in place.
 
-I hadn't even heard of Python back in 1996---I was only in tenth grade at the
-time, and I don't think I even knew what Windows NT was at that point, let
-alone Linux or FreeBSD.  Nor did I have any aspirations to be a software
-engineer---I was gung-ho on becoming an F/A-18 Hornet fighter pilot in the
-Royal Australian Air Force (RAAF).
-
-Getting back on track: Greg's work tackled a lot of other important concepts
-like separating global state into per-thread state (something that is still
-relied upon today), as well as injecting pooled mutexes into builtin container
-types like `list` and `dict` objects.
+Nevertheless, Greg's work tackled a lot of other important concepts like
+separating global state into per-thread state (something that is still relied
+upon today), as well as injecting pooled mutexes into builtin container types
+like `list` and `dict` objects.
 
 However, the performance impact to single-threaded code was deemed too great,
-and as such, Greg's work never made it into mainline Python.
+and as such, Greg's work never made it into mainline Python.  I don't believe
+the `python-dev@` mailing list archives were public until a few years later,
+so we can't see the specific discussions that were had about Greg's work some
+nearly 30 years ago.
 
 ## PyParallel
+
+### Genesis
+
+#### The python-ideas@ asyncore discussion
 
 In October 2012, there was a discussion on the `python-ideas@` mailing list
 titled [asyncore: included batteries don't fit](
@@ -373,6 +381,8 @@ just want to focus on the implementation details of PyParallel compared to
 Greg Stein's earlier work, before discussing the free-threading implementation
 we now have today in Python 3.13t.
 
+#### Reviewing Existing Attempts
+
 I remember reading David Beazley's [article](
 https://dabeaz.blogspot.com/2011/08/inside-look-at-gil-removal-patch-of.html)
 and a couple of YouTube videos he'd also done on the topic of the GIL.  I made
@@ -381,6 +391,8 @@ introducing fine-grained per-object synchronization for reference counts was
 prohibitively expensive---the interlocked increment and decrement operations
 alone were bad enough; the global `pthread_mutex_t` reference count approach
 never stood a chance.
+
+#### The Hunch
 
 So, what else could we try?  My hunch was that there was a way to achieve
 parallelism within the Python interpreter when framed through the lens of
@@ -400,24 +412,72 @@ of that for you behind the scenes (i.e. you can safely `accept()` on multiple
 threads against the same `sockaddr_in` on Linux, or `AcceptEx()` against a
 single completion port on Windows).
 
-So, as it pertained to reference counting, garbage collection, and memory
-allocation and deallocation---all thread-sensitive things that need to be
-handled very carefully in a GIL-less Python---with PyParallel, I explored the
-notion of: *what if we just didn't do any of that in parallel thread contexts*?
+### The Implementation
 
-Instead of trying to remove the GIL, let's keep the GIL, and instead,
+So, as it pertained to reference counting and garbage collection---all
+thread-sensitive things that need to be handled very carefully in a GIL-less
+Python---with PyParallel, I explored the notion of: *what if we just didn't do
+any of that in parallel thread contexts*?
+
+That is, instead of trying to remove the GIL, let's keep the GIL, and instead,
 introduce a new concept of a *parallel thread*.  Because if we can come up with
 an efficient way to determine if we're a *parallel thread* at any given time,
 we can instrument all the thread-sensitive calls like `Py_INCREF()` and
 `Py_DECREF()` such that:
 
- - If we're not a *parallel thread* (i.e. we're holding the GIL), just do what
-   we normally do.
- - If we are a *parallel thread*, do something else.
+ - If we're a *parallel thread*, do X, if not, do Y.
+    - X: a thread-safe alternative
+    - Y: what we normally do (i.e. when we're holding the GIL)
 
-That's the crux of PyParallel's approach to achieving simultaneous
-multi-threading: instrument everything thread sensitive to detect if we're
-a *parallel thread*, and do something else if we are.
+And as the thread-sensitive calls we need to instrument are ubiquitous---you
+really can't do much in Python before needing to `Py_INCREF()` or `Py_DECREF()`
+something---so the viability of this approach would be entirely contingent upon
+finding an efficient way to detect if we're a parallel thread.
+
+#### Detecting Parallel Threads
+
+I introduced a macro named `Py_PXCTX()` for PyParallel that was responsible for
+detecting if we were in one of these *parallel threads* (or *parallel contexts*
+as I referred to them in the source code).
+
+As PyParallel was a Windows-only proof-of-concept, I was able to leverage an
+x64 intrinsic named `readgsdword` to interrogate the current thread's TEB
+([Thread Environment
+Block](https://learn.microsoft.com/en-us/windows/win32/api/winternl/ns-winternl-teb))
+to obtain the current thread ID (which lives at offset `0x48` on x64 Windows).
+By comparing this to the known thread ID of the *main thread* (i.e. the thread
+holding the GIL), we could determine if we were a parallel thread with a couple
+of instructions.
+
+A simplified 
+The [implementation](
+https://github.com/pyparallel/pyparallel/blob/branches/3.3-px/Include/pyintrinsics.h#L13)
+looked like this:
+
+```c
+#define _Py_get_current_thread_id() (__readgsdword(0x48))
+
+static inline
+int
+_PyParallel_IsParallelContext(void)
+{
+    return (Py_MainThreadId != _Py_get_current_thread_id());
+}
+#define Py_PXCTX() (_PyParallel_IsParallelContext())
+```
+
+#### Instrumenting Thread-Sensitive Calls
+
+With the ability to quickly determine if we were a parallel thread in place,
+we could instrument all of the thread-sensitive calls to follow the
+aforementioned paradigm of:
+
+> If we're a *parallel thread*, do X, if not, do Y.
+
+
+
+The viability of this approach is contingent upon the overhead involved in
+determining if we're a parallel thread.
 
 For reference counting, the *do something else* was literally: do nothing.
 
@@ -450,6 +510,15 @@ by virtue of the fact you're simply resetting the block allocator back to the
 start of the first block.  By not relying on reference counts to hit zero to
 trigger deallocation, you don't need to worry about reference cycles.
 
+### The Performance
+
+The performance of PyParallel was really good.  There was negligible overhead
+introduced by instrumenting all of the thread-sensitive macros, which was a big
+win.  Remember, Greg Stein's approach made **all** Python code run about 40%
+slower, single-threaded or multi-threaded.  PyParallel's approach of detecting
+if we're in a parallel thread by way of the `Py_PXCTX()` macro 
+
+### The Limitations
 
 Larry Hasting's
 [Gilectomy](https://github.com/larryhastings/gilectomy/tree/gilectomy).
@@ -573,10 +642,12 @@ It was a bit of a surreal experience, sitting in a room hacking on Python
 alongside the very founder of Python himself---Guido---plus many other
 luminaries that actively contributed to the language over the years.  I don't
 know who took this photo, nor why it appears to have dimensions tailored
-towards ants, but you can see myself and Michael Ford in the foreground table,
+towards ants, but you can see myself and Michael Foord in the foreground table
+(dark maroon t-shirt on the left and orange t-shirt on the right, respectively),
 Guido in the bright green shirt at the top right table, sitting with Neal
-Norwitz and Barry Warsaw.  And that looks like Brett Canon and Martin von
-Löwis at the middle table.
+Norwitz and Barry Warsaw.  And that looks like Brett Canon in thinking pose in
+the dark t-shirt and Martin von Löwis sitting next to him scratching his head
+at whatever Brett was doing at the middle table :-)
 
 ![PyCon 2008 Core Sprint](images/pycon2008-chicago-core-sprints.jpg)
 
