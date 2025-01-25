@@ -224,10 +224,10 @@ typedef struct {
 There was no cyclic garbage collection in Python 1.4--that feature wasn't added
 until Python 2.0 around the October 2000 timeframe.  Reference counting was the
 only means for Python to reclaim the memory used by objects that were no longer
-needed.  The reference count was stored in the `ob_refcnt` field.  Incrementing
-the reference simply added one to the existing value.  Decrementing the
-reference subtracted one and checked to see if the resulting value was zero,
-and, if it was, the object would be deallocated via `_Py_Dealloc()`.
+needed, by way of the `PyObject` `ob_refcnt` field.  Incrementing the reference
+simply added one to the existing value.  Decrementing the reference subtracted
+one and checked to see if the resulting value was zero, and, if it was, the
+object would be deallocated via `_Py_Dealloc()`.
 
 The relevant Python 1.4 [Include/object.h](
 https://github.com/tpn/python-1.4/blob/c6ef13ae4c089eaf8c39942655d65953e6849469/Include/object.h#L349C1-L354C18)
@@ -468,19 +468,127 @@ _PyParallel_IsParallelContext(void)
 
 #### Instrumenting Thread-Sensitive Calls
 
-With the ability to quickly determine if we were a parallel thread in place,
-we could instrument all of the thread-sensitive calls to follow the
-aforementioned paradigm of:
+With the ability to quickly determine if we were a parallel thread, we could
+instrument all of the thread-sensitive calls to follow the aforementioned
+paradigm of:
 
 > If we're a *parallel thread*, do X, if not, do Y.
 
+For reference counting, the *do Y* was literally: do nothing.  E.g., instead
+of the standard Python reference counting mechanics that basically looked
+like this:
 
+```c
+#define Py_INCREF(op) ((op)->ob_refcnt++)
+#define Py_DECREF(op) \
+    (--(op)->ob_refcnt == 0 ? _Py_Dealloc(op) : ;)
+```
 
-The viability of this approach is contingent upon the overhead involved in
-determining if we're a parallel thread.
+The PyParallel approach would gate the reference counting logic with the
+`Py_PXCTX()` macro, along these lines:
 
-For reference counting, the *do something else* was literally: do nothing.
+```c
+#define Py_INCREF(op) (!Py_PXCTX() && ((op)->ob_refcnt++))
+#define Py_DECREF(op) \
+    (!Py_PXCTX() && (--(op)->ob_refcnt == 0 ? _Py_Dealloc(op) : ;))
+```
 
+This is a purposefully-simplified example---the actual `Py_INCREF(op)` and
+`Py_DECREF(op)` calls in PyParallel eventually grew debug guards that allowed
+me to catch erroneous cases of, for example, the main thread attempting to
+mutate the reference count of an object created by a parallel thread.
+
+#### Changes to PyObject
+
+And in order to ascertain whether any given object was created by the Python
+*main thread*, or one of these new *parallel thread contexts*, I had to augment
+the `PyObject` structure to capture some additional state about each object.
+Note that the Python Free-Threading implementation, which we'll discuss after
+this, also does the same thing (adds new `PyObject` fields).
+
+I made three changes to `PyObject`:
+
+1. A field I could fill with a sentinel value that unambiguously indicated
+   [from whence it came](https://apps.npr.org/arrested-development/joke-39.html)
+   (i.e. a main thread or parallel thread): `void *is_px`.
+1. A flags field I could store pertinent per-object state in:
+   `size_t px_flags`.
+1. A pointer to the object's original type object: `PyTypeObject *orig_type`.
+   In some situations, we would override an object's type with a
+   parallel-specific shim type that could intercept certain operations.
+
+Technically, the `is_px` field was redundant once I introduced the `px_flags`
+field, as we could track whether or not an object was a parallel object by way
+of a single flag bit, so I could have shaved off 8 bytes by removing it.
+
+I kept it in because a) I never got around to removing it, and b) it was helpful
+when debugging, as the `is_px` field was initialized to one of two
+`0xDEADBEEF`-style sentinel values, shown below, which made it very easy to
+eyeball in the debugger when traipsing through memory or crash dumps.
+
+```c
+#define _Py_DEADBEEF 0xdead1234beef5678 /* is_px when main thread */
+#define _Px_DEADBEEF 0x9876beef5432dead /* is_px when parallel thread */
+```
+A side-by-side comparison of the 64-bit Python 3.3 `PyObject` structure and
+the equivalent PyParallel `PyObject` structure is shown below:
+
+<div class="side-by-side-struct-layout">
+<div class="side-by-side-struct-column">
+
+##### Python PyObject
+
+<div class="struct-layout">
+<div class="struct-cell py-field" style="grid-column: span 8;">
+<pre>Py_ssize_t ob_refcnt
+(8 bytes)</pre>
+</div>
+<div class="struct-cell py-field" style="grid-column: span 8;">
+<pre>PyTypeObject &#42;ob_type
+(8 bytes)</pre>
+</div>
+</div>
+
+<div style="text-align: left; margin-top: 1em;">
+Total structure size: 16 bytes.
+</div>
+
+</div>
+<div class="side-by-side-struct-column">
+
+##### PyParallel PyObject
+
+<div class="struct-layout"><div class="struct-cell px-field" style="grid-column: span 8;">
+<pre>void &#42;is_px
+(8 bytes)</pre>
+</div>
+<div class="struct-cell px-field" style="grid-column: span 8;">
+<pre>size_t px_flags
+(8 bytes)</pre>
+</div>
+<div class="struct-cell px-field" style="grid-column: span 8;">
+<pre>PyTypeObject &#42;orig_type
+(8 bytes)</pre>
+</div>
+<div class="struct-cell py-field" style="grid-column: span 8;">
+<pre>Py_ssize_t ob_refcnt
+(8 bytes)</pre>
+</div>
+<div class="struct-cell py-field" style="grid-column: span 8;">
+<pre>PyTypeObject &#42;ob_type
+(8 bytes)</pre>
+</div></div>
+
+<div style="text-align: left; margin-top: 1em;">
+Total structure size: 40 bytes (24 bytes larger than standard Python).
+</div>
+
+</div>
+</div>
+
+#### Memory Allocation
+
+So, with regards to reference counting, my hunch was simply: who cares?
 Again, I was keen on targetting the very narrow domain of an asynchronous I/O
 based TCP/IP socket server, like a HTTP server, where none of the objects that
 are created as part of servicing the request need to persist once we've sent
@@ -510,36 +618,122 @@ by virtue of the fact you're simply resetting the block allocator back to the
 start of the first block.  By not relying on reference counts to hit zero to
 trigger deallocation, you don't need to worry about reference cycles.
 
+
+
 ### The Performance
 
 The performance of PyParallel was really good.  There was negligible overhead
 introduced by instrumenting all of the thread-sensitive macros, which was a big
 win.  Remember, Greg Stein's approach made **all** Python code run about 40%
 slower, single-threaded or multi-threaded.  PyParallel's approach of detecting
-if we're in a parallel thread by way of the `Py_PXCTX()` macro 
+if we're in a parallel thread by way of the `Py_PXCTX()` macro, plus fast
+thread-safe alternates of the thread-sensitive calls, proved that there were
+viable ways to achieve parallelism in Python without also incurring prohibitive
+overhead.
 
 ### The Limitations
 
-Larry Hasting's
-[Gilectomy](https://github.com/larryhastings/gilectomy/tree/gilectomy).
+For all of the performance benefits of PyParallel, it was, in essence, a
+proof-of-concept project I predominantly hacked together over the course of
+about three months during a very cold Michigan Winter in 2012-2013.
 
-The hilarious Reddit post by user [/u/corysama](https://reddit.com/u/corysama)
-in the thread
-[Describe what developing for each console you've developed for is like.](
-https://www.reddit.com/r/gamedev/comments/xddlp/comment/c5lg7px/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button).
-With regards to PS2 development, the following comment always stood out to me:
-
-> There are so many amazing things you can do, but everything requires
-> backflips through invisible blades of segfault.
-
-That absolutely encompasses the first few months of developing PyParallel.  And
-then all subsequent months.  Larry Hasting's has a similar sentiment in the
-Gilectomy [README](https://github.com/larryhastings/gilectomy/tree/gilectomy),
-with the first sentence proudly stating:
-
-> Welcome to the exciting world of segfaults and massive slowdowns!
+By design, I never intended to support *"free-threaded"* Python, i.e. you
+would never be able to create Python `threading.Thread` objects yourself,
+instead, you'd have to use the machinery provided to you by PyParallel,
+such as `async.server()`, `async.submit_work()`, etc.  (This was before
+`async` became a keyword in Python.)
 
 ...
+
+# Python Free-Threading
+
+Now, let's talk about the Python Free-Threading implementation that has been
+introduced in Python 3.13t.
+
+## Implementation
+
+### Changes to PyObject
+
+::: {.panel-tabset}
+
+## Python vs Free-Threading
+
+:::: {.panel-tabset}
+
+### Python PyObject
+
+<div class="struct-layout">
+<div class="struct-cell py-field" style="grid-column: span 8;">
+<pre>Py_ssize_t ob_refcnt
+(8 bytes)</pre>
+</div>
+<div class="struct-cell py-field" style="grid-column: span 8;">
+<pre>PyTypeObject &#42;ob_type
+(8 bytes)</pre>
+</div>
+</div>
+
+<div style="text-align: left; margin-top: 1em;">
+Total structure size: 16 bytes.
+</div>
+
+### Free-Threaded PyObject
+
+<div class="struct-layout">
+<div class="struct-cell ft-field" style="grid-column: span 8;">
+<pre>uintptr_t ob_tid
+(8 bytes)</pre>
+</div>
+<div class="struct-cell ft-field" style="grid-column: span 2;">
+<pre>uint16_t
+ob_flags
+(2 bytes)</pre>
+</div>
+<div class="struct-cell ft-field" style="grid-column: span 1;">
+<pre>PyMutex
+ob_mutex
+(1 byte)</pre>
+</div>
+<div class="struct-cell ft-field" style="grid-column: span 1;">
+<pre>uint8_t
+ob_gc_bits
+(1 byte)</pre>
+</div>
+<div class="struct-cell ft-field" style="grid-column: span 4;">
+<pre>uint32_t
+ob_ref_local
+(4 bytes)</pre>
+</div>
+<div class="struct-cell ft-field" style="grid-column: span 8;">
+<pre>Py_ssize_t ob_ref_shared
+(8 bytes)</pre>
+</div>
+<div class="struct-cell py-field" style="grid-column: span 8;">
+<pre>PyTypeObject &#42;ob_type
+(8 bytes)</pre>
+</div></div>
+
+<div style="text-align: left; margin-top: 1em;">
+Total structure size: 32 bytes (16 bytes larger than standard Python).
+</div>
+
+::::
+
+## PyParallel vs Free-Threading
+
+:::: {.panel-tabset}
+
+### PyParallel PyObject
+
+TBD
+
+### Free-Threaded PyObject
+
+TBD
+
+::::
+
+:::
 
 # Appendix
 
@@ -665,53 +859,6 @@ As much as I love Git and Github, getting your pull request accepted for an
 open source project just doesn't have the same feel as getting offered commit
 privileges like back in the old days.
 
-### Snakebite: The Open Source Network
-
-### The python-ideas@ asyncore discussion
-
-#### My Hunch
-
-#### Offline Discussions with Guido
-
-### The Genesis of PyParallel
-
-#### Prior Attempts at Removing the GIL
-
-#### Removing the GIL without removing the GIL
-
-### Windows, Threading, and Asynchronous I/O
-
-The backstory behind that hunch warrants its own article, and I don't want to
-detract too much from the purpose of this article, which is to focus on the
-exciting new primitives available to use via Python 3.13's free-threading
-facilities.  Suffice to say that circa 2012, having done over a decade of
-multi-threaded and asynchronous I/O systems programming on UNIX and Windows by
-that stage, I had pretty strong ideas about how to best write high-performance
-parallel programs that optimally used multi-threading and asynchronous I/O
-primitives.
-
-And to the detriment of wide-spread adoption of PyParallel, I was convinced
-that the sublime facilities provided by the Windows NT kernel for
-multi-threading and asynchronous I/O
-
-
-without the restrictions imposed by the Python
-interpreter's *Global Interpreter Lock* (GIL).
-
-
-```python
-def get_page_offsets_for_key3(search_string):
-    results = []
-    items = titles.items(search_string)
-    if not items:
-        return results
-    for (key, value) in items:
-        v = value[0]
-        o = uint64(v if v > 0 else v*-1)
-        ix = offsets.searchsorted(o, side='right')
-        results.append((key, int(o-uint64_7), int(offsets[ix]-uint64_11)))
-    return results
-```
 
 # Colophon {#colophon}
 
@@ -786,7 +933,7 @@ of the development in the
 [parallelopedia-ui](https://github.com/tpn/parallelopedia-ui) repo, which is
 the React, Bootstrap, JavaScript/JSX web UI seen in this article.
 
-I'm not a web developer, I don't know how to write web apps, I don't care about
+i'm not a web developer, I don't know how to write web apps, I don't care about
 code quality of web apps I do write (as I'm not writing anything other than
 demos or small little tools), so, whatever gets the job done is fine.  However,
 I am, by trade, a software engineer, so a lot of the core skill set still

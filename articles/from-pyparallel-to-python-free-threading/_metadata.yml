@@ -1,4 +1,5 @@
 format:
   html:
-    grid:
-      margin-width: 380px
+    #highlight-style: ../../tpn.theme
+    #highlight-style: highlight.theme
+    anchor-sections: true

@@ -22,7 +22,7 @@
   --quarto-hl-kw-color: #ff79c6;
   --quarto-hl-op-color: PapayaWhip;
   --quarto-hl-ot-color: #C4ED54;
-  --quarto-hl-pp-color: #a6e22e;
+  --quarto-hl-pp-color: Moccasin;
   --quarto-hl-re-color: #8be9fd;
   --quarto-hl-sc-color: #ff79c6;
   --quarto-hl-ss-color: #f1fa8c;
@@ -146,7 +146,7 @@ code span.ot {
 }
 
 code span.pp {
-  color: #a6e22e;
+  color: Moccasin;
 }
 
 code span.re {
