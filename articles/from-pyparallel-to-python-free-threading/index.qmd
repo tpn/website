@@ -412,7 +412,7 @@ of that for you behind the scenes (i.e. you can safely `accept()` on multiple
 threads against the same `sockaddr_in` on Linux, or `AcceptEx()` against a
 single completion port on Windows).
 
-### The Implementation
+### Implementation
 
 So, as it pertained to reference counting and garbage collection---all
 thread-sensitive things that need to be handled very carefully in a GIL-less
@@ -586,7 +586,7 @@ Total structure size: 40 bytes (24 bytes larger than standard Python).
 </div>
 </div>
 
-#### Memory Allocation
+#### Reference Counting
 
 So, with regards to reference counting, my hunch was simply: who cares?
 Again, I was keen on targetting the very narrow domain of an asynchronous I/O
@@ -597,45 +597,99 @@ bytes back on the wire to the client.
 So who cares about reference counts?  We know when the parallel context starts
 and ends: it starts when we call the user's `data_received()` routine, and it
 ends when that routine returns bytes which we then send back to the client.
+As long as we've diverted all memory allocation to a thread-safe alternative
+during execution of that callback, we can get away with not doing any reference
+counting whatsoever.
 
-Each parallel thread can have a thread-local, simple block allocator, that is
-responsible for furnishing all memory allocation requests thanks to us having
-instrumented calls like `PyObject_New` and `PyMem_Malloc`.  Block allocators
-are about the simplest memory allocator you can have: you have a pre-allocated
-block of memory (say, 4KB, or one page), a request comes in for 120 bytes,
-you capture the address of the current block pointer, increment it by 120
-bytes, then return the captured address.
+#### Memory Allocation
 
-How do you free memory?  Easy!  You don't!  Again, socket-server callbacks are
-pretty short-lived; you're not allocating gobs of memory that has an ambiguous
-lifetime.  You're doing lots of little allocations with very clear lifetimes:
-the allocations will cease to exist once the callback returns.
+Each parallel thread had its own thread-local block allocator that was
+responsible for furnishing all memory allocation requests that we intercepted
+by instrumenting calls like `PyObject_New` and `PyMem_Malloc`.
 
-How do you handle garbage collection?  Easy!  You don't!  As you're not
-mutating global state, any cyclic references you construct during the parallel
-thread callback will be magically taken care of when the callback completes,
-by virtue of the fact you're simply resetting the block allocator back to the
-start of the first block.  By not relying on reference counts to hit zero to
-trigger deallocation, you don't need to worry about reference cycles.
+Block allocators are about the simplest memory allocator you can have: you have
+a pre-allocated block of memory (say, 4KB, or one page), a request comes in for
+120 bytes, you capture the address of the current block pointer, increment it
+by 120 bytes, then return the captured address.  If you exceeded 4KB, another
+page would be allocated and linked to the existing page, such that you'd have
+a doubly-linked list of blocks from which allocations would be carved out.
+
+#### Memory Reclaimation
+
+How do you free memory allocated in these parallel contexts?  Easy: you don't!
+At the end of the callback, when you're back in the Python C code after you
+have finished executing the user's `data_received()` callback, for example,
+you can just reset the block allocator such that it points to the first chunk
+of memory in the first block.  You don't actually need to `free()` anything.
+
+Additionally, as back-to-back execution of callbacks on the same thread would
+be continually using the same block allocator, and thus, the same blocks and
+corresponding virtual addresses---you'd reap all the benefits you'd expect
+from frequently using the same addresses: increased likelihood of cache hits
+and TLB hits, vastly-reduced likelihood of page faults.
+
+This all worked because socket-server callbacks are pretty short-lived; you're
+not allocating gobs of memory for objects with ambiguous lifetimes.  You're
+doing lots of little allocations with very clear lifetimes: the allocations
+will cease to exist once the callback returns.
+
+#### Garbage Collection
+
+How do you handle garbage collection?  Easy: you don't!  As no reference count
+mutation takes place during a parallel callback, no reference cycles can be
+constructed in the first place, obviating the need to even perform garbage
+collection.
+
+#### Async I/O
+
+The workhorse of PyParallel was the [PxSocket_IoLoop](
+https://github.com/pyparallel/pyparallel/blob/branches/3.3-px/Python/pyparallel.c#L8603-L10642),
+some 2,000+ lines of hideous C state-machine-esque hackery that drove the
+*completion-oriented* protocol callbacks implemented by the user.
 
 
+ - Custom `PxSocket_IoLoop()`.
+ - Highly-optimized TCP/IP socket server "virtual machine".
+ - Integrated `TransmitFile` support.
+ - Summary: the `PxSocket_IoLoop()` plus negligible-overhead of our
+   instrumented thread-sensitive calls is what led to PyParallel's performance.
 
-### The Performance
+### Limitations
 
-The performance of PyParallel was really good.  There was negligible overhead
-introduced by instrumenting all of the thread-sensitive macros, which was a big
-win.  Remember, Greg Stein's approach made **all** Python code run about 40%
-slower, single-threaded or multi-threaded.  PyParallel's approach of detecting
-if we're in a parallel thread by way of the `Py_PXCTX()` macro, plus fast
-thread-safe alternates of the thread-sensitive calls, proved that there were
-viable ways to achieve parallelism in Python without also incurring prohibitive
-overhead.
+PyParallel, was, in essence, a proof-of-concept project I predominantly hacked
+together over the course of about three months during a very cold Michigan
+Winter in 2012-2013.
 
-### The Limitations
+It had many limitations, especially the first pass in that 2012-2013 timeframe.
+I spent a few months sprinting on it again around 2015, and addressed some of
+the egregious limitations like not being able to use generators in parallel
+contexts, and not being able to persist objects created within a parallel
+context outside of that context (i.e. `foo['key'] = bar`, where `foo` is a
+`dict` created in the `main thread` context).
 
-For all of the performance benefits of PyParallel, it was, in essence, a
-proof-of-concept project I predominantly hacked together over the course of
-about three months during a very cold Michigan Winter in 2012-2013.
+I also got it to a point where it could compete in a subset of the
+[TechEmpower Framework Benchmarks](
+https://www.techempower.com/benchmarks/#hw=ph&test=fortune&section=data-r22),
+including non-trivial ones like accessing a `PyODBC` data source in a parallel
+context.
+
+Nevertheless, the remaining limitations relegated PyParallel to being somewhat
+similar to [Stackless Python](https://en.wikipedia.org/wiki/Stackless_Python),
+which was a nichè variant of Python that separated the C call stack from the
+Python call stack, but never had a chance of getting mainlined into Python.
+
+(Unlike Stackless, though, which had actual users like [Eve
+Online](https://en.wikipedia.org/wiki/Eve_Online), I am not aware of anyone
+using PyParallel for anything.  I certainly never got any support requests for
+it.)
+
+The next few sections capture some of the limitations that I presume kept
+PyParallel from becoming anything other than a proof-of-concept.  Thankfully
+I have the luxury of writing about the failures some ten years after I wrote
+the underlying code, so I'm inherently less defensive about its egregious
+shortcomings as I would have been back then.
+
+#### Parallel Code Has To Be Entered Via Protocol Callbacks
 
 By design, I never intended to support *"free-threaded"* Python, i.e. you
 would never be able to create Python `threading.Thread` objects yourself,
@@ -643,12 +697,247 @@ instead, you'd have to use the machinery provided to you by PyParallel,
 such as `async.server()`, `async.submit_work()`, etc.  (This was before
 `async` became a keyword in Python.)
 
-...
+The fact that the only thing that really worked properly was a TCP/IP-based
+socket server speaks volumes to the lack of general applicability of the
+solution.
+
+#### You Couldn't Do A Lot Of Things In Parallel Callbacks
+
+You couldn't import modules in parallel callbacks.  This wasn't a huge
+limitation, you'd simply work around this by making sure you import all the
+modules you need at startup, before you launch your server.
+
+You couldn't call routines of modules that used a lot of caching.  Pandas is a
+great example of this: there is a prolific amount of behind-the-scenes caching
+that happens in Pandas (or at least the version I was experimenting with circa
+2015) when interacting with `DataFrame` objects.  This just flat-out did not
+work in PyParallel---trying to persist parallel objects past the callback
+lifetime completely went against the grain of how PyParallel was initially
+architected to work.
+
+You couldn't leverage PyParallel to, for example, load large data structures
+in parallel.  Because there was no free-threading support, nor was memory
+allocated in these parallel callback contexts intended to persist after the
+callback completed---you couldn't spin up a bunch of threads to load some
+expensive data structures in parallel (i.e. reading pickles, etc.).
+
+This is actually one of the patterns that I have enjoyed exploiting the
+most in the new free-threaded Python as its such a huge win for very little
+effort.  I'll cover this more later.
+
+#### Third-Party Libraries Required Recompilation
+
+As PyParallel was based off Python 3.3, a lot of the great work that has since
+been done regarding sanitizing the Python C ABI wasn't done yet, so modules
+with C code doing raw `Py_INCREF()` and `Py_DECREF()` calls would need to be
+recompiled to ensure they use the new PyParallel definitions.
+
+This particular limitation is no different to the current state of affairs
+with Python free-threading: modules that need intimiate knowledge of C Python
+internals need to be recompiled at the very least, and sometimes will need
+additional code changes to ensure correct behavior when operating in a No-GIL
+environment.
+
+#### The Code Was... Hideous
+
+I hadn't looked at the [pyparallel.c](
+https://github.com/pyparallel/pyparallel/blob/branches/3.3-px/Python/pyparallel.c)
+code in a long time prior to writing this article.  Boy, it doesn't hold up
+particularly well, in my opinion.  It's very clearly hacky proof-of-concept
+code that realistically had no chance of getting mainlined into Python.
+
+You can peruse all of the changes required to convert Python 3.3.5 into
+PyParallel by reviewing the [diffs](
+https://github.com/pyparallel/pyparallel/tree/branches/3.3-px/diffs) folder,
+which I populated with diffs against base 3.3.5 sources and PyParallel
+counterparts.  The patches to files like [Include/object.h](
+https://github.com/pyparallel/pyparallel/blob/branches/3.3-px/diffs/Include/object.h.patch)
+I find most interesting, as they contain most of the *"thread-sensitive
+interception"* functionality I was reliant upon.
+
+#### It Was Windows-only
+
+I attribute the *success* of PyParallel---if we define success as being able
+to hack together a proof-of-concept that basically worked in about 2-3
+months---to Windows.  There are a couple of reasons for this, which I'll
+capture in the next sections.
+
+##### Thread Pool APIs and Asynchronous I/O
+
+First, I made extensive use of the
+phenomenal [Thread Pool API](
+https://learn.microsoft.com/en-us/windows/win32/procthread/thread-pool-api)
+introduced in Windows Vista.  It is hard to succinctly capture just how
+sophisticated this particular API is, especially when paired with the NT
+kernel's incredibly robust asynchronous I/O primitives, particularly the
+seminal `OVERLAPPED` structure and the [Completion Port](
+https://learn.microsoft.com/en-us/windows/win32/fileio/i-o-completion-ports)
+scaffolding.
+
+If you're interesting in learning more about asynchronous I/O on Windows,
+[slide
+47](https://speakerdeck.com/trent/pyparallel-how-we-removed-the-gil-and-exploited-all-cores?slide=47)
+of my PyParallel PyData 2013 deck is a great place to start.
+
+So, I used the thread pool facilities to manage all thread dispatching for
+PyParallel.  I didn't have to create any threads myself, nor did I ever intend
+to support individual Python *free-threading* threads created via Python's
+`threading.Thread` facilities.  There are simply no good cross-platform
+threadpool alternatives that have equivalent functionality to what is provided
+by Windows, and a lot of that is because other operating systems just don't
+have the kernel mechanisms in place to support things like thread-agnostic
+I/O, or true asynchronous I/O at the driver level via I/O request packets (or
+`Irps` as they're colloquially called in kernel development circles).  Neither
+Wine nor ReactOS have attempted to implement the Windows Thread Pool API,
+which I also found to be an interesting data point.
+
+For the TCP/IP socket-server primary use case, enabled by the
+`PxSocket_IoLoop()` workhorse described earlier, overlapped-versions of all
+the socket primitives were used where possible.  There aren't any exact
+equivalents to these functions on platforms like Linux, the BSDs, or Mac OS.
+
+All of those platforms support non-blocking read and write socket
+operations---which is the foundation upon which concurrency is achieved when
+combined with a multiplexing operation like `select()`, `poll()`, `epoll()`,
+or `kqueue`.  But there is no way to dispatch a socket `read()` or `write()`
+call *asynchronously* in conjunction with a request for the OS to invoke a
+callback you provide when that asynchronous operation completes (or fails).
+
+::: {.callout-note}
+
+`io_uring` is an exception: it absolutely allows asynchronous submission of a
+whole range of system calls, but it doesn't introduce a thread-agnostic I/O
+model, per se.  Or rather, it doesn't suddenly allow you to write your C
+programs in a way that mimics a threadpool+overlapped I/O approach you'd use
+on Windows.
+
+It also wasn't available in 2012 when I started hacking on PyParallel; it
+first appeared in the Linux kernel 5.1 in May 2019.
+
+:::
+
+The point of all of this is to convey that PyParallel wasn't just Windows-only
+because I didn't have the time or inclination to try compile it on other
+platforms---it extensively used APIs for which there were no
+functionally-equivalent counterparts on other platforms.  So, if you were to
+try get PyParallel working on Linux or Mac OS X, for example, you'd need to
+write a whole bunch of thread pool and synchronization scaffolding, as well
+as `PxSocket_IoLoop()`-equivalents using whatever the underlying platform's
+optimal socket multiplexing system call was.
+
+##### Visual Studio Debugger
+
+The other element of developing PyParallel on Windows that I consider crucial
+to its success (again, defining success as *getting a proof-of-concept working
+in about 2-3 months*) was Visual Studio's sublime debugging facilities.
+
+Microsoft has always invested heavily in fantastic debugger experiences.  This
+includes usermode application debugging via tools like Visual Studio, all the
+way up to kernel debugging via Windbg.
+
+The first week or two of PyParallel's development was simply stepping through
+the Python C code line-by-line in Visual Studio's debugger, building up a
+mental model of exactly how the interpreter worked at the lowest-level when
+executing a Python program.  I didn't write a line of code during this initial
+exploratory period---I was genuinely just traipsing through the debugger
+observing how Python *worked*.  Incredibly valuable experience, by the way.
+It's my favorite way of getting up to speed with an unfamiliar code base.
+
+Visual Studio Code is pretty good at debugging C programs visually these days
+on non-Windows platforms---I certainly used it a lot at Voltron on our Theseus
+product, which was exclusively in Linux and C++.  However, Visual Studio Code
+didn't appear until 2015, whereas my initial PyParallel hacking was toward the
+end of 2012.
+
+Once I started actually writing code for PyParallel, again, the Visual Studio
+debugger was indispensable.  Particularly due to how frequently I'd be
+crashing in the course of normal development, heh.  It was incredibly handy
+with a few mouse clicks to be able to freeze all threads OTHER than the one
+you were interested in, step execution through that, then resume, etc.  You
+can do all of this via `gdb` and `lldb` when doing console debugging on
+UNIX-ish platforms, but it's definitely not as convenient as a full-featured
+IDE for debugging.
+
+### Performance
+
+Now, for all its limitations and ultimate market failure, PyParallel excelled
+at the one thing it was designed to do well: async I/O-oriented TCP/IP
+servers, where users would implement protocol classes that featured
+*completion-oriented* callbacks, and those callbacks could be run
+simultaneously on multiple cores without any egregious slowdown (i.e. compared
+to normal, single-threaded Python code); i.e.: in parallel.
+
+There was negligible overhead introduced by instrumenting all of the
+thread-sensitive macros, nor the thread-safe alternates for reference counting
+(don't do it), garbage collection (don't do it), memory allocation (simple
+block allocator), and memory reclamation (reset block allocator after a
+callback has completed).  Collectively, this all ensured that the new parallel
+context Python code ran just as fast, if not faster, than normal
+single-threaded Python code.
+
+Remember, the prior approach by Greg Stein (some sixteen years prior) where
+fine-grained locking was introduced at the individual object level made
+**all** Python code run about 40% slower, not just new multi-threaded code.
+
+So PyParallel at least demonstrated that you could get a mostly-functional
+parallel version of Python without incurring prohibitive slowdown to all code.
+
+The PyParallel [Performance](https://pyparallel.org/#performance) section of
+the website features some concrete metrics that I captured back in 2015 with
+whatever hardware I had lying around at the time.
+
+My favorite metric was that PyParallel's plaintext performance yielded 132,772
+requests per second which put it into first place across all the platforms I
+benchmarked.  LWAN, a raw C Linux implementation well-known for its
+performance, came in second with 128,126 requests per second.  Granted, I
+cheated on my side, leveraging an SSE-accelerated HTTP parser to process the
+incoming request, per the `http11 = True` line below:
+
+```python
+# PyParallel (Fast)
+# (Uses picohttpparser's SSE-accelerated HTTP parser.)
+import async
+class Plaintext:
+    http11 = True
+    def plaintext(self, transport, data):
+        return b'Hello, World!'
+
+server = async.server('0.0.0.0', 8080)
+async.register(transport=server, protocol=Plaintext)
+async.run()
+```
+
+So the only Python code actually being executed in this example was the
+`return b'Hello, World!'` line, which is so simple its basically a no-op.
+Thus, the only thing I was really demonstrating there was the performance of
+the `PxSocket_IoLoop()` implementation, plus the underlying Windows threadpool
+and async I/O facilities.
+
+The *slow* version featured a full HTTP request parser written in Python,
+which clocked in at 53,455 requests per second (which was still significantly
+higher than other pure-Python implementations like Tornado).
 
 # Python Free-Threading
 
-Now, let's talk about the Python Free-Threading implementation that has been
-introduced in Python 3.13t.
+So, we've covered Greg Stein's initial attempts at removing the GIL back in
+1996, plus my attempts at removing the GIL limitations without actually
+removing the GIL via PyParallel.
+
+Hopefully this provides some context on the type of obstacles that the
+free-threading implementation needed to overcome in order to prevail.
+
+And I am happy to report that they absolutely did prevail in overcoming all
+of the obstacles that prevented prior work from being viable.  The resulting
+Free-Threaded Python 3.13t really is an engineering marvel that took a lot
+of effort on many fronts.
+
+I'll spend a little bit of time in this next section covering the
+implementation, particularly as it pertains to the things that were done
+differently to Greg Stein's work and PyParallel regarding reference counting,
+garbage collection, memory, etc.  And then we'll take a look at some
+non-trivial examples of real-world problems that can now be tackled
+performantly via the [Parallelopedia](https://github.com/tpn/parallelopedia)
+example project.
 
 ## Implementation
 
@@ -734,6 +1023,28 @@ TBD
 ::::
 
 :::
+
+# Parallelopedia
+
+## HTTP Server
+
+ - Multi-threaded `asyncio`-based HTTP server.
+ - Performance/benchmarks.
+ - Compare `-Xgil=0` to with GIL.
+
+TODO
+
+## Wiki Server
+
+TODO
+
+# PyTorch and Free-Threading
+
+## Training a local GPT2
+
+## Multi-threaded Inference
+
+ - Via `asyncio` & HTTP server.
 
 # Appendix
 
@@ -970,10 +1281,14 @@ init_openai_key () {
 % init_openai_key
 % aider --model gpt-4o --vim
 ```
-It was trivial to point it at a local model hosted by LM Studio, too:
+It was trivial to point it at a local model hosted by LM Studio, too, after
+enabling the *Developer* view and starting a local development server (which
+will default to hosting on `http://<hostname>:1234/v1`):
 
 ```bash
-% aider --model lm_studio/qwen2.5-coder-32b-instruct@fp16 --vim
+% LM_STUDIO_API_KEY=notused \
+  LM_STUDIO_API_BASE=http://$(hostname):1234/v1 \
+    aider --model lm_studio/qwen2.5-coder-32b-instruct@fp16 --vim
 ```
 
 By default, Aider keeps a Markdown transcript of your sessions in a file named
