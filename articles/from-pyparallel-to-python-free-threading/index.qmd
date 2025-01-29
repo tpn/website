@@ -52,10 +52,11 @@ been made to solve this problem---including my own efforts with
 [PyParallel](https://pyparallel.org)---but no-one has prevailed in getting a
 solution mainlined into CPython.  Until now!
 
-I will admit I am biased: I am a Python committer (though not directly involved
-in this work), I adore the language, and have spent years obsessing over the
-dream of a parallel Python.  It's a topic I'm incredibly passionate about, and
-this article will unabashedly proselytize the extraordinary engineering efforts
+I will admit I am biased: I am a Python committer (though I have not been
+directly involved in this work, nor have I contributed any changes to Python
+recently), I adore the language, and have spent years obsessing over the dream
+of a parallel Python.  It's a topic I'm incredibly passionate about, and this
+article will unabashedly proselytize the extraordinary engineering efforts
 that finally made a free-threaded Python a reality.
 
 Thankfully, it's not just blind, uninformed enthusiasm.  Over the past few
@@ -271,9 +272,9 @@ going to handle making reference counting thread-safe.
 ### Greg's Free-Threaded Approach
 
 Greg's approach tried the most logical solution: make reference counting
-a thread-safe operation.  He did this by using interlocked increment and
-decrement operations against the `ob_refcnt` field on NT (Windows) systems.
-On Linux, a mutex lock was used to protect the reference count.
+a thread-safe operation by using interlocked increment and decrement
+operations against the `ob_refcnt` field on NT (Windows) systems.  On Linux, a
+mutex lock was used to protect the reference count.
 
 Using a `WITH_FREE_THREAD` macro to gate his changes, Greg modified the
 [reference counting logic](
@@ -350,12 +351,12 @@ counts for all objects.  (N.B. `PyMutex` was a slim wrapper around
 `pthread_mutex_t`, and the lock and unlock operations simply called out to
 `pthread_mutex_lock()` and `pthread_mutex_unlock()` respectively.)
 
-Compared to simply incrementing a value in memory by one, obtaining a mutex
-lock and then unlocking the mutex is orders of magnitude more expensive, so
-it's not surprising that this approach to removing the GIL introduced brutal
-slowdowns---not just to new multi-threaded code, but to existing single-threaded
-code that wasn't even taking advantage of the fact that there was now no GIL
-in place.
+Compared to simply incrementing a value in memory by one, locking and
+unlocking a mutex is orders of magnitude more expensive, so it's not
+surprising that this approach to removing the GIL introduced brutal
+slowdowns---not just to new multi-threaded code, but to existing
+single-threaded code that wasn't even taking advantage of the fact that there
+was now no GIL in place.
 
 Nevertheless, Greg's work tackled a lot of other important concepts which were
 mainlined into Python, like separating global state into per-thread state
@@ -394,7 +395,7 @@ and a couple of YouTube videos he'd also done on the topic of the GIL.  I
 can't remember if it was in one of his videos (or presentations) or articles,
 but I remember him stating something along the lines of *"the GIL is something
 every Python committer should be worried about"*, and that really stuck with
-me, giving me the initial motivation to even embark on the PyParallel project.
+me, giving me the initial motivation to embark on the PyParallel project.
 
 The first step I took was to make sure I reviewed Greg's earlier work to see
 what did and didn't work in the past.  Clearly, introducing fine-grained
@@ -603,11 +604,12 @@ things you need to focus on handling, which we'll cover in the next sections:
 
 #### Reference Counting
 
-My hunch regarding reference counting was simple: let's just not do it and see
-what happens.  Again, I was keen on targetting the very narrow domain of an
-asynchronous I/O-based TCP/IP socket server, like a HTTP server, where none of
-the objects that are created as part of servicing an incoming request need to
-persist once we've sent bytes back on the wire to the client.
+My hunch regarding reference counting was simple: *let's just not do it and see
+what happens*.  Such rigorous engineering!  Again, I was keen on targeting
+the very narrow domain of an asynchronous I/O-based TCP/IP socket server, like
+a HTTP server, where none of the objects that are created as part of servicing
+an incoming request need to persist once we've sent bytes back on the wire to
+the client.
 
 Additionally, if you think about the flow of a Python program that launches a
 HTTP server, you'll have a main thread that does all of the module importing,
@@ -625,13 +627,14 @@ and then respond to it accordingly.
 You're not mutating global state (such as adding values to a global or
 non-local container object (`list`, `dict`, etc.)) in these callbacks.
 
-Additionally, you can be assured that for all of the objects you rely upon as
+Finally, you can be assured that for all of the objects you rely upon as
 part of your request processing (i.e. HTTP URL parsing libraries, application
 configuration objects, etc.), by the time you're interacting with those
 objects in your callback: a) they will have reference counts way above one,
 and b) there won't be any other code running that could possibly result in
 those reference counts ever hitting zero.  Those objects are effectively
-*immortal*, as far as you're concerned in your parallel callback.
+*immortal* for the duration of your parallel callback, as far as you're
+concerned.
 
 So who cares about incrementing and decrementing reference counts for objects
 we know are guaranteed to stay resident throughout the duration of our
@@ -660,10 +663,12 @@ need for reference counting.
 
 #### Memory Allocation
 
-So, for PyParallel, I did the easiest thing I could think of: just give each
-parallel thread its own thread-local block allocator.  This allocator would
-furnish all memory allocation requests that we intercepted by instrumenting
-calls like `PyObject_New` and `PyMem_Malloc`.
+So, when I hit the point I needed to write a thread-safe memory allocator that
+would kick-in to service memory allocation requests in these parallel contexts,
+I picked the easiest thing I could think of: just give each parallel thread
+its own thread-local block allocator.  This allocator would furnish all memory
+allocation requests that we intercepted by instrumenting calls like
+`PyObject_New` and `PyMem_Malloc`.
 
 Block allocators are about the simplest memory allocator you can have: you have
 a pre-allocated block of memory (say, 4KB, or one page), a request comes in for
@@ -743,8 +748,9 @@ some 2,000+ lines of hideous C state-machine-esque hackery that drove the
 *completion-oriented* protocol callbacks implemented by the user.
 
 The protocol objects you had to use for PyParallel were similar to the
-[Protocol](https://docs.python.org/3/library/asyncio-protocol.html#protocols)
-current-day Python objects used by `asyncio`.
+current-day [Protocol](
+https://docs.python.org/3/library/asyncio-protocol.html#protocols)
+Python objects used by `asyncio`.
 
 An example of what a TCP/IP socket server might look like in PyParallel
 follows.  Note that no `transport.send()` routines were exposed, if you wanted
@@ -790,6 +796,8 @@ async.run()
 ```
 
 #### More Information
+
+I've omitted a lot of details on purpose in this section on PyParallel.
 
 
 ### Limitations
@@ -1001,12 +1009,13 @@ hacking on PyParallel; it first appeared in the Linux kernel 5.1 in May 2019.)
 
 The point of all of this is to convey that PyParallel wasn't just Windows-only
 because I didn't have the time or inclination to try compile it on other
-platforms---it extensively used APIs for which there were no
-functionally-equivalent counterparts on other platforms.  So, if you were to
-try get PyParallel working on Linux or Mac OS X, for example, you'd need to
-write a whole bunch of thread pool and synchronization scaffolding, as well
-as `PxSocket_IoLoop()`-equivalents using whatever the underlying platform's
-optimal socket multiplexing system call was.
+platforms---it extensively used APIs for which there are *still* no equivalent
+counterparts on other platforms, some thirteen or so years later.
+
+So, if you were to try get PyParallel working on Linux or Mac OS X, for
+example, you'd need to write a whole bunch of thread pool and synchronization
+scaffolding, as well as `PxSocket_IoLoop()`-equivalents using whatever the
+underlying platform's optimal socket multiplexing system call was.
 
 ##### Visual Studio Debugger
 
@@ -1070,9 +1079,9 @@ the website features some concrete metrics that I captured back in 2015 with
 whatever hardware I had lying around at the time.
 
 My favorite metric was that PyParallel's plaintext benchmark (basically a
-HTTP server that responded to `/plaintext` with b`Hello, World!`) performance
-yielded 132,772 requests per second which put it into first place across all
-the platforms I benchmarked.
+HTTP server that responded to `/plaintext` with a plain text `Hello, World!`
+response) performance yielded 132,772 requests per second which put it into
+first place across all the platforms I benchmarked.
 
 LWAN, a raw C Linux implementation well-known for its performance, came in
 second with 128,126 requests per second.  Granted, I cheated on my side,
@@ -1114,7 +1123,7 @@ simultaneously on multiple cores as optimally as possible:
  1. Reference counting.
  2. Garbage collection.
  3. Memory allocation.
- 4. Memory reclaimation.
+ 4. Memory reclamation.
 
 And I am happy to report that they absolutely did prevail in overcoming all
 of the obstacles that prevented prior work from being viable.  The resulting
@@ -1399,7 +1408,7 @@ OpenAI-compatible REST interface.  LM Studio is powered by
 ### Aider
 
 I came across [Aider](https://aider.chat) recently.  Aider is, to quote their
-website, directly, **AI pair programming in your terminal**.  It's pretty neat,
+website, directly, *AI pair programming in your terminal*.  It's pretty neat,
 and I played around with having it drive a little bit of the Python development
 in the [parallelopedia](https://github.com/tpn/parallelopedia) repo, and a lot
 of the development in the
@@ -1415,7 +1424,7 @@ have AI an alt-tab away, or, in the case of Aider, available in a terminal to
 carry out your development requests.
 
 The biggest issue I had with Aider was honestly just biting the bullet and
-just trying it.  **Begin, the rest is easy** as they say.  It's definitely
+just trying it.  *Begin, the rest is easy* as they say.  It's definitely
 not perfect--I had to jump in and fix things a few times every session I had
 with it, but we're talking maybe five interventions within a 3-4 hour coding
 session, give or take.  It was particularly good at generating scaffolding that
