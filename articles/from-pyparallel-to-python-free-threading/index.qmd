@@ -490,7 +490,7 @@ paradigm of:
 
 > If we're a *parallel thread*, do X, if not, do Y.
 
-For reference counting, the *do Y* was literally: *do nothing*.  E.g., instead
+For reference counting, the *do X* was literally: *do nothing*.  E.g., instead
 of the standard Python reference counting mechanics that basically looked
 like this:
 

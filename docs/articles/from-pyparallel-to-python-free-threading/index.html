@@ -623,7 +623,7 @@ Actual C Header Code
 <blockquote class="blockquote">
 <p>If we’re a <em>parallel thread</em>, do X, if not, do Y.</p>
 </blockquote>
-<p>For reference counting, the <em>do Y</em> was literally: <em>do nothing</em>. E.g., instead of the standard Python reference counting mechanics that basically looked like this:</p>
+<p>For reference counting, the <em>do X</em> was literally: <em>do nothing</em>. E.g., instead of the standard Python reference counting mechanics that basically looked like this:</p>
 <div class="sourceCode" id="cb9"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#define Py_INCREF</span><span class="op">(</span><span class="pp">op</span><span class="op">)</span><span class="pp"> </span><span class="op">((</span><span class="pp">op</span><span class="op">)-&gt;</span><span class="pp">ob_refcnt</span><span class="op">++)</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="pp">#define Py_DECREF</span><span class="op">(</span><span class="pp">op</span><span class="op">)</span><span class="pp"> </span><span class="op">\</span></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="pp">    </span><span class="op">(--(</span><span class="pp">op</span><span class="op">)-&gt;</span><span class="pp">ob_refcnt </span><span class="op">==</span><span class="pp"> </span><span class="dv">0</span><span class="pp"> </span><span class="op">?</span><span class="pp"> _Py_Dealloc</span><span class="op">(</span><span class="pp">op</span><span class="op">)</span><span class="pp"> </span><span class="op">:</span><span class="pp"> </span><span class="op">;)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -3300,7 +3300,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <input type="hidden" id="giscus-base-theme" value="dark">
 <input type="hidden" id="giscus-alt-theme" value="dark">
 </div> <!-- /content -->
-<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/tpn/website/edit/main/articles/from-pyparallel-to-python-free-threading/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/tpn/website/issues/new/choose" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer><script>var lightboxQuarto = GLightbox({"loop":false,"descPosition":"bottom","closeEffect":"zoom","selector":".lightbox","openEffect":"zoom"});
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/tpn/website/edit/main/articles/from-pyparallel-to-python-free-threading/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/tpn/website/issues/new/choose" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer><script>var lightboxQuarto = GLightbox({"loop":false,"closeEffect":"zoom","descPosition":"bottom","openEffect":"zoom","selector":".lightbox"});
 (function() {
   let previousOnload = window.onload;
   window.onload = () => {
