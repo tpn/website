@@ -246,6 +246,9 @@ gtag('config', 'G-8RPR4XKPEW', { 'anonymize_ip': false});
   <li><a href="#free-threaded-pyobject" id="toc-free-threaded-pyobject" class="nav-link" data-scroll-target="#free-threaded-pyobject">Free-Threaded PyObject</a>
   <ul class="collapse">
   <li><a href="#object-thread-id-uintptr_t-ob_tid" id="toc-object-thread-id-uintptr_t-ob_tid" class="nav-link" data-scroll-target="#object-thread-id-uintptr_t-ob_tid">Object Thread ID: <code>uintptr_t ob_tid</code></a></li>
+  <li><a href="#reference-counts-ob_ref_local-and-ob_ref_shared" id="toc-reference-counts-ob_ref_local-and-ob_ref_shared" class="nav-link" data-scroll-target="#reference-counts-ob_ref_local-and-ob_ref_shared">Reference Counts: <code>ob_ref_local</code> and <code>ob_ref_shared</code></a></li>
+  <li><a href="#per-object-locking-pymutex-ob_mutex" id="toc-per-object-locking-pymutex-ob_mutex" class="nav-link" data-scroll-target="#per-object-locking-pymutex-ob_mutex">Per-Object Locking: <code>PyMutex ob_mutex</code></a></li>
+  <li><a href="#garbage-collection-state-ob_gc_bits" id="toc-garbage-collection-state-ob_gc_bits" class="nav-link" data-scroll-target="#garbage-collection-state-ob_gc_bits">Garbage Collection State: <code>ob_gc_bits</code></a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -383,6 +386,9 @@ gtag('config', 'G-8RPR4XKPEW', { 'anonymize_ip': false});
   <li><a href="#free-threaded-pyobject" id="toc-free-threaded-pyobject">Free-Threaded PyObject</a>
   <ul>
   <li><a href="#object-thread-id-uintptr_t-ob_tid" id="toc-object-thread-id-uintptr_t-ob_tid">Object Thread ID: <code>uintptr_t ob_tid</code></a></li>
+  <li><a href="#reference-counts-ob_ref_local-and-ob_ref_shared" id="toc-reference-counts-ob_ref_local-and-ob_ref_shared">Reference Counts: <code>ob_ref_local</code> and <code>ob_ref_shared</code></a></li>
+  <li><a href="#per-object-locking-pymutex-ob_mutex" id="toc-per-object-locking-pymutex-ob_mutex">Per-Object Locking: <code>PyMutex ob_mutex</code></a></li>
+  <li><a href="#garbage-collection-state-ob_gc_bits" id="toc-garbage-collection-state-ob_gc_bits">Garbage Collection State: <code>ob_gc_bits</code></a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -840,7 +846,7 @@ Note
 <h5 class="anchored" data-anchor-id="visual-studio-debugger">Visual Studio Debugger</h5>
 <p>The other element of developing PyParallel on Windows that I consider crucial to its success (again, defining success as <em>getting a proof-of-concept working in about 2-3 months</em>) was Visual Studio’s sublime debugging facilities.</p>
 <p>Microsoft has always invested heavily in fantastic debugger experiences. This includes usermode application debugging via tools like Visual Studio, all the way up to kernel debugging via Windbg.</p>
-<p>The first week or two of PyParallel’s development was simply stepping through the Python C code line-by-line in Visual Studio’s debugger, building up a mental model of exactly how the interpreter worked at the lowest-level when executing a Python program. I didn’t write a line of code during this initial exploratory period—I was genuinely just traipsing through the debugger observing how Python <em>worked</em>. Incredibly valuable experience, by the way. It’s my favorite way of getting up to speed with an unfamiliar code base.</p>
+<p>The first week or two of PyParallel’s development was simply stepping through the Python C code line-by-line in Visual Studio’s debugger, building up a mental model of exactly how the interpreter worked at the lowest-level when executing a Python program. I didn’t write a line of code during this initial exploratory period—I was genuinely just traipsing through the debugger observing how Python <em>worked</em> and building up my situational awareness and mental model. Incredibly valuable experience, by the way. It’s my favorite way of getting up to speed with an unfamiliar code base.</p>
 <p>Visual Studio Code is pretty good at debugging C programs visually these days on non-Windows platforms—I certainly used it a lot at Voltron on our Theseus product, which was exclusively in Linux and C++. However, Visual Studio Code didn’t appear until 2015, whereas my initial PyParallel hacking was toward the end of 2012.</p>
 <p>Once I started actually writing code for PyParallel, again, the Visual Studio debugger was indispensable. Particularly due to how frequently I’d be crashing in the course of normal development, heh. It was incredibly handy with a few mouse clicks to be able to freeze all threads OTHER than the one you were interested in, step execution through that, then resume, etc. You can do all of this via <code>gdb</code> and <code>lldb</code> when doing console debugging on UNIX-ish platforms, but it’s definitely not as convenient as a full-featured IDE for debugging.</p>
 </section>
@@ -983,27 +989,30 @@ Actual C Header Code
 <section id="free-threaded-pyobject" class="level4">
 <h4 class="anchored" data-anchor-id="free-threaded-pyobject">Free-Threaded PyObject</h4>
 <p>The new <code>PyObject</code> structure in the Free-Threaded build has grown numerous new fields, and lives below the GIL version in <a href="https://github.com/python/cpython/blob/v3.13.1/Include/object.h#L207">Include/object.h</a>, reproduced below (with supporting typedefs):</p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Only the two least significant bits are used; remaining bits always zero.</span></span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="co">// 0b00: unlocked</span></span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="co">// 0b01: locked</span></span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="co">// 0b10: unlocked and has parked threads</span></span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="co">// 0b11: locked and has parked threads</span></span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="kw">typedef</span> <span class="kw">struct</span> <span class="op">{</span></span>
-<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>    <span class="dt">uint8_t</span> _bits<span class="op">;</span></span>
-<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a><span class="op">}</span> PyMutex<span class="op">;</span></span>
-<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a><span class="kw">typedef</span> <span class="kw">struct</span> <span class="op">{</span></span>
-<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>    <span class="co">// ob_tid stores the thread id (or zero). It is also used by the GC</span></span>
-<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>    <span class="co">// and the trashcan mechanism as a linked list pointer and by the GC</span></span>
-<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>    <span class="co">// to store the computed "gc_refs" refcount.</span></span>
-<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>    <span class="dt">uintptr_t</span> ob_tid<span class="op">;</span>           <span class="co">// thread id</span></span>
-<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>    <span class="dt">uint16_t</span> _padding<span class="op">;</span>          <span class="co">// ob_flags in 3.14+</span></span>
-<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a>    PyMutex ob_mutex<span class="op">;</span>           <span class="co">// per-object lock</span></span>
-<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a>    <span class="dt">uint8_t</span> ob_gc_bits<span class="op">;</span>         <span class="co">// gc-related state</span></span>
-<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a>    <span class="dt">uint32_t</span> ob_ref_local<span class="op">;</span>      <span class="co">// local reference count</span></span>
-<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a>    Py_ssize_t ob_ref_shared<span class="op">;</span>   <span class="co">// shared (atomic) reference count</span></span>
-<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a>    PyTypeObject <span class="op">*</span>ob_type<span class="op">;</span></span>
-<span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a><span class="op">}</span> PyObject<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Only the two least significant bits are used; remaining bits</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="co">// always zero.</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="co">// 0b00: unlocked</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="co">// 0b01: locked</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="co">// 0b10: unlocked and has parked threads</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="co">// 0b11: locked and has parked threads</span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a><span class="kw">typedef</span> <span class="kw">struct</span> <span class="op">{</span></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>    <span class="dt">uint8_t</span> _bits<span class="op">;</span></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a><span class="op">}</span> PyMutex<span class="op">;</span></span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a><span class="kw">typedef</span> <span class="kw">struct</span> <span class="op">{</span></span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>    <span class="co">// ob_tid stores the thread id (or zero). It is also used</span></span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>    <span class="co">// by the GC and the trashcan mechanism as a linked list</span></span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>    <span class="co">// pointer and by the GC to store the computed "gc_refs"</span></span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a>    <span class="co">// refcount.</span></span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a>    <span class="dt">uintptr_t</span> ob_tid<span class="op">;</span>           <span class="co">// thread id</span></span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a>    <span class="dt">uint16_t</span> _padding<span class="op">;</span>          <span class="co">// ob_flags in 3.14+</span></span>
+<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a>    PyMutex ob_mutex<span class="op">;</span>           <span class="co">// per-object lock</span></span>
+<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a>    <span class="dt">uint8_t</span> ob_gc_bits<span class="op">;</span>         <span class="co">// gc-related state</span></span>
+<span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a>    <span class="dt">uint32_t</span> ob_ref_local<span class="op">;</span>      <span class="co">// local reference count</span></span>
+<span id="cb16-22"><a href="#cb16-22" aria-hidden="true" tabindex="-1"></a>    Py_ssize_t ob_ref_shared<span class="op">;</span>   <span class="co">// shared (atomic) reference count</span></span>
+<span id="cb16-23"><a href="#cb16-23" aria-hidden="true" tabindex="-1"></a>    PyTypeObject <span class="op">*</span>ob_type<span class="op">;</span></span>
+<span id="cb16-24"><a href="#cb16-24" aria-hidden="true" tabindex="-1"></a><span class="op">}</span> PyObject<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>N.B. The <code>_padding</code> field has been renamed to <code>ob_flags</code> in Python 3.14+.</p>
 <p>A visual depiction of the Free-Threaded PyObject structure on 64-bit architectures follows. The object size has grown an additional 16 bytes from the with-GIL <code>PyObject</code>, doubling the total structure size to 32 bytes.</p>
 <div class="struct-layout">
@@ -1148,6 +1157,17 @@ Actual C Header Code
 </div>
 </div>
 </div>
+</section>
+<section id="reference-counts-ob_ref_local-and-ob_ref_shared" class="level5">
+<h5 class="anchored" data-anchor-id="reference-counts-ob_ref_local-and-ob_ref_shared">Reference Counts: <code>ob_ref_local</code> and <code>ob_ref_shared</code></h5>
+<p>TODO: Biased and deferred reference counting. Optimization if attempting to incref/decref an object we own.</p>
+</section>
+<section id="per-object-locking-pymutex-ob_mutex" class="level5">
+<h5 class="anchored" data-anchor-id="per-object-locking-pymutex-ob_mutex">Per-Object Locking: <code>PyMutex ob_mutex</code></h5>
+<p>TBD</p>
+</section>
+<section id="garbage-collection-state-ob_gc_bits" class="level5">
+<h5 class="anchored" data-anchor-id="garbage-collection-state-ob_gc_bits">Garbage Collection State: <code>ob_gc_bits</code></h5>
 </section>
 </section>
 </section>
@@ -3300,7 +3320,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <input type="hidden" id="giscus-base-theme" value="dark">
 <input type="hidden" id="giscus-alt-theme" value="dark">
 </div> <!-- /content -->
-<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/tpn/website/edit/main/articles/from-pyparallel-to-python-free-threading/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/tpn/website/issues/new/choose" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer><script>var lightboxQuarto = GLightbox({"loop":false,"closeEffect":"zoom","descPosition":"bottom","openEffect":"zoom","selector":".lightbox"});
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/tpn/website/edit/main/articles/from-pyparallel-to-python-free-threading/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/tpn/website/issues/new/choose" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer><script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","selector":".lightbox","loop":false,"descPosition":"bottom","openEffect":"zoom"});
 (function() {
   let previousOnload = window.onload;
   window.onload = () => {

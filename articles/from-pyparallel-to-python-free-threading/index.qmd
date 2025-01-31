@@ -1030,8 +1030,9 @@ the Python C code line-by-line in Visual Studio's debugger, building up a
 mental model of exactly how the interpreter worked at the lowest-level when
 executing a Python program.  I didn't write a line of code during this initial
 exploratory period---I was genuinely just traipsing through the debugger
-observing how Python *worked*.  Incredibly valuable experience, by the way.
-It's my favorite way of getting up to speed with an unfamiliar code base.
+observing how Python *worked* and building up my situational awareness and
+mental model.  Incredibly valuable experience, by the way.  It's my favorite
+way of getting up to speed with an unfamiliar code base.
 
 Visual Studio Code is pretty good at debugging C programs visually these days
 on non-Windows platforms---I certainly used it a lot at Voltron on our Theseus
@@ -1274,7 +1275,8 @@ https://github.com/python/cpython/blob/v3.13.1/Include/object.h#L207),
 reproduced below (with supporting typedefs):
 
 ```c
-// Only the two least significant bits are used; remaining bits always zero.
+// Only the two least significant bits are used; remaining bits
+// always zero.
 // 0b00: unlocked
 // 0b01: locked
 // 0b10: unlocked and has parked threads
@@ -1284,9 +1286,11 @@ typedef struct {
 } PyMutex;
 
 typedef struct {
-    // ob_tid stores the thread id (or zero). It is also used by the GC
-    // and the trashcan mechanism as a linked list pointer and by the GC
-    // to store the computed "gc_refs" refcount.
+
+    // ob_tid stores the thread id (or zero). It is also used
+    // by the GC and the trashcan mechanism as a linked list
+    // pointer and by the GC to store the computed "gc_refs"
+    // refcount.
     uintptr_t ob_tid;           // thread id
     uint16_t _padding;          // ob_flags in 3.14+
     PyMutex ob_mutex;           // per-object lock
@@ -1456,6 +1460,17 @@ _Py_IsOwnedByCurrentThread(PyObject *ob)
 ```
 :::
 
+##### Reference Counts: `ob_ref_local` and `ob_ref_shared`
+
+TODO: Biased and deferred reference counting.  Optimization if attempting to
+incref/decref an object we own.
+
+##### Per-Object Locking: `PyMutex ob_mutex`
+
+TBD
+
+
+##### Garbage Collection State: `ob_gc_bits`
 
 # Parallelopedia
 
