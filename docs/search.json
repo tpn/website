@@ -112,6 +112,20 @@
     "text": "Not So Recent\n\nEnversion\nCQ Python\nPersonal Python Library ‘tpn’"
   },
   {
+    "objectID": "blog/posts/2025-xx-xx-pytorch-and-python-free-threading/index.html",
+    "href": "blog/posts/2025-xx-xx-pytorch-and-python-free-threading/index.html",
+    "title": "DRAFT: PyTorch and Python Free-Threading",
+    "section": "",
+    "text": "Introduction\n  Getting Started\n  \n  Parallelopedia\n  \n  Parallelopedia Web Interface\nThis blog post is sponsored in part by Meta in collaboration with Quansight and OpenTeams."
+  },
+  {
+    "objectID": "blog/posts/2025-xx-xx-pytorch-and-python-free-threading/index.html#parallelopedia",
+    "href": "blog/posts/2025-xx-xx-pytorch-and-python-free-threading/index.html#parallelopedia",
+    "title": "DRAFT: PyTorch and Python Free-Threading",
+    "section": "Parallelopedia",
+    "text": "Parallelopedia\nAll of the code in this article is available in the Parallelopedia repository on Github.\n\nParallelopedia Web Interface\nThe React Bootstrap web interface lives in the Parallelopedia-UI repository.\n\n\n\n\n\n\nNote\n\n\n\nFull disclaimer: I’m not a web developer. I don’t know JavaScript, React, or Bootstrap with any level of proficiency other than what I’ve been able to bootstrap (heh) with in the past few months via LLMs like ChatGPT. In fact, a lot of the Parallelopedia-UI code was written by Aider using OpenAI’s GPT-4o model.\nSo, TL;DR, the web interface code probably sucks."
+  },
+  {
     "objectID": "articles/is-prefix-of-string-in-table/index.html",
     "href": "articles/is-prefix-of-string-in-table/index.html",
     "title": "Is Prefix Of String In Table?",
@@ -243,6 +257,13 @@
     "title": "Articles",
     "section": "",
     "text": "DRAFT: From PyParallel to Python Free-Threading\n\n\nOptimally Exploiting Multiple Cores with Python\n\n\n\nPython\n\n\nPyParallel\n\n\nFree-threading\n\n\nNo-GIL\n\n\nPyTorch\n\n\nasyncio\n\n\n\nThis article takes a look at the new no-GIL, free-threading functionality introduced in Python 3.13, as well as how it compares and performs against PyParallel’s attempt at explointing multiple CPU cores over ten years ago. Using a demo project named Parallelopedia, we demonstrate the benefits afforded by the new functionality, whereby large data structures (tens to hundreds of gigabytes) are loaded in main memory and then accessed in parallel from Python—a feat not previously possible with the contemporary multiprocessing approach. Additionally, we investigate multi-threaded, parallel inference (generation) of transformer-based Deep Neural Networks via PyTorch, and explorer the limits of what can and can’t currently be done, as well as a roadmap for future PyTorch support. \n\n\n\n\n\nTrent Nelson\n\n\n\n\n\n\n\n\n\n\n\n\nIs Prefix Of String In Table?\n\n\nA Journey Into SIMD String Processing\n\n\n\nAVX2\n\n\nSIMD\n\n\nC\n\n\nAssembly\n\n\nMASM\n\n\n\nThis article details an approach for efficiently determining if a given string prefix-matches a set of known strings. That is, do any of the known strings represent the prefix of a given string? A custom data structure is employed with successive implementations benchmarked to find the fastest possible solution. \n\n\n\n\n\nMay 4, 2018\n\n\nTrent Nelson\n\n\n\n\n\n\nNo matching items"
+  },
+  {
+    "objectID": "blog/index.html",
+    "href": "blog/index.html",
+    "title": "Trent Nelson’s Blog",
+    "section": "",
+    "text": "DRAFT: PyTorch and Python Free-Threading\n\n\n\n\n\n\nPyTorch\n\n\nPython\n\n\nFree-Threading\n\n\nNo-GIL\n\n\nLLM\n\n\nGPT2\n\n\n\nThis blog post explores multi-threaded PyTorch parallel inference via an asyncio-based HTTP server and the new No-GIL free-threaded Python, using a (predominantly-AI-written) simple React Bootstrap web interface. We capture what is currently possible, what type of issues are typically encountered, and what the roadmap may look like for the future. \n\n\n\n\n\nTrent Nelson\n\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "index.html",

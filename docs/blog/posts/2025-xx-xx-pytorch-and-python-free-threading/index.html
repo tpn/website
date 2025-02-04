@@ -6,8 +6,10 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="author" content="Trent Nelson">
+<meta name="description" content="This blog post explores multi-threaded PyTorch parallel inference via an asyncio-based HTTP server and the new No-GIL free-threaded Python, using a (predominantly-AI-written) simple React Bootstrap web interface. We capture what is currently possible, what type of issues are typically encountered, and what the roadmap may look like for the future.">
 
-<title>Tools – Trent Nelson</title>
+<title>DRAFT: PyTorch and Python Free-Threading – Trent Nelson</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -23,25 +25,25 @@ ul.task-list li input[type="checkbox"] {
 </style>
 
 
-<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="../site_libs/quarto-nav/headroom.min.js"></script>
-<script src="../site_libs/clipboard/clipboard.min.js"></script>
-<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="../site_libs/quarto-search/fuse.min.js"></script>
-<script src="../site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="../">
-<link href="../favicon.ico" rel="icon">
-<script src="../site_libs/quarto-html/quarto.js"></script>
-<script src="../site_libs/quarto-html/popper.min.js"></script>
-<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="../site_libs/quarto-html/anchor.min.js"></script>
-<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
-<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../site_libs/bootstrap/bootstrap-dark.min.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script src="../../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../../">
+<link href="../../../favicon.ico" rel="icon">
+<script src="../../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="../../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../../site_libs/bootstrap/bootstrap-dark.min.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -78,23 +80,32 @@ function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
 gtag('config', 'G-8RPR4XKPEW', { 'anonymize_ip': false});
 </script>
+<meta name="quarto:status" content="draft">
 
 
-<link rel="stylesheet" href="../styles.css">
-<meta property="og:title" content="Tools – Trent Nelson">
+<link rel="stylesheet" href="../../../styles.css">
+<meta property="og:title" content="DRAFT: PyTorch and Python Free-Threading – Trent Nelson">
+<meta property="og:description" content="This blog post explores multi-threaded PyTorch parallel inference via an asyncio-based HTTP server and the new No-GIL free-threaded Python, using a (predominantly-AI-written) simple React Bootstrap web interface. We capture what is currently possible, what type of issues are typically encountered, and what the roadmap may look like for the future.">
+<meta property="og:image" content="https://trent.me/blog/posts/2025-xx-xx-pytorch-and-python-free-threading/images/pytorch-and-python-free-threading.png">
 <meta property="og:site_name" content="Trent Nelson">
-<meta name="twitter:title" content="Tools – Trent Nelson">
-<meta name="twitter:card" content="summary">
+<meta property="og:image:height" content="1024">
+<meta property="og:image:width" content="1024">
+<meta name="twitter:title" content="DRAFT: PyTorch and Python Free-Threading – Trent Nelson">
+<meta name="twitter:description" content="This blog post explores multi-threaded PyTorch parallel inference via an asyncio-based HTTP server and the new No-GIL free-threaded Python, using a (predominantly-AI-written) simple React Bootstrap web interface. We capture what is currently possible, what type of issues are typically encountered, and what the roadmap may look like for the future.">
+<meta name="twitter:image" content="https://trent.me/blog/posts/2025-xx-xx-pytorch-and-python-free-threading/images/pytorch-and-python-free-threading.png">
+<meta name="twitter:image-height" content="1024">
+<meta name="twitter:image-width" content="1024">
+<meta name="twitter:card" content="summary_large_image">
 </head>
 
-<body class="nav-fixed fullcontent">
+<body class="nav-fixed">
 
 <div id="quarto-search-results"></div>
-  <header id="quarto-header" class="headroom fixed-top">
+  <header id="quarto-header" class="headroom fixed-top"><div id="quarto-draft-alert" class="alert alert-warning"><i class="bi bi-pencil-square"></i>Draft</div>
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a class="navbar-brand" href="../index.html">
+    <a class="navbar-brand" href="../../../index.html">
     <span class="navbar-title">Trent Nelson</span>
     </a>
   </div>
@@ -105,19 +116,19 @@ gtag('config', 'G-8RPR4XKPEW', { 'anonymize_ip': false});
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="../articles/index.html"> 
+    <a class="nav-link" href="../../../articles/index.html"> 
 <span class="menu-text">Articles</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../blog/index.html"> 
+    <a class="nav-link" href="../../../blog/index.html"> 
 <span class="menu-text">Blog</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../projects/index.html"> 
+    <a class="nav-link" href="../../../projects/index.html"> 
 <span class="menu-text">Projects &amp; Repos</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link active" href="../tools/index.html" aria-current="page"> 
+    <a class="nav-link" href="../../../tools/index.html"> 
 <span class="menu-text">Tools</span></a>
   </li>  
 </ul>
@@ -140,19 +151,53 @@ gtag('config', 'G-8RPR4XKPEW', { 'anonymize_ip': false});
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Contents</h2>
+   
+  <ul>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#getting-started" id="toc-getting-started" class="nav-link" data-scroll-target="#getting-started">Getting Started</a>
+  <ul>
+  <li><a href="#parallelopedia" id="toc-parallelopedia" class="nav-link" data-scroll-target="#parallelopedia">Parallelopedia</a>
+  <ul>
+  <li><a href="#parallelopedia-web-interface" id="toc-parallelopedia-web-interface" class="nav-link" data-scroll-target="#parallelopedia-web-interface">Parallelopedia Web Interface</a></li>
+  </ul></li>
+  </ul></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/tpn/website/edit/main/blog/posts/2025-xx-xx-pytorch-and-python-free-threading/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/tpn/website/issues/new/choose" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+    </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Tools</h1>
-</div>
+<h1 class="title">DRAFT: PyTorch and Python Free-Threading</h1>
+  <div class="quarto-categories">
+    <div class="quarto-category">PyTorch</div>
+    <div class="quarto-category">Python</div>
+    <div class="quarto-category">Free-Threading</div>
+    <div class="quarto-category">No-GIL</div>
+    <div class="quarto-category">LLM</div>
+    <div class="quarto-category">GPT2</div>
+  </div>
+  </div>
 
+<div>
+  <div class="description">
+    <p>This blog post explores multi-threaded PyTorch parallel inference via an <code>asyncio</code>-based HTTP server and the new <em>No-GIL</em> free-threaded Python, using a (predominantly-AI-written) simple React Bootstrap web interface. We capture what is currently possible, what type of issues are typically encountered, and what the roadmap may look like for the future.</p>
+  </div>
+</div>
 
 
 <div class="quarto-title-meta">
 
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Trent Nelson </p>
+          </div>
+  </div>
     
   
     
@@ -162,21 +207,56 @@ gtag('config', 'G-8RPR4XKPEW', { 'anonymize_ip': false});
 
 </header>
 
-
-<section id="intel-intrinsics-guide" class="level1">
-<h1>Intel Intrinsics Guide</h1>
-<ul>
-<li><a href="../intel-intrinsics-guide">Intel Intrinsics Guide</a>.</li>
-</ul>
+<nav id="TOC-body" role="doc-toc">
+    <h2 id="toc-title">Contents</h2>
+   
+  <ul>
+  <li><a href="#introduction" id="toc-introduction">Introduction</a></li>
+  <li><a href="#getting-started" id="toc-getting-started">Getting Started</a>
+  <ul>
+  <li><a href="#parallelopedia" id="toc-parallelopedia">Parallelopedia</a>
+  <ul>
+  <li><a href="#parallelopedia-web-interface" id="toc-parallelopedia-web-interface">Parallelopedia Web Interface</a></li>
+  </ul></li>
+  </ul></li>
+  </ul>
+</nav>
+<p>This blog post is sponsored in part by <a href="https://meta.com">Meta</a> in collaboration with <a href="https://quansight.com">Quansight</a> and <a href="https://openteams.com">OpenTeams</a>.</p>
+<section id="introduction" class="level1">
+<h1>Introduction</h1>
+<p>Python 3.13, released in October 2024, is the first version of Python to introduce support for a “no-GIL” <em>free-threaded</em> mode, per <a href="https://peps.python.org/pep-0703/">PEP-703 Making the Global Interpreter Lock Optional in CPython</a>, unlocking the ability for multiple Python threads to run simultaneously.</p>
+<p>This allows, for the first time since the language’s inception in December 1989, a single Python process to saturate all CPU cores in parallel with pure Python code (i.e.&nbsp;not farming out to extension modules written in C, C++, or, more recently, Rust).</p>
+<p>A handful of the <a href="https://peps.python.org/pep-0703/#motivation">motivations</a> captured in that PEP opine on how the GIL impedes Python AI workflows, particularly as it relates to GPU programming.</p>
+<p>This blog post explores what can be done with <a href="https://pytorch.org">PyTorch</a> now with the new free-threaded version of Python, specifically focusing on run-time inference on transformer-based generative models. Using a simple React Bootstrap web interface for the front-end, a pure-Python <code>asyncio</code>-based multi-threaded HTTP server is used to facilitate multi-threaded, simultaneous parallel model inference.</p>
 </section>
-<section id="oak-ridge-national-laboratory-cuda-training-series" class="level1">
-<h1>Oak Ridge National Laboratory CUDA Training Series</h1>
-<ul>
-<li><a href="https://www.olcf.ornl.gov/cuda-training-series/">CUDA Training Series</a></li>
-<li><a href="https://github.com/tpn/pdfs/blob/master/CUDA%20Training%20Series%20-%20All%20%282020-2021%29.pdf">PDFs of the slides</a></li>
-</ul>
+<section id="getting-started" class="level1">
+<h1>Getting Started</h1>
+<p>All of this work was done on Linux (Ubuntu 22.04) with Python 3.13t, PyTorch 2.5, and CUDA 12.7. I would have liked to get Windows support working too, but unfortunately, the multi-threaded <code>asyncio</code>-based HTTP server I wrote for Linux doesn’t appear to leverage multiple threads on Windows. (From a cursory inspection, it appears to be an issue either with event loops not getting created properly on non-main-thread threads, or a more insidious issue with how the <code>IocpProactor()</code> code uses I/O completion ports.)</p>
+<section id="parallelopedia" class="level2">
+<h2 class="anchored" data-anchor-id="parallelopedia">Parallelopedia</h2>
+<p>All of the code in this article is available in the <a href="https://github.com/tpn/parallelopedia">Parallelopedia</a> repository on Github.</p>
+<section id="parallelopedia-web-interface" class="level3">
+<h3 class="anchored" data-anchor-id="parallelopedia-web-interface">Parallelopedia Web Interface</h3>
+<p>The React Bootstrap web interface lives in the <a href="https://github.com/tpn/parallelopedia-ui">Parallelopedia-UI</a> repository.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Full disclaimer: I’m not a web developer. I don’t know JavaScript, React, or Bootstrap with any level of proficiency other than what I’ve been able to bootstrap (heh) with in the past few months via LLMs like ChatGPT. In fact, a lot of the Parallelopedia-UI code was written by <a href="https://aider.chat">Aider</a> using OpenAI’s GPT-4o model.</p>
+<p>So, TL;DR, the web interface code probably sucks.</p>
+</div>
+</div>
+<!-- vim:set ts=8 sw=2 sts=2 expandtab textwidth=78 -->
 
 
+</section>
+</section>
 </section>
 
 </main> <!-- /main -->
@@ -744,9 +824,13 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
 });
 </script>
+<script src="https://giscus.app/client.js" data-repo="tpn/website" data-repo-id="MDEwOlJlcG9zaXRvcnkxMjg2ODc3NTQ=" data-category="Blog" data-category-id="" data-mapping="pathname" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="dark" data-lang="en" crossorigin="anonymous" async="">
+</script>
+<input type="hidden" id="giscus-base-theme" value="dark">
+<input type="hidden" id="giscus-alt-theme" value="dark">
 </div> <!-- /content -->
 
 
 
 
-<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions"><ul><li><a href="https://github.com/tpn/website/edit/main/tools/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/tpn/website/issues/new/choose" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/tpn/website/edit/main/blog/posts/2025-xx-xx-pytorch-and-python-free-threading/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/tpn/website/issues/new/choose" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>

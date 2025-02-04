@@ -5,5 +5,11 @@
       "/articles/from-pyparallel-to-python-free-threading/index.html",
       "/articles/is-prefix-of-string-in-table/index.html"
     ]
+  },
+  {
+    "listing": "/blog/index.html",
+    "items": [
+      "/blog/posts/2025-xx-xx-pytorch-and-python-free-threading/index.html"
+    ]
   }
 ]

@@ -1,0 +1,82 @@
+---
+title: "DRAFT: PyTorch and Python Free-Threading"
+categories:
+  - PyTorch
+  - Python
+  - Free-Threading
+  - No-GIL
+  - LLM
+  - GPT2
+author: "Trent Nelson"
+draft: true
+image: "images/pytorch-and-python-free-threading.png"
+description: |
+  This blog post explores multi-threaded PyTorch parallel inference via an
+  `asyncio`-based HTTP server and the new *No-GIL* free-threaded Python,
+  using a (predominantly-AI-written) simple React Bootstrap web interface.
+  We capture what is currently possible, what type of issues are typically
+  encountered, and what the roadmap may look like for the future.
+---
+
+This blog post is sponsored in part by [Meta](https://meta.com) in
+collaboration with [Quansight](https://quansight.com) and
+[OpenTeams](https://openteams.com).
+
+# Introduction
+
+Python 3.13, released in October 2024, is the first version of Python to
+introduce support for a "no-GIL" *free-threaded* mode, per
+[PEP-703 Making the Global Interpreter Lock Optional in CPython](
+https://peps.python.org/pep-0703/), unlocking the ability for multiple Python
+threads to run simultaneously.
+
+This allows, for the first time since the language's inception in December
+1989, a single Python process to saturate all CPU cores in parallel with
+pure Python code (i.e. not farming out to extension modules written in C, C++,
+or, more recently, Rust).
+
+A handful of the [motivations](https://peps.python.org/pep-0703/#motivation)
+captured in that PEP opine on how the GIL impedes Python AI workflows,
+particularly as it relates to GPU programming.
+
+This blog post explores what can be done with [PyTorch](https://pytorch.org)
+now with the new free-threaded version of Python, specifically focusing on
+run-time inference on transformer-based generative models.  Using a simple
+React Bootstrap web interface for the front-end, a pure-Python
+`asyncio`-based multi-threaded HTTP server is used to facilitate
+multi-threaded, simultaneous parallel model inference.
+
+# Getting Started
+
+All of this work was done on Linux (Ubuntu 22.04) with Python 3.13t, PyTorch
+2.5, and CUDA 12.7.  I would have liked to get Windows support working too,
+but unfortunately, the multi-threaded `asyncio`-based HTTP server I wrote
+for Linux doesn't appear to leverage multiple threads on Windows.  (From a
+cursory inspection, it appears to be an issue either with event loops not
+getting created properly on non-main-thread threads, or a more insidious
+issue with how the `IocpProactor()` code uses I/O completion ports.)
+
+## Parallelopedia
+
+All of the code in this article is available in the [Parallelopedia](
+https://github.com/tpn/parallelopedia) repository on Github.
+
+### Parallelopedia Web Interface
+
+The React Bootstrap web interface lives in the [Parallelopedia-UI](
+https://github.com/tpn/parallelopedia-ui) repository.
+
+::: {.callout-note}
+
+Full disclaimer: I'm not a web developer.  I don't know JavaScript, React,
+or Bootstrap with any level of proficiency other than what I've been able
+to bootstrap (heh) with in the past few months via LLMs like ChatGPT.  In
+fact, a lot of the Parallelopedia-UI code was written by [Aider](
+https://aider.chat) using OpenAI's GPT-4o model.
+
+So, TL;DR, the web interface code probably sucks.
+
+:::
+
+
+<!-- vim:set ts=8 sw=2 sts=2 expandtab textwidth=78 -->

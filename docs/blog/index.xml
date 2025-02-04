@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss  xmlns:atom="http://www.w3.org/2005/Atom" 
+      xmlns:media="http://search.yahoo.com/mrss/" 
+      xmlns:content="http://purl.org/rss/1.0/modules/content/" 
+      xmlns:dc="http://purl.org/dc/elements/1.1/" 
+      version="2.0">
+<channel>
+<title>Trent Nelson</title>
+<link>https://trent.me/blog/</link>
+<atom:link href="https://trent.me/blog/index.xml" rel="self" type="application/rss+xml"/>
+<description></description>
+<generator>quarto-1.5.57</generator>
+<lastBuildDate>Tue, 04 Feb 2025 17:58:17 GMT</lastBuildDate>
+<item>
+  <title>DRAFT: PyTorch and Python Free-Threading</title>
+  <dc:creator>Trent Nelson</dc:creator>
+  <link>https://trent.me/blog/posts/2025-xx-xx-pytorch-and-python-free-threading/</link>
+  <description><![CDATA[ 
+
+
+
+
+<p>This blog post is sponsored in part by <a href="https://meta.com">Meta</a> in collaboration with <a href="https://quansight.com">Quansight</a> and <a href="https://openteams.com">OpenTeams</a>.</p>
+<section id="introduction" class="level1">
+<h1>Introduction</h1>
+<p>Python 3.13, released in October 2024, is the first version of Python to introduce support for a “no-GIL” <em>free-threaded</em> mode, per <a href="https://peps.python.org/pep-0703/">PEP-703 Making the Global Interpreter Lock Optional in CPython</a>, unlocking the ability for multiple Python threads to run simultaneously.</p>
+<p>This allows, for the first time since the language’s inception in December 1989, a single Python process to saturate all CPU cores in parallel with pure Python code (i.e.&nbsp;not farming out to extension modules written in C, C++, or, more recently, Rust).</p>
+<p>A handful of the <a href="https://peps.python.org/pep-0703/#motivation">motivations</a> captured in that PEP opine on how the GIL impedes Python AI workflows, particularly as it relates to GPU programming.</p>
+<p>This blog post explores what can be done with <a href="https://pytorch.org">PyTorch</a> now with the new free-threaded version of Python, specifically focusing on run-time inference on transformer-based generative models. Using a simple React Bootstrap web interface for the front-end, a pure-Python <code>asyncio</code>-based multi-threaded HTTP server is used to facilitate multi-threaded, simultaneous parallel model inference.</p>
+</section>
+<section id="getting-started" class="level1">
+<h1>Getting Started</h1>
+<p>All of this work was done on Linux (Ubuntu 22.04) with Python 3.13t, PyTorch 2.5, and CUDA 12.7. I would have liked to get Windows support working too, but unfortunately, the multi-threaded <code>asyncio</code>-based HTTP server I wrote for Linux doesn’t appear to leverage multiple threads on Windows. (From a cursory inspection, it appears to be an issue either with event loops not getting created properly on non-main-thread threads, or a more insidious issue with how the <code>IocpProactor()</code> code uses I/O completion ports.)</p>
+<section id="parallelopedia" class="level2">
+<h2 class="anchored" data-anchor-id="parallelopedia">Parallelopedia</h2>
+<p>All of the code in this article is available in the <a href="https://github.com/tpn/parallelopedia">Parallelopedia</a> repository on Github.</p>
+<section id="parallelopedia-web-interface" class="level3">
+<h3 class="anchored" data-anchor-id="parallelopedia-web-interface">Parallelopedia Web Interface</h3>
+<p>The React Bootstrap web interface lives in the <a href="https://github.com/tpn/parallelopedia-ui">Parallelopedia-UI</a> repository.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Full disclaimer: I’m not a web developer. I don’t know JavaScript, React, or Bootstrap with any level of proficiency other than what I’ve been able to bootstrap (heh) with in the past few months via LLMs like ChatGPT. In fact, a lot of the Parallelopedia-UI code was written by <a href="https://aider.chat">Aider</a> using OpenAI’s GPT-4o model.</p>
+<p>So, TL;DR, the web interface code probably sucks.</p>
+</div>
+</div>
+<!-- vim:set ts=8 sw=2 sts=2 expandtab textwidth=78 -->
+
+
+</section>
+</section>
+</section>
+
+ ]]></description>
+  <category>PyTorch</category>
+  <category>Python</category>
+  <category>Free-Threading</category>
+  <category>No-GIL</category>
+  <category>LLM</category>
+  <category>GPT2</category>
+  <guid>https://trent.me/blog/posts/2025-xx-xx-pytorch-and-python-free-threading/</guid>
+  <pubDate>Tue, 04 Feb 2025 17:58:17 GMT</pubDate>
+  <media:content url="https://trent.me/blog/posts/2025-xx-xx-pytorch-and-python-free-threading/images/pytorch-and-python-free-threading.png" medium="image" type="image/png" height="144" width="144"/>
+</item>
+</channel>
+</rss>

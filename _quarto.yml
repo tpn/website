@@ -41,6 +41,8 @@ website:
     left:
       - text: Articles
         href: articles/index.qmd
+      - text: Blog
+        href: blog/index.qmd
       - text: Projects & Repos
         href: projects/index.qmd
       - text: Tools
