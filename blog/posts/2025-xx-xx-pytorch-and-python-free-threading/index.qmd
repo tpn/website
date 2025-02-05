@@ -16,6 +16,11 @@ description: |
   using a (predominantly-AI-written) simple React Bootstrap web interface.
   We capture what is currently possible, what type of issues are typically
   encountered, and what the roadmap may look like for the future.
+jupyter:
+  kernelspec:
+    display_name: "Python 3.13t (Free-Threaded)"
+    language: python
+    name: py313t
 ---
 
 This blog post is sponsored in part by [Meta](https://meta.com) in
@@ -493,11 +498,13 @@ simultaneous parallel inference on a single model in a single Python process
 is novel territory: it hasn't been possible prior to now, because of the
 Python GIL.
 
+::: {.hidden}
 Additionally, parallel multi-threaded inference is particularly interesting
 because you should arguably be able to have an HTTP server servicing *"chat"*
 requests (i.e. like an OpenAI compatible REST API) in parallel with only one
 GPU.  (Although no reason multiple GPUs can't also be leveraged, as we'll
 find out.)
+:::
 
 ## A Simple PyTorch GPT-2 Implementation
 
@@ -520,14 +527,29 @@ environment and launch `jupyter lab`.  If you correctly registered your
 creating a new notebook to use the `py313t` Python kernel, which will be the
 free-threaded version.
 
-I've conscientiously formatted the code to be viewable even on
-mobile phone devices without needing to do any horizontal
-scrolling, which requires quite liberal vertical layout liberties.
+The code below roughly corresponds to my first version of the code in the
+commit [3ed4fe6: Add gpt2.py](
+https://github.com/tpn/parallelopedia/blob/3ed4fe60a767a12b31fca183fed00fef43c65827/src/parallelopedia/gpt2.py),
+with some formatting and style tweaks to ensure the code is viewable on mobile
+devices without requiring horizontal scrolling.
 
-```python
+There are a number of deficiencies in this code, which we'll address in
+subsequent versions.  For now, it's a good starting point to get a feel for
+how we can use PyTorch to load a GPT-2 model checkpoint, tokenize some input
+text, and generate some output text.
+
+
+```{.python .numberLines}
 {{< include _gpt2_v1.py >}}
 ```
 
-
+```{.python .numberLines}
+from _gpt2_v1 import *
+# Load the model checkpoint.
+model = GPT.from_local_pretrained(MODEL_CHECKPOINT)
+model.to('cuda')
+prompt = "Albert Einstein's Theory of Relativity stated that"
+print(model.generate(prompt))
+```
 
 <!-- vim:set ts=8 sw=2 sts=2 expandtab textwidth=78 -->
