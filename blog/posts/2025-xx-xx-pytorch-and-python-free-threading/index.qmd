@@ -21,6 +21,11 @@ jupyter:
     display_name: "Python 3.13t (Free-Threaded)"
     language: python
     name: py313t
+execute:
+  echo: true
+  eval: true
+  output: true
+  error: true
 ---
 
 This blog post is sponsored in part by [Meta](https://meta.com) in
@@ -96,7 +101,7 @@ via pip, as follows:
 
 ```bash
 conda create -n py313t python=3.13 python-freethreading \
-    nodejs pip tqdm flake8 rust \
+    nodejs pip tqdm flake8 rust requests \
         -c conda-forge
 conda activate py313t
 pip install numpy setuptools_rust regex requests datrie
@@ -138,7 +143,7 @@ cd tiktoken
 
 Edit the `Cargo.toml` file and change the `pyo3` dependency version to at
 least 0.23.3^[I used 0.23.3, as that was the latest version available at the
-time, however, 0.23.4 has since been released, so you could try that too]:
+time, however, 0.23.4 has since been released, so you could try that too.]:
 
 ```diff
 diff --git a/Cargo.toml b/Cargo.toml
@@ -295,7 +300,7 @@ install Cython and then build `datrie` from git.
 
 ```bash
 conda create -n py313 python=3.13 \
-    nodejs pip tqdm flake8 jupyterlab \
+    nodejs pip tqdm flake8 jupyterlab requests \
         -c conda-forge
 conda activate py313
 pip install numpy datrie tiktoken
@@ -317,13 +322,15 @@ git clone https://github.com/tpn/parallelopedia
 ```
 
 The code and command examples in this post will assume you've added the
-`src` directory to your `PYTHONPATH`, and the `bin` directory to your `PATH`:
+`src` directory to your `PYTHONPATH`, the `bin` directory to your `PATH`,
+and set the `PARALLELOPEDIA_ROOT` environment variable to the root of the
+repository.  You can do this as follows:
 
 ```bash
 cd parallelopedia
 export PYTHONPATH=$(pwd)/src:$PYTHONPATH
 export PATH=$(pwd)/bin:$PATH
-
+export PARALLELOPEDIA_ROOT=$(pwd)
 ```
 
 You can perform a quick sanity check that things are working as follows:
@@ -521,6 +528,7 @@ of this code would have made any sense to me a month or two ago---but I can
 promise you that if you devote sufficient time to watching and understanding
 the entire series, you'll grok every single line!
 
+Th
 You can follow along in a Jupyter Lab notebook if you activate the `py313`
 environment and launch `jupyter lab`.  If you correctly registered your
 `py313t` kernel per the instructions earlier, you should see an option when
@@ -538,18 +546,39 @@ subsequent versions.  For now, it's a good starting point to get a feel for
 how we can use PyTorch to load a GPT-2 model checkpoint, tokenize some input
 text, and generate some output text.
 
+{{< embed gpt2_v1.ipynb#gpt2-v1-setup >}}
 
-```{.python .numberLines}
-{{< include _gpt2_v1.py >}}
-```
+We can load the model as follows:
 
-```{.python .numberLines}
-from _gpt2_v1 import *
-# Load the model checkpoint.
-model = GPT.from_local_pretrained(MODEL_CHECKPOINT)
-model.to('cuda')
-prompt = "Albert Einstein's Theory of Relativity stated that"
-print(model.generate(prompt))
-```
+{{< embed gpt2_v1.ipynb#gpt2-v1-load-model >}}
+
+And generate some text as follows:
+
+{{< embed gpt2_v1.ipynb#gpt2-v1-generate-1 >}}
+
+Now, it's worth noting at this point that a 124 million parameter GPT2 model,
+trained from scratch for 19,072 iterations on the `edu_fineweb10b` data set,
+with a final loss score of 3.052, is, quite frankly, hot garbage :-)
+
+Do not be expecting output from this model to rival anything close to what
+you'd expect from a contemporary LLM.  In fact, we can't even rely on it to
+even remotely generate content that is factual in nature.  It spews hot
+probabilisitic garbage that mostly conforms to the structure of the English
+language.
+
+::: {.callout-note collapse="true" appearance="simple" icon="false" title="Hot Garbage Example"}
+
+Provide a slightly different seed to the prompt above and you'll precisely
+see some hot garbage generation in action.  In the following example, with
+an identical prompt as the one prior, it just streams nonsense until hitting
+its max token limit, nary a stop token in sight.
+
+{{< embed gpt2_v1.ipynb#gpt2-v1-generate-2 >}}
+
+:::
+
+But at least it's *our* hot garbage that we trained from nothing, and it's
+all we need to start playing around with generating text in parallel.
+
 
 <!-- vim:set ts=8 sw=2 sts=2 expandtab textwidth=78 -->

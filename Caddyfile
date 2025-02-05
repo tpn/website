@@ -1,0 +1,10 @@
+{
+    admin :2222
+    auto_https off
+}
+
+:9999 {
+    root docs content
+    file_server browse
+    tls /home/trent/.certs/trent.me-server-bundle.crt /home/trent/.certs/trent.me-server.key.decrypted
+}

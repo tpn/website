@@ -1,5 +1,0 @@
-format:
-  html:
-    #highlight-style: ../../tpn.theme
-    #highlight-style: highlight.theme
-    anchor-sections: true

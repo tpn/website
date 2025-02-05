@@ -1,5 +1,4 @@
 format:
   html:
-    highlight-style: tpn.theme
     grid:
       margin-width: 380px

@@ -2,6 +2,7 @@
 # Imports
 # ===================================================================
 import dataclasses
+from dataclasses import dataclass
 import logging
 
 import tiktoken
@@ -358,7 +359,7 @@ class GPT(nn.Module):
                 map_location=map_location,
             )
 
-        config = checkpoint["config"]
+        config = GPTConfig(**checkpoint["config"])
         model = cls(config)
         model.load_state_dict(checkpoint["model"])
         model.eval()

@@ -60,11 +60,12 @@ website:
 
 format:
   html:
-    #link-external-icon: true
+    anchor-sections: true
     syntax-definitions:
       - asm.xml
       - c.xml
-    highlight-style: tpn.theme
+      - python.xml
+    highlight-style: tpn.theme.json
     #fig-cap-location: margin
     #reference-location: margin
     #citation-location: margin
