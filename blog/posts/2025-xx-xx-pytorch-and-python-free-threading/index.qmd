@@ -253,7 +253,7 @@ https://linux.thai.net/~thep/datrie/datrie.html) C library.  The Python
 other components rely on it, so it's handy to get installed now, if possible.
 
 It relies upon Cython, and thus, for now, you need to install a free-threaded
-compatible version of Python first, as follows:
+compatible version of Cython first, as follows:
 
 ```bash
 conda activate py313t
@@ -324,7 +324,7 @@ export PATH=$(pwd)/bin:$PATH
 You can perform a quick sanity check that things are working as follows:
 
 ```bash
-python -Xgil=0 -m parallelopedia.http.server --help
+% python -Xgil=0 -m parallelopedia.http.server --help
 usage: server.py [-h] [--ip IP] [--port PORT] [--debug] [--log-level {DEBUG,INFO,WARNING,ERROR,CRITICAL}] [--threads THREADS] [--protocol-class PROTOCOL_CLASS] [--app-classes APP_CLASSES [APP_CLASSES ...]] [--listen-backlog LISTEN_BACKLOG]
 
 Run the HTTP server.
@@ -503,11 +503,16 @@ find out.)
 
 Let's introduce the first version of the Python code we're going to use.
 Again, all of this has been made possible thanks to Andrej Karpathy's work
-with his YouTube series and [build-nanogpt](
+with his [YouTube series](
+https://www.youtube.com/watch?v=l8pRSuU81PU&list=PLAqhIrjkxbuWI23v9cThsA9GvCAUhRvKZ&index=10&t=1286s&pp=iAQB)
+and [build-nanogpt](
 https://github.com/karpathy/build-nanogpt) repo, so any and all code you see
 in this post can typically be traced back to something equivalent that appears
 in [train_gpt2.py](
-https://github.com/karpathy/build-nanogpt/blob/master/train_gpt2.py).
+https://github.com/karpathy/build-nanogpt/blob/master/train_gpt2.py).  None
+of this code would have made any sense to me a month or two ago---but I can
+promise you that if you devote sufficient time to watching and understanding
+the entire series, you'll grok every single line!
 
 You can follow along in a Jupyter Lab notebook if you activate the `py313`
 environment and launch `jupyter lab`.  If you correctly registered your
@@ -517,7 +522,7 @@ free-threaded version.
 
 I've conscientiously formatted the code to be viewable even on
 mobile phone devices without needing to do any horizontal
-scrolling, because that drives me nuts.
+scrolling, which requires quite liberal vertical layout liberties.
 
 ```python
 {{< include _gpt2_v1.py >}}

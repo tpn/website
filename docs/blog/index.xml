@@ -10,7 +10,7 @@
 <atom:link href="https://trent.me/blog/index.xml" rel="self" type="application/rss+xml"/>
 <description></description>
 <generator>quarto-1.5.57</generator>
-<lastBuildDate>Wed, 05 Feb 2025 04:07:11 GMT</lastBuildDate>
+<lastBuildDate>Wed, 05 Feb 2025 04:23:47 GMT</lastBuildDate>
 <item>
   <title>DRAFT: PyTorch and Python Free-Threading</title>
   <dc:creator>Trent Nelson</dc:creator>
@@ -5928,7 +5928,7 @@ font-style: inherit;">@@ -12,4 +13,4 @@</span></span>
 <section id="datrie-and-cython" class="level4">
 <h4 class="anchored" data-anchor-id="datrie-and-cython">Datrie and Cython</h4>
 <p><a href="https://github.com/pytries/datrie">datrie</a> is a Python library that provides a <em>trie</em> (or <em>digital search tree</em>) data structure by way of the <a href="https://linux.thai.net/~thep/datrie/datrie.html">libdatrie</a> C library. The Python <code>datrie</code> library isn’t strictly necessary to run <code>parallelopedia.gpt2</code>, but other components rely on it, so it’s handy to get installed now, if possible.</p>
-<p>It relies upon Cython, and thus, for now, you need to install a free-threaded compatible version of Python first, as follows:</p>
+<p>It relies upon Cython, and thus, for now, you need to install a free-threaded compatible version of Cython first, as follows:</p>
 <div class="sourceCode" id="cb13" style="background: #f1f3f5;"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb13-1"><span class="ex" style="color: null;
 background-color: null;
 font-style: inherit;">conda</span> activate py313t</span>
@@ -6072,7 +6072,7 @@ font-style: inherit;">$PATH</span></span></code></pre></div>
 <p>You can perform a quick sanity check that things are working as follows:</p>
 <div class="sourceCode" id="cb19" style="background: #f1f3f5;"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb19-1"><span class="ex" style="color: null;
 background-color: null;
-font-style: inherit;">python</span> <span class="at" style="color: #657422;
+font-style: inherit;">%</span> python <span class="at" style="color: #657422;
 background-color: null;
 font-style: inherit;">-Xgil</span><span class="op" style="color: #5E5E5E;
 background-color: null;
@@ -6296,9 +6296,9 @@ Note
 <p>Additionally, parallel multi-threaded inference is particularly interesting because you should arguably be able to have an HTTP server servicing <em>“chat”</em> requests (i.e.&nbsp;like an OpenAI compatible REST API) in parallel with only one GPU. (Although no reason multiple GPUs can’t also be leveraged, as we’ll find out.)</p>
 <section id="a-simple-pytorch-gpt-2-implementation" class="level2">
 <h2 class="anchored" data-anchor-id="a-simple-pytorch-gpt-2-implementation">A Simple PyTorch GPT-2 Implementation</h2>
-<p>Let’s introduce the first version of the Python code we’re going to use. Again, all of this has been made possible thanks to Andrej Karpathy’s work with his YouTube series and <a href="https://github.com/karpathy/build-nanogpt">build-nanogpt</a> repo, so any and all code you see in this post can typically be traced back to something equivalent that appears in <a href="https://github.com/karpathy/build-nanogpt/blob/master/train_gpt2.py">train_gpt2.py</a>.</p>
+<p>Let’s introduce the first version of the Python code we’re going to use. Again, all of this has been made possible thanks to Andrej Karpathy’s work with his <a href="https://www.youtube.com/watch?v=l8pRSuU81PU&amp;list=PLAqhIrjkxbuWI23v9cThsA9GvCAUhRvKZ&amp;index=10&amp;t=1286s&amp;pp=iAQB">YouTube series</a> and <a href="https://github.com/karpathy/build-nanogpt">build-nanogpt</a> repo, so any and all code you see in this post can typically be traced back to something equivalent that appears in <a href="https://github.com/karpathy/build-nanogpt/blob/master/train_gpt2.py">train_gpt2.py</a>. None of this code would have made any sense to me a month or two ago—but I can promise you that if you devote sufficient time to watching and understanding the entire series, you’ll grok every single line!</p>
 <p>You can follow along in a Jupyter Lab notebook if you activate the <code>py313</code> environment and launch <code>jupyter lab</code>. If you correctly registered your <code>py313t</code> kernel per the instructions earlier, you should see an option when creating a new notebook to use the <code>py313t</code> Python kernel, which will be the free-threaded version.</p>
-<p>I’ve conscientiously formatted the code to be viewable even on mobile phone devices without needing to do any horizontal scrolling, because that drives me nuts.</p>
+<p>I’ve conscientiously formatted the code to be viewable even on mobile phone devices without needing to do any horizontal scrolling, which requires quite liberal vertical layout liberties.</p>
 <div class="sourceCode" id="cb23" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;"># ===================================================================</span></span>
@@ -7103,7 +7103,7 @@ font-style: inherit;">self</span>.config),</span>
   <category>LLM</category>
   <category>GPT2</category>
   <guid>https://trent.me/blog/posts/2025-xx-xx-pytorch-and-python-free-threading/</guid>
-  <pubDate>Wed, 05 Feb 2025 04:07:11 GMT</pubDate>
+  <pubDate>Wed, 05 Feb 2025 04:23:47 GMT</pubDate>
   <media:content url="https://trent.me/blog/posts/2025-xx-xx-pytorch-and-python-free-threading/images/pytorch-and-python-free-threading.png" medium="image" type="image/png" height="144" width="144"/>
 </item>
 </channel>
