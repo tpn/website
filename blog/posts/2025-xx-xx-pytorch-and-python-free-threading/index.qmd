@@ -49,19 +49,304 @@ multi-threaded, simultaneous parallel model inference.
 # Getting Started
 
 All of this work was done on Linux (Ubuntu 22.04) with Python 3.13t, PyTorch
-2.5, and CUDA 12.7.  I would have liked to get Windows support working too,
+2.6, and CUDA 12.6.  I would have liked to get Windows support working too,
 but unfortunately, the multi-threaded `asyncio`-based HTTP server I wrote
 for Linux doesn't appear to leverage multiple threads on Windows.  (From a
 cursory inspection, it appears to be an issue either with event loops not
 getting created properly on non-main-thread threads, or a more insidious
 issue with how the `IocpProactor()` code uses I/O completion ports.)
 
+## Environments
+
+In general, I endeavored to minimize the number of external library
+dependencies as best I could.  The primary reason for this is that a lot of
+the modern Python AI stack isn't yet compatible with Python free-threaded
+builds, unfortunately.  This is improving at a rapid pace, though.
+
+Anything written in Rust is particularly problematic, as
+[PyO3](https://github.com/PyO3/pyo3) (Rust bindings for Python) only recently
+supported free-threaded Python 3.13+ as of 0.23.3, which was released early
+December, 2025, and a lot of projects haven't yet updated to it (like TikToken
+and Pydantic).  Other common projects like `lxml` aren't compatible yet either,
+which means you can't simply do `pip install llama-stack` and start playing
+around.  Likewise for `transformers` and other parts of the HuggingFace stack.
+
+I will reference two `conda` environments in this post: a Python 3.13
+free-threaded one named `py313t`, and a normal, not-free-threaded Python
+3.13 one named `py313`.
+
+The primary motivation behind the second `py313` environment is it allows
+us to install Jupyter Lab, which, at the time of writing, still isn't
+compatible with a Python free-threaded installation.  However, we can still
+register a free-threaded Python kernel with Jupyter, which is all we really
+care about when running the code in this post in a free-threaded environment.
+
+Details on creating the `conda` environments follow.
+
+### Free-Threaded 3.13 Env (py313t)
+
+I use `conda` to create the Python 3.13 free-threaded environment plus
+initial dependencies, activate it, then install the remaining dependencies
+via pip, as follows:
+
+```bash
+conda create -n py313t python=3.13 python-freethreading \
+    nodejs pip tqdm flake8 rust \
+        -c conda-forge
+conda activate py313t
+pip install numpy setuptools_rust regex requests datrie
+```
+
+`nodejs` is required for the UI component we'll introduce later.  `regex`,
+`rust`, and `setuptools_rust` are needed for `tiktoken`, described next.
+Finally, `numpy` is for `torch`, which we install later, too.
+
+#### TikToken
+
+[TikToken](https://github.com/openai/tiktoken) is a fast BPE tokenizer from
+OpenAI that is used extensively in the emerging Python LLM landscape.  At the
+time of writing, the latest TikToken release was [0.8.0](
+https://github.com/openai/tiktoken/releases/tag/0.8.0), which was built
+against PyO3 0.22.2, which isn't compatible with free-threaded Python.
+
+Thankfully, it was trivial to get a local installation of `tiktoken` working
+by cloning the Github repo, bumping the PyO3 version in `Cargo.toml`, then
+rebuilding and installing.
+
+::: {.callout-note}
+
+This is a perfect example of the type of fiddling around I wanted to avoid
+by not depending on any external packages other than the bare necessities,
+such as PyTorch.  I made an exception for `tiktoken` because a) it's arguably
+an equally-important part of the LLM stack as `torch`, and b) it thankfully
+wasn't *too* difficult getting a compatible version of `tiktoken` installed
+locally.
+
+:::
+
+Clone the tiktoken git repo and cd into it as follows:
+
+```bash
+git clone https://github.com/openai/tiktoken
+cd tiktoken
+```
+
+Edit the `Cargo.toml` file and change the `pyo3` dependency version to at
+least 0.23.3^[I used 0.23.3, as that was the latest version available at the
+time, however, 0.23.4 has since been released, so you could try that too]:
+
+```diff
+diff --git a/Cargo.toml b/Cargo.toml
+index 2eed0c1..6be5f63 100644
+--- a/Cargo.toml
++++ b/Cargo.toml
+@@ -9,7 +9,7 @@ name = "_tiktoken"
+ crate-type = ["cdylib"]
+ 
+ [dependencies]
+-pyo3 = { version = "0.22.2", default-features = false, features = ["extension-module", "macros"] }
++pyo3 = { version = "0.23.3", default-features = false, features = ["extension-module", "macros"] }
+ 
+ # tiktoken dependencies
+ fancy-regex = "0.13.0"
+```
+
+With this patch applied, and the `py313t` conda environment active (with
+`rust` and `setuptools_rust` installed):
+
+```bash
+python setup.py build
+python setup.py install
+```
+
+::: {.callout-note collapse="true" appearance="simple" icon="false" title="Show Build & Install Output"}
+
+{{< include tiktoken-setup.py-build-and-install-output.md >}}
+
+:::
+
+After this, you should be able to import the `tiktoken` module in Python:
+
+```bash
+% cd ..
+% python -Xgil=0
+Python 3.13.1 experimental free-threading build | packaged by conda-forge | (main, Jan 13 2025, 09:59:40) [GCC 13.3.0] on linux
+Type "help", "copyright", "credits" or "license" for more information.
+>>> import tiktoken
+>>>
+```
+
+#### Torch
+
+Install PyTorch 2.6 via `pip` with the conda `py313t` environment active:
+
+```bash
+pip install torch==2.6 --index-url https://download.pytorch.org/whl/cu126
+```
+
+If you have trouble installing PyTorch, consult their [Getting Started](
+https://pytorch.org/get-started/locally/) guide.
+
+You can verify torch installed correctly as follows:
+
+```bash
+% python -Xgil=0
+Python 3.13.1 experimental free-threading build | packaged by conda-forge | (main, Jan 13 2025, 09:59:40) [GCC 13.3.0] on linux
+Type "help", "copyright", "credits" or "license" for more information.
+>>> import torch
+>>> torch.cuda.is_available()
+True
+```
+
+#### IPython Kernel
+
+Installing IPython Kernel allows us to use our free-threaded Python
+installation via the Jupyter Lab instance we install in the `py313`
+environment.
+
+```bash
+conda activate py313t
+pip install ipykernel
+```
+
+Once `ipykernel` is installed, run the following:
+
+```bash
+% python3.13t -m ipykernel --install --name py313t --user
+Installed kernelspec py313t in /home/trent/.local/share/jupyter/kernels/py313t
+```
+
+This will install a kernel configuration in
+`~/.local/jupyter/share/kernels/py313t`, which we then need to tweak by adding
+the `-Xgil=0` startup flag:
+
+```bash
+% cd ~/.local/jupyter/share/kernels/py313t
+% cp kernel.json kernel.json.orig
+% vi kernel.json
+# Edit kernel.json to make it look like the diff below.
+```
+
+```diff
+--- kernel.json.orig    2025-02-04 15:02:21.814112004 -0800
++++ kernel.json 2025-02-04 15:02:36.553806199 -0800
+@@ -1,6 +1,7 @@
+ {
+  "argv": [
+   "/home/trent/mambaforge/envs/py313t/bin/python3.13t",
++  "-Xgil=0",
+   "-Xfrozen_modules=off",
+   "-m",
+   "ipykernel_launcher",
+@@ -12,4 +13,4 @@
+  "metadata": {
+   "debugger": true
+  }
+```
+
+#### Datrie and Cython
+
+[datrie](https://github.com/pytries/datrie) is a Python library that provides
+a *trie* (or *digital search tree*) data structure by way of the [libdatrie](
+https://linux.thai.net/~thep/datrie/datrie.html) C library.  The Python
+`datrie` library isn't strictly necessary to run `parallelopedia.gpt2`, but
+other components rely on it, so it's handy to get installed now, if possible.
+
+It relies upon Cython, and thus, for now, you need to install a free-threaded
+compatible version of Python first, as follows:
+
+```bash
+conda activate py313t
+pip install git+https://github.com/cython/cython
+```
+Then, clone the `datrie` repo and install as follows:
+
+```bash
+conda activate py313t
+git clone https://github.com/pytries/datrie --recursive
+cd datrie
+python setup.py build
+python setup.py install
+```
+
+If everything goes well, you should see something like this when you launch
+Python and import `datrie`:
+
+```bash
+% python
+Python 3.13.1 experimental free-threading build | packaged by conda-forge | (main, Jan 13 2025, 09:59:40) [GCC 13.3.0] on linux
+Type "help", "copyright", "credits" or "license" for more information.
+>>> import datrie
+>>>
+```
+
+### Normal 3.13 Env (py313)
+
+The second `py313` environment is almost identical to `py313t`, except it is
+not a `python-freethreading` installation, and, additionally, we install
+Jupyter Lab.  We can install `tiktoken` directly via `pip`, so we don't need
+the supporting Rust cruft.  Likewise for `datrie`, we don't need to first
+install Cython and then build `datrie` from git.
+
+```bash
+conda create -n py313 python=3.13 \
+    nodejs pip tqdm flake8 jupyterlab \
+        -c conda-forge
+conda activate py313
+pip install numpy datrie tiktoken
+pip install torch==2.6 --index-url https://download.pytorch.org/whl/cu126
+```
+
 ## Parallelopedia
 
 All of the code in this article is available in the [Parallelopedia](
-https://github.com/tpn/parallelopedia) repository on Github.
+https://github.com/tpn/parallelopedia) repository on Github.  The code we'll
+be focusing on in this post lives in the [parallelopedia.gpt2](
+https://github.com/tpn/parallelopedia/blob/main/src/parallelopedia/gpt2.py)
+module.
 
-### Parallelopedia Web Interface
+Clone the repository as follows:
+
+```bash
+git clone https://github.com/tpn/parallelopedia
+```
+
+The code and command examples in this post will assume you've added the
+`src` directory to your `PYTHONPATH`, and the `bin` directory to your `PATH`:
+
+```bash
+cd parallelopedia
+export PYTHONPATH=$(pwd)/src:$PYTHONPATH
+export PATH=$(pwd)/bin:$PATH
+
+```
+
+You can perform a quick sanity check that things are working as follows:
+
+```bash
+python -Xgil=0 -m parallelopedia.http.server --help
+usage: server.py [-h] [--ip IP] [--port PORT] [--debug] [--log-level {DEBUG,INFO,WARNING,ERROR,CRITICAL}] [--threads THREADS] [--protocol-class PROTOCOL_CLASS] [--app-classes APP_CLASSES [APP_CLASSES ...]] [--listen-backlog LISTEN_BACKLOG]
+
+Run the HTTP server.
+
+options:
+  -h, --help            show this help message and exit
+  --ip IP               IP address to bind the server to.
+  --port PORT           Port number to bind the server to.
+  --debug               Enable debug mode for asyncio.
+  --log-level {DEBUG,INFO,WARNING,ERROR,CRITICAL}
+                        Set the logging level.
+  --threads THREADS     Number of threads to use.
+  --protocol-class PROTOCOL_CLASS
+                        The protocol class to use for the server.
+  --app-classes APP_CLASSES [APP_CLASSES ...]
+                        Space-separated list of HTTP application classes.
+  --listen-backlog LISTEN_BACKLOG
+                        The listen backlog for the server.
+
+```
+
+## Parallelopedia Web Interface
 
 The React Bootstrap web interface lives in the [Parallelopedia-UI](
 https://github.com/tpn/parallelopedia-ui) repository.
@@ -69,14 +354,175 @@ https://github.com/tpn/parallelopedia-ui) repository.
 ::: {.callout-note}
 
 Full disclaimer: I'm not a web developer.  I don't know JavaScript, React,
-or Bootstrap with any level of proficiency other than what I've been able
-to bootstrap (heh) with in the past few months via LLMs like ChatGPT.  In
-fact, a lot of the Parallelopedia-UI code was written by [Aider](
-https://aider.chat) using OpenAI's GPT-4o model.
+or Bootstrap, or anything else in the modern web stack.  So, like any
+modern developer in 2025, when faced with needing to whip up something in an
+area I am not proficient, I farm it all out to AI---either ChatGPT, local
+LLMs via [LM Studio](https://lmstudio.ai/), or, more recently, [Aider](
+https://aider.chat).
 
-So, TL;DR, the web interface code probably sucks.
+TL;DR: the web interface code probably sucks.
 
 :::
+
+Clone the repository as follows:
+
+```bash
+git clone https://github.com/tpn/parallelopedia-ui
+```
+
+Both the `py313t` and `py313` environments included `nodejs`, so with either
+of them active, you should be able to change into that directory and run
+`npm run start` to start up the web interface:
+
+```bash
+conda activate py313
+cd parallelopedia-ui
+npm run start
+```
+
+That should launch a browser automatically to `http://localhost:3000/`, which
+should have a `GPT2` tab that, when selected, looks something like this:
+
+::: {.lightbox .theme-light}
+![Parallelopedia UI Example](images/parallelopedia-ui-gpt2-light.png)
+:::
+
+::: {.lightbox .theme-dark}
+![Parallelopedia UI Example](images/parallelopedia-ui-gpt2-dark.png)
+:::
+
+# Learning about LLMs
+
+I started at [OpenTeams](https://openteams.com) around the middle of November,
+2024 (last year), and joined the PyTorch team.  At the time I honestly knew
+nothing about PyTorch.  Nor deep neural networks.  Nor LLMs---other than
+knowing I thoroughly enjoyed using them, having been an avid ChatGPT user
+for a while now.
+
+Thanks to [Andrej Karpathy](https://karpathy.ai/)'s phenomenal YouTube series
+on deep neural networks and LLMs titled [Neural Networks: From Zero to Hero](
+https://www.youtube.com/playlist?list=PLAqhIrjkxbuWI23v9cThsA9GvCAUhRvKZ),
+featuring 19 hours, 21 minutes and two seconds of content across ten videos,
+over the course of about 3-4 weeks, I went from zero to... *hero* is too
+strong of a word---I'd say I at least made it to *not-completely-clueless*
+level with regards to my understandings of how LLMs work.  I was also soaking
+up as much PyTorch exposure as I could throughout this period, which is made
+easier given Andrej leverages PyTorch in later videos.
+
+The content is simply fantastic.  Andrej's is a great teacher, and he does a
+wonderful job of laying the foundation of modern neural networks, particularly
+with regard to the *bread-and-butter* concepts like auto-differentiation and
+back-propagation that fuel today's LLM AI models.
+
+None of the work presented in this post would have been possible had I not
+invested the time in Andrej's series.  If you're reading this Andrej, thanks,
+and keep up the brilliant work!
+
+## Training GPT-2 (124M) Locally
+
+Equipped with my new knowledge about LLMs, PyTorch, and, thanks to Andrej's
+final video in the series titled [Let's reproduce GPT-2 (124M)](
+https://www.youtube.com/watch?v=l8pRSuU81PU&list=PLAqhIrjkxbuWI23v9cThsA9GvCAUhRvKZ&index=10&t=1286s&pp=iAQB)
+and the accompanying [build-nanogpt](
+https://github.com/karpathy/build-nanogpt) Github repo, I was able to train
+a local GPT-2 model via PyTorch, from scratch, using the [edu_fineweb10B](
+https://huggingface.co/rhysjones/gpt2-124M-edu-fineweb-10B) dataset.
+
+I only had to make one change in order to run locally:
+[Use 8 for micro batch size](https://github.com/tpn/build-nanogpt/commit/0069c4a35d1a362c1fd50f9f5bce00a170e15904).
+With that change in place, I was able to train GPT-2 from scratch as follows:
+
+```bash
+conda activate py313
+git clone gh:tpn/build-nanogpt
+cd build-nanogpt
+# Download the fineweb dataset.
+python fineweb.py
+# Train!
+torchrun --standalone --nproc_per_node=4 train_gpt2.py
+```
+
+This was run on an NVIDIA DGX workstation from 2017, which has an Intel
+Xeon(R) CPU E5-2698 v4 @ 2.20GHz (20 cores, 40 threads), and four Tesla
+V100-DGXS-32GB GPUs.
+
+Training in parallel across all four GPUs yielded around 36,000 tokens/sec,
+with an average time of about 14.5 seconds per loop iteration.  Training
+took about 3 days and 5 hours for 19,072 steps.  All four GPUs were pegged
+close to their 300W power limit for those three days.
+
+::: {.callout-note}
+
+Amusingly, well after the fact, I decided to see what kind of training
+performance I'd get on my Windows 11 gaming box, which has an AMD Ryzen 9
+7950X3D (16 cores, 32 threads) and NVIDIA RTX 4090.  Training via
+`python train_gpt2.py` (`torchrun` wasn't needed as I wasn't using multiple
+GPUs) yielded about 45,000 tokens/sec, which is a nice bump, but what was most
+impressive was the reduction to the loop iteration duration, which averaged
+out to about 180ms.
+
+So, I could have completed the same training process in about an hour or so,
+at a vastly reduced impact on my electricity bill that month :-)
+
+:::
+
+Once training completes, a `log/model_19072.pt` file is produced, which is
+the checkpoint of the model at that final step, obtained via a call to
+`torch.save()`.  The model has 124M parameters---which is tiny by modern
+standards---and is just under 500MB on disk.
+
+You can download that very model I trained via the HuggingFace dataset I set
+up here: [model_19072.pt](
+https://huggingface.co/datasets/trentnelson/parallelopedia-data-gpt2/blob/main/model_19072.pt).
+Once downloaded, place the file in `~/src/parallelopedia/data` (assuming you
+cloned the repo to `~/src/parallelopedia`; change as necessary), and that will
+be all that's required for the next steps.
+
+# Parallel PyTorch Inference with Free-Threaded Python
+
+Now we finally get to the fun part.  The primary objective I intended to
+tackle with this work was to investigate whether or not PyTorch model
+inference could be done simultaneously, by multiple threads, in a single
+free-threaded Python process, ideally with just a single GPU at minimum.
+
+I didn't focus on exploring free-threading and *training* PyTorch models.
+Mainly because it's a lot more complex, plus there's already a huge body of
+existing work in PyTorch that handles distributed training across multiple
+GPUs via `multiprocessing`.  On the flip side, having multiple threads do
+simultaneous parallel inference on a single model in a single Python process
+is novel territory: it hasn't been possible prior to now, because of the
+Python GIL.
+
+Additionally, parallel multi-threaded inference is particularly interesting
+because you should arguably be able to have an HTTP server servicing *"chat"*
+requests (i.e. like an OpenAI compatible REST API) in parallel with only one
+GPU.  (Although no reason multiple GPUs can't also be leveraged, as we'll
+find out.)
+
+## A Simple PyTorch GPT-2 Implementation
+
+Let's introduce the first version of the Python code we're going to use.
+Again, all of this has been made possible thanks to Andrej Karpathy's work
+with his YouTube series and [build-nanogpt](
+https://github.com/karpathy/build-nanogpt) repo, so any and all code you see
+in this post can typically be traced back to something equivalent that appears
+in [train_gpt2.py](
+https://github.com/karpathy/build-nanogpt/blob/master/train_gpt2.py).
+
+You can follow along in a Jupyter Lab notebook if you activate the `py313`
+environment and launch `jupyter lab`.  If you correctly registered your
+`py313t` kernel per the instructions earlier, you should see an option when
+creating a new notebook to use the `py313t` Python kernel, which will be the
+free-threaded version.
+
+I've conscientiously formatted the code to be viewable even on
+mobile phone devices without needing to do any horizontal
+scrolling, because that drives me nuts.
+
+```python
+{{< include _gpt2_v1.py >}}
+```
+
 
 
 <!-- vim:set ts=8 sw=2 sts=2 expandtab textwidth=78 -->

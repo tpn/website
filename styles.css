@@ -76,3 +76,16 @@
     /*color: #007bff;*/
 }
 
+body.quarto-dark .theme-light {
+    display: none;
+}
+
+body:not(.quarto-dark) .theme-dark {
+    display: none;
+}
+
+body.quarto-light .lightbox img {
+    border: 1px solid #ccc;  /* Light gray border */
+    border-radius: 8px;      /* Optional: rounded corners */
+    padding: 3px;            /* Optional: spacing inside border */
+}
