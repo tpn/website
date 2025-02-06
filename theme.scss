@@ -88,3 +88,31 @@ pre code {
 
 }
 
+/* Hide all by default */
+.phone-only,
+.tablet-only,
+.desktop-only {
+  display: none;
+}
+
+/* For phones: screens up to 767px */
+@media (max-width: 767px) {
+  .phone-only {
+    display: block;
+  }
+}
+
+/* For tablets: screens between 768px and 991px */
+@media (min-width: 768px) and (max-width: 991px) {
+  .tablet-only {
+    display: block;
+  }
+}
+
+/* For desktops: screens 992px and up */
+@media (min-width: 992px) {
+  .desktop-only {
+    display: block;
+  }
+}
+

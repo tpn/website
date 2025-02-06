@@ -395,6 +395,15 @@ npm run start
 That should launch a browser automatically to `http://localhost:3000/`, which
 should have a `GPT2` tab that, when selected, looks something like this:
 
+::: {.lightbox}
+![Parallelopedia UI Example](images/parallelopedia-ui-gpt2-light.png)
+:::
+
+::: {.hidden}
+
+The dark version's contrast is a little too dark for my liking.  Just use
+the light version until it bugs me enough to fix.
+
 ::: {.lightbox .theme-light}
 ![Parallelopedia UI Example](images/parallelopedia-ui-gpt2-light.png)
 :::
@@ -403,28 +412,29 @@ should have a `GPT2` tab that, when selected, looks something like this:
 ![Parallelopedia UI Example](images/parallelopedia-ui-gpt2-dark.png)
 :::
 
-# Learning about LLMs
+:::
 
-I started at [OpenTeams](https://openteams.com) around the middle of November,
-2024 (last year), and joined the PyTorch team.  At the time I honestly knew
-nothing about PyTorch.  Nor deep neural networks.  Nor LLMs---other than
-knowing I thoroughly enjoyed using them, having been an avid ChatGPT user
-for a while now.
+# PyTorch and LLM Crash Course
+
+My involvement with PyTorch and Large Language Models (LLMs) started around
+late November last year, 2024.  Going in, I knew nothing about PyTorch, nor
+deep neural networks, nor LLMs---other than having enjoyed using LLMs
+thoroughly the past couple of years.  I had never trained an AI model of
+any kind.  I did have a bit of NumPy and data science exposure up my sleeve,
+plus general familiarity with Python.
 
 Thanks to [Andrej Karpathy](https://karpathy.ai/)'s phenomenal YouTube series
 on deep neural networks and LLMs titled [Neural Networks: From Zero to Hero](
 https://www.youtube.com/playlist?list=PLAqhIrjkxbuWI23v9cThsA9GvCAUhRvKZ),
-featuring 19 hours, 21 minutes and two seconds of content across ten videos,
-over the course of about 3-4 weeks, I went from zero to... *hero* is too
-strong of a word---I'd say I at least made it to *not-completely-clueless*
-level with regards to my understandings of how LLMs work.  I was also soaking
-up as much PyTorch exposure as I could throughout this period, which is made
-easier given Andrej leverages PyTorch in later videos.
+over the course of about 3 weeks or so I went from zero to... well I
+wouldn't necessarily say *hero*---perhaps zero to *not-completley-clueless*
+level of understanding of how LLMs work.
 
-The content is simply fantastic.  Andrej's is a great teacher, and he does a
-wonderful job of laying the foundation of modern neural networks, particularly
-with regard to the *bread-and-butter* concepts like auto-differentiation and
-back-propagation that fuel today's LLM AI models.
+Andrej's content is a fantastic resource to learn everything you need to
+know to understand how modern LLMs work from the ground-up.  It's not a
+short series---there's 19 hours, 21 minutes and two seconds of content
+across ten videos---and you'll probably spend double that if you really
+want to have the content sink in.
 
 None of the work presented in this post would have been possible had I not
 invested the time in Andrej's series.  If you're reading this Andrej, thanks,
@@ -441,17 +451,18 @@ a local GPT-2 model via PyTorch, from scratch, using the [edu_fineweb10B](
 https://huggingface.co/rhysjones/gpt2-124M-edu-fineweb-10B) dataset.
 
 I only had to make one change in order to run locally:
-[Use 8 for micro batch size](https://github.com/tpn/build-nanogpt/commit/0069c4a35d1a362c1fd50f9f5bce00a170e15904).
+[Use 8 for micro batch size instead of 64](
+https://github.com/tpn/build-nanogpt/commit/0069c4a35d1a362c1fd50f9f5bce00a170e15904).
 With that change in place, I was able to train GPT-2 from scratch as follows:
 
 ```bash
-conda activate py313
-git clone gh:tpn/build-nanogpt
-cd build-nanogpt
+% conda activate py313
+% git clone gh:tpn/build-nanogpt
+% cd build-nanogpt
 # Download the fineweb dataset.
-python fineweb.py
+% python fineweb.py
 # Train!
-torchrun --standalone --nproc_per_node=4 train_gpt2.py
+% torchrun --standalone --nproc_per_node=4 train_gpt2.py
 ```
 
 This was run on an NVIDIA DGX workstation from 2017, which has an Intel
@@ -466,12 +477,12 @@ close to their 300W power limit for those three days.
 ::: {.callout-note}
 
 Amusingly, well after the fact, I decided to see what kind of training
-performance I'd get on my Windows 11 gaming box, which has an AMD Ryzen 9
-7950X3D (16 cores, 32 threads) and NVIDIA RTX 4090.  Training via
-`python train_gpt2.py` (`torchrun` wasn't needed as I wasn't using multiple
-GPUs) yielded about 45,000 tokens/sec, which is a nice bump, but what was most
-impressive was the reduction to the loop iteration duration, which averaged
-out to about 180ms.
+performance I'd get on my Windows 11 gaming box (via WSL2 and Ubuntu 22.04),
+which has an AMD Ryzen 9 7950X3D (16 cores, 32 threads) and NVIDIA RTX 4090.
+Training via `python train_gpt2.py` (`torchrun` wasn't needed as I wasn't
+using multiple GPUs) yielded about 45,000 tokens/sec, which is a nice bump,
+but what was most impressive was the reduction to the loop iteration
+duration, which averaged out to about 180ms!
 
 So, I could have completed the same training process in about an hour or so,
 at a vastly reduced impact on my electricity bill that month :-)
@@ -486,34 +497,11 @@ standards---and is just under 500MB on disk.
 You can download that very model I trained via the HuggingFace dataset I set
 up here: [model_19072.pt](
 https://huggingface.co/datasets/trentnelson/parallelopedia-data-gpt2/blob/main/model_19072.pt).
-Once downloaded, place the file in `~/src/parallelopedia/data` (assuming you
-cloned the repo to `~/src/parallelopedia`; change as necessary), and that will
-be all that's required for the next steps.
+Once downloaded, place the file in `$PARALLELOPEDIA_ROOT/data`;
+alternatively, if you run the Jupyter Notebook below, it'll automatically
+download the model from HuggingFace on first run.
 
-# Parallel PyTorch Inference with Free-Threaded Python
-
-Now we finally get to the fun part.  The primary objective I intended to
-tackle with this work was to investigate whether or not PyTorch model
-inference could be done simultaneously, by multiple threads, in a single
-free-threaded Python process, ideally with just a single GPU at minimum.
-
-I didn't focus on exploring free-threading and *training* PyTorch models.
-Mainly because it's a lot more complex, plus there's already a huge body of
-existing work in PyTorch that handles distributed training across multiple
-GPUs via `multiprocessing`.  On the flip side, having multiple threads do
-simultaneous parallel inference on a single model in a single Python process
-is novel territory: it hasn't been possible prior to now, because of the
-Python GIL.
-
-::: {.hidden}
-Additionally, parallel multi-threaded inference is particularly interesting
-because you should arguably be able to have an HTTP server servicing *"chat"*
-requests (i.e. like an OpenAI compatible REST API) in parallel with only one
-GPU.  (Although no reason multiple GPUs can't also be leveraged, as we'll
-find out.)
-:::
-
-## A Simple PyTorch GPT-2 Implementation
+# PyTorch GPT-2 Implementation
 
 Let's introduce the first version of the Python code we're going to use.
 Again, all of this has been made possible thanks to Andrej Karpathy's work
@@ -526,14 +514,17 @@ in [train_gpt2.py](
 https://github.com/karpathy/build-nanogpt/blob/master/train_gpt2.py).  None
 of this code would have made any sense to me a month or two ago---but I can
 promise you that if you devote sufficient time to watching and understanding
-the entire series, you'll grok every single line!
+the entire series, you'll have a comprehensive understanding of all of the
+pieces present in this post.
 
-Th
 You can follow along in a Jupyter Lab notebook if you activate the `py313`
 environment and launch `jupyter lab`.  If you correctly registered your
 `py313t` kernel per the instructions earlier, you should see an option when
 creating a new notebook to use the `py313t` Python kernel, which will be the
-free-threaded version.
+free-threaded version.  On the right of this page you should see all of the
+notebooks referenced.
+
+## First Version
 
 The code below roughly corresponds to my first version of the code in the
 commit [3ed4fe6: Add gpt2.py](
@@ -548,13 +539,44 @@ text, and generate some output text.
 
 {{< embed gpt2_v1.ipynb#gpt2-v1-setup >}}
 
-We can load the model as follows:
+## Loading the Model
+
+With the code above executed in a preceding Jupyter Notebook cell, we can
+load the model as follows:
 
 {{< embed gpt2_v1.ipynb#gpt2-v1-load-model >}}
 
-And generate some text as follows:
+## Generating Text
 
-{{< embed gpt2_v1.ipynb#gpt2-v1-generate-1 >}}
+Once we've got a model instance, text can be generated by simply calling
+the model's `generate()` function with a prompt, and, optionally, some
+additional parameters like seed and max length.  This is also referred to
+as inference---the two terms are interchangeable, and mean the same thing:
+the act of providing some input tokens---your prompt---to your trained
+model, and having it generate tokens in response.
+
+Note that this isn't a *chat* or *instruction* model, nor has it been
+fine-tuned to remotely resemble something actually usable.  So you can't
+ask it questions or have it write code for you.
+
+What you can do, though, is provide it with a half written sentence, and
+then laugh at the ridiculous content it generates in response.  Although
+note that its syntax is pretty good---the model has clearly learned enough
+during training about how the English language is structured, which words
+make sense when placed together, that sort of thing.  It just has no clue
+about underlying semantics.
+
+::: {.desktop-only}
+{{< embed gpt2_v1.ipynb#gpt2-v1-generate-1-desktop >}}
+:::
+
+::: {.tablet-only}
+{{< embed gpt2_v1.ipynb#gpt2-v1-generate-1-tablet >}}
+:::
+
+::: {.phone-only}
+{{< embed gpt2_v1.ipynb#gpt2-v1-generate-1-phone >}}
+:::
 
 Now, it's worth noting at this point that a 124 million parameter GPT2 model,
 trained from scratch for 19,072 iterations on the `edu_fineweb10b` data set,
@@ -566,6 +588,9 @@ even remotely generate content that is factual in nature.  It spews hot
 probabilisitic garbage that mostly conforms to the structure of the English
 language.
 
+But at least it's *our* hot garbage that we trained from nothing, and it's
+all we need to start playing around with generating text in parallel.
+
 ::: {.callout-note collapse="true" appearance="simple" icon="false" title="Hot Garbage Example"}
 
 Provide a slightly different seed to the prompt above and you'll precisely
@@ -573,12 +598,98 @@ see some hot garbage generation in action.  In the following example, with
 an identical prompt as the one prior, it just streams nonsense until hitting
 its max token limit, nary a stop token in sight.
 
-{{< embed gpt2_v1.ipynb#gpt2-v1-generate-2 >}}
+::: {.desktop-only}
+{{< embed gpt2_v1.ipynb#gpt2-v1-generate-2-desktop >}}
+:::
+
+::: {.tablet-only}
+{{< embed gpt2_v1.ipynb#gpt2-v1-generate-2-tablet >}}
+:::
+
+::: {.phone-only}
+{{< embed gpt2_v1.ipynb#gpt2-v1-generate-2-phone >}}
+:::
+
+lolwat.
 
 :::
 
-But at least it's *our* hot garbage that we trained from nothing, and it's
-all we need to start playing around with generating text in parallel.
+## Tweaked Version
 
+TODO.
+
+# Parallel PyTorch Inference
+
+Now we finally get to the fun part.  The primary objective I intended to
+tackle with this work was to investigate whether or not PyTorch model
+inference could be done simultaneously, in parallel, by multiple threads,
+in a single free-threaded Python process, ideally with just a single GPU at
+minimum.
+
+This is novel, uncharted territory we're able to now explore thanks to
+the free-threaded version of Python.
+
+::: {.callout-note}
+
+I didn't focus on exploring free-threading and *training* PyTorch models.
+Mainly because it's a lot more complex, plus there's already a huge body of
+existing work in PyTorch that handles distributed training across multiple
+GPUs via `multiprocessing`.
+
+:::
+
+The first design decision I had to make was: how would I test this?  I could
+spin up some threads and have them all call generate, but that's a little
+boring.
+
+Why not try implement a pure Python, multi-threaded `asyncio`-based HTTP
+server, expose a `/generate`-esque style `GET` endpoint, and wire that up
+to the model generation code we saw above, allowing us to serve generic
+web requests for generation in parallel, ideally in an `asyncio`-friendly
+manner, where we can stream individual tokens back one-by-one via HTTP's
+chunked-encoding transfer protocol, giving each thread's event loop the
+ability to service multiple clients *concurrently* in a reasonably fair
+manner, whilst also servicing many clients in *parallel* across all threads?
+
+So, that's what I tried, and, shockingly... it all just basically worked
+out of the box without any issues.  You can absolutely have multiple Python
+threads running in parallel, generating tokens against different prompts,
+one-by-one, from a single PyTorch model, in a single Python process.
+
+Granted, the development work I did on the multi-threaded `asyncio`-based
+HTTP server---essentially, the [parallelopedia.http.server](
+https://github.com/tpn/parallelopedia/blob/main/src/parallelopedia/http/server.py)
+module---was done in concert with some other articles I'm actively working
+on about Python's new free-threading abilities, so it was nice to be able
+to leverage that work and easily plug in a little GPT2 web app that played
+nicely with the existing setup.
+
+
+
+
+Shockingly... that all just basically worked.
+
+
+
+
+
+
+, ideally in an `asyncio`-friendly manner, where
+we can stream back tokens one at a time via HTTP's chunked-encoding
+
+
+
+
+
+
+
+
+::: {.hidden}
+Additionally, parallel multi-threaded inference is particularly interesting
+because you should arguably be able to have an HTTP server servicing *"chat"*
+requests (i.e. like an OpenAI compatible REST API) in parallel with only one
+GPU.  (Although no reason multiple GPUs can't also be leveraged, as we'll
+find out.)
+:::
 
 <!-- vim:set ts=8 sw=2 sts=2 expandtab textwidth=78 -->
