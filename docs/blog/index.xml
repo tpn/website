@@ -10,7 +10,7 @@
 <atom:link href="https://trent.me/blog/index.xml" rel="self" type="application/rss+xml"/>
 <description></description>
 <generator>quarto-1.6.40</generator>
-<lastBuildDate>Fri, 07 Feb 2025 06:27:03 GMT</lastBuildDate>
+<lastBuildDate>Fri, 07 Feb 2025 06:44:09 GMT</lastBuildDate>
 <item>
   <title>DRAFT: PyTorch and Python Free-Threading</title>
   <dc:creator>Trent Nelson</dc:creator>
@@ -8705,55 +8705,41 @@ Simultaneous vs Parallel vs Concurrent
 background-color: null;
 font-weight: bold;
 font-style: inherit;">class</span> PlaintextApp(HttpApp):</span>
-<span id="cb38-2">    routes <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> make_routes()</span>
-<span id="cb38-3">    route <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> router(routes)</span>
-<span id="cb38-4"></span>
-<span id="cb38-5">    <span class="at" style="color: #657422;
+<span id="cb38-2">    <span class="at" style="color: #657422;
 background-color: null;
 font-style: inherit;">@route</span></span>
-<span id="cb38-6">    <span class="kw" style="color: #003B4F;
+<span id="cb38-3">    <span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">def</span> plaintext(<span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">self</span>, request):</span>
-<span id="cb38-7">        response <span class="op" style="color: #5E5E5E;
+<span id="cb38-4">        response <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> text_response(request, <span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">'Hello, World!'</span>)</span>
-<span id="cb38-8">        <span class="va" style="color: #111111;
+<span id="cb38-5">        <span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">self</span>.server.send_response(response)</span>
-<span id="cb38-9"></span>
-<span id="cb38-10"><span class="kw" style="color: #003B4F;
+<span id="cb38-6"></span>
+<span id="cb38-7"><span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">class</span> SleeperApp(HttpApp):</span>
-<span id="cb38-11">    routes <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> make_routes()</span>
-<span id="cb38-12">    route <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> router(routes)</span>
-<span id="cb38-13"></span>
-<span id="cb38-14">    <span class="at" style="color: #657422;
+<span id="cb38-8">    <span class="at" style="color: #657422;
 background-color: null;
 font-style: inherit;">@route</span></span>
-<span id="cb38-15">    <span class="kw" style="color: #003B4F;
+<span id="cb38-9">    <span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">def</span> sleep(<span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">self</span>, request, seconds):</span>
-<span id="cb38-16">        time.sleep(<span class="bu" style="color: null;
+<span id="cb38-10">        time.sleep(<span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">int</span>(seconds))</span>
-<span id="cb38-17">        msg <span class="op" style="color: #5E5E5E;
+<span id="cb38-11">        msg <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> <span class="ss" style="color: #20794D;
 background-color: null;
@@ -8764,20 +8750,20 @@ background-color: null;
 font-style: inherit;">}</span><span class="ss" style="color: #20794D;
 background-color: null;
 font-style: inherit;"> seconds.'</span>)</span>
-<span id="cb38-18">        response <span class="op" style="color: #5E5E5E;
+<span id="cb38-12">        response <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> text_response(request, msg)</span>
-<span id="cb38-19">        <span class="va" style="color: #111111;
+<span id="cb38-13">        <span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">self</span>.server.send_response(response)</span>
-<span id="cb38-20"></span>
-<span id="cb38-21"><span class="co" style="color: #5E5E5E;
+<span id="cb38-14"></span>
+<span id="cb38-15"><span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;"># Create a server with the two apps.</span></span>
-<span id="cb38-22">app_classes<span class="op" style="color: #5E5E5E;
+<span id="cb38-16">app_classes<span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span>[PlaintextApp, SleeperApp]</span>
-<span id="cb38-23">server <span class="op" style="color: #5E5E5E;
+<span id="cb38-17">server <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> HttpServer(app_classes<span class="op" style="color: #5E5E5E;
 background-color: null;
@@ -9190,49 +9176,42 @@ font-style: inherit;">'__main__'</span>:</span>
 background-color: null;
 font-weight: bold;
 font-style: inherit;">class</span> Gpt2App(HttpApp):</span>
-<span id="cb40-2">    routes <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> make_routes()</span>
-<span id="cb40-3">    route <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> router(routes)</span>
-<span id="cb40-4"></span>
-<span id="cb40-5">    <span class="at" style="color: #657422;
+<span id="cb40-2">    <span class="at" style="color: #657422;
 background-color: null;
 font-style: inherit;">@route</span></span>
-<span id="cb40-6">    <span class="kw" style="color: #003B4F;
+<span id="cb40-3">    <span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">def</span> generate(<span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">self</span>, request: Request,</span>
-<span id="cb40-7">                 <span class="op" style="color: #5E5E5E;
+<span id="cb40-4">                 <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">*</span>args: List,</span>
-<span id="cb40-8">                 <span class="op" style="color: #5E5E5E;
+<span id="cb40-5">                 <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">**</span>kwds: Dict) <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">-&gt;</span> <span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">None</span>:</span>
-<span id="cb40-9">        prompt <span class="op" style="color: #5E5E5E;
+<span id="cb40-6">        prompt <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> args[<span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">0</span>]</span>
-<span id="cb40-10">        model <span class="op" style="color: #5E5E5E;
+<span id="cb40-7">        model <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> get_model()</span>
-<span id="cb40-11">        result <span class="op" style="color: #5E5E5E;
+<span id="cb40-8">        result <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> model.generate(prompt<span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span>prompt)</span>
-<span id="cb40-12">        respose <span class="op" style="color: #5E5E5E;
+<span id="cb40-9">        respose <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> text_response(request, result)</span>
-<span id="cb40-13">        <span class="va" style="color: #111111;
+<span id="cb40-10">        <span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">self</span>.server.send_response(response)</span></code></pre></div>
 <p>But when have you ever interacted with an LLM via a web interface where it waits until it generates <em>all</em> of the response up-front before sending it back to you? Never; you can see it generate the response in real time, and that’s what we want to mimic here in this experiment.</p>
@@ -10450,50 +10429,42 @@ font-style: inherit;">                seed will be used.</span></span>
 <span id="cb45-27"></span>
 <span id="cb45-28"><span class="co" style="color: #5E5E5E;
 background-color: null;
-font-style: inherit;">        Returns:</span></span>
+font-style: inherit;">        Yields:</span></span>
 <span id="cb45-29"></span>
 <span id="cb45-30"><span class="co" style="color: #5E5E5E;
 background-color: null;
-font-style: inherit;">            str: The generated text (including the initial prompt).</span></span>
-<span id="cb45-31"></span>
-<span id="cb45-32"><span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">        Yields:</span></span>
-<span id="cb45-33"></span>
-<span id="cb45-34"><span class="co" style="color: #5E5E5E;
-background-color: null;
 font-style: inherit;">            byte: The newly generated decoded token.  If -1, a</span></span>
-<span id="cb45-35"><span class="co" style="color: #5E5E5E;
+<span id="cb45-31"><span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">            non-printable token was generated, and generation</span></span>
-<span id="cb45-36"><span class="co" style="color: #5E5E5E;
+<span id="cb45-32"><span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">            was terminated.</span></span>
-<span id="cb45-37"><span class="co" style="color: #5E5E5E;
+<span id="cb45-33"><span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">        """</span></span>
-<span id="cb45-38"></span>
-<span id="cb45-39">        enc <span class="op" style="color: #5E5E5E;
+<span id="cb45-34"></span>
+<span id="cb45-35">        enc <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> <span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">self</span>.enc</span>
-<span id="cb45-40">        stop_token <span class="op" style="color: #5E5E5E;
+<span id="cb45-36">        stop_token <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> <span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">self</span>.stop_token</span>
-<span id="cb45-41"></span>
-<span id="cb45-42">        <span class="co" style="color: #5E5E5E;
+<span id="cb45-37"></span>
+<span id="cb45-38">        <span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;"># Encode the prompt -&gt; tensor of shape (1, T)</span></span>
-<span id="cb45-43">        tokens <span class="op" style="color: #5E5E5E;
+<span id="cb45-39">        tokens <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> enc.encode(text)</span>
-<span id="cb45-44">        x <span class="op" style="color: #5E5E5E;
+<span id="cb45-40">        x <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> torch.tensor(</span>
-<span id="cb45-45">            tokens, dtype<span class="op" style="color: #5E5E5E;
+<span id="cb45-41">            tokens, dtype<span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span>torch.<span class="bu" style="color: null;
 background-color: null;
@@ -10502,18 +10473,18 @@ background-color: null;
 font-style: inherit;">=</span><span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">self</span>.device</span>
-<span id="cb45-46">        ).unsqueeze(<span class="dv" style="color: #AD0000;
+<span id="cb45-42">        ).unsqueeze(<span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">0</span>)</span>
-<span id="cb45-47"></span>
-<span id="cb45-48">        sample_rng <span class="op" style="color: #5E5E5E;
+<span id="cb45-43"></span>
+<span id="cb45-44">        sample_rng <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> torch.Generator(device<span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span><span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">self</span>.device)</span>
-<span id="cb45-49">        <span class="cf" style="color: #003B4F;
+<span id="cb45-45">        <span class="cf" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">if</span> seed <span class="kw" style="color: #003B4F;
@@ -10522,15 +10493,15 @@ font-weight: bold;
 font-style: inherit;">is</span> <span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">None</span>:</span>
-<span id="cb45-50">            seed <span class="op" style="color: #5E5E5E;
+<span id="cb45-46">            seed <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> <span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">self</span>.manual_seed</span>
-<span id="cb45-51">        sample_rng.manual_seed(seed)</span>
-<span id="cb45-52"></span>
-<span id="cb45-53">        logging.debug(</span>
-<span id="cb45-54">            <span class="ss" style="color: #20794D;
+<span id="cb45-47">        sample_rng.manual_seed(seed)</span>
+<span id="cb45-48"></span>
+<span id="cb45-49">        logging.debug(</span>
+<span id="cb45-50">            <span class="ss" style="color: #20794D;
 background-color: null;
 font-style: inherit;">f'[generate_async_for] Starting generation loop for </span><span class="sc" style="color: #5E5E5E;
 background-color: null;
@@ -10539,7 +10510,7 @@ background-color: null;
 font-style: inherit;">}</span><span class="ss" style="color: #20794D;
 background-color: null;
 font-style: inherit;"> '</span></span>
-<span id="cb45-55">            <span class="ss" style="color: #20794D;
+<span id="cb45-51">            <span class="ss" style="color: #20794D;
 background-color: null;
 font-style: inherit;">f'with seed </span><span class="sc" style="color: #5E5E5E;
 background-color: null;
@@ -10548,17 +10519,17 @@ background-color: null;
 font-style: inherit;">}</span><span class="ss" style="color: #20794D;
 background-color: null;
 font-style: inherit;">.'</span></span>
-<span id="cb45-56">        )</span>
-<span id="cb45-57"></span>
-<span id="cb45-58">        start_time <span class="op" style="color: #5E5E5E;
+<span id="cb45-52">        )</span>
+<span id="cb45-53"></span>
+<span id="cb45-54">        start_time <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> time.perf_counter()</span>
-<span id="cb45-59">        count <span class="op" style="color: #5E5E5E;
+<span id="cb45-55">        count <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">0</span></span>
-<span id="cb45-60">        <span class="cf" style="color: #003B4F;
+<span id="cb45-56">        <span class="cf" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">while</span> x.size(<span class="dv" style="color: #AD0000;
@@ -10566,145 +10537,145 @@ background-color: null;
 font-style: inherit;">1</span>) <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">&lt;</span> max_length:</span>
-<span id="cb45-61">            count <span class="op" style="color: #5E5E5E;
+<span id="cb45-57">            count <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">+=</span> <span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">1</span></span>
-<span id="cb45-62">            <span class="cf" style="color: #003B4F;
+<span id="cb45-58">            <span class="cf" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">with</span> torch.no_grad():</span>
-<span id="cb45-63">                <span class="co" style="color: #5E5E5E;
+<span id="cb45-59">                <span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;"># Forward pass, ignoring the returned loss.</span></span>
-<span id="cb45-64">                (logits, _) <span class="op" style="color: #5E5E5E;
+<span id="cb45-60">                (logits, _) <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> <span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">self</span>(x)</span>
-<span id="cb45-65"></span>
-<span id="cb45-66">            <span class="co" style="color: #5E5E5E;
+<span id="cb45-61"></span>
+<span id="cb45-62">            <span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;"># Take the logits at the last time-step (shape:</span></span>
-<span id="cb45-67">            <span class="co" style="color: #5E5E5E;
+<span id="cb45-63">            <span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;"># (1, vocab_size)).</span></span>
-<span id="cb45-68">            logits <span class="op" style="color: #5E5E5E;
+<span id="cb45-64">            logits <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> logits[:, <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">1</span>, :]</span>
-<span id="cb45-69"></span>
-<span id="cb45-70">            <span class="co" style="color: #5E5E5E;
+<span id="cb45-65"></span>
+<span id="cb45-66">            <span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;"># Convert to probabilities.</span></span>
-<span id="cb45-71">            probs <span class="op" style="color: #5E5E5E;
+<span id="cb45-67">            probs <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> F.softmax(logits, dim<span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=-</span><span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">1</span>)</span>
-<span id="cb45-72"></span>
-<span id="cb45-73">            <span class="co" style="color: #5E5E5E;
+<span id="cb45-68"></span>
+<span id="cb45-69">            <span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;"># Top-k sampling.</span></span>
-<span id="cb45-74">            topk_probs, topk_indices <span class="op" style="color: #5E5E5E;
+<span id="cb45-70">            topk_probs, topk_indices <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> torch.topk(</span>
-<span id="cb45-75">                probs, k<span class="op" style="color: #5E5E5E;
+<span id="cb45-71">                probs, k<span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span>top_k, dim<span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=-</span><span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">1</span>,</span>
-<span id="cb45-76">            )</span>
-<span id="cb45-77"></span>
-<span id="cb45-78">            <span class="co" style="color: #5E5E5E;
+<span id="cb45-72">            )</span>
+<span id="cb45-73"></span>
+<span id="cb45-74">            <span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;"># Sample the next token.</span></span>
-<span id="cb45-79">            next_idx <span class="op" style="color: #5E5E5E;
+<span id="cb45-75">            next_idx <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> torch.multinomial(</span>
-<span id="cb45-80">                topk_probs,</span>
-<span id="cb45-81">                num_samples<span class="op" style="color: #5E5E5E;
+<span id="cb45-76">                topk_probs,</span>
+<span id="cb45-77">                num_samples<span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">1</span>,</span>
-<span id="cb45-82">                generator<span class="op" style="color: #5E5E5E;
+<span id="cb45-78">                generator<span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span>sample_rng,</span>
-<span id="cb45-83">            )</span>
-<span id="cb45-84">            next_token <span class="op" style="color: #5E5E5E;
+<span id="cb45-79">            )</span>
+<span id="cb45-80">            next_token <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> torch.gather(topk_indices, <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">1</span>, next_idx)</span>
-<span id="cb45-85"></span>
-<span id="cb45-86">            <span class="co" style="color: #5E5E5E;
+<span id="cb45-81"></span>
+<span id="cb45-82">            <span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;"># If the next token is the stop token, we're done.</span></span>
-<span id="cb45-87">            next_token_item <span class="op" style="color: #5E5E5E;
+<span id="cb45-83">            next_token_item <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> next_token.item()</span>
-<span id="cb45-88">            <span class="cf" style="color: #003B4F;
+<span id="cb45-84">            <span class="cf" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">if</span> next_token_item <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">==</span> stop_token:</span>
-<span id="cb45-89">                <span class="cf" style="color: #003B4F;
+<span id="cb45-85">                <span class="cf" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">break</span></span>
-<span id="cb45-90"></span>
-<span id="cb45-91">            <span class="co" style="color: #5E5E5E;
+<span id="cb45-86"></span>
+<span id="cb45-87">            <span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;"># Append token to current sequence.  Although we only</span></span>
-<span id="cb45-92">            <span class="co" style="color: #5E5E5E;
+<span id="cb45-88">            <span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;"># yield a singular decoded token below, we still need</span></span>
-<span id="cb45-93">            <span class="co" style="color: #5E5E5E;
+<span id="cb45-89">            <span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;"># to keep track of the entire sequence for subsequent</span></span>
-<span id="cb45-94">            <span class="co" style="color: #5E5E5E;
+<span id="cb45-90">            <span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;"># generation steps.</span></span>
-<span id="cb45-95">            x <span class="op" style="color: #5E5E5E;
+<span id="cb45-91">            x <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> torch.cat((x, next_token), dim<span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">1</span>)</span>
+<span id="cb45-92"></span>
+<span id="cb45-93">            <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Decode the newly-generated token.  Note that a single</span></span>
+<span id="cb45-94">            <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># token will often be decoded to multiple characters.</span></span>
+<span id="cb45-95">            new_text_fragment <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> enc.decode([next_token.item()])</span>
 <span id="cb45-96"></span>
 <span id="cb45-97">            <span class="co" style="color: #5E5E5E;
 background-color: null;
-font-style: inherit;"># Decode the newly-generated token.  Note that a single</span></span>
+font-style: inherit;"># If any of the characters in the decoded text</span></span>
 <span id="cb45-98">            <span class="co" style="color: #5E5E5E;
 background-color: null;
-font-style: inherit;"># token will often be decoded to multiple characters.</span></span>
-<span id="cb45-99">            new_text_fragment <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">=</span> enc.decode([next_token.item()])</span>
-<span id="cb45-100"></span>
-<span id="cb45-101">            <span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;"># If any of the characters in the decoded text</span></span>
-<span id="cb45-102">            <span class="co" style="color: #5E5E5E;
-background-color: null;
 font-style: inherit;"># representation aren't printable, terminate</span></span>
-<span id="cb45-103">            <span class="co" style="color: #5E5E5E;
+<span id="cb45-99">            <span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;"># generation.</span></span>
-<span id="cb45-104">            <span class="cf" style="color: #003B4F;
+<span id="cb45-100">            <span class="cf" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">if</span> <span class="kw" style="color: #003B4F;
@@ -10724,7 +10695,7 @@ font-style: inherit;">for</span> c <span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">in</span> new_text_fragment):</span>
-<span id="cb45-105">                <span class="cf" style="color: #003B4F;
+<span id="cb45-101">                <span class="cf" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">yield</span> <span class="op" style="color: #5E5E5E;
@@ -10732,51 +10703,51 @@ background-color: null;
 font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">1</span></span>
-<span id="cb45-106">                <span class="cf" style="color: #003B4F;
+<span id="cb45-102">                <span class="cf" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">break</span></span>
-<span id="cb45-107"></span>
-<span id="cb45-108">            <span class="cf" style="color: #003B4F;
+<span id="cb45-103"></span>
+<span id="cb45-104">            <span class="cf" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">yield</span> new_text_fragment</span>
-<span id="cb45-109"></span>
-<span id="cb45-110">            <span class="co" style="color: #5E5E5E;
+<span id="cb45-105"></span>
+<span id="cb45-106">            <span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;"># Yield control back to the event loop before continuing</span></span>
-<span id="cb45-111">            <span class="co" style="color: #5E5E5E;
+<span id="cb45-107">            <span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;"># generation.  If we didn't do this, this client would</span></span>
-<span id="cb45-112">            <span class="co" style="color: #5E5E5E;
+<span id="cb45-108">            <span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;"># hog the thread's event loop, preventing other clients</span></span>
-<span id="cb45-113">            <span class="co" style="color: #5E5E5E;
+<span id="cb45-109">            <span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;"># associated with the loop from getting services.  (As</span></span>
-<span id="cb45-114">            <span class="co" style="color: #5E5E5E;
+<span id="cb45-110">            <span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;"># we're now running multiple threads in parallel, other</span></span>
-<span id="cb45-115">            <span class="co" style="color: #5E5E5E;
+<span id="cb45-111">            <span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;"># clients associated with event loops on other threads</span></span>
-<span id="cb45-116">            <span class="co" style="color: #5E5E5E;
+<span id="cb45-112">            <span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;"># would not be impacted.)</span></span>
-<span id="cb45-117">            <span class="cf" style="color: #003B4F;
+<span id="cb45-113">            <span class="cf" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">await</span> asyncio.sleep(<span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">0</span>)</span>
-<span id="cb45-118"></span>
-<span id="cb45-119">        elapsed <span class="op" style="color: #5E5E5E;
+<span id="cb45-114"></span>
+<span id="cb45-115">        elapsed <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> time.perf_counter() <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">-</span> start_time</span>
-<span id="cb45-120">        logging.debug(</span>
-<span id="cb45-121">            <span class="ss" style="color: #20794D;
+<span id="cb45-116">        logging.debug(</span>
+<span id="cb45-117">            <span class="ss" style="color: #20794D;
 background-color: null;
 font-style: inherit;">f"[generate_async_for] Generated </span><span class="sc" style="color: #5E5E5E;
 background-color: null;
@@ -10785,7 +10756,7 @@ background-color: null;
 font-style: inherit;">}</span><span class="ss" style="color: #20794D;
 background-color: null;
 font-style: inherit;"> tokens in "</span></span>
-<span id="cb45-122">            <span class="ss" style="color: #20794D;
+<span id="cb45-118">            <span class="ss" style="color: #20794D;
 background-color: null;
 font-style: inherit;">f"</span><span class="sc" style="color: #5E5E5E;
 background-color: null;
@@ -10802,7 +10773,7 @@ background-color: null;
 font-style: inherit;">:.2f}</span><span class="ss" style="color: #20794D;
 background-color: null;
 font-style: inherit;"> tok/s)"</span></span>
-<span id="cb45-123">        )</span></code></pre></div>
+<span id="cb45-119">        )</span></code></pre></div>
 <p>This routine was the last piece we needed to implement to satisfy our three goals captured earlier, so, we’re now ready to test it out!</p>
 </section>
 </section>
@@ -10812,151 +10783,31 @@ font-style: inherit;"> tok/s)"</span></span>
 <p>We can launch an instance of our multi-threaded HTTP web server with our new <code>Gpt2App</code> HTTP application via the command line as follows:</p>
 <div class="sourceCode" id="cb46" style="background: #f1f3f5;"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb46-1"><span class="ex" style="color: null;
 background-color: null;
-font-style: inherit;">%</span> %] python <span class="at" style="color: #657422;
+font-style: inherit;">%</span> python <span class="at" style="color: #657422;
 background-color: null;
 font-style: inherit;">-Xgil</span><span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span>0 <span class="at" style="color: #657422;
 background-color: null;
-font-style: inherit;">-m</span> parallelopedia.http.server <span class="at" style="color: #657422;
+font-style: inherit;">-m</span> parallelopedia.http.server  <span class="dt" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">\</span></span>
+<span id="cb46-2">    <span class="at" style="color: #657422;
 background-color: null;
 font-style: inherit;">--threads</span> 40 <span class="at" style="color: #657422;
 background-color: null;
-font-style: inherit;">--app-classes</span> parallelopedia.gpt2.Gpt2App <span class="at" style="color: #657422;
+font-style: inherit;">--ip</span> 0.0.0.0 <span class="at" style="color: #657422;
 background-color: null;
-font-style: inherit;">--port</span> 4444</span>
-<span id="cb46-2"><span class="ex" style="color: null;
+font-style: inherit;">--port</span> 4444       <span class="dt" style="color: #AD0000;
 background-color: null;
-font-style: inherit;">Traceback</span> <span class="er" style="color: #AD0000;
+font-style: inherit;">\</span></span>
+<span id="cb46-3">    <span class="at" style="color: #657422;
 background-color: null;
-font-style: inherit;">(</span><span class="ex" style="color: null;
+font-style: inherit;">--app-classes</span> parallelopedia.gpt2.Gpt2App   <span class="dt" style="color: #AD0000;
 background-color: null;
-font-style: inherit;">most</span> recent call last<span class="kw" style="color: #003B4F;
-background-color: null;
-font-weight: bold;
-font-style: inherit;">)</span><span class="bu" style="color: null;
-background-color: null;
-font-style: inherit;">:</span></span>
-<span id="cb46-3">  <span class="ex" style="color: null;
-background-color: null;
-font-style: inherit;">File</span> <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"&lt;frozen runpy&gt;"</span>, line 198, in _run_module_as_main</span>
-<span id="cb46-4">  <span class="ex" style="color: null;
-background-color: null;
-font-style: inherit;">File</span> <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"&lt;frozen runpy&gt;"</span>, line 88, in _run_code</span>
-<span id="cb46-5">  <span class="ex" style="color: null;
-background-color: null;
-font-style: inherit;">File</span> <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"/mnt/raid1/trent/src/parallelopedia/src/parallelopedia/http/server.py"</span>, line 1478, in <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">&lt;</span>module<span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">&gt;</span></span>
-<span id="cb46-6">    <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">main()</span></span>
-<span id="cb46-7">    <span class="ex" style="color: null;
-background-color: null;
-font-style: inherit;">~~~~^^</span></span>
-<span id="cb46-8">  <span class="ex" style="color: null;
-background-color: null;
-font-style: inherit;">File</span> <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"/mnt/raid1/trent/src/parallelopedia/src/parallelopedia/http/server.py"</span>, line 1457, in main</span>
-<span id="cb46-9">    <span class="ex" style="color: null;
-background-color: null;
-font-style: inherit;">get_class_from_string</span><span class="er" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">(</span><span class="ex" style="color: null;
-background-color: null;
-font-style: inherit;">app_class</span><span class="kw" style="color: #003B4F;
-background-color: null;
-font-weight: bold;
-font-style: inherit;">)</span></span>
-<span id="cb46-10">    <span class="ex" style="color: null;
-background-color: null;
-font-style: inherit;">~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^</span></span>
-<span id="cb46-11">  <span class="ex" style="color: null;
-background-color: null;
-font-style: inherit;">File</span> <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"/mnt/raid1/trent/src/parallelopedia/src/parallelopedia/util.py"</span>, line 128, in get_class_from_string</span>
-<span id="cb46-12">    <span class="ex" style="color: null;
-background-color: null;
-font-style: inherit;">module</span> = __import__<span class="er" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">(</span><span class="ex" style="color: null;
-background-color: null;
-font-style: inherit;">module_name</span><span class="kw" style="color: #003B4F;
-background-color: null;
-font-weight: bold;
-font-style: inherit;">)</span></span>
-<span id="cb46-13">  <span class="ex" style="color: null;
-background-color: null;
-font-style: inherit;">File</span> <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"/mnt/raid1/trent/src/parallelopedia/src/parallelopedia/gpt2.py"</span>, line 407, in <span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">&lt;</span>module<span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">&gt;</span></span>
-<span id="cb46-14">    <span class="ex" style="color: null;
-background-color: null;
-font-style: inherit;">class</span> GPT<span class="er" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">(</span><span class="ex" style="color: null;
-background-color: null;
-font-style: inherit;">nn.Module</span><span class="kw" style="color: #003B4F;
-background-color: null;
-font-weight: bold;
-font-style: inherit;">)</span><span class="bu" style="color: null;
-background-color: null;
-font-style: inherit;">:</span></span>
-<span id="cb46-15">    <span class="ex" style="color: null;
-background-color: null;
-font-style: inherit;">...</span><span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">&lt;</span>679 lines<span class="op" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">&gt;</span>...</span>
-<span id="cb46-16">            <span class="er" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">)</span></span>
-<span id="cb46-17">  <span class="ex" style="color: null;
-background-color: null;
-font-style: inherit;">File</span> <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"/mnt/raid1/trent/src/parallelopedia/src/parallelopedia/gpt2.py"</span>, line 905, in GPT</span>
-<span id="cb46-18">    <span class="ex" style="color: null;
-background-color: null;
-font-style: inherit;">@torch.compile</span></span>
-<span id="cb46-19">     <span class="ex" style="color: null;
-background-color: null;
-font-style: inherit;">^^^^^^^^^^^^^</span></span>
-<span id="cb46-20">  <span class="ex" style="color: null;
-background-color: null;
-font-style: inherit;">File</span> <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"/home/trent/mambaforge/envs/py313t/lib/python3.13t/site-packages/torch/__init__.py"</span>, line 2526, in compile</span>
-<span id="cb46-21">    <span class="ex" style="color: null;
-background-color: null;
-font-style: inherit;">raise</span> RuntimeError<span class="er" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">(</span></span>
-<span id="cb46-22">        <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"torch.compile is not supported on Python built with GIL disabled"</span></span>
-<span id="cb46-23">    <span class="kw" style="color: #003B4F;
-background-color: null;
-font-weight: bold;
-font-style: inherit;">)</span></span>
-<span id="cb46-24"><span class="ex" style="color: null;
-background-color: null;
-font-style: inherit;">RuntimeError:</span> torch.compile is not supported on Python built with GIL disabled</span></code></pre></div>
+font-style: inherit;">\</span></span>
+<span id="cb46-4">                  parallelopedia.http.server.PlaintextApp</span></code></pre></div>
+<p>This will start up a multi-threaded HTTP server listening on all interfaces on port 4444, with 40 threads, and two HTTP applications: our <code>Gpt2App</code> and a <code>PlaintextApp</code> that just returns “Hello, World!” to any incoming request.</p>
 <!-- vim:set ts=8 sw=2 sts=2 expandtab textwidth=78 -->
 
 
@@ -10979,7 +10830,7 @@ font-style: inherit;">RuntimeError:</span> torch.compile is not supported on Pyt
   <category>LLM</category>
   <category>GPT2</category>
   <guid>https://trent.me/blog/posts/2025-xx-xx-pytorch-and-python-free-threading/</guid>
-  <pubDate>Fri, 07 Feb 2025 06:27:03 GMT</pubDate>
+  <pubDate>Fri, 07 Feb 2025 06:44:09 GMT</pubDate>
   <media:content url="https://trent.me/blog/posts/2025-xx-xx-pytorch-and-python-free-threading/images/pytorch-and-python-free-threading.png" medium="image" type="image/png" height="144" width="144"/>
 </item>
 </channel>

@@ -1812,28 +1812,22 @@ Simultaneous vs Parallel vs Concurrent
 <p>Turns out, thankfully, that this Just Works, at least on Linux<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a>—we can now have a pure Python HTTP server, running in a single Python process, that’ll happily saturate every CPU core under load.</p>
 <p>The server code lives in <a href="https://github.com/tpn/parallelopedia/blob/main/src/parallelopedia/http/server.py"><code>parallelopedia.http.server</code></a>, and it includes a super janky little notion of <em>“HTTP Apps”</em>, the purpose of which can be best demonstrated with a simple example:</p>
 <div class="sourceCode" id="cb38"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> PlaintextApp(HttpApp):</span>
-<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>    routes <span class="op">=</span> make_routes()</span>
-<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>    route <span class="op">=</span> router(routes)</span>
-<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">@route</span></span>
-<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> plaintext(<span class="va">self</span>, request):</span>
-<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>        response <span class="op">=</span> text_response(request, <span class="st">'Hello, World!'</span>)</span>
-<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.server.send_response(response)</span>
-<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-10"><a href="#cb38-10" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> SleeperApp(HttpApp):</span>
-<span id="cb38-11"><a href="#cb38-11" aria-hidden="true" tabindex="-1"></a>    routes <span class="op">=</span> make_routes()</span>
-<span id="cb38-12"><a href="#cb38-12" aria-hidden="true" tabindex="-1"></a>    route <span class="op">=</span> router(routes)</span>
-<span id="cb38-13"><a href="#cb38-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-14"><a href="#cb38-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">@route</span></span>
-<span id="cb38-15"><a href="#cb38-15" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> sleep(<span class="va">self</span>, request, seconds):</span>
-<span id="cb38-16"><a href="#cb38-16" aria-hidden="true" tabindex="-1"></a>        time.sleep(<span class="bu">int</span>(seconds))</span>
-<span id="cb38-17"><a href="#cb38-17" aria-hidden="true" tabindex="-1"></a>        msg <span class="op">=</span> <span class="ss">f'Slept for </span><span class="sc">{</span>seconds<span class="sc">}</span><span class="ss"> seconds.'</span>)</span>
-<span id="cb38-18"><a href="#cb38-18" aria-hidden="true" tabindex="-1"></a>        response <span class="op">=</span> text_response(request, msg)</span>
-<span id="cb38-19"><a href="#cb38-19" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.server.send_response(response)</span>
-<span id="cb38-20"><a href="#cb38-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-21"><a href="#cb38-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a server with the two apps.</span></span>
-<span id="cb38-22"><a href="#cb38-22" aria-hidden="true" tabindex="-1"></a>app_classes<span class="op">=</span>[PlaintextApp, SleeperApp]</span>
-<span id="cb38-23"><a href="#cb38-23" aria-hidden="true" tabindex="-1"></a>server <span class="op">=</span> HttpServer(app_classes<span class="op">=</span>app_classes)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">@route</span></span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> plaintext(<span class="va">self</span>, request):</span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>        response <span class="op">=</span> text_response(request, <span class="st">'Hello, World!'</span>)</span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.server.send_response(response)</span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> SleeperApp(HttpApp):</span>
+<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">@route</span></span>
+<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> sleep(<span class="va">self</span>, request, seconds):</span>
+<span id="cb38-10"><a href="#cb38-10" aria-hidden="true" tabindex="-1"></a>        time.sleep(<span class="bu">int</span>(seconds))</span>
+<span id="cb38-11"><a href="#cb38-11" aria-hidden="true" tabindex="-1"></a>        msg <span class="op">=</span> <span class="ss">f'Slept for </span><span class="sc">{</span>seconds<span class="sc">}</span><span class="ss"> seconds.'</span>)</span>
+<span id="cb38-12"><a href="#cb38-12" aria-hidden="true" tabindex="-1"></a>        response <span class="op">=</span> text_response(request, msg)</span>
+<span id="cb38-13"><a href="#cb38-13" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.server.send_response(response)</span>
+<span id="cb38-14"><a href="#cb38-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-15"><a href="#cb38-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a server with the two apps.</span></span>
+<span id="cb38-16"><a href="#cb38-16" aria-hidden="true" tabindex="-1"></a>app_classes<span class="op">=</span>[PlaintextApp, SleeperApp]</span>
+<span id="cb38-17"><a href="#cb38-17" aria-hidden="true" tabindex="-1"></a>server <span class="op">=</span> HttpServer(app_classes<span class="op">=</span>app_classes)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>In the above example, the HTTP server will route requests for the <code>/plaintext</code> endpoint to an instance of the <code>PlaintextApp</code>’s <code>plaintext()</code> routine, and <code>/sleep</code> requests get routed to the <code>SleeperApp</code>’s <code>sleep()</code> routine.</p>
 <p>The <em>“slapped multiple threads on it”</em> activity I refered to earlier is handled by some new <a href="https://github.com/tpn/parallelopedia/blob/main/src/parallelopedia/http/server.py#L1344">async and threading scaffolding</a> added to the bottom of that module, with the pertinent pieces reproduced below:</p>
 <div class="sourceCode" id="cb39"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a></span>
@@ -1989,18 +1983,15 @@ Simultaneous vs Parallel vs Concurrent
 <p>Now, we could take the simple approach, where the <code>Gpt2App.generate()</code> call goes off and calls <code>model.generate()</code> and then patiently waits for the entire response to be generated before sending anything back to the user.</p>
 <p>That code would look something like this:</p>
 <div class="sourceCode" id="cb40"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Gpt2App(HttpApp):</span>
-<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>    routes <span class="op">=</span> make_routes()</span>
-<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>    route <span class="op">=</span> router(routes)</span>
-<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">@route</span></span>
-<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> generate(<span class="va">self</span>, request: Request,</span>
-<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a>                 <span class="op">*</span>args: List,</span>
-<span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a>                 <span class="op">**</span>kwds: Dict) <span class="op">-&gt;</span> <span class="va">None</span>:</span>
-<span id="cb40-9"><a href="#cb40-9" aria-hidden="true" tabindex="-1"></a>        prompt <span class="op">=</span> args[<span class="dv">0</span>]</span>
-<span id="cb40-10"><a href="#cb40-10" aria-hidden="true" tabindex="-1"></a>        model <span class="op">=</span> get_model()</span>
-<span id="cb40-11"><a href="#cb40-11" aria-hidden="true" tabindex="-1"></a>        result <span class="op">=</span> model.generate(prompt<span class="op">=</span>prompt)</span>
-<span id="cb40-12"><a href="#cb40-12" aria-hidden="true" tabindex="-1"></a>        respose <span class="op">=</span> text_response(request, result)</span>
-<span id="cb40-13"><a href="#cb40-13" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.server.send_response(response)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">@route</span></span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> generate(<span class="va">self</span>, request: Request,</span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>                 <span class="op">*</span>args: List,</span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>                 <span class="op">**</span>kwds: Dict) <span class="op">-&gt;</span> <span class="va">None</span>:</span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a>        prompt <span class="op">=</span> args[<span class="dv">0</span>]</span>
+<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a>        model <span class="op">=</span> get_model()</span>
+<span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a>        result <span class="op">=</span> model.generate(prompt<span class="op">=</span>prompt)</span>
+<span id="cb40-9"><a href="#cb40-9" aria-hidden="true" tabindex="-1"></a>        respose <span class="op">=</span> text_response(request, result)</span>
+<span id="cb40-10"><a href="#cb40-10" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.server.send_response(response)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>But when have you ever interacted with an LLM via a web interface where it waits until it generates <em>all</em> of the response up-front before sending it back to you? Never; you can see it generate the response in real time, and that’s what we want to mimic here in this experiment.</p>
 </section>
 <section id="our-goals" class="level3">
@@ -2365,102 +2356,98 @@ Full Code for async Gpt2App.generate_response()
 <span id="cb45-25"><a href="#cb45-25" aria-hidden="true" tabindex="-1"></a><span class="co">                for the generator.  If None, the model's manual</span></span>
 <span id="cb45-26"><a href="#cb45-26" aria-hidden="true" tabindex="-1"></a><span class="co">                seed will be used.</span></span>
 <span id="cb45-27"><a href="#cb45-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb45-28"><a href="#cb45-28" aria-hidden="true" tabindex="-1"></a><span class="co">        Returns:</span></span>
+<span id="cb45-28"><a href="#cb45-28" aria-hidden="true" tabindex="-1"></a><span class="co">        Yields:</span></span>
 <span id="cb45-29"><a href="#cb45-29" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb45-30"><a href="#cb45-30" aria-hidden="true" tabindex="-1"></a><span class="co">            str: The generated text (including the initial prompt).</span></span>
-<span id="cb45-31"><a href="#cb45-31" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb45-32"><a href="#cb45-32" aria-hidden="true" tabindex="-1"></a><span class="co">        Yields:</span></span>
-<span id="cb45-33"><a href="#cb45-33" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb45-34"><a href="#cb45-34" aria-hidden="true" tabindex="-1"></a><span class="co">            byte: The newly generated decoded token.  If -1, a</span></span>
-<span id="cb45-35"><a href="#cb45-35" aria-hidden="true" tabindex="-1"></a><span class="co">            non-printable token was generated, and generation</span></span>
-<span id="cb45-36"><a href="#cb45-36" aria-hidden="true" tabindex="-1"></a><span class="co">            was terminated.</span></span>
-<span id="cb45-37"><a href="#cb45-37" aria-hidden="true" tabindex="-1"></a><span class="co">        """</span></span>
-<span id="cb45-38"><a href="#cb45-38" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb45-39"><a href="#cb45-39" aria-hidden="true" tabindex="-1"></a>        enc <span class="op">=</span> <span class="va">self</span>.enc</span>
-<span id="cb45-40"><a href="#cb45-40" aria-hidden="true" tabindex="-1"></a>        stop_token <span class="op">=</span> <span class="va">self</span>.stop_token</span>
-<span id="cb45-41"><a href="#cb45-41" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb45-42"><a href="#cb45-42" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Encode the prompt -&gt; tensor of shape (1, T)</span></span>
-<span id="cb45-43"><a href="#cb45-43" aria-hidden="true" tabindex="-1"></a>        tokens <span class="op">=</span> enc.encode(text)</span>
-<span id="cb45-44"><a href="#cb45-44" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> torch.tensor(</span>
-<span id="cb45-45"><a href="#cb45-45" aria-hidden="true" tabindex="-1"></a>            tokens, dtype<span class="op">=</span>torch.<span class="bu">long</span>, device<span class="op">=</span><span class="va">self</span>.device</span>
-<span id="cb45-46"><a href="#cb45-46" aria-hidden="true" tabindex="-1"></a>        ).unsqueeze(<span class="dv">0</span>)</span>
-<span id="cb45-47"><a href="#cb45-47" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb45-48"><a href="#cb45-48" aria-hidden="true" tabindex="-1"></a>        sample_rng <span class="op">=</span> torch.Generator(device<span class="op">=</span><span class="va">self</span>.device)</span>
-<span id="cb45-49"><a href="#cb45-49" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> seed <span class="kw">is</span> <span class="va">None</span>:</span>
-<span id="cb45-50"><a href="#cb45-50" aria-hidden="true" tabindex="-1"></a>            seed <span class="op">=</span> <span class="va">self</span>.manual_seed</span>
-<span id="cb45-51"><a href="#cb45-51" aria-hidden="true" tabindex="-1"></a>        sample_rng.manual_seed(seed)</span>
-<span id="cb45-52"><a href="#cb45-52" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb45-53"><a href="#cb45-53" aria-hidden="true" tabindex="-1"></a>        logging.debug(</span>
-<span id="cb45-54"><a href="#cb45-54" aria-hidden="true" tabindex="-1"></a>            <span class="ss">f'[generate_async_for] Starting generation loop for </span><span class="sc">{</span>text<span class="sc">}</span><span class="ss"> '</span></span>
-<span id="cb45-55"><a href="#cb45-55" aria-hidden="true" tabindex="-1"></a>            <span class="ss">f'with seed </span><span class="sc">{</span>seed<span class="sc">}</span><span class="ss">.'</span></span>
-<span id="cb45-56"><a href="#cb45-56" aria-hidden="true" tabindex="-1"></a>        )</span>
-<span id="cb45-57"><a href="#cb45-57" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb45-58"><a href="#cb45-58" aria-hidden="true" tabindex="-1"></a>        start_time <span class="op">=</span> time.perf_counter()</span>
-<span id="cb45-59"><a href="#cb45-59" aria-hidden="true" tabindex="-1"></a>        count <span class="op">=</span> <span class="dv">0</span></span>
-<span id="cb45-60"><a href="#cb45-60" aria-hidden="true" tabindex="-1"></a>        <span class="cf">while</span> x.size(<span class="dv">1</span>) <span class="op">&lt;</span> max_length:</span>
-<span id="cb45-61"><a href="#cb45-61" aria-hidden="true" tabindex="-1"></a>            count <span class="op">+=</span> <span class="dv">1</span></span>
-<span id="cb45-62"><a href="#cb45-62" aria-hidden="true" tabindex="-1"></a>            <span class="cf">with</span> torch.no_grad():</span>
-<span id="cb45-63"><a href="#cb45-63" aria-hidden="true" tabindex="-1"></a>                <span class="co"># Forward pass, ignoring the returned loss.</span></span>
-<span id="cb45-64"><a href="#cb45-64" aria-hidden="true" tabindex="-1"></a>                (logits, _) <span class="op">=</span> <span class="va">self</span>(x)</span>
+<span id="cb45-30"><a href="#cb45-30" aria-hidden="true" tabindex="-1"></a><span class="co">            byte: The newly generated decoded token.  If -1, a</span></span>
+<span id="cb45-31"><a href="#cb45-31" aria-hidden="true" tabindex="-1"></a><span class="co">            non-printable token was generated, and generation</span></span>
+<span id="cb45-32"><a href="#cb45-32" aria-hidden="true" tabindex="-1"></a><span class="co">            was terminated.</span></span>
+<span id="cb45-33"><a href="#cb45-33" aria-hidden="true" tabindex="-1"></a><span class="co">        """</span></span>
+<span id="cb45-34"><a href="#cb45-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-35"><a href="#cb45-35" aria-hidden="true" tabindex="-1"></a>        enc <span class="op">=</span> <span class="va">self</span>.enc</span>
+<span id="cb45-36"><a href="#cb45-36" aria-hidden="true" tabindex="-1"></a>        stop_token <span class="op">=</span> <span class="va">self</span>.stop_token</span>
+<span id="cb45-37"><a href="#cb45-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-38"><a href="#cb45-38" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Encode the prompt -&gt; tensor of shape (1, T)</span></span>
+<span id="cb45-39"><a href="#cb45-39" aria-hidden="true" tabindex="-1"></a>        tokens <span class="op">=</span> enc.encode(text)</span>
+<span id="cb45-40"><a href="#cb45-40" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> torch.tensor(</span>
+<span id="cb45-41"><a href="#cb45-41" aria-hidden="true" tabindex="-1"></a>            tokens, dtype<span class="op">=</span>torch.<span class="bu">long</span>, device<span class="op">=</span><span class="va">self</span>.device</span>
+<span id="cb45-42"><a href="#cb45-42" aria-hidden="true" tabindex="-1"></a>        ).unsqueeze(<span class="dv">0</span>)</span>
+<span id="cb45-43"><a href="#cb45-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-44"><a href="#cb45-44" aria-hidden="true" tabindex="-1"></a>        sample_rng <span class="op">=</span> torch.Generator(device<span class="op">=</span><span class="va">self</span>.device)</span>
+<span id="cb45-45"><a href="#cb45-45" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> seed <span class="kw">is</span> <span class="va">None</span>:</span>
+<span id="cb45-46"><a href="#cb45-46" aria-hidden="true" tabindex="-1"></a>            seed <span class="op">=</span> <span class="va">self</span>.manual_seed</span>
+<span id="cb45-47"><a href="#cb45-47" aria-hidden="true" tabindex="-1"></a>        sample_rng.manual_seed(seed)</span>
+<span id="cb45-48"><a href="#cb45-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-49"><a href="#cb45-49" aria-hidden="true" tabindex="-1"></a>        logging.debug(</span>
+<span id="cb45-50"><a href="#cb45-50" aria-hidden="true" tabindex="-1"></a>            <span class="ss">f'[generate_async_for] Starting generation loop for </span><span class="sc">{</span>text<span class="sc">}</span><span class="ss"> '</span></span>
+<span id="cb45-51"><a href="#cb45-51" aria-hidden="true" tabindex="-1"></a>            <span class="ss">f'with seed </span><span class="sc">{</span>seed<span class="sc">}</span><span class="ss">.'</span></span>
+<span id="cb45-52"><a href="#cb45-52" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb45-53"><a href="#cb45-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-54"><a href="#cb45-54" aria-hidden="true" tabindex="-1"></a>        start_time <span class="op">=</span> time.perf_counter()</span>
+<span id="cb45-55"><a href="#cb45-55" aria-hidden="true" tabindex="-1"></a>        count <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb45-56"><a href="#cb45-56" aria-hidden="true" tabindex="-1"></a>        <span class="cf">while</span> x.size(<span class="dv">1</span>) <span class="op">&lt;</span> max_length:</span>
+<span id="cb45-57"><a href="#cb45-57" aria-hidden="true" tabindex="-1"></a>            count <span class="op">+=</span> <span class="dv">1</span></span>
+<span id="cb45-58"><a href="#cb45-58" aria-hidden="true" tabindex="-1"></a>            <span class="cf">with</span> torch.no_grad():</span>
+<span id="cb45-59"><a href="#cb45-59" aria-hidden="true" tabindex="-1"></a>                <span class="co"># Forward pass, ignoring the returned loss.</span></span>
+<span id="cb45-60"><a href="#cb45-60" aria-hidden="true" tabindex="-1"></a>                (logits, _) <span class="op">=</span> <span class="va">self</span>(x)</span>
+<span id="cb45-61"><a href="#cb45-61" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-62"><a href="#cb45-62" aria-hidden="true" tabindex="-1"></a>            <span class="co"># Take the logits at the last time-step (shape:</span></span>
+<span id="cb45-63"><a href="#cb45-63" aria-hidden="true" tabindex="-1"></a>            <span class="co"># (1, vocab_size)).</span></span>
+<span id="cb45-64"><a href="#cb45-64" aria-hidden="true" tabindex="-1"></a>            logits <span class="op">=</span> logits[:, <span class="op">-</span><span class="dv">1</span>, :]</span>
 <span id="cb45-65"><a href="#cb45-65" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb45-66"><a href="#cb45-66" aria-hidden="true" tabindex="-1"></a>            <span class="co"># Take the logits at the last time-step (shape:</span></span>
-<span id="cb45-67"><a href="#cb45-67" aria-hidden="true" tabindex="-1"></a>            <span class="co"># (1, vocab_size)).</span></span>
-<span id="cb45-68"><a href="#cb45-68" aria-hidden="true" tabindex="-1"></a>            logits <span class="op">=</span> logits[:, <span class="op">-</span><span class="dv">1</span>, :]</span>
-<span id="cb45-69"><a href="#cb45-69" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb45-70"><a href="#cb45-70" aria-hidden="true" tabindex="-1"></a>            <span class="co"># Convert to probabilities.</span></span>
-<span id="cb45-71"><a href="#cb45-71" aria-hidden="true" tabindex="-1"></a>            probs <span class="op">=</span> F.softmax(logits, dim<span class="op">=-</span><span class="dv">1</span>)</span>
-<span id="cb45-72"><a href="#cb45-72" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb45-73"><a href="#cb45-73" aria-hidden="true" tabindex="-1"></a>            <span class="co"># Top-k sampling.</span></span>
-<span id="cb45-74"><a href="#cb45-74" aria-hidden="true" tabindex="-1"></a>            topk_probs, topk_indices <span class="op">=</span> torch.topk(</span>
-<span id="cb45-75"><a href="#cb45-75" aria-hidden="true" tabindex="-1"></a>                probs, k<span class="op">=</span>top_k, dim<span class="op">=-</span><span class="dv">1</span>,</span>
-<span id="cb45-76"><a href="#cb45-76" aria-hidden="true" tabindex="-1"></a>            )</span>
-<span id="cb45-77"><a href="#cb45-77" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb45-78"><a href="#cb45-78" aria-hidden="true" tabindex="-1"></a>            <span class="co"># Sample the next token.</span></span>
-<span id="cb45-79"><a href="#cb45-79" aria-hidden="true" tabindex="-1"></a>            next_idx <span class="op">=</span> torch.multinomial(</span>
-<span id="cb45-80"><a href="#cb45-80" aria-hidden="true" tabindex="-1"></a>                topk_probs,</span>
-<span id="cb45-81"><a href="#cb45-81" aria-hidden="true" tabindex="-1"></a>                num_samples<span class="op">=</span><span class="dv">1</span>,</span>
-<span id="cb45-82"><a href="#cb45-82" aria-hidden="true" tabindex="-1"></a>                generator<span class="op">=</span>sample_rng,</span>
-<span id="cb45-83"><a href="#cb45-83" aria-hidden="true" tabindex="-1"></a>            )</span>
-<span id="cb45-84"><a href="#cb45-84" aria-hidden="true" tabindex="-1"></a>            next_token <span class="op">=</span> torch.gather(topk_indices, <span class="op">-</span><span class="dv">1</span>, next_idx)</span>
-<span id="cb45-85"><a href="#cb45-85" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb45-86"><a href="#cb45-86" aria-hidden="true" tabindex="-1"></a>            <span class="co"># If the next token is the stop token, we're done.</span></span>
-<span id="cb45-87"><a href="#cb45-87" aria-hidden="true" tabindex="-1"></a>            next_token_item <span class="op">=</span> next_token.item()</span>
-<span id="cb45-88"><a href="#cb45-88" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> next_token_item <span class="op">==</span> stop_token:</span>
-<span id="cb45-89"><a href="#cb45-89" aria-hidden="true" tabindex="-1"></a>                <span class="cf">break</span></span>
-<span id="cb45-90"><a href="#cb45-90" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb45-91"><a href="#cb45-91" aria-hidden="true" tabindex="-1"></a>            <span class="co"># Append token to current sequence.  Although we only</span></span>
-<span id="cb45-92"><a href="#cb45-92" aria-hidden="true" tabindex="-1"></a>            <span class="co"># yield a singular decoded token below, we still need</span></span>
-<span id="cb45-93"><a href="#cb45-93" aria-hidden="true" tabindex="-1"></a>            <span class="co"># to keep track of the entire sequence for subsequent</span></span>
-<span id="cb45-94"><a href="#cb45-94" aria-hidden="true" tabindex="-1"></a>            <span class="co"># generation steps.</span></span>
-<span id="cb45-95"><a href="#cb45-95" aria-hidden="true" tabindex="-1"></a>            x <span class="op">=</span> torch.cat((x, next_token), dim<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb45-66"><a href="#cb45-66" aria-hidden="true" tabindex="-1"></a>            <span class="co"># Convert to probabilities.</span></span>
+<span id="cb45-67"><a href="#cb45-67" aria-hidden="true" tabindex="-1"></a>            probs <span class="op">=</span> F.softmax(logits, dim<span class="op">=-</span><span class="dv">1</span>)</span>
+<span id="cb45-68"><a href="#cb45-68" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-69"><a href="#cb45-69" aria-hidden="true" tabindex="-1"></a>            <span class="co"># Top-k sampling.</span></span>
+<span id="cb45-70"><a href="#cb45-70" aria-hidden="true" tabindex="-1"></a>            topk_probs, topk_indices <span class="op">=</span> torch.topk(</span>
+<span id="cb45-71"><a href="#cb45-71" aria-hidden="true" tabindex="-1"></a>                probs, k<span class="op">=</span>top_k, dim<span class="op">=-</span><span class="dv">1</span>,</span>
+<span id="cb45-72"><a href="#cb45-72" aria-hidden="true" tabindex="-1"></a>            )</span>
+<span id="cb45-73"><a href="#cb45-73" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-74"><a href="#cb45-74" aria-hidden="true" tabindex="-1"></a>            <span class="co"># Sample the next token.</span></span>
+<span id="cb45-75"><a href="#cb45-75" aria-hidden="true" tabindex="-1"></a>            next_idx <span class="op">=</span> torch.multinomial(</span>
+<span id="cb45-76"><a href="#cb45-76" aria-hidden="true" tabindex="-1"></a>                topk_probs,</span>
+<span id="cb45-77"><a href="#cb45-77" aria-hidden="true" tabindex="-1"></a>                num_samples<span class="op">=</span><span class="dv">1</span>,</span>
+<span id="cb45-78"><a href="#cb45-78" aria-hidden="true" tabindex="-1"></a>                generator<span class="op">=</span>sample_rng,</span>
+<span id="cb45-79"><a href="#cb45-79" aria-hidden="true" tabindex="-1"></a>            )</span>
+<span id="cb45-80"><a href="#cb45-80" aria-hidden="true" tabindex="-1"></a>            next_token <span class="op">=</span> torch.gather(topk_indices, <span class="op">-</span><span class="dv">1</span>, next_idx)</span>
+<span id="cb45-81"><a href="#cb45-81" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-82"><a href="#cb45-82" aria-hidden="true" tabindex="-1"></a>            <span class="co"># If the next token is the stop token, we're done.</span></span>
+<span id="cb45-83"><a href="#cb45-83" aria-hidden="true" tabindex="-1"></a>            next_token_item <span class="op">=</span> next_token.item()</span>
+<span id="cb45-84"><a href="#cb45-84" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> next_token_item <span class="op">==</span> stop_token:</span>
+<span id="cb45-85"><a href="#cb45-85" aria-hidden="true" tabindex="-1"></a>                <span class="cf">break</span></span>
+<span id="cb45-86"><a href="#cb45-86" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-87"><a href="#cb45-87" aria-hidden="true" tabindex="-1"></a>            <span class="co"># Append token to current sequence.  Although we only</span></span>
+<span id="cb45-88"><a href="#cb45-88" aria-hidden="true" tabindex="-1"></a>            <span class="co"># yield a singular decoded token below, we still need</span></span>
+<span id="cb45-89"><a href="#cb45-89" aria-hidden="true" tabindex="-1"></a>            <span class="co"># to keep track of the entire sequence for subsequent</span></span>
+<span id="cb45-90"><a href="#cb45-90" aria-hidden="true" tabindex="-1"></a>            <span class="co"># generation steps.</span></span>
+<span id="cb45-91"><a href="#cb45-91" aria-hidden="true" tabindex="-1"></a>            x <span class="op">=</span> torch.cat((x, next_token), dim<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb45-92"><a href="#cb45-92" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-93"><a href="#cb45-93" aria-hidden="true" tabindex="-1"></a>            <span class="co"># Decode the newly-generated token.  Note that a single</span></span>
+<span id="cb45-94"><a href="#cb45-94" aria-hidden="true" tabindex="-1"></a>            <span class="co"># token will often be decoded to multiple characters.</span></span>
+<span id="cb45-95"><a href="#cb45-95" aria-hidden="true" tabindex="-1"></a>            new_text_fragment <span class="op">=</span> enc.decode([next_token.item()])</span>
 <span id="cb45-96"><a href="#cb45-96" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb45-97"><a href="#cb45-97" aria-hidden="true" tabindex="-1"></a>            <span class="co"># Decode the newly-generated token.  Note that a single</span></span>
-<span id="cb45-98"><a href="#cb45-98" aria-hidden="true" tabindex="-1"></a>            <span class="co"># token will often be decoded to multiple characters.</span></span>
-<span id="cb45-99"><a href="#cb45-99" aria-hidden="true" tabindex="-1"></a>            new_text_fragment <span class="op">=</span> enc.decode([next_token.item()])</span>
-<span id="cb45-100"><a href="#cb45-100" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb45-101"><a href="#cb45-101" aria-hidden="true" tabindex="-1"></a>            <span class="co"># If any of the characters in the decoded text</span></span>
-<span id="cb45-102"><a href="#cb45-102" aria-hidden="true" tabindex="-1"></a>            <span class="co"># representation aren't printable, terminate</span></span>
-<span id="cb45-103"><a href="#cb45-103" aria-hidden="true" tabindex="-1"></a>            <span class="co"># generation.</span></span>
-<span id="cb45-104"><a href="#cb45-104" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> <span class="kw">not</span> <span class="bu">all</span>(c <span class="kw">in</span> <span class="va">self</span>.printable <span class="cf">for</span> c <span class="kw">in</span> new_text_fragment):</span>
-<span id="cb45-105"><a href="#cb45-105" aria-hidden="true" tabindex="-1"></a>                <span class="cf">yield</span> <span class="op">-</span><span class="dv">1</span></span>
-<span id="cb45-106"><a href="#cb45-106" aria-hidden="true" tabindex="-1"></a>                <span class="cf">break</span></span>
-<span id="cb45-107"><a href="#cb45-107" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb45-108"><a href="#cb45-108" aria-hidden="true" tabindex="-1"></a>            <span class="cf">yield</span> new_text_fragment</span>
-<span id="cb45-109"><a href="#cb45-109" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb45-110"><a href="#cb45-110" aria-hidden="true" tabindex="-1"></a>            <span class="co"># Yield control back to the event loop before continuing</span></span>
-<span id="cb45-111"><a href="#cb45-111" aria-hidden="true" tabindex="-1"></a>            <span class="co"># generation.  If we didn't do this, this client would</span></span>
-<span id="cb45-112"><a href="#cb45-112" aria-hidden="true" tabindex="-1"></a>            <span class="co"># hog the thread's event loop, preventing other clients</span></span>
-<span id="cb45-113"><a href="#cb45-113" aria-hidden="true" tabindex="-1"></a>            <span class="co"># associated with the loop from getting services.  (As</span></span>
-<span id="cb45-114"><a href="#cb45-114" aria-hidden="true" tabindex="-1"></a>            <span class="co"># we're now running multiple threads in parallel, other</span></span>
-<span id="cb45-115"><a href="#cb45-115" aria-hidden="true" tabindex="-1"></a>            <span class="co"># clients associated with event loops on other threads</span></span>
-<span id="cb45-116"><a href="#cb45-116" aria-hidden="true" tabindex="-1"></a>            <span class="co"># would not be impacted.)</span></span>
-<span id="cb45-117"><a href="#cb45-117" aria-hidden="true" tabindex="-1"></a>            <span class="cf">await</span> asyncio.sleep(<span class="dv">0</span>)</span>
-<span id="cb45-118"><a href="#cb45-118" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb45-119"><a href="#cb45-119" aria-hidden="true" tabindex="-1"></a>        elapsed <span class="op">=</span> time.perf_counter() <span class="op">-</span> start_time</span>
-<span id="cb45-120"><a href="#cb45-120" aria-hidden="true" tabindex="-1"></a>        logging.debug(</span>
-<span id="cb45-121"><a href="#cb45-121" aria-hidden="true" tabindex="-1"></a>            <span class="ss">f"[generate_async_for] Generated </span><span class="sc">{</span>count<span class="sc">}</span><span class="ss"> tokens in "</span></span>
-<span id="cb45-122"><a href="#cb45-122" aria-hidden="true" tabindex="-1"></a>            <span class="ss">f"</span><span class="sc">{</span>elapsed<span class="sc">:.2f}</span><span class="ss"> seconds (~</span><span class="sc">{</span>count <span class="op">/</span> elapsed<span class="sc">:.2f}</span><span class="ss"> tok/s)"</span></span>
-<span id="cb45-123"><a href="#cb45-123" aria-hidden="true" tabindex="-1"></a>        )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb45-97"><a href="#cb45-97" aria-hidden="true" tabindex="-1"></a>            <span class="co"># If any of the characters in the decoded text</span></span>
+<span id="cb45-98"><a href="#cb45-98" aria-hidden="true" tabindex="-1"></a>            <span class="co"># representation aren't printable, terminate</span></span>
+<span id="cb45-99"><a href="#cb45-99" aria-hidden="true" tabindex="-1"></a>            <span class="co"># generation.</span></span>
+<span id="cb45-100"><a href="#cb45-100" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> <span class="kw">not</span> <span class="bu">all</span>(c <span class="kw">in</span> <span class="va">self</span>.printable <span class="cf">for</span> c <span class="kw">in</span> new_text_fragment):</span>
+<span id="cb45-101"><a href="#cb45-101" aria-hidden="true" tabindex="-1"></a>                <span class="cf">yield</span> <span class="op">-</span><span class="dv">1</span></span>
+<span id="cb45-102"><a href="#cb45-102" aria-hidden="true" tabindex="-1"></a>                <span class="cf">break</span></span>
+<span id="cb45-103"><a href="#cb45-103" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-104"><a href="#cb45-104" aria-hidden="true" tabindex="-1"></a>            <span class="cf">yield</span> new_text_fragment</span>
+<span id="cb45-105"><a href="#cb45-105" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-106"><a href="#cb45-106" aria-hidden="true" tabindex="-1"></a>            <span class="co"># Yield control back to the event loop before continuing</span></span>
+<span id="cb45-107"><a href="#cb45-107" aria-hidden="true" tabindex="-1"></a>            <span class="co"># generation.  If we didn't do this, this client would</span></span>
+<span id="cb45-108"><a href="#cb45-108" aria-hidden="true" tabindex="-1"></a>            <span class="co"># hog the thread's event loop, preventing other clients</span></span>
+<span id="cb45-109"><a href="#cb45-109" aria-hidden="true" tabindex="-1"></a>            <span class="co"># associated with the loop from getting services.  (As</span></span>
+<span id="cb45-110"><a href="#cb45-110" aria-hidden="true" tabindex="-1"></a>            <span class="co"># we're now running multiple threads in parallel, other</span></span>
+<span id="cb45-111"><a href="#cb45-111" aria-hidden="true" tabindex="-1"></a>            <span class="co"># clients associated with event loops on other threads</span></span>
+<span id="cb45-112"><a href="#cb45-112" aria-hidden="true" tabindex="-1"></a>            <span class="co"># would not be impacted.)</span></span>
+<span id="cb45-113"><a href="#cb45-113" aria-hidden="true" tabindex="-1"></a>            <span class="cf">await</span> asyncio.sleep(<span class="dv">0</span>)</span>
+<span id="cb45-114"><a href="#cb45-114" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-115"><a href="#cb45-115" aria-hidden="true" tabindex="-1"></a>        elapsed <span class="op">=</span> time.perf_counter() <span class="op">-</span> start_time</span>
+<span id="cb45-116"><a href="#cb45-116" aria-hidden="true" tabindex="-1"></a>        logging.debug(</span>
+<span id="cb45-117"><a href="#cb45-117" aria-hidden="true" tabindex="-1"></a>            <span class="ss">f"[generate_async_for] Generated </span><span class="sc">{</span>count<span class="sc">}</span><span class="ss"> tokens in "</span></span>
+<span id="cb45-118"><a href="#cb45-118" aria-hidden="true" tabindex="-1"></a>            <span class="ss">f"</span><span class="sc">{</span>elapsed<span class="sc">:.2f}</span><span class="ss"> seconds (~</span><span class="sc">{</span>count <span class="op">/</span> elapsed<span class="sc">:.2f}</span><span class="ss"> tok/s)"</span></span>
+<span id="cb45-119"><a href="#cb45-119" aria-hidden="true" tabindex="-1"></a>        )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>This routine was the last piece we needed to implement to satisfy <a href="#our-goals">our three goals</a> captured earlier, so, we’re now ready to test it out!</p>
 </section>
 </section>
@@ -2468,30 +2455,11 @@ Full Code for async Gpt2App.generate_response()
 <section id="test-drive" class="level2">
 <h2 class="anchored" data-anchor-id="test-drive">Test Drive!</h2>
 <p>We can launch an instance of our multi-threaded HTTP web server with our new <code>Gpt2App</code> HTTP application via the command line as follows:</p>
-<div class="sourceCode" id="cb46"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="ex">%</span> %] python <span class="at">-Xgil</span><span class="op">=</span>0 <span class="at">-m</span> parallelopedia.http.server <span class="at">--threads</span> 40 <span class="at">--app-classes</span> parallelopedia.gpt2.Gpt2App <span class="at">--port</span> 4444</span>
-<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a><span class="ex">Traceback</span> <span class="er">(</span><span class="ex">most</span> recent call last<span class="kw">)</span><span class="bu">:</span></span>
-<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>  <span class="ex">File</span> <span class="st">"&lt;frozen runpy&gt;"</span>, line 198, in _run_module_as_main</span>
-<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a>  <span class="ex">File</span> <span class="st">"&lt;frozen runpy&gt;"</span>, line 88, in _run_code</span>
-<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a>  <span class="ex">File</span> <span class="st">"/mnt/raid1/trent/src/parallelopedia/src/parallelopedia/http/server.py"</span>, line 1478, in <span class="op">&lt;</span>module<span class="op">&gt;</span></span>
-<span id="cb46-6"><a href="#cb46-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">main()</span></span>
-<span id="cb46-7"><a href="#cb46-7" aria-hidden="true" tabindex="-1"></a>    <span class="ex">~~~~^^</span></span>
-<span id="cb46-8"><a href="#cb46-8" aria-hidden="true" tabindex="-1"></a>  <span class="ex">File</span> <span class="st">"/mnt/raid1/trent/src/parallelopedia/src/parallelopedia/http/server.py"</span>, line 1457, in main</span>
-<span id="cb46-9"><a href="#cb46-9" aria-hidden="true" tabindex="-1"></a>    <span class="ex">get_class_from_string</span><span class="er">(</span><span class="ex">app_class</span><span class="kw">)</span></span>
-<span id="cb46-10"><a href="#cb46-10" aria-hidden="true" tabindex="-1"></a>    <span class="ex">~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^</span></span>
-<span id="cb46-11"><a href="#cb46-11" aria-hidden="true" tabindex="-1"></a>  <span class="ex">File</span> <span class="st">"/mnt/raid1/trent/src/parallelopedia/src/parallelopedia/util.py"</span>, line 128, in get_class_from_string</span>
-<span id="cb46-12"><a href="#cb46-12" aria-hidden="true" tabindex="-1"></a>    <span class="ex">module</span> = __import__<span class="er">(</span><span class="ex">module_name</span><span class="kw">)</span></span>
-<span id="cb46-13"><a href="#cb46-13" aria-hidden="true" tabindex="-1"></a>  <span class="ex">File</span> <span class="st">"/mnt/raid1/trent/src/parallelopedia/src/parallelopedia/gpt2.py"</span>, line 407, in <span class="op">&lt;</span>module<span class="op">&gt;</span></span>
-<span id="cb46-14"><a href="#cb46-14" aria-hidden="true" tabindex="-1"></a>    <span class="ex">class</span> GPT<span class="er">(</span><span class="ex">nn.Module</span><span class="kw">)</span><span class="bu">:</span></span>
-<span id="cb46-15"><a href="#cb46-15" aria-hidden="true" tabindex="-1"></a>    <span class="ex">...</span><span class="op">&lt;</span>679 lines<span class="op">&gt;</span>...</span>
-<span id="cb46-16"><a href="#cb46-16" aria-hidden="true" tabindex="-1"></a>            <span class="er">)</span></span>
-<span id="cb46-17"><a href="#cb46-17" aria-hidden="true" tabindex="-1"></a>  <span class="ex">File</span> <span class="st">"/mnt/raid1/trent/src/parallelopedia/src/parallelopedia/gpt2.py"</span>, line 905, in GPT</span>
-<span id="cb46-18"><a href="#cb46-18" aria-hidden="true" tabindex="-1"></a>    <span class="ex">@torch.compile</span></span>
-<span id="cb46-19"><a href="#cb46-19" aria-hidden="true" tabindex="-1"></a>     <span class="ex">^^^^^^^^^^^^^</span></span>
-<span id="cb46-20"><a href="#cb46-20" aria-hidden="true" tabindex="-1"></a>  <span class="ex">File</span> <span class="st">"/home/trent/mambaforge/envs/py313t/lib/python3.13t/site-packages/torch/__init__.py"</span>, line 2526, in compile</span>
-<span id="cb46-21"><a href="#cb46-21" aria-hidden="true" tabindex="-1"></a>    <span class="ex">raise</span> RuntimeError<span class="er">(</span></span>
-<span id="cb46-22"><a href="#cb46-22" aria-hidden="true" tabindex="-1"></a>        <span class="st">"torch.compile is not supported on Python built with GIL disabled"</span></span>
-<span id="cb46-23"><a href="#cb46-23" aria-hidden="true" tabindex="-1"></a>    <span class="kw">)</span></span>
-<span id="cb46-24"><a href="#cb46-24" aria-hidden="true" tabindex="-1"></a><span class="ex">RuntimeError:</span> torch.compile is not supported on Python built with GIL disabled</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb46"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="ex">%</span> python <span class="at">-Xgil</span><span class="op">=</span>0 <span class="at">-m</span> parallelopedia.http.server  <span class="dt">\</span></span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">--threads</span> 40 <span class="at">--ip</span> 0.0.0.0 <span class="at">--port</span> 4444       <span class="dt">\</span></span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">--app-classes</span> parallelopedia.gpt2.Gpt2App   <span class="dt">\</span></span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a>                  parallelopedia.http.server.PlaintextApp</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>This will start up a multi-threaded HTTP server listening on all interfaces on port 4444, with 40 threads, and two HTTP applications: our <code>Gpt2App</code> and a <code>PlaintextApp</code> that just returns “Hello, World!” to any incoming request.</p>
 <!-- vim:set ts=8 sw=2 sts=2 expandtab textwidth=78 -->
 
 

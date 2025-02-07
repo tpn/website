@@ -712,18 +712,12 @@ which can be best demonstrated with a simple example:
 
 ```python
 class PlaintextApp(HttpApp):
-    routes = make_routes()
-    route = router(routes)
-
     @route
     def plaintext(self, request):
         response = text_response(request, 'Hello, World!')
         self.server.send_response(response)
 
 class SleeperApp(HttpApp):
-    routes = make_routes()
-    route = router(routes)
-
     @route
     def sleep(self, request, seconds):
         time.sleep(int(seconds))
@@ -910,9 +904,6 @@ That code would look something like this:
 
 ```python
 class Gpt2App(HttpApp):
-    routes = make_routes()
-    route = router(routes)
-
     @route
     def generate(self, request: Request,
                  *args: List,
@@ -1395,10 +1386,6 @@ class GPT:
                 for the generator.  If None, the model's manual
                 seed will be used.
 
-        Returns:
-
-            str: The generated text (including the initial prompt).
-
         Yields:
 
             byte: The newly generated decoded token.  If -1, a
@@ -1503,31 +1490,15 @@ We can launch an instance of our multi-threaded HTTP web server with our new
 `Gpt2App` HTTP application via the command line as follows:
 
 ```bash
-% %] python -Xgil=0 -m parallelopedia.http.server --threads 40 --app-classes parallelopedia.gpt2.Gpt2App --port 4444
-Traceback (most recent call last):
-  File "<frozen runpy>", line 198, in _run_module_as_main
-  File "<frozen runpy>", line 88, in _run_code
-  File "/mnt/raid1/trent/src/parallelopedia/src/parallelopedia/http/server.py", line 1478, in <module>
-    main()
-    ~~~~^^
-  File "/mnt/raid1/trent/src/parallelopedia/src/parallelopedia/http/server.py", line 1457, in main
-    get_class_from_string(app_class)
-    ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^
-  File "/mnt/raid1/trent/src/parallelopedia/src/parallelopedia/util.py", line 128, in get_class_from_string
-    module = __import__(module_name)
-  File "/mnt/raid1/trent/src/parallelopedia/src/parallelopedia/gpt2.py", line 407, in <module>
-    class GPT(nn.Module):
-    ...<679 lines>...
-            )
-  File "/mnt/raid1/trent/src/parallelopedia/src/parallelopedia/gpt2.py", line 905, in GPT
-    @torch.compile
-     ^^^^^^^^^^^^^
-  File "/home/trent/mambaforge/envs/py313t/lib/python3.13t/site-packages/torch/__init__.py", line 2526, in compile
-    raise RuntimeError(
-        "torch.compile is not supported on Python built with GIL disabled"
-    )
-RuntimeError: torch.compile is not supported on Python built with GIL disabled
+% python -Xgil=0 -m parallelopedia.http.server  \
+    --threads 40 --ip 0.0.0.0 --port 4444       \
+    --app-classes parallelopedia.gpt2.Gpt2App   \
+                  parallelopedia.http.server.PlaintextApp
 ```
+
+This will start up a multi-threaded HTTP server listening on all interfaces
+on port 4444, with 40 threads, and two HTTP applications: our `Gpt2App` and
+a `PlaintextApp` that just returns "Hello, World!" to any incoming request.
 
 
 <!-- vim:set ts=8 sw=2 sts=2 expandtab textwidth=78 -->
