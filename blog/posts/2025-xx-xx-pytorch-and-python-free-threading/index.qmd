@@ -1,5 +1,7 @@
 ---
 title: "DRAFT: PyTorch and Python Free-Threading"
+subtitle: |
+    Unlocking multi-threaded parallel inference on PyTorch models
 categories:
   - PyTorch
   - Python
@@ -11,11 +13,12 @@ author: "Trent Nelson"
 draft: true
 image: "images/pytorch-and-python-free-threading.png"
 description: |
-  This blog post explores multi-threaded PyTorch parallel inference via an
-  `asyncio`-based HTTP server and the new *No-GIL* free-threaded Python,
-  using a (predominantly-AI-written) simple React Bootstrap web interface.
-  We capture what is currently possible, what type of issues are typically
-  encountered, and what the roadmap may look like for the future.
+  This post examines multi-threaded parallel inference on PyTorch models
+  using the new *No-GIL*, free-threaded version of Python.  Using a simple
+  124M parameter GPT2 model that we train from scratch, we explore the novel
+  new territory unlocked by free-threaded Python: parallel PyTorch model
+  inference, where multiple threads, unimpeded by the Python GIL, attempt to
+  generate text from a transformer-based model in parallel.
 jupyter:
   kernelspec:
     display_name: "Python 3.13t (Free-Threaded)"
@@ -51,37 +54,67 @@ particularly as it relates to GPU programming.
 
 This blog post explores what can be done with [PyTorch](https://pytorch.org)
 now with the new free-threaded version of Python, specifically focusing on
-run-time inference on transformer-based generative models.  Using a simple
-React Bootstrap web interface for the front-end, a pure-Python
-`asyncio`-based multi-threaded HTTP server is used to facilitate
-multi-threaded, simultaneous parallel model inference.
+run-time inference on transformer-based generative models.
+
+::: {.callout-note}
+
+I didn't focus on how *training* PyTorch models might look in the new
+free-threaded Python world for a couple of reasons.
+
+Primarily, training is
+a lot more complex if you're involving multiple nodes---as gradients need
+to be carefully synchronized at critical points, for example---and is well
+outside the scope of a simple blog post.
+
+Additionally, there's already a huge body of existing work tackling
+multi-node training in PyTorch by way of the [Distributed Data Parallel](
+https://pytorch.org/tutorials/intermediate/ddp_tutorial.html),
+`multiprocessing`-based facilities exposed by [`torch.distributed`](
+https://pytorch.org/tutorials/intermediate/dist_tuto.html).
+
+Whereas, on the flip side, no one has really explored what parallel
+inference might look like in a single-threaded Python because the GIL has
+prevented that from even being an option until now.
+
+:::
 
 # Getting Started
 
 All of this work was done on Linux (Ubuntu 22.04) with Python 3.13t, PyTorch
-2.6, and CUDA 12.6.  I would have liked to get Windows support working too,
-but unfortunately, the multi-threaded `asyncio`-based HTTP server I wrote
-for Linux doesn't appear to leverage multiple threads on Windows.  (From a
-cursory inspection, it appears to be an issue either with event loops not
-getting created properly on non-main-thread threads, or a more insidious
-issue with how the `IocpProactor()` code uses I/O completion ports.)
+2.6, and CUDA 12.6.
+
+Full source code is provided to everything captured in this post.  It is
+worth noting that in a few cases, I am rolling my own solutions for things
+that have existing solutions in the broader Python ecosystem.  For example,
+in the tail end of the post, I leverage a multi-threaded `asyncio`-based
+HTTP server I wrote instead of using existing solutions like
+[FastAPI](https://fastapi.tiangolo.com/).
+
+The reason for this is that, as free-threaded Python is still in its
+infancy, a lot of packages do not work with it yet, especially those that
+rely on Cython, C or C++ code, or Rust.
+
+In fact, Rust dependencies are particularly problematic due to the
+proliferation of Python projects leveraging [PyO3](
+https://github.com/PyO3/pyo3) (Rust bindings for Python), especially
+prominent projects such as [TikToken](https://github.com/openai/tiktoken)
+and [Pydantic](https://docs.pydantic.dev/latest/), upon which a lot of the
+Python AI ecosystem is built.  PyO3 only recently grew support for
+free-threaded Python in their 0.23.3 release, which came out in December,
+2025, and many dependent projects are yet to update to it.
+
+Thus, this post and its supporting code should not be considered the state
+of the art for production deployments---its primary goal is exploratory in
+nature, and minimizing the number of moving pieces in the stack helps
+achieve this goal.
 
 ## Environments
 
-In general, I endeavored to minimize the number of external library
-dependencies as best I could.  The primary reason for this is that a lot of
-the modern Python AI stack isn't yet compatible with Python free-threaded
-builds, unfortunately.  This is improving at a rapid pace, though.
+It is fiddly getting the environments set up in support of this post.
+Again, this is due to the infancy of free-threaded Python.  So I apologize
+in advance for how long this environment setup section is.
 
-Anything written in Rust is particularly problematic, as
-[PyO3](https://github.com/PyO3/pyo3) (Rust bindings for Python) only recently
-supported free-threaded Python 3.13+ as of 0.23.3, which was released early
-December, 2025, and a lot of projects haven't yet updated to it (like TikToken
-and Pydantic).  Other common projects like `lxml` aren't compatible yet either,
-which means you can't simply do `pip install llama-stack` and start playing
-around.  Likewise for `transformers` and other parts of the HuggingFace stack.
-
-I will reference two `conda` environments in this post: a Python 3.13
+I reference two `conda` environments in this post: a Python 3.13
 free-threaded one named `py313t`, and a normal, not-free-threaded Python
 3.13 one named `py313`.
 
@@ -104,7 +137,7 @@ conda create -n py313t python=3.13 python-freethreading \
     nodejs pip tqdm flake8 rust requests \
         -c conda-forge
 conda activate py313t
-pip install numpy setuptools_rust regex requests datrie
+pip install numpy setuptools_rust regex safetensors
 ```
 
 `nodejs` is required for the UI component we'll introduce later.  `regex`,
@@ -191,7 +224,8 @@ Type "help", "copyright", "credits" or "license" for more information.
 Install PyTorch 2.6 via `pip` with the conda `py313t` environment active:
 
 ```bash
-pip install torch==2.6 --index-url https://download.pytorch.org/whl/cu126
+% conda activate py313t
+% pip install torch==2.6 --index-url https://download.pytorch.org/whl/cu126
 ```
 
 If you have trouble installing PyTorch, consult their [Getting Started](
@@ -226,15 +260,15 @@ Once `ipykernel` is installed, run the following:
 Installed kernelspec py313t in /home/trent/.local/share/jupyter/kernels/py313t
 ```
 
-This will install a kernel configuration in
-`~/.local/jupyter/share/kernels/py313t`, which we then need to tweak by adding
-the `-Xgil=0` startup flag:
+This will install a kernel configuration file, `kernel.json`, which we need
+to tweak by adding the `-Xgil=0` startup flag to the Python interpreter:
 
 ```bash
 % cd ~/.local/jupyter/share/kernels/py313t
 % cp kernel.json kernel.json.orig
 % vi kernel.json
 # Edit kernel.json to make it look like the diff below.
+% diff -u kernel.json.orig kernel.json
 ```
 
 ```diff
@@ -303,7 +337,7 @@ conda create -n py313 python=3.13 \
     nodejs pip tqdm flake8 jupyterlab requests \
         -c conda-forge
 conda activate py313
-pip install numpy datrie tiktoken
+pip install numpy datrie tiktoken safetensors
 pip install torch==2.6 --index-url https://download.pytorch.org/whl/cu126
 ```
 
@@ -315,11 +349,18 @@ be focusing on in this post lives in the [parallelopedia.gpt2](
 https://github.com/tpn/parallelopedia/blob/main/src/parallelopedia/gpt2.py)
 module.
 
-Clone the repository as follows:
+There is also a web user interface component named [Parallelopedia-UI](
+https://github.com/tpn/parallelopedia-ui), which we will use later in the
+post.
+
+Clone the repositories as follows:
 
 ```bash
-git clone https://github.com/tpn/parallelopedia
+% git clone https://github.com/tpn/parallelopedia
+% git clone https://github.com/tpn/parallelopedia-ui
 ```
+
+::: {.callout-important .env-vars collapse="false" title="Important Environment Variables"}
 
 The code and command examples in this post will assume you've added the
 `src` directory to your `PYTHONPATH`, the `bin` directory to your `PATH`,
@@ -331,7 +372,22 @@ cd parallelopedia
 export PYTHONPATH=$(pwd)/src:$PYTHONPATH
 export PATH=$(pwd)/bin:$PATH
 export PARALLELOPEDIA_ROOT=$(pwd)
+cd ..
+cd parallelopedia-ui
+export PARALLELOPEDIA_UI=$(pwd)
 ```
+
+It is recommended that you add these to your shell.  For me, using zsh, I
+use the following:
+
+```zsh
+export PARALLELOPEDIA_ROOT=~s1/parallelopedia
+export PARALLELOPEDIA_UI=~s1/parallelopedia-ui
+export PYTHONPATH=$PARALLELOPEDIA_ROOT/src:$PYTHONPATH
+export PATH=$PARALLELOPEDIA_ROOT/bin:$PATH
+```
+
+:::
 
 You can perform a quick sanity check that things are working as follows:
 
@@ -358,62 +414,6 @@ options:
 
 ```
 
-## Parallelopedia Web Interface
-
-The React Bootstrap web interface lives in the [Parallelopedia-UI](
-https://github.com/tpn/parallelopedia-ui) repository.
-
-::: {.callout-note}
-
-Full disclaimer: I'm not a web developer.  I don't know JavaScript, React,
-or Bootstrap, or anything else in the modern web stack.  So, like any
-modern developer in 2025, when faced with needing to whip up something in an
-area I am not proficient, I farm it all out to AI---either ChatGPT, local
-LLMs via [LM Studio](https://lmstudio.ai/), or, more recently, [Aider](
-https://aider.chat).
-
-TL;DR: the web interface code probably sucks.
-
-:::
-
-Clone the repository as follows:
-
-```bash
-git clone https://github.com/tpn/parallelopedia-ui
-```
-
-Both the `py313t` and `py313` environments included `nodejs`, so with either
-of them active, you should be able to change into that directory and run
-`npm run start` to start up the web interface:
-
-```bash
-conda activate py313
-cd parallelopedia-ui
-npm run start
-```
-
-That should launch a browser automatically to `http://localhost:3000/`, which
-should have a `GPT2` tab that, when selected, looks something like this:
-
-::: {.lightbox}
-![Parallelopedia UI Example](images/parallelopedia-ui-gpt2-light.png)
-:::
-
-::: {.hidden}
-
-The dark version's contrast is a little too dark for my liking.  Just use
-the light version until it bugs me enough to fix.
-
-::: {.lightbox .theme-light}
-![Parallelopedia UI Example](images/parallelopedia-ui-gpt2-light.png)
-:::
-
-::: {.lightbox .theme-dark}
-![Parallelopedia UI Example](images/parallelopedia-ui-gpt2-dark.png)
-:::
-
-:::
-
 # PyTorch and LLM Crash Course
 
 My involvement with PyTorch and Large Language Models (LLMs) started around
@@ -428,13 +428,13 @@ on deep neural networks and LLMs titled [Neural Networks: From Zero to Hero](
 https://www.youtube.com/playlist?list=PLAqhIrjkxbuWI23v9cThsA9GvCAUhRvKZ),
 over the course of about 3 weeks or so I went from zero to... well I
 wouldn't necessarily say *hero*---perhaps zero to *not-completley-clueless*
-level of understanding of how LLMs work.
+is more apropos.
 
 Andrej's content is a fantastic resource to learn everything you need to
 know to understand how modern LLMs work from the ground-up.  It's not a
-short series---there's 19 hours, 21 minutes and two seconds of content
-across ten videos---and you'll probably spend double that if you really
-want to have the content sink in.
+short series---there are 19 hours, 21 minutes and two seconds of content
+across ten videos---and you'll probably spend double that if you *really*
+want to properly absorb the content.
 
 None of the work presented in this post would have been possible had I not
 invested the time in Andrej's series.  If you're reading this Andrej, thanks,
@@ -620,56 +620,914 @@ TODO.
 
 # Parallel PyTorch Inference
 
-Now we finally get to the fun part.  The primary objective I intended to
-tackle with this work was to investigate whether or not PyTorch model
-inference could be done simultaneously, in parallel, by multiple threads,
-in a single free-threaded Python process, ideally with just a single GPU at
-minimum.
+Now we finally get to the fun part: let's investigate whether or not PyTorch
+model inference can be done simultaneously, in parallel, by multiple
+threads, running on multiple cores at the same time, in a single
+free-threaded Python process.  And ideally, we should only need one GPU,
+with all of these threads *sharing* it as fairly as possible.  Although if
+we have multiple GPUs, we should be able to distribute the incoming work
+evenly across those too, if we want.
 
 This is novel, uncharted territory we're able to now explore thanks to
 the free-threaded version of Python.
 
-::: {.callout-note}
+::: {.callout-note title="Simultaneous vs Parallel vs Concurrent"}
 
-I didn't focus on exploring free-threading and *training* PyTorch models.
-Mainly because it's a lot more complex, plus there's already a huge body of
-existing work in PyTorch that handles distributed training across multiple
-GPUs via `multiprocessing`.
+The phrasing I've used above---*"simultaneously, in parallel"*---is a bit
+redundant.  They both imply the same thing.  When I use either word in this
+post, I'm explicitly referring to the new ability unlocked by free-threaded
+Python, where multiple threads can be running Python code on different CPU
+cores at the same time---i.e. *simultaneously*.  And thus, you're performing
+work in *parallel*.
+
+When I use the term *concurrent* or *concurrency*, I'm using it in the
+traditional sense within the context of Python: making progress on multiple
+things at a time.  This term is well suited to describe things like
+web servers, where a single Python process, with a single thread, running on
+a single CPU core, can service multiple clients at any given time (by way
+of [non-blocking socket I/O and event multiplexing](
+https://speakerdeck.com/trent/pyparallel-how-we-removed-the-gil-and-exploited-all-cores?slide=27)),
+but it's not servicing any of those clients *simultaneously* on different
+cores, because that would require multiple threads running in *parallel*.
+
+Some more details regarding *parallelism* vs *concurrency* can be found on
+[slide
+8](
+https://speakerdeck.com/trent/parallelism-and-concurrency-with-python?slide=8)
+of a deck I put together many years ago titled
+[Parallelism and Concurrency in Python](
+https://speakerdeck.com/trent/parallelism-and-concurrency-with-python).
 
 :::
 
-The first design decision I had to make was: how would I test this?  I could
-spin up some threads and have them all call generate, but that's a little
-boring.
+So how do we try this out?  I guess we could spin up some threads and have
+them all call `model.generate()`, but that's a little boring.
 
 Why not try implement a pure Python, multi-threaded `asyncio`-based HTTP
 server, expose a `/generate`-esque style `GET` endpoint, and wire that up
-to the model generation code we saw above, allowing us to serve generic
-web requests for generation in parallel, ideally in an `asyncio`-friendly
-manner, where we can stream individual tokens back one-by-one via HTTP's
-chunked-encoding transfer protocol, giving each thread's event loop the
-ability to service multiple clients *concurrently* in a reasonably fair
-manner, whilst also servicing many clients in *parallel* across all threads?
+to the model generation code we saw above, allowing us to serve web requests
+for generation in parallel, ideally in an `asyncio`-friendly manner, where
+we can stream individual tokens back one-by-one via HTTP's chunked-encoding
+transfer protocol, giving each thread's event loop the ability to service
+multiple clients *concurrently* in a reasonably fair manner, whilst also
+servicing many clients in *parallel* across all threads, and for kicks, get
+AI to whip up a janky little React Bootstrap UI that we can slap in front of
+it all to test it?
 
-So, that's what I tried, and, shockingly... it all just basically worked
-out of the box without any issues.  You can absolutely have multiple Python
-threads running in parallel, generating tokens against different prompts,
-one-by-one, from a single PyTorch model, in a single Python process.
+## Pure Python Multi-threaded HTTP Server
 
-Granted, the development work I did on the multi-threaded `asyncio`-based
-HTTP server---essentially, the [parallelopedia.http.server](
-https://github.com/tpn/parallelopedia/blob/main/src/parallelopedia/http/server.py)
-module---was done in concert with some other articles I'm actively working
-on about Python's new free-threading abilities, so it was nice to be able
-to leverage that work and easily plug in a little GPT2 web app that played
-nicely with the existing setup.
+First thing we need is a nice and simple `asyncio`-based HTTP server, that
+also happens to work with multi-threading now that we have a free-threaded
+Python at our disposal.
 
-::: {.hidden}
-Additionally, parallel multi-threaded inference is particularly interesting
-because you should arguably be able to have an HTTP server servicing *"chat"*
-requests (i.e. like an OpenAI compatible REST API) in parallel with only one
-GPU.  (Although no reason multiple GPUs can't also be leveraged, as we'll
-find out.)
+Luckily, I have one of those laying around already!  In support of another
+article I'm actively working on (which was meant to get published before
+this post), I ported the [HTTP Server](
+https://github.com/pyparallel/pyparallel/blob/branches/3.3-px/Lib/async/http/server.py)
+I wrote many years ago for [PyParallel](https://pyparallel.org)^[And I'm
+sure I used the existing Python stdlib `http.server` code at the time as the
+basis; ain't nobody got time to be writing new web servers from scratch.] to
+use the new `asyncio` facilities available with Python, and then slapped
+multiple threads on it, where each thread gets its own `asyncio` event loop.
+
+Turns out, thankfully, that this Just Works, at least on
+Linux^[Unfortunately, it doesn't appear to work on Windows as-is; using the
+exact same code, only one thread can be seen running when the server is
+loaded.  It's not doing a round-robin between *all* threads, like you'd
+expect to see with the GIL enabled, there's just a single sole thread
+attempting to service all incoming requests, with all other threads sitting
+idle.  I don't know if it's because of something quirky with regards to
+additional, non-main-thread threads not getting their own event loop
+(hopefully easy to fix), or something more insidious related to how we're
+misuing I/O completion ports behind the scenes in `IocpProactor()` now that
+we have free-threading (much harder to fix).  I haven't had time to
+investigate in more detail.]---we can now have a pure Python HTTP server,
+running in a single Python process, that'll happily saturate every CPU core
+under load.
+
+The server code lives in [`parallelopedia.http.server`](
+https://github.com/tpn/parallelopedia/blob/main/src/parallelopedia/http/server.py),
+and it includes a super janky little notion of *"HTTP Apps"*, the purpose of
+which can be best demonstrated with a simple example:
+
+```python
+class PlaintextApp(HttpApp):
+    routes = make_routes()
+    route = router(routes)
+
+    @route
+    def plaintext(self, request):
+        response = text_response(request, 'Hello, World!')
+        self.server.send_response(response)
+
+class SleeperApp(HttpApp):
+    routes = make_routes()
+    route = router(routes)
+
+    @route
+    def sleep(self, request, seconds):
+        time.sleep(int(seconds))
+        msg = f'Slept for {seconds} seconds.')
+        response = text_response(request, msg)
+        self.server.send_response(response)
+
+# Create a server with the two apps.
+app_classes=[PlaintextApp, SleeperApp]
+server = HttpServer(app_classes=app_classes)
+```
+
+In the above example, the HTTP server will route requests for the
+`/plaintext` endpoint to an instance of the `PlaintextApp`'s
+`plaintext()` routine, and `/sleep` requests get routed to the
+`SleeperApp`'s `sleep()` routine.
+
+The *"slapped multiple threads on it"* activity I refered to earlier is
+handled by some new [async and threading scaffolding](
+https://github.com/tpn/parallelopedia/blob/main/src/parallelopedia/http/server.py#L1344)
+added to the bottom of that module, with the pertinent pieces reproduced
+below:
+
+```python
+
+async def main_async(
+    args: argparse.Namespace,
+    protocol_class: type,
+    *protocol_args: Tuple
+) -> None:
+    """
+    This is the main function for the server when it is running in
+    asynchronous mode.  It will create a server instance and then
+    call serve_forever() on it.
+
+    Arguments:
+
+        args (argparse.Namespace): Supplies the command-line arguments.
+
+        protocol_class (type): Supplies the protocol class to use.
+
+        protocol_args (tuple): Supplies the arguments to pass to the
+            protocol class constructor.
+
+    """
+    loop = asyncio.get_running_loop()
+
+    if os.name in ('nt', 'cygwin'):
+        reuse_port = False
+    else:
+        reuse_port = True
+
+    reuse_address = True
+
+    server = await loop.create_server(
+        lambda: protocol_class(*protocol_args),
+        args.ip,
+        args.port,
+        backlog=args.listen_backlog,
+        reuse_address=reuse_address,
+        reuse_port=reuse_port,
+    )
+
+    async with server:
+        await server.serve_forever()
+
+
+def start_event_loop(
+    args: argparse.Namespace,
+    protocol_class: type,
+    *protocol_args: Tuple
+) -> None:
+    """
+    This function will start the asyncio event loop and run
+    the main_async() function.  It is intended to be the
+    target of a threading.Thread.
+
+    Arguments:
+
+        args (argparse.Namespace): Supplies the command-line arguments.
+
+        protocol_class (type): Supplies the protocol class to use.
+
+        protocol_args (tuple): Supplies the arguments to pass to the
+            protocol class constructor.
+    """
+    asyncio.run(
+        main_async(
+            args,
+            protocol_class,
+            *protocol_args,
+        ),
+        debug=args.debug,
+    )
+
+
+def main_threaded_multi_accept(
+    args: argparse.Namespace,
+    protocol_class: type,
+    *protocol_args: Tuple
+) -> None:
+    """
+    This is the main function for the server when it is running in
+    multi-threaded mode with multiple accept sockets.  Each thread
+    will have its own asyncio loop issue a create_server() call for
+    the given host/port and protocol.
+
+    Arguments:
+
+        args (argparse.Namespace): Supplies the command-line arguments.
+
+        protocol_class (type): Supplies the protocol class to use.
+
+        protocol_args (tuple): Supplies the arguments to pass to the
+            protocol class constructor.
+    """
+    import threading
+
+    threads = []
+    for _ in range(args.threads):
+        thread = threading.Thread(
+            target=start_event_loop,
+            args=(args, protocol_class, *protocol_args),
+        )
+        threads.append(thread)
+        thread.start()
+
+    for thread in threads:
+        thread.join()
+
+
+def main(args: Optional[argparse.Namespace] = None):
+    """
+    Main entry point for parallelopedia.http.server module.
+    """
+    args = parse_arguments()
+
+    logging.basicConfig(
+        level=getattr(logging, args.log_level),
+        format='%(asctime)s - %(levelname)s - %(message)s',
+    )
+
+    # Use multiple threads to load the application classes.
+    app_classes = get_classes_from_strings_parallel(
+        args.app_classes,
+    )
+
+    protocol_class = get_class_from_string(args.protocol_class)
+    protocol_args = (app_classes,)
+
+    if args.threads == 1:
+        asyncio.run(
+            main_async(
+                args,
+                protocol_class,
+                *protocol_args,
+            ),
+            debug=args.debug,
+        )
+    else:
+        main_threaded_multi_accept(
+            args,
+            protocol_class,
+            *protocol_args,
+        )
+
+if __name__ == '__main__':
+    main()
+```
+
+## GPT2 HTTP App
+
+With the HTTP server scaffolding in place, we can now whip up a little
+`Gpt2App` class that has a `generate()` method.  Incoming requests to
+the `/generate` endpoint will be routed to that routine by the server.
+
+### Synchronous Up-Front Generation
+
+Now, we could take the simple approach, where the `Gpt2App.generate()`
+call goes off and calls `model.generate()` and then patiently waits for the
+entire response to be generated before sending anything back to the user.
+
+That code would look something like this:
+
+```python
+class Gpt2App(HttpApp):
+    routes = make_routes()
+    route = router(routes)
+
+    @route
+    def generate(self, request: Request,
+                 *args: List,
+                 **kwds: Dict) -> None:
+        prompt = args[0]
+        model = get_model()
+        result = model.generate(prompt=prompt)
+        respose = text_response(request, result)
+        self.server.send_response(response)
+```
+
+But when have you ever interacted with an LLM via a web interface where it
+waits until it generates *all* of the response up-front before sending it
+back to you?  Never; you can see it generate the response in real time, and
+that's what we want to mimic here in this experiment.
+
+### Our Goals
+
+The high-level goals for our solution are thus:
+
+1. We want to send a generated token back to the user as soon as it becomes
+   available.
+
+2. We want to ensure the client receiving the token can display it as soon
+   as they receive it---so we need to be cognizant of what HTTP transfer
+   protocol we use to send bytes back.  If we just used normal HTTP transfer
+   encoding, the client would wait until we've sent *everything* before the
+   user sees it, despite the fact that we've been trickling individual
+   tokens to them the entire time.
+
+3. We want to play nicely with the `asyncio` ecosystem upon which our
+   hosting HTTP server is based---so we need to be cognizant of the current
+   thread's event loop, and make sure we don't impede that thread's ability
+   to *concurrently* serve other clients that are being handled by the event
+   loop.
+
+Thankfully, as we saw earlier with the implementation of the
+`GPT.generate()` routine, generating tokens in response to a prompt is
+inherently a *token-by-token* process.  So the algorithm at least provides
+us with the means to obtain a single token at a time, which takes care of
+the first point.
+
+Second, HTTP's chunked-encoding transfer protocol will allow a HTTP client
+to immediately *"see"* the tokens we send back to it as soon as we send
+them, provided we enable `TCP_NODELAY` on the underlying socket to ensure
+the operating system sends the bytes out to the client as soon as we send
+them.
+
+::: {.callout-note}
+
+If we didn't do this, the default behavior of [Nagle's algorithm](
+https://en.wikipedia.org/wiki/Nagle%27s_algorithm) would apply, and the
+operating system would delay sending individual bytes back when we request,
+in the hope that it can accumulate more bytes to send all at once at a
+slightly later point in time.  This is advantageous for maximizing
+throughput, but it impedes latency, and in our case, we want the lower
+latency afforded by immediately sending the bytes back to the client as soon
+as we generate them.
+
 :::
+
+[Chunked-encoding](https://en.wikipedia.org/wiki/Chunked_transfer_encoding)
+works by setting an HTTP response header `Transfer-Encoding: chunked`, and
+then in the body, each chunk is transmitted by its length and then the chunk
+itself.  The server communicates to the client that the transfer has
+completed once a zero-length chunk is received.
+
+So, as long as we send our tokens back via chunked-encoding, any HTTP/1.1
+client will be able to reassemble them back into the generated text, giving
+the visual appearance of real time model generation.  That will take care
+of the second point.
+
+Lastly, in order to play nice within the greater `asyncio` ecosystem, we
+need to give control back to the underlying thread's `asyncio` event loop
+after we generate a token and yield a decoded text fragment, which can
+thankfully be done via a simple call to `await asyncio.sleep(0)`, provided
+we're generating text from the model from within an `async` callback.
+
+This ensures multiple *concurrent* clients being handled by our thread's
+event loop will be handled fairly; they'll all receive generated tokens
+at the same rate.
+
+### Asynchronous Token-by-Token Generation
+
+The first thing we need to do is to change our `Gpt2App.generate()` call
+into something that is `async` compatible, in anticipation of some later
+code that we write needing to issue an `await asyncio.sleep(0)`, which
+can only be done within a call frame of an asynchronous method.
+
+When our `Gpt2App.generate()` routine is called, we're still within the
+context of the `asyncio` protocol's `data_received()` routine, which is a
+normal, synchronous method, *not* an enlightened `async` method that can
+participate in an `asyncio` event loop.
+
+So, in order to transition from a synchronous callback to an asynchronous
+one, we can use the current event loop's `create_task()` routine to enqueue
+an `async` method for execution.
+
+#### Step 1: Have generate() enqueue an async generate_response().
+
+Thus, our `Gpt2App.generate()` call will look something like this:
+
+```python
+
+class Gpt2App(HttpApp):
+
+    ...
+
+    @route
+    def generate(self, request: Request,
+                 *args: List,
+                 **kwds: Dict) -> None:
+
+        # Extract the "prompt" provided in the incoming request.
+        text = args[0]
+
+        # Obtain the event loop and schedule the response
+        # generation via our async generation coroutine.
+        # We have to do it like this as at this point we're
+        # still within the call frame of the data_received()
+        # protocol callback, which isn't an async function.
+        loop = asyncio.get_running_loop()
+        async_task = self.generate_response(request, text, **kwds)
+        loop.create_task(async_task)
+```
+
+#### Step 2: Implement an async generate_response()
+
+Our asynchronous `generate_response()` routine will be the bridge between
+generating tokens from the model, and sending those tokens back to the
+client via chunked-encoding.
+
+It is responsible for preparing the response to use chunked-encoding,
+and then enabling `TCP_NODELAY` on the socket.
+
+Then, assuming that our model has an `async_generate_for()` routine,
+which we'll implement in the next step, we perform an `async for` loop
+over that routine in order to obtain individual *decoded* tokens.  As
+soon as we receive a token, we can send it back to the client via the
+`response` object's `send_chunk()` routine.
+
+Once we've exhausted the async generator (i.e. it either generated the
+maximum number of requested tokens, or it encountered a stop token), we
+can re-enable `TCP_NODELAY`, and then return.
+
+A simplified version of the Python code is presented below.  I have omitted
+most of the error handling and query parameter parsing code for simplicity;
+see the expandable code block at the end for the full version.
+
+```python
+
+class Gpt2App(HttpApp):
+
+    ...
+
+    async def generate_response(
+        self, request: Request,
+        prompt: str,
+        **kwds: Dict
+    ) -> None:
+
+        # Prepare a chunked-encoding response.
+        response = request.response
+        response.code = 200
+        response.message = 'OK'
+        response.chunked_response = True
+        response.content_type = 'text/plain'
+
+        # Obtain the model.
+        model = get_model()
+
+        # We want to enable TCP_NODELAY for the duration of
+        # the response.  This ensures packets are sent
+        # immediately without any internal buffering.
+        try:
+            response.enable_tcp_nodelay()
+            enabled_nodelay = True
+        except Exception as e:
+            logging.error(f'Error enabling TCP_NODELAY: {e}')
+            enabled_nodelay = False
+
+        # Write the chunked header immediately.
+        response_bytes = bytes(response)
+        if not self.write(response_bytes):
+            # Encountered a disconnect, return.
+            return
+
+        # N.B. From herein, all data must be transferred to
+        #      the client via chunked encoding with the
+        #      `response.send_chunk()` routine.
+
+        # Send the initial prompt text.
+        response.send_chunk(prompt)
+
+        # Obtain decoded tokens from the model one at a time
+        # via an `async for` loop, sending the token back to
+        # the client as soon as it's available.
+        async for decoded_token in model.generate_async_for(prompt):
+            response.send_chunk(decoded_token)
+
+        # Terminate the chunked-encoding response.
+        response.end_chunks()
+
+        # Disable TCP_NODELAY now that the response is complete.
+        # The reasoning behind this is that the client may have
+        # issued the HTTP request with a keep-alive header, and
+        # plans on reusing this connection for a different request
+        # next, which won't necessarily want `TCP_NODELAY` active.
+        if enabled_nodelay:
+            response.disable_tcp_nodelay()
+```
+
+::: {.callout-note #gpt2app-generate-response-full collapse="true" appearance="simple" icon="false" title="Full Code for async Gpt2App.generate_response()"}
+
+The actual code has more robust error-handling facilities and support for
+extracting the query string parameters from the incoming request URI and
+converting them into keyword arguments suitable for passing to the model.
+
+Additionally, we haven't touched on how we initialize or obtain instances of
+our models yet, so the model-related code won't make much sense until later
+in the article.
+
+```python
+
+class Gpt2App(HttpApp):
+    routes = make_routes()
+    route = router(routes)
+
+    def __init__(self, server: HttpServer) -> None:
+        super().__init__(server)
+        self.printable = PRINTABLE
+
+    def is_connected(self):
+        # server.transport will be severed when the client
+        # disconnects, so we can use this to determine if
+        # the client is still connected.
+        server = self.server
+        transport = None
+        try:
+            transport = server.transport
+        except AttributeError:
+            pass
+        return transport is not None
+
+    def write(self, response_bytes):
+        server = self.server
+        transport = None
+        try:
+            transport = server.transport
+        except AttributeError:
+            pass
+        if transport is not None:
+            transport.write(response_bytes)
+            return True
+        else:
+            return False
+
+    async def generate_response(
+        self, request: Request, prompt: str, **kwds: Dict
+    ) -> None:
+
+        response = request.response
+
+        response.code = 200
+        response.message = 'OK'
+        response.chunked_response = True
+        response.content_type = 'text/plain'
+
+        if kwds is None:
+            kwds = {}
+        max_length = min(int(kwds.get('max_length', 100) or 100), 1024)
+        top_k = min(int(kwds.get('top_k', 50) or 50), 50)
+        seed = kwds.get('seed', None)
+        if seed:
+            try:
+                seed = int(seed)
+            except ValueError:
+                seed = None
+        if not seed:
+            seed = random.randint(0, 2**32 - 1)
+
+        device = kwds.get('device', None)
+
+        model_name = kwds.get('model', None)
+        if model_name == 'gpt2-xl':
+            models = PRETRAINED_MODELS
+            get_next = get_next_pretrained_model
+        else:
+            model_name = 'gpt2'
+            models = MODELS
+            get_next = get_next_model
+
+        model = None
+        if device is not None:
+            if device == 'cpu':
+                model = models[-1]
+            elif device.startswith('cuda:'):
+                try:
+                    index = int(device[5:])
+                except ValueError:
+                    index = -1
+                if index < 0 or index >= NUM_GPUS:
+                    index = -1
+                if index != -1:
+                    model = models[index]
+            elif device == 'cuda':
+                model = models[random.randint(0, NUM_GPUS - 1)]
+
+        if not model:
+            # Get a model.  If there are multiple models available, e.g. if we
+            # have multiple GPUs, this will balance the load a bit.
+            model = get_next()
+
+        expose_headers = (
+            'Access-Control-Expose-Headers: '
+            'X-Max-Length, '
+            'X-Top-K, '
+            'X-Seed, '
+            'X-Model-Name, '
+            'X-Model-Device'
+        )
+        response.other_headers.extend([
+            expose_headers,
+            f'X-Max-Length: {max_length}',
+            f'X-Top-K: {top_k}',
+            f'X-Seed: {seed}',
+            f'X-Model-Name: {model_name}',
+            f'X-Model-Device: {model.device}',
+        ])
+
+        # We want to enable TCP_NODELAY for the duration of
+        # the response.  This ensures packets are sent
+        # immediately without any internal buffering.
+        try:
+            response.enable_tcp_nodelay()
+            enabled_nodelay = True
+        except Exception as e:
+            logging.error(f'Error enabling TCP_NODELAY: {e}')
+            enabled_nodelay = False
+
+        # Write the chunked header immediately.
+        response_bytes = bytes(response)
+        if not self.write(response_bytes):
+            # Encountered a disconnect, return.
+            return
+
+        # N.B. From herein, all data must be transferred to
+        #      the client via chunked encoding with the
+        #      `response.send_chunk()` routine.
+
+        # Send the initial prompt text.
+        response.send_chunk(prompt)
+
+        # Obtain an async generator instance to the model's
+        # new async token generation routine.
+        generate_tokens = model.generate_async_for(
+            prompt,
+            max_length=max_length,
+            top_k=top_k,
+            seed=seed,
+        )
+        async for decoded_token in generate_tokens:
+            if decoded_token == -1:
+                # A non-printable token was generated,
+                # terminating generation.
+                response.send_chunk(
+                    OOPS_NON_PRINTABLE_ENCOUNTERED
+                )
+                break
+
+            # If the client has forcibly disconnected,
+            # terminate generation.
+            if not self.is_connected():
+                break
+
+            # Otherwise, send the decoded token to the client
+            # via chunked encoding.
+            response.send_chunk(decoded_token)
+
+        # Send the termination chunk.  This may fail at the
+        # socket.send() level if the client has already
+        # disconnected, which is harmless.
+        response.end_chunks()
+
+        # Disable TCP_NODELAY now that the response is complete.
+        # Again, this may fail at the socket level if the client
+        # has already disconnected, which is harmless.
+        if enabled_nodelay:
+            try:
+                response.disable_tcp_nodelay()
+            except Exception as e:
+                msg = f'Error disabling TCP_NODELAY: {e}'
+                logging.error(msg)
+
+```
+
+:::
+
+
+#### Step 3: Implement an async GPT.async_generate_for()
+
+In the code example above, we assumed the `GPT` model we've been using had
+grown a new `async` routine named `async_generate_for()`, which we'll cover
+now.
+
+This routine is essentially an `asyncio`-friendly version of the original
+`generate()` routine we wrote.  It shares a lot of the same code, with a few
+notable tweaks in order to support the fact that it is being called from a
+callback that was enqueued on a thread's `asyncio` event loop, and it is
+expected to yield a token as soon as it is available, and then pass control
+back to the event loop in order for it to service other clients before it
+continues with generating the next token.
+
+It also has the notion of checking for *"printable"* characters.  This came
+about when I was initially testing this code via `curl` which would
+sometimes balk and exit in the middle of streaming the response, citing that
+it encountered corrupted data or something like that.
+
+After investigation, it turned out that sometimes, for whatever reason, the
+model just generates a junk, nonsensical token (like 65534, which is well
+outside the highest token number of 50384).  I have no idea why it happens,
+although I'll note it happens on the OpenAI GPT2 XL model available on
+HuggingFace (which we'll discuss later) too, so, eh.
+
+I deal with this by checking if we've generated a non-printable token after
+decoding it, and, if so, return -1 and terminate the loop.  The
+[full version](#gpt2app-generate-response-full) of the
+`Gpt2App.generate_response()` routine that we introduced above checks if
+we return -1, and if so, terminates generation with an oopsie message, e.g.:
+
+```python
+OOPS_NON_PRINTABLE_ENCOUNTERED = (
+    'Oops! Non-printable token encountered.  Generation terminated.'
+)
+...
+
+async for decoded_token in generate_tokens:
+    if decoded_token == -1:
+        # A non-printable token was generated,
+        # terminating generation.
+        response.send_chunk(
+            OOPS_NON_PRINTABLE_ENCOUNTERED
+        )
+        break
+```
+
+After yielding a valid decoded token, we issue an `await asyncio.sleep(0)`
+call, which returns control back to the event loop for it to potentially
+handle other concurrent clients.  If there are no other clients, or after
+it has handled all other enqueued work, generation resumes.
+
+The full code follows, it is simple enough as-is that I didn't feel the need
+to omit any details like in the prior example.
+
+```python
+
+class GPT:
+
+    ...
+
+    async def generate_async_for(
+        self, text: str, max_length: int = 1024, top_k: int = 50,
+        seed: int = None,
+    ):
+        """
+        Asynchronously generate text from the model, yielding tokens
+        one at a time as soon as they are available.
+
+        Args:
+
+            text (str): Supplies the prompt.
+
+            max_length (int): Supplies the maximum total length,
+                including prompt.
+
+            top_k (int): Supplies the number of tokens to consider
+                at each generation step.
+
+            seed (int): Optionally supplies the manual seed to use
+                for the generator.  If None, the model's manual
+                seed will be used.
+
+        Returns:
+
+            str: The generated text (including the initial prompt).
+
+        Yields:
+
+            byte: The newly generated decoded token.  If -1, a
+            non-printable token was generated, and generation
+            was terminated.
+        """
+
+        enc = self.enc
+        stop_token = self.stop_token
+
+        # Encode the prompt -> tensor of shape (1, T)
+        tokens = enc.encode(text)
+        x = torch.tensor(
+            tokens, dtype=torch.long, device=self.device
+        ).unsqueeze(0)
+
+        sample_rng = torch.Generator(device=self.device)
+        if seed is None:
+            seed = self.manual_seed
+        sample_rng.manual_seed(seed)
+
+        logging.debug(
+            f'[generate_async_for] Starting generation loop for {text} '
+            f'with seed {seed}.'
+        )
+
+        start_time = time.perf_counter()
+        count = 0
+        while x.size(1) < max_length:
+            count += 1
+            with torch.no_grad():
+                # Forward pass, ignoring the returned loss.
+                (logits, _) = self(x)
+
+            # Take the logits at the last time-step (shape:
+            # (1, vocab_size)).
+            logits = logits[:, -1, :]
+
+            # Convert to probabilities.
+            probs = F.softmax(logits, dim=-1)
+
+            # Top-k sampling.
+            topk_probs, topk_indices = torch.topk(
+                probs, k=top_k, dim=-1,
+            )
+
+            # Sample the next token.
+            next_idx = torch.multinomial(
+                topk_probs,
+                num_samples=1,
+                generator=sample_rng,
+            )
+            next_token = torch.gather(topk_indices, -1, next_idx)
+
+            # If the next token is the stop token, we're done.
+            next_token_item = next_token.item()
+            if next_token_item == stop_token:
+                break
+
+            # Append token to current sequence.  Although we only
+            # yield a singular decoded token below, we still need
+            # to keep track of the entire sequence for subsequent
+            # generation steps.
+            x = torch.cat((x, next_token), dim=1)
+
+            # Decode the newly-generated token.  Note that a single
+            # token will often be decoded to multiple characters.
+            new_text_fragment = enc.decode([next_token.item()])
+
+            # If any of the characters in the decoded text
+            # representation aren't printable, terminate
+            # generation.
+            if not all(c in self.printable for c in new_text_fragment):
+                yield -1
+                break
+
+            yield new_text_fragment
+
+            # Yield control back to the event loop before continuing
+            # generation.  If we didn't do this, this client would
+            # hog the thread's event loop, preventing other clients
+            # associated with the loop from getting services.  (As
+            # we're now running multiple threads in parallel, other
+            # clients associated with event loops on other threads
+            # would not be impacted.)
+            await asyncio.sleep(0)
+
+        elapsed = time.perf_counter() - start_time
+        logging.debug(
+            f"[generate_async_for] Generated {count} tokens in "
+            f"{elapsed:.2f} seconds (~{count / elapsed:.2f} tok/s)"
+        )
+```
+
+This routine was the last piece we needed to implement to satisfy
+[our three goals](#our-goals) captured earlier, so, we're now ready to test
+it out!
+
+## Test Drive!
+
+We can launch an instance of our multi-threaded HTTP web server with our new
+`Gpt2App` HTTP application via the command line as follows:
+
+```bash
+% %] python -Xgil=0 -m parallelopedia.http.server --threads 40 --app-classes parallelopedia.gpt2.Gpt2App --port 4444
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/mnt/raid1/trent/src/parallelopedia/src/parallelopedia/http/server.py", line 1478, in <module>
+    main()
+    ~~~~^^
+  File "/mnt/raid1/trent/src/parallelopedia/src/parallelopedia/http/server.py", line 1457, in main
+    get_class_from_string(app_class)
+    ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^
+  File "/mnt/raid1/trent/src/parallelopedia/src/parallelopedia/util.py", line 128, in get_class_from_string
+    module = __import__(module_name)
+  File "/mnt/raid1/trent/src/parallelopedia/src/parallelopedia/gpt2.py", line 407, in <module>
+    class GPT(nn.Module):
+    ...<679 lines>...
+            )
+  File "/mnt/raid1/trent/src/parallelopedia/src/parallelopedia/gpt2.py", line 905, in GPT
+    @torch.compile
+     ^^^^^^^^^^^^^
+  File "/home/trent/mambaforge/envs/py313t/lib/python3.13t/site-packages/torch/__init__.py", line 2526, in compile
+    raise RuntimeError(
+        "torch.compile is not supported on Python built with GIL disabled"
+    )
+RuntimeError: torch.compile is not supported on Python built with GIL disabled
+```
+
 
 <!-- vim:set ts=8 sw=2 sts=2 expandtab textwidth=78 -->
