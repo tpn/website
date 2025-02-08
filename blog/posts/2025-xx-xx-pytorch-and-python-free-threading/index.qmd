@@ -1638,7 +1638,7 @@ command, which sends keystrokes to all active panes within a given `tmux`
 session window.
 
 I captured a 15 frames-per-second GIF of this in action, which you can view
-below if you expand the callout.  It shows terminal sessions to seven
+below if you expand the callout.  It shows terminal sessions to six
 machines, arranged vertically, all executing the same `echo ... | nc`
 command depicted above.  It's a bit janky, but hopefully you can see that
 the requests are being serviced in parallel by the HTTP server.
@@ -1671,7 +1671,124 @@ images/parallelopedia-multi-threaded-gpu-inference-gpt2-curl-1000.gif)
 
 :::
 
-### Launching the React Bootstrap UI
+## Let's Load Test This Sucker!
+
+These tests are pretty positive!  Looks like we can absolutely do PyTorch
+model generation in parallel via multiple threads thanks to free-threaded
+Python.
+
+Let's ramp it up a notch and see what happens if we attempt to load test
+the `/generate` endpoint from a different server.  The `leopard` server
+you see in the next example is an Intel(R) Xeon(R) W-2275 CPU @ 3.30GHz
+(14 cores, 28 threads) and is connected to the `dgx` box via a 10G Ethernet
+link.
+
+Using the fork of [`wrk`](https://github.com/tpn/wrk) I hacked together some
+ten years ago or so whilst load testing PyParallel, let's kick off a run
+with 14 threads for 30 seconds.  There will be one connection per thread,
+and HTTP/1.1 will be used, so the implicit *keep-alive* behavior means that
+as soon as one `/generate` request completes, another one is immediately
+dispatched.
+
+For posterity, the console command being used is as follows:
+
+```bash
+% time ./wrk -v --latency -c14 -t14 -d30s \
+    'http://dgx:4444/generate/'
+    'The%20quick%20brown%20fox?max_length=20&device=cuda&seed=42'
+```
+
+If you expand the callout below, the GIF you'll see depicts two terminal
+windows.  The smaller foreground window on the left is `leopard`, the
+session doing the `wrk` load test.  The background window that takes up the
+rest of the screen is a GPU-enabled build of [`btop`](
+https://github.com/aristocratos/btop), which is a beautiful console app for
+displaying resource usage.
+
+The 40 CPU cores can be seen in the top pane, and, as expected, about 14 of
+them whirr into life as soon as the load test begins, which tracks, as there
+are now 14 clients attempting to hammer our `/generate` end point.
+
+Below that, you can see the four Tesla V100-DGXS-32GB GPUs also whirr into
+action, handling the generation between them with relative ease.
+
+On the bottom right, I've filtered the process tree to just display our
+`python` HTTP server invocation.  I would love it if `btop` showed the
+individual threads and their load, as it beautifully depicts Python
+saturating cores in parallel now that there's no GIL impeding execution.
+
+::: {.callout-note collapse="true" appearance="simple" icon="false" title="Parallel Generation Load Test GIF: No GIL"}
+
+![Parallel Generation Load Test - No GIL](
+images/parallelopedia-multi-threaded-gpu-inference-gpt2-wrk-14.gif)
+
+:::
+
+I've extracted the last frame, below, to allow closer inspection at the end
+of the run, without the annoyance of the GIF looping.
+
+![Parallel Generation Load Test No GIL - Last Frame](
+images/parallelopedia-multi-threaded-gpu-inference-gpt2-wrk-14-last-frame-optimized.png)
+
+The console output from `wrk` is captured in the callout below.
+
+::: {.callout-note collapse="true" appearance="simple" icon="false" title="Console Output of wrk: No GIL"}
+
+```
+{{< include wrk-leopard-01-no-gil.txt >}}
+```
+
+:::
+
+A visualization of the latencies is presented below.
+
+{{< embed wrk-analysis.ipynb#wrk-01-no-gil >}}
+
+### Ablation Test: Re-enable the GIL
+
+Let's see what happens if we re-enable the GIL.  We should see poor resource
+utilization on the server side, as only one Python thread can run at a time,
+and the statistics reported on the client side should be equally dismal.
+
+Expand the callout below to view the GIF.  I have used another terminal
+window to launch the server with the `-Xgil=1` argument, which re-enables
+the GIL.  I then switch back over to `leopard` and perform the `wrk` load
+test like before.
+
+::: {.callout-note collapse="true" appearance="simple" icon="false" title="Parallel Generation Load Test GIF: GIL Enabled"}
+
+![Parallel Generation Load Test - GIL Enabled](
+images/parallelopedia-multi-threaded-gpu-inference-gpt2-wrk-14-GIL-enabled.gif)
+
+:::
+
+As with before, I've extracted the last frame, below, to allow closer
+inspection at the end of the run, without the annoyance of the GIF looping.
+
+![Parallel Generation Load Test - GIL Enabled - Last Frame](
+images/parallelopedia-multi-threaded-gpu-inference-gpt2-wrk-14-GIL-enabled-last-frame-optimized.png)
+
+As we expected: re-enabling the GIL absolutely murders resource utilization.
+
+The console output from `wrk` follows in the next callout.
+
+::: {.callout-note collapse="true" appearance="simple" icon="false" title="Console Output of wrk: GIL Enabled"}
+
+```
+{{< include wrk-leopard-01-gil.txt >}}
+```
+
+:::
+
+And a visualization of the latencies follows.  Note that there were 60
+socket timeouts in this case, whereas no timeouts were encountered in the
+prior run with the GIL disabled.
+
+{{< embed wrk-analysis.ipynb#wrk-01-gil >}}
+
+::: {.hidden}
+
+## Launching the React Bootstrap UI
 
 The React Bootstrap UI can be launched as follows:
 
@@ -1694,6 +1811,6 @@ TL;DR: the web interface code probably sucks.
 
 :::
 
-
+:::
 
 <!-- vim:set ts=8 sw=2 sts=2 expandtab textwidth=78 -->

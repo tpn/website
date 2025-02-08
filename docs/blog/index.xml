@@ -10,7 +10,7 @@
 <atom:link href="https://trent.me/blog/index.xml" rel="self" type="application/rss+xml"/>
 <description></description>
 <generator>quarto-1.6.40</generator>
-<lastBuildDate>Sat, 08 Feb 2025 00:15:57 GMT</lastBuildDate>
+<lastBuildDate>Sat, 08 Feb 2025 04:22:06 GMT</lastBuildDate>
 <item>
   <title>DRAFT: PyTorch and Python Free-Threading</title>
   <dc:creator>Trent Nelson</dc:creator>
@@ -11064,7 +11064,7 @@ font-style: inherit;">#0 to host dgx left intact</span></span></code></pre></div
 <section id="netcat-example" class="level4">
 <h4 class="anchored" data-anchor-id="netcat-example">Netcat Example</h4>
 <p>To test drive the parallel generation—at least in a very rudimentary fashion—I’ll enlist the help of <code>tmux</code> and the <code>:setw synchronize-panes</code> command, which sends keystrokes to all active panes within a given <code>tmux</code> session window.</p>
-<p>I captured a 15 frames-per-second GIF of this in action, which you can view below if you expand the callout. It shows terminal sessions to seven machines, arranged vertically, all executing the same <code>echo ... | nc</code> command depicted above. It’s a bit janky, but hopefully you can see that the requests are being serviced in parallel by the HTTP server.</p>
+<p>I captured a 15 frames-per-second GIF of this in action, which you can view below if you expand the callout. It shows terminal sessions to six machines, arranged vertically, all executing the same <code>echo ... | nc</code> command depicted above. It’s a bit janky, but hopefully you can see that the requests are being serviced in parallel by the HTTP server.</p>
 <div class="callout callout-style-simple callout-note no-icon callout-titled" title="Parallel Netcat Generation GIF">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-11-contents" aria-controls="callout-11" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
@@ -11120,22 +11120,398 @@ Parallel Curl Generation GIF
 </div>
 </section>
 </section>
-<section id="launching-the-react-bootstrap-ui" class="level3">
-<h3 class="anchored" data-anchor-id="launching-the-react-bootstrap-ui">Launching the React Bootstrap UI</h3>
-<p>The React Bootstrap UI can be launched as follows:</p>
+</section>
+<section id="lets-load-test-this-sucker" class="level2">
+<h2 class="anchored" data-anchor-id="lets-load-test-this-sucker">Let’s Load Test This Sucker!</h2>
+<p>These tests are pretty positive! Looks like we can absolutely do PyTorch model generation in parallel via multiple threads thanks to free-threaded Python.</p>
+<p>Let’s ramp it up a notch and see what happens if we attempt to load test the <code>/generate</code> endpoint from a different server. The <code>leopard</code> server you see in the next example is an Intel(R) Xeon(R) W-2275 CPU @ 3.30GHz (14 cores, 28 threads) and is connected to the <code>dgx</code> box via a 10G Ethernet link.</p>
+<p>Using the fork of <a href="https://github.com/tpn/wrk"><code>wrk</code></a> I hacked together some ten years ago or so whilst load testing PyParallel, let’s kick off a run with 14 threads for 30 seconds. There will be one connection per thread, and HTTP/1.1 will be used, so the implicit <em>keep-alive</em> behavior means that as soon as one <code>/generate</code> request completes, another one is immediately dispatched.</p>
+<p>For posterity, the console command being used is as follows:</p>
 <div class="sourceCode" id="cb50" style="background: #f1f3f5;"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb50-1"><span class="ex" style="color: null;
+background-color: null;
+font-style: inherit;">%</span> time ./wrk <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">-v</span> <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">--latency</span> <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">-c14</span> <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">-t14</span> <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">-d30s</span> <span class="dt" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">\</span></span>
+<span id="cb50-2">    <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'http://dgx:4444/generate/'</span></span>
+<span id="cb50-3">    <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'The%20quick%20brown%20fox?max_length=20&amp;device=cuda&amp;seed=42'</span></span></code></pre></div>
+<p>If you expand the callout below, the GIF you’ll see depicts two terminal windows. The smaller foreground window on the left is <code>leopard</code>, the session doing the <code>wrk</code> load test. The background window that takes up the rest of the screen is a GPU-enabled build of <a href="https://github.com/aristocratos/btop"><code>btop</code></a>, which is a beautiful console app for displaying resource usage.</p>
+<p>The 40 CPU cores can be seen in the top pane, and, as expected, about 14 of them whirr into life as soon as the load test begins, which tracks, as there are now 14 clients attempting to hammer our <code>/generate</code> end point.</p>
+<p>Below that, you can see the four Tesla V100-DGXS-32GB GPUs also whirr into action, handling the generation between them with relative ease.</p>
+<p>On the bottom right, I’ve filtered the process tree to just display our <code>python</code> HTTP server invocation. I would love it if <code>btop</code> showed the individual threads and their load, as it beautifully depicts Python saturating cores in parallel now that there’s no GIL impeding execution.</p>
+<div class="callout callout-style-simple callout-note no-icon callout-titled" title="Parallel Generation Load Test GIF: No GIL">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-13-contents" aria-controls="callout-13" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Parallel Generation Load Test GIF: No GIL
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-13" class="callout-13-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="images/parallelopedia-multi-threaded-gpu-inference-gpt2-wrk-14.gif" class="lightbox" data-gallery="quarto-lightbox-gallery-4" title="Parallel Generation Load Test - No GIL"><img src="https://trent.me/blog/posts/2025-xx-xx-pytorch-and-python-free-threading/images/parallelopedia-multi-threaded-gpu-inference-gpt2-wrk-14.gif" class="img-fluid figure-img" alt="Parallel Generation Load Test - No GIL"></a></p>
+<figcaption>Parallel Generation Load Test - No GIL</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<p>I’ve extracted the last frame, below, to allow closer inspection at the end of the run, without the annoyance of the GIF looping.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="images/parallelopedia-multi-threaded-gpu-inference-gpt2-wrk-14-last-frame-optimized.png" class="lightbox" data-gallery="quarto-lightbox-gallery-5" title="Parallel Generation Load Test No GIL - Last Frame"><img src="https://trent.me/blog/posts/2025-xx-xx-pytorch-and-python-free-threading/images/parallelopedia-multi-threaded-gpu-inference-gpt2-wrk-14-last-frame-optimized.png" class="img-fluid figure-img" alt="Parallel Generation Load Test No GIL - Last Frame"></a></p>
+<figcaption>Parallel Generation Load Test No GIL - Last Frame</figcaption>
+</figure>
+</div>
+<p>The console output from <code>wrk</code> is captured in the callout below.</p>
+<div class="callout callout-style-simple callout-note no-icon callout-titled" title="Console Output of wrk: No GIL">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-14-contents" aria-controls="callout-14" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Console Output of wrk: No GIL
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-14" class="callout-14-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<pre><code>wrk 4.0.0 [epoll] Copyright (C) 2012 Will Glozer
+Running 30s test @ http://dgx:4444/generate/The%20quick%20brown%20fox?max_length=20&amp;device=cuda&amp;seed=42
+  14 threads and 14 connections
+  Thread Stats   Min      Avg       Stdev     Max     +/- Stdev
+    Latency   130.40ms  197.38ms   54.41ms 528.61ms   89.19%
+    Req/Sec     1.00      5.63      2.32    10.00     67.76%
+  Latency Distribution
+      0%  130.40ms
+      1%  139.79ms
+      2%  143.50ms
+      3%  145.78ms
+      4%  147.53ms
+      5%  149.78ms
+      6%  151.18ms
+      7%  152.43ms
+      8%  153.42ms
+      9%  155.29ms
+     10%  156.15ms
+     11%  157.29ms
+     12%  158.27ms
+     13%  158.90ms
+     14%  159.70ms
+     15%  160.73ms
+     16%  161.64ms
+     17%  162.32ms
+     18%  163.09ms
+     19%  163.60ms
+     20%  164.41ms
+     21%  165.17ms
+     22%  165.61ms
+     23%  166.08ms
+     24%  166.75ms
+     25%  167.36ms
+     26%  167.93ms
+     27%  168.51ms
+     28%  169.05ms
+     29%  169.49ms
+     30%  170.23ms
+     31%  170.92ms
+     32%  171.54ms
+     33%  172.10ms
+     34%  172.66ms
+     35%  173.29ms
+     36%  173.98ms
+     37%  174.39ms
+     38%  174.96ms
+     39%  175.47ms
+     40%  176.17ms
+     41%  176.80ms
+     42%  177.24ms
+     43%  177.75ms
+     44%  178.49ms
+     45%  178.92ms
+     46%  179.57ms
+     47%  180.15ms
+     48%  180.62ms
+     49%  181.31ms
+     50%  182.00ms
+     51%  182.60ms
+     52%  183.22ms
+     53%  184.14ms
+     54%  185.01ms
+     55%  185.53ms
+     56%  186.21ms
+     57%  187.30ms
+     58%  188.03ms
+     59%  188.66ms
+     60%  189.14ms
+     61%  190.47ms
+     62%  191.13ms
+     63%  191.69ms
+     64%  192.34ms
+     65%  193.06ms
+     66%  193.87ms
+     67%  194.51ms
+     68%  195.63ms
+     69%  196.68ms
+     70%  197.67ms
+     71%  198.34ms
+     72%  199.90ms
+     73%  201.43ms
+     74%  202.66ms
+     75%  203.56ms
+     76%  205.00ms
+     77%  206.48ms
+     78%  207.76ms
+     79%  209.30ms
+     80%  210.53ms
+     81%  212.11ms
+     82%  213.30ms
+     83%  215.90ms
+     84%  218.09ms
+     85%  220.16ms
+     86%  224.57ms
+     87%  227.99ms
+     88%  230.93ms
+     89%  234.77ms
+     90%  241.08ms
+     91%  252.68ms
+     92%  302.34ms
+     93%  321.04ms
+     94%  335.47ms
+     95%  339.80ms
+     96%  358.81ms
+     97%  369.67ms
+     98%  379.52ms
+     99%  397.66ms
+    100%  411.36ms
+  2128 requests in 30.06s, 1.17MB read
+Requests/sec:     70.80
+Transfer/sec:     39.75KB
+</code></pre>
+</div>
+</div>
+</div>
+<p>A visualization of the latencies is presented below.</p>
+<div class="quarto-embed-nb-cell">
+<div id="cell-wrk-01-no-gil" class="cell" data-execution_count="5">
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><a href="index_files/figure-html/wrk-analysis-wrk-01-no-gil-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-6"><img src="https://trent.me/blog/posts/2025-xx-xx-pytorch-and-python-free-threading/index_files/figure-html/wrk-analysis-wrk-01-no-gil-output-1.png" id="wrk-01-no-gil" width="699" height="553" class="figure-img"></a></p>
+</figure>
+</div>
+</div>
+</div>
+<a class="quarto-notebook-link" id="nblink-2" href="wrk-analysis-preview.html#cell-wrk-01-no-gil">Source: wrk-analysis.ipynb</a></div>
+<section id="ablation-test-re-enable-the-gil" class="level3">
+<h3 class="anchored" data-anchor-id="ablation-test-re-enable-the-gil">Ablation Test: Re-enable the GIL</h3>
+<p>Let’s see what happens if we re-enable the GIL. We should see poor resource utilization on the server side, as only one Python thread can run at a time, and the statistics reported on the client side should be equally dismal.</p>
+<p>Expand the callout below to view the GIF. I have used another terminal window to launch the server with the <code>-Xgil=1</code> argument, which re-enables the GIL. I then switch back over to <code>leopard</code> and perform the <code>wrk</code> load test like before.</p>
+<div class="callout callout-style-simple callout-note no-icon callout-titled" title="Parallel Generation Load Test GIF: GIL Enabled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-15-contents" aria-controls="callout-15" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Parallel Generation Load Test GIF: GIL Enabled
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-15" class="callout-15-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="images/parallelopedia-multi-threaded-gpu-inference-gpt2-wrk-14-GIL-enabled.gif" class="lightbox" data-gallery="quarto-lightbox-gallery-7" title="Parallel Generation Load Test - GIL Enabled"><img src="https://trent.me/blog/posts/2025-xx-xx-pytorch-and-python-free-threading/images/parallelopedia-multi-threaded-gpu-inference-gpt2-wrk-14-GIL-enabled.gif" class="img-fluid figure-img" alt="Parallel Generation Load Test - GIL Enabled"></a></p>
+<figcaption>Parallel Generation Load Test - GIL Enabled</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<p>As with before, I’ve extracted the last frame, below, to allow closer inspection at the end of the run, without the annoyance of the GIF looping.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="images/parallelopedia-multi-threaded-gpu-inference-gpt2-wrk-14-GIL-enabled-last-frame-optimized.png" class="lightbox" data-gallery="quarto-lightbox-gallery-8" title="Parallel Generation Load Test - GIL Enabled - Last Frame"><img src="https://trent.me/blog/posts/2025-xx-xx-pytorch-and-python-free-threading/images/parallelopedia-multi-threaded-gpu-inference-gpt2-wrk-14-GIL-enabled-last-frame-optimized.png" class="img-fluid figure-img" alt="Parallel Generation Load Test - GIL Enabled - Last Frame"></a></p>
+<figcaption>Parallel Generation Load Test - GIL Enabled - Last Frame</figcaption>
+</figure>
+</div>
+<p>As we expected: re-enabling the GIL absolutely murders resource utilization.</p>
+<p>The console output from <code>wrk</code> follows in the next callout.</p>
+<div class="callout callout-style-simple callout-note no-icon callout-titled" title="Console Output of wrk: GIL Enabled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-16-contents" aria-controls="callout-16" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Console Output of wrk: GIL Enabled
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-16" class="callout-16-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<pre><code>wrk 4.0.0 [epoll] Copyright (C) 2012 Will Glozer
+Running 30s test @ http://dgx:4444/generate/The%20quick%20brown%20fox?max_length=20&amp;device=cuda&amp;seed=42
+  14 threads and 14 connections
+  Thread Stats   Min      Avg       Stdev     Max     +/- Stdev
+    Latency     1.11s     1.46s    92.76ms   1.82s    84.47%
+    Req/Sec     0.00      0.00      0.00     0.00    100.00%
+  Latency Distribution
+      0%    1.11s
+      1%    1.16s
+      2%    1.22s
+      3%    1.24s
+      4%    1.29s
+      5%    1.36s
+      6%    1.37s
+      7%    1.37s
+      8%    1.37s
+      9%    1.38s
+     10%    1.38s
+     11%    1.39s
+     12%    1.39s
+     13%    1.39s
+     14%    1.40s
+     15%    1.40s
+     16%    1.40s
+     17%    1.41s
+     18%    1.41s
+     19%    1.41s
+     20%    1.41s
+     21%    1.41s
+     22%    1.41s
+     23%    1.42s
+     24%    1.42s
+     25%    1.42s
+     26%    1.42s
+     27%    1.42s
+     28%    1.42s
+     29%    1.42s
+     30%    1.42s
+     31%    1.43s
+     32%    1.43s
+     33%    1.43s
+     34%    1.43s
+     35%    1.43s
+     36%    1.43s
+     37%    1.43s
+     38%    1.44s
+     39%    1.44s
+     40%    1.44s
+     41%    1.44s
+     42%    1.44s
+     43%    1.45s
+     44%    1.45s
+     45%    1.45s
+     46%    1.45s
+     47%    1.45s
+     48%    1.45s
+     49%    1.45s
+     50%    1.46s
+     51%    1.46s
+     52%    1.46s
+     53%    1.46s
+     54%    1.46s
+     55%    1.47s
+     56%    1.47s
+     57%    1.47s
+     58%    1.47s
+     59%    1.47s
+     60%    1.47s
+     61%    1.48s
+     62%    1.48s
+     63%    1.48s
+     64%    1.48s
+     65%    1.48s
+     66%    1.49s
+     67%    1.49s
+     68%    1.49s
+     69%    1.49s
+     70%    1.49s
+     71%    1.49s
+     72%    1.49s
+     73%    1.50s
+     74%    1.50s
+     75%    1.50s
+     76%    1.50s
+     77%    1.50s
+     78%    1.51s
+     79%    1.51s
+     80%    1.51s
+     81%    1.51s
+     82%    1.51s
+     83%    1.51s
+     84%    1.52s
+     85%    1.52s
+     86%    1.52s
+     87%    1.53s
+     88%    1.53s
+     89%    1.53s
+     90%    1.54s
+     91%    1.55s
+     92%    1.56s
+     93%    1.56s
+     94%    1.59s
+     95%    1.59s
+     96%    1.60s
+     97%    1.70s
+     98%    1.75s
+     99%    1.77s
+    100%    1.82s
+  221 requests in 30.07s, 129.42KB read
+  Socket errors: connect 0, read 0, write 0, timeout 60
+Requests/sec:      7.35
+Transfer/sec:      4.30KB
+</code></pre>
+</div>
+</div>
+</div>
+<p>And a visualization of the latencies follows. Note that there were 60 socket timeouts in this case, whereas no timeouts were encountered in the prior run with the GIL disabled.</p>
+<div class="quarto-embed-nb-cell">
+<div id="cell-wrk-01-gil" class="cell" data-execution_count="6">
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><a href="index_files/figure-html/wrk-analysis-wrk-01-gil-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-9"><img src="https://trent.me/blog/posts/2025-xx-xx-pytorch-and-python-free-threading/index_files/figure-html/wrk-analysis-wrk-01-gil-output-1.png" id="wrk-01-gil" width="699" height="553" class="figure-img"></a></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="launching-the-react-bootstrap-ui" class="level2 hidden">
+<h2 class="anchored" data-anchor-id="launching-the-react-bootstrap-ui">Launching the React Bootstrap UI</h2>
+<p>The React Bootstrap UI can be launched as follows:</p>
+<div class="sourceCode" id="cb53" style="background: #f1f3f5;"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb53-1"><span class="ex" style="color: null;
 background-color: null;
 font-style: inherit;">%</span> cd <span class="va" style="color: #111111;
 background-color: null;
 font-style: inherit;">$PARALLELOPEDIA_UI</span> <span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;"># i.e. root of gh:tpn/parallelopedia-ui</span></span>
-<span id="cb50-2"><span class="ex" style="color: null;
+<span id="cb53-2"><span class="ex" style="color: null;
 background-color: null;
 font-style: inherit;">%</span> conda activate py313t <span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;"># or whatever has recent nodejs/npm</span></span>
-<span id="cb50-3"><span class="ex" style="color: null;
+<span id="cb53-3"><span class="ex" style="color: null;
 background-color: null;
 font-style: inherit;">%</span> npm start run</span></code></pre></div>
 <div class="callout callout-style-default callout-note callout-titled">
@@ -11152,11 +11528,10 @@ Note
 <p>TL;DR: the web interface code probably sucks.</p>
 </div>
 </div>
+</section>
 <!-- vim:set ts=8 sw=2 sts=2 expandtab textwidth=78 -->
 
 
-</section>
-</section>
 </section>
 
 
@@ -11175,7 +11550,7 @@ Note
   <category>LLM</category>
   <category>GPT2</category>
   <guid>https://trent.me/blog/posts/2025-xx-xx-pytorch-and-python-free-threading/</guid>
-  <pubDate>Sat, 08 Feb 2025 00:15:57 GMT</pubDate>
+  <pubDate>Sat, 08 Feb 2025 04:22:06 GMT</pubDate>
   <media:content url="https://trent.me/blog/posts/2025-xx-xx-pytorch-and-python-free-threading/images/pytorch-and-python-free-threading.png" medium="image" type="image/png" height="144" width="144"/>
 </item>
 </channel>
