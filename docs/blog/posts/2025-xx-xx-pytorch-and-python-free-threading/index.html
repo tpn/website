@@ -2675,7 +2675,7 @@ Parallel Curl Generation GIF
 <p>The 40 CPU cores can be seen in the top pane, and, as expected, about 14 of them whirr into life as soon as the load test begins, which tracks, as there are now 14 clients attempting to hammer our <code>/generate</code> end point.</p>
 <p>Below that, you can see the four Tesla V100-DGXS-32GB GPUs also whirr into action, handling the generation between them with relative ease.</p>
 <p>On the bottom right, I’ve filtered the process tree to just display our <code>python</code> HTTP server invocation. I would love it if <code>btop</code> showed the individual threads and their load, as it beautifully depicts Python saturating cores in parallel now that there’s no GIL impeding execution.</p>
-<div class="callout callout-style-simple callout-note no-icon callout-titled" title="Parallel Generation Load Test GIF: No GIL">
+<div id="parallel-generation-load-test-no-gil" class="callout callout-style-simple callout-note no-icon callout-titled" title="Parallel Generation Load Test GIF: No GIL">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-13-contents" aria-controls="callout-13" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon no-icon"></i>

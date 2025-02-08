@@ -1717,7 +1717,7 @@ On the bottom right, I've filtered the process tree to just display our
 individual threads and their load, as it beautifully depicts Python
 saturating cores in parallel now that there's no GIL impeding execution.
 
-::: {.callout-note collapse="true" appearance="simple" icon="false" title="Parallel Generation Load Test GIF: No GIL"}
+::: {.callout-note #parallel-generation-load-test-no-gil collapse="true" appearance="simple" icon="false" title="Parallel Generation Load Test GIF: No GIL"}
 
 ![Parallel Generation Load Test - No GIL](
 images/parallelopedia-multi-threaded-gpu-inference-gpt2-wrk-14.gif)
