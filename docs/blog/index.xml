@@ -10,7 +10,7 @@
 <atom:link href="https://trent.me/blog/index.xml" rel="self" type="application/rss+xml"/>
 <description></description>
 <generator>quarto-1.6.40</generator>
-<lastBuildDate>Sat, 08 Feb 2025 04:22:06 GMT</lastBuildDate>
+<lastBuildDate>Sat, 08 Feb 2025 04:36:21 GMT</lastBuildDate>
 <item>
   <title>DRAFT: PyTorch and Python Free-Threading</title>
   <dc:creator>Trent Nelson</dc:creator>
@@ -11310,7 +11310,7 @@ Transfer/sec:     39.75KB
 </div>
 <p>A visualization of the latencies is presented below.</p>
 <div class="quarto-embed-nb-cell">
-<div id="cell-wrk-01-no-gil" class="cell" data-execution_count="5">
+<div id="cell-wrk-01-no-gil" class="cell" data-execution_count="4">
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -11484,11 +11484,35 @@ Transfer/sec:      4.30KB
 </div>
 <p>And a visualization of the latencies follows. Note that there were 60 socket timeouts in this case, whereas no timeouts were encountered in the prior run with the GIL disabled.</p>
 <div class="quarto-embed-nb-cell">
-<div id="cell-wrk-01-gil" class="cell" data-execution_count="6">
+<div id="cell-wrk-01-gil" class="cell" data-execution_count="5">
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
 <p><a href="index_files/figure-html/wrk-analysis-wrk-01-gil-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-9"><img src="https://trent.me/blog/posts/2025-xx-xx-pytorch-and-python-free-threading/index_files/figure-html/wrk-analysis-wrk-01-gil-output-1.png" id="wrk-01-gil" width="699" height="553" class="figure-img"></a></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<p>Viewing them side by side:</p>
+<div class="quarto-embed-nb-cell">
+<div id="cell-wrk-01-combined" class="cell" data-execution_count="6">
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><a href="index_files/figure-html/wrk-analysis-wrk-01-combined-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-10"><img src="https://trent.me/blog/posts/2025-xx-xx-pytorch-and-python-free-threading/index_files/figure-html/wrk-analysis-wrk-01-combined-output-1.png" id="wrk-01-combined" width="699" height="553" class="figure-img"></a></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<p>Remember to keep in mind that the No GIL vs GIL requests/sec was 70.80 vs 7.35, nearly a ten-fold increase:</p>
+<div class="quarto-embed-nb-cell">
+<div id="cell-wrk-01-rps-combined" class="cell" data-execution_count="7">
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><a href="index_files/figure-html/wrk-analysis-wrk-01-rps-combined-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-11"><img src="https://trent.me/blog/posts/2025-xx-xx-pytorch-and-python-free-threading/index_files/figure-html/wrk-analysis-wrk-01-rps-combined-output-1.png" id="wrk-01-rps-combined" width="694" height="553" class="figure-img"></a></p>
 </figure>
 </div>
 </div>
@@ -11550,7 +11574,7 @@ Note
   <category>LLM</category>
   <category>GPT2</category>
   <guid>https://trent.me/blog/posts/2025-xx-xx-pytorch-and-python-free-threading/</guid>
-  <pubDate>Sat, 08 Feb 2025 04:22:06 GMT</pubDate>
+  <pubDate>Sat, 08 Feb 2025 04:36:21 GMT</pubDate>
   <media:content url="https://trent.me/blog/posts/2025-xx-xx-pytorch-and-python-free-threading/images/pytorch-and-python-free-threading.png" medium="image" type="image/png" height="144" width="144"/>
 </item>
 </channel>

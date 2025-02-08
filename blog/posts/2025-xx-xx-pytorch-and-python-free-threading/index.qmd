@@ -1786,6 +1786,15 @@ prior run with the GIL disabled.
 
 {{< embed wrk-analysis.ipynb#wrk-01-gil >}}
 
+Viewing them side by side:
+
+{{< embed wrk-analysis.ipynb#wrk-01-combined >}}
+
+Remember to keep in mind that the No GIL vs GIL requests/sec was 70.80 vs
+7.35, nearly a ten-fold increase:
+
+{{< embed wrk-analysis.ipynb#wrk-01-rps-combined >}}
+
 ::: {.hidden}
 
 ## Launching the React Bootstrap UI
