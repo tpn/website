@@ -78,6 +78,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="../../../site_libs/bootstrap/bootstrap-e1dca550fcec1e1c7934dca98c281342.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
 <link href="../../../site_libs/bootstrap/bootstrap-dark-30d7f8590d48599e5b2d2a1d86e332d2.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script src="../../../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="../../../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="../../../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -231,7 +234,18 @@ gtag('config', 'G-8RPR4XKPEW', { 'anonymize_ip': false});
   <li><a href="#step-3-implement-an-async-gpt.async_generate_for" id="toc-step-3-implement-an-async-gpt.async_generate_for" class="nav-link" data-scroll-target="#step-3-implement-an-async-gpt.async_generate_for">Step 3: Implement an async GPT.async_generate_for()</a></li>
   </ul></li>
   </ul></li>
-  <li><a href="#test-drive" id="toc-test-drive" class="nav-link" data-scroll-target="#test-drive">Test Drive!</a></li>
+  <li><a href="#test-drive" id="toc-test-drive" class="nav-link" data-scroll-target="#test-drive">Test Drive!</a>
+  <ul>
+  <li><a href="#launching-the-http-server" id="toc-launching-the-http-server" class="nav-link" data-scroll-target="#launching-the-http-server">Launching the HTTP Server</a></li>
+  <li><a href="#visualizing-chunked-encoding" id="toc-visualizing-chunked-encoding" class="nav-link" data-scroll-target="#visualizing-chunked-encoding">Visualizing Chunked-Encoding</a></li>
+  <li><a href="#verifying-via-curl" id="toc-verifying-via-curl" class="nav-link" data-scroll-target="#verifying-via-curl">Verifying via Curl</a></li>
+  <li><a href="#parallel-generation" id="toc-parallel-generation" class="nav-link" data-scroll-target="#parallel-generation">Parallel Generation</a>
+  <ul class="collapse">
+  <li><a href="#netcat-example" id="toc-netcat-example" class="nav-link" data-scroll-target="#netcat-example">Netcat Example</a></li>
+  <li><a href="#curl-example" id="toc-curl-example" class="nav-link" data-scroll-target="#curl-example">Curl Example</a></li>
+  </ul></li>
+  <li><a href="#launching-the-react-bootstrap-ui" id="toc-launching-the-react-bootstrap-ui" class="nav-link" data-scroll-target="#launching-the-react-bootstrap-ui">Launching the React Bootstrap UI</a></li>
+  </ul></li>
   </ul></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/tpn/website/edit/main/blog/posts/2025-xx-xx-pytorch-and-python-free-threading/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/tpn/website/issues/new/choose" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div><div class="quarto-alternate-notebooks"><h2>Notebooks</h2><ul><li><a href="gpt2_v1-preview.html"><i class="bi bi-journal-code"></i>gpt2_v1.ipynb</a></li></ul></div></nav>
@@ -322,7 +336,18 @@ gtag('config', 'G-8RPR4XKPEW', { 'anonymize_ip': false});
   <li><a href="#step-3-implement-an-async-gpt.async_generate_for" id="toc-step-3-implement-an-async-gpt.async_generate_for">Step 3: Implement an async GPT.async_generate_for()</a></li>
   </ul></li>
   </ul></li>
-  <li><a href="#test-drive" id="toc-test-drive">Test Drive!</a></li>
+  <li><a href="#test-drive" id="toc-test-drive">Test Drive!</a>
+  <ul>
+  <li><a href="#launching-the-http-server" id="toc-launching-the-http-server">Launching the HTTP Server</a></li>
+  <li><a href="#visualizing-chunked-encoding" id="toc-visualizing-chunked-encoding">Visualizing Chunked-Encoding</a></li>
+  <li><a href="#verifying-via-curl" id="toc-verifying-via-curl">Verifying via Curl</a></li>
+  <li><a href="#parallel-generation" id="toc-parallel-generation">Parallel Generation</a>
+  <ul>
+  <li><a href="#netcat-example" id="toc-netcat-example">Netcat Example</a></li>
+  <li><a href="#curl-example" id="toc-curl-example">Curl Example</a></li>
+  </ul></li>
+  <li><a href="#launching-the-react-bootstrap-ui" id="toc-launching-the-react-bootstrap-ui">Launching the React Bootstrap UI</a></li>
+  </ul></li>
   </ul></li>
   </ul>
 </nav>
@@ -2437,7 +2462,7 @@ Full Code for async Gpt2App.generate_response()
 <span id="cb45-106"><a href="#cb45-106" aria-hidden="true" tabindex="-1"></a>            <span class="co"># Yield control back to the event loop before continuing</span></span>
 <span id="cb45-107"><a href="#cb45-107" aria-hidden="true" tabindex="-1"></a>            <span class="co"># generation.  If we didn't do this, this client would</span></span>
 <span id="cb45-108"><a href="#cb45-108" aria-hidden="true" tabindex="-1"></a>            <span class="co"># hog the thread's event loop, preventing other clients</span></span>
-<span id="cb45-109"><a href="#cb45-109" aria-hidden="true" tabindex="-1"></a>            <span class="co"># associated with the loop from getting services.  (As</span></span>
+<span id="cb45-109"><a href="#cb45-109" aria-hidden="true" tabindex="-1"></a>            <span class="co"># associated with the loop from getting serviced.  (As</span></span>
 <span id="cb45-110"><a href="#cb45-110" aria-hidden="true" tabindex="-1"></a>            <span class="co"># we're now running multiple threads in parallel, other</span></span>
 <span id="cb45-111"><a href="#cb45-111" aria-hidden="true" tabindex="-1"></a>            <span class="co"># clients associated with event loops on other threads</span></span>
 <span id="cb45-112"><a href="#cb45-112" aria-hidden="true" tabindex="-1"></a>            <span class="co"># would not be impacted.)</span></span>
@@ -2454,15 +2479,204 @@ Full Code for async Gpt2App.generate_response()
 </section>
 <section id="test-drive" class="level2">
 <h2 class="anchored" data-anchor-id="test-drive">Test Drive!</h2>
+<section id="launching-the-http-server" class="level3">
+<h3 class="anchored" data-anchor-id="launching-the-http-server">Launching the HTTP Server</h3>
 <p>We can launch an instance of our multi-threaded HTTP web server with our new <code>Gpt2App</code> HTTP application via the command line as follows:</p>
 <div class="sourceCode" id="cb46"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="ex">%</span> python <span class="at">-Xgil</span><span class="op">=</span>0 <span class="at">-m</span> parallelopedia.http.server  <span class="dt">\</span></span>
 <span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">--threads</span> 40 <span class="at">--ip</span> 0.0.0.0 <span class="at">--port</span> 4444       <span class="dt">\</span></span>
 <span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">--app-classes</span> parallelopedia.gpt2.Gpt2App   <span class="dt">\</span></span>
 <span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a>                  parallelopedia.http.server.PlaintextApp</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>This will start up a multi-threaded HTTP server listening on all interfaces on port 4444, with 40 threads, and two HTTP applications: our <code>Gpt2App</code> and a <code>PlaintextApp</code> that just returns “Hello, World!” to any incoming request.</p>
+<p>This will start up a multi-threaded HTTP server listening on all interfaces on port 4444, with 40 threads, and two HTTP applications: our <code>Gpt2App</code>, which will service requests to the <code>/generate</code> endpoint, and a <code>PlaintextApp</code> that just returns “Hello, World!” to any incoming request received for the <code>/plaintext</code> endpoint.</p>
+</section>
+<section id="visualizing-chunked-encoding" class="level3">
+<h3 class="anchored" data-anchor-id="visualizing-chunked-encoding">Visualizing Chunked-Encoding</h3>
+<p>Let’s visualize the generation response in a way that shows us the raw chunked-encoding, without doing any client-side reassembly. We can achieve that with <code>echo</code> and <code>netcat</code> (<code>nc</code>):</p>
+<div class="sourceCode" id="cb47"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="ex">%</span> echo <span class="at">-en</span> <span class="dt">\</span></span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a> <span class="st">'GET /generate/The%20quick%20brown%20fox?max_length=20&amp;device=cuda&amp;seed=42 '</span> <span class="dt">\</span></span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a> <span class="st">'HTTP/1.1\r\nConnection: close\r\nHost: dgx\r\n\r\n'</span> <span class="kw">|</span> <span class="ex">nc</span> dgx 4444</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>That should yield the following raw output:</p>
+<pre><code>HTTP/1.1 200 OK
+Server: Parallelopedia Web Server v1.0
+Date: Fri, 07 Feb 2025 23:32:02 GMT
+Accept-Ranges: bytes
+Content-Type: text/plain
+Access-Control-Allow-Origin: *
+Connection: close
+Transfer-Encoding: chunked
+Access-Control-Expose-Headers: X-Max-Length, X-Top-K, X-Seed, X-Model-Name, X-Model-Device
+X-Max-Length: 20
+X-Top-K: 50
+X-Seed: 42
+X-Model-Name: gpt2
+X-Model-Device: cuda:0
+
+13
+The quick brown fox
+3
+ is
+2
+ a
+4
+ sub
+7
+species
+5
+ that
+B
+ originated
+3
+ in
+9
+ southern
+9
+ Scotland
+3
+ as
+2
+ a
+8
+ variety
+3
+ of
+4
+ fox
+1
+.
+5
+ This
+0
+</code></pre>
+<p>As you can see, we’ve enabled chunked-encoding by way of the <code>Transfer-Encoding: chunked</code> header. And the body of the response is comprised of these <em>“chunks”</em>; specifically, each bit of decoded text is preceded by its length, in bytes, then followed by <code>\r\n</code>, then followed by the text itself.</p>
+<p>The zero-length chunk at the end indicates completion of the transfer, and as we requested <code>Connection: close</code> in our headers, our HTTP server closes the connection once the generation has completed.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>In HTTP/1.1, <em>“keep-alive”</em> is the default behavior—i.e., a server won’t close a connection unless the client specifically requests it. This is the opposite of HTTP/1.0 behavior, where the server will close a connection by default unless a client furnishes a <code>Connection: keep-alive</code> header.</p>
+</div>
+</div>
+</section>
+<section id="verifying-via-curl" class="level3">
+<h3 class="anchored" data-anchor-id="verifying-via-curl">Verifying via Curl</h3>
+<p>If we switch over to <code>curl</code> and run the same generation request, we’ll see the <em>reassembled</em> text, and, provided we supply the <code>--no-buffer</code> argument, <code>curl</code> will also display decoded text as soon as it receives it.</p>
+<div class="sourceCode" id="cb49"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="ex">%</span> curl <span class="at">--no-buffer</span> <span class="at">--verbose</span> <span class="dt">\</span></span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">'http://dgx:4444/generate/The%20quick%20brown%20fox?'</span> <span class="dt">\</span></span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>        <span class="st">'max_length=20&amp;seed=42&amp;device=cuda'</span></span>
+<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a><span class="ex">*</span>   Trying 10.0.132.48:4444...</span>
+<span id="cb49-5"><a href="#cb49-5" aria-hidden="true" tabindex="-1"></a><span class="ex">*</span> Connected to dgx <span class="er">(</span><span class="ex">10.0.132.48</span><span class="kw">)</span> <span class="ex">port</span> 4444 <span class="er">(</span><span class="co">#0)</span></span>
+<span id="cb49-6"><a href="#cb49-6" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;</span> GET <span class="ex">/generate/The%20quick%20brown%20fox?max_length=20</span><span class="kw">&amp;</span><span class="va">seed</span><span class="op">=</span>42<span class="kw">&amp;</span><span class="va">device</span><span class="op">=</span>cuda <span class="ex">HTTP/1.1</span></span>
+<span id="cb49-7"><a href="#cb49-7" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;</span> Host: <span class="ex">dgx:4444</span></span>
+<span id="cb49-8"><a href="#cb49-8" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;</span> User-Agent: <span class="ex">curl/7.81.0</span></span>
+<span id="cb49-9"><a href="#cb49-9" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;</span> Accept: <span class="ex">*/*</span></span>
+<span id="cb49-10"><a href="#cb49-10" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;</span> </span>
+<span id="cb49-11"><a href="#cb49-11" aria-hidden="true" tabindex="-1"></a><span class="ex">*</span> Mark bundle as not supporting multiuse</span>
+<span id="cb49-12"><a href="#cb49-12" aria-hidden="true" tabindex="-1"></a><span class="op">&lt;</span> HTTP/1.1 <span class="ex">200</span> OK</span>
+<span id="cb49-13"><a href="#cb49-13" aria-hidden="true" tabindex="-1"></a><span class="op">&lt;</span> Server: <span class="ex">Parallelopedia</span> Web Server v1.0</span>
+<span id="cb49-14"><a href="#cb49-14" aria-hidden="true" tabindex="-1"></a><span class="op">&lt;</span> Date: <span class="ex">Fri,</span> 07 Feb 2025 23:05:34 GMT</span>
+<span id="cb49-15"><a href="#cb49-15" aria-hidden="true" tabindex="-1"></a><span class="op">&lt;</span> Accept-Ranges: <span class="ex">bytes</span></span>
+<span id="cb49-16"><a href="#cb49-16" aria-hidden="true" tabindex="-1"></a><span class="op">&lt;</span> Content-Type: <span class="ex">text/plain</span></span>
+<span id="cb49-17"><a href="#cb49-17" aria-hidden="true" tabindex="-1"></a><span class="op">&lt;</span> Access-Control-Allow-Origin: <span class="ex">*</span></span>
+<span id="cb49-18"><a href="#cb49-18" aria-hidden="true" tabindex="-1"></a><span class="op">&lt;</span> Transfer-Encoding: <span class="ex">chunked</span></span>
+<span id="cb49-19"><a href="#cb49-19" aria-hidden="true" tabindex="-1"></a><span class="op">&lt;</span> Access-Control-Expose-Headers: <span class="ex">X-Max-Length,</span> X-Top-K, X-Seed, X-Model-Name, X-Model-Device</span>
+<span id="cb49-20"><a href="#cb49-20" aria-hidden="true" tabindex="-1"></a><span class="op">&lt;</span> X-Max-Length: <span class="ex">20</span></span>
+<span id="cb49-21"><a href="#cb49-21" aria-hidden="true" tabindex="-1"></a><span class="op">&lt;</span> X-Top-K: <span class="ex">50</span></span>
+<span id="cb49-22"><a href="#cb49-22" aria-hidden="true" tabindex="-1"></a><span class="op">&lt;</span> X-Seed: <span class="ex">42</span></span>
+<span id="cb49-23"><a href="#cb49-23" aria-hidden="true" tabindex="-1"></a><span class="op">&lt;</span> X-Model-Name: <span class="ex">gpt2</span></span>
+<span id="cb49-24"><a href="#cb49-24" aria-hidden="true" tabindex="-1"></a><span class="op">&lt;</span> X-Model-Device: <span class="ex">cuda:2</span></span>
+<span id="cb49-25"><a href="#cb49-25" aria-hidden="true" tabindex="-1"></a><span class="op">&lt;</span> </span>
+<span id="cb49-26"><a href="#cb49-26" aria-hidden="true" tabindex="-1"></a><span class="ex">The</span> quick brown fox is a subspecies that originated in southern Scotland as a variety of fox. This<span class="pp">*</span> Connection <span class="co">#0 to host dgx left intact</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="parallel-generation" class="level3">
+<h3 class="anchored" data-anchor-id="parallel-generation">Parallel Generation</h3>
+<section id="netcat-example" class="level4">
+<h4 class="anchored" data-anchor-id="netcat-example">Netcat Example</h4>
+<p>To test drive the parallel generation—at least in a very rudimentary fashion—I’ll enlist the help of <code>tmux</code> and the <code>:setw synchronize-panes</code> command, which sends keystrokes to all active panes within a given <code>tmux</code> session window.</p>
+<p>I captured a 15 frames-per-second GIF of this in action, which you can view below if you expand the callout. It shows terminal sessions to seven machines, arranged vertically, all executing the same <code>echo ... | nc</code> command depicted above. It’s a bit janky, but hopefully you can see that the requests are being serviced in parallel by the HTTP server.</p>
+<div class="callout callout-style-simple callout-note no-icon callout-titled" title="Parallel Netcat Generation GIF">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-11-contents" aria-controls="callout-11" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Parallel Netcat Generation GIF
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-11" class="callout-11-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="images/parallelopedia-multi-threaded-gpu-inference-gpt2-nc.gif" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="Parallel Netcat Generation"><img src="images/parallelopedia-multi-threaded-gpu-inference-gpt2-nc.gif" class="img-fluid figure-img" alt="Parallel Netcat Generation"></a></p>
+<figcaption>Parallel Netcat Generation</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<p>I extracted the last frame of the GIF, which you can see below, where you can see that at least there was some variance between which GPUs were selected:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="images/parallelopedia-multi-threaded-gpu-inference-gpt2-nc-last-frame-2.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2" title="Parallel Netcat Generation - Last Frame"><img src="images/parallelopedia-multi-threaded-gpu-inference-gpt2-nc-last-frame-2.png" class="img-fluid figure-img" alt="Parallel Netcat Generation - Last Frame"></a></p>
+<figcaption>Parallel Netcat Generation - Last Frame</figcaption>
+</figure>
+</div>
+</section>
+<section id="curl-example" class="level4">
+<h4 class="anchored" data-anchor-id="curl-example">Curl Example</h4>
+<p>I did the same thing with the panes arranged horizontally, using <code>curl</code> instead and a <code>max_length=1000</code> and no seed, which helps in visualizing the parallel generation, as you can clearly see different clients are receiving completely different outputs.</p>
+<div class="callout callout-style-simple callout-note no-icon callout-titled" title="Parallel Curl Generation GIF">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-12-contents" aria-controls="callout-12" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Parallel Curl Generation GIF
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-12" class="callout-12-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="images/parallelopedia-multi-threaded-gpu-inference-gpt2-curl-1000.gif" class="lightbox" data-gallery="quarto-lightbox-gallery-3" title="Parallel Curl Generation"><img src="images/parallelopedia-multi-threaded-gpu-inference-gpt2-curl-1000.gif" class="img-fluid figure-img" alt="Parallel Curl Generation"></a></p>
+<figcaption>Parallel Curl Generation</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="launching-the-react-bootstrap-ui" class="level3">
+<h3 class="anchored" data-anchor-id="launching-the-react-bootstrap-ui">Launching the React Bootstrap UI</h3>
+<p>The React Bootstrap UI can be launched as follows:</p>
+<div class="sourceCode" id="cb50"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="ex">%</span> cd <span class="va">$PARALLELOPEDIA_UI</span> <span class="co"># i.e. root of gh:tpn/parallelopedia-ui</span></span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a><span class="ex">%</span> conda activate py313t <span class="co"># or whatever has recent nodejs/npm</span></span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a><span class="ex">%</span> npm start run</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Full disclaimer: I’m not a web developer. I don’t know JavaScript, React, or Bootstrap, or anything else in the modern web stack. So like any good developer in 2025 when confronted with a task they have absolutely no business doing… I palmed it off to AI—either ChatGPT, local LLMs via <a href="https://lmstudio.ai/">LM Studio</a>, or, more recently, <a href="https://aider.chat">Aider</a>.</p>
+<p>TL;DR: the web interface code probably sucks.</p>
+</div>
+</div>
 <!-- vim:set ts=8 sw=2 sts=2 expandtab textwidth=78 -->
 
 
+</section>
 </section>
 </section>
 
@@ -3041,8 +3255,40 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <input type="hidden" id="giscus-base-theme" value="dark">
 <input type="hidden" id="giscus-alt-theme" value="dark">
 </div> <!-- /content -->
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/tpn/website/edit/main/blog/posts/2025-xx-xx-pytorch-and-python-free-threading/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/tpn/website/issues/new/choose" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer><script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","descPosition":"bottom","loop":false,"openEffect":"zoom","selector":".lightbox"});
+(function() {
+  let previousOnload = window.onload;
+  window.onload = () => {
+    if (previousOnload) {
+      previousOnload();
+    }
+    lightboxQuarto.on('slide_before_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      const href = trigger.getAttribute('href');
+      if (href !== null) {
+        const imgEl = window.document.querySelector(`a[href="${href}"] img`);
+        if (imgEl !== null) {
+          const srcAttr = imgEl.getAttribute("src");
+          if (srcAttr && srcAttr.startsWith("data:")) {
+            slideConfig.href = srcAttr;
+          }
+        }
+      } 
+    });
+  
+    lightboxQuarto.on('slide_after_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(slideNode);
+      }
+    });
+  
+  };
+  
+})();
+          </script>
 
 
 
 
-<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/tpn/website/edit/main/blog/posts/2025-xx-xx-pytorch-and-python-free-threading/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/tpn/website/issues/new/choose" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>
+</body></html>

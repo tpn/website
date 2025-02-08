@@ -29,6 +29,7 @@ execute:
   eval: true
   output: true
   error: true
+lightbox: true
 ---
 
 This blog post is sponsored in part by [Meta](https://meta.com) in
@@ -1467,7 +1468,7 @@ class GPT:
             # Yield control back to the event loop before continuing
             # generation.  If we didn't do this, this client would
             # hog the thread's event loop, preventing other clients
-            # associated with the loop from getting services.  (As
+            # associated with the loop from getting serviced.  (As
             # we're now running multiple threads in parallel, other
             # clients associated with event loops on other threads
             # would not be impacted.)
@@ -1486,6 +1487,8 @@ it out!
 
 ## Test Drive!
 
+### Launching the HTTP Server
+
 We can launch an instance of our multi-threaded HTTP web server with our new
 `Gpt2App` HTTP application via the command line as follows:
 
@@ -1497,8 +1500,200 @@ We can launch an instance of our multi-threaded HTTP web server with our new
 ```
 
 This will start up a multi-threaded HTTP server listening on all interfaces
-on port 4444, with 40 threads, and two HTTP applications: our `Gpt2App` and
-a `PlaintextApp` that just returns "Hello, World!" to any incoming request.
+on port 4444, with 40 threads, and two HTTP applications: our `Gpt2App`,
+which will service requests to the `/generate` endpoint, and a
+`PlaintextApp` that just returns "Hello, World!" to any incoming request
+received for the `/plaintext` endpoint.
+
+### Visualizing Chunked-Encoding
+
+Let's visualize the generation response in a way that shows us the raw
+chunked-encoding, without doing any client-side reassembly.  We can achieve
+that with `echo` and `netcat` (`nc`):
+
+```bash
+% echo -en \
+ 'GET /generate/The%20quick%20brown%20fox?max_length=20&device=cuda&seed=42 ' \
+ 'HTTP/1.1\r\nConnection: close\r\nHost: dgx\r\n\r\n' | nc dgx 4444
+
+```
+
+That should yield the following raw output:
+
+```
+HTTP/1.1 200 OK
+Server: Parallelopedia Web Server v1.0
+Date: Fri, 07 Feb 2025 23:32:02 GMT
+Accept-Ranges: bytes
+Content-Type: text/plain
+Access-Control-Allow-Origin: *
+Connection: close
+Transfer-Encoding: chunked
+Access-Control-Expose-Headers: X-Max-Length, X-Top-K, X-Seed, X-Model-Name, X-Model-Device
+X-Max-Length: 20
+X-Top-K: 50
+X-Seed: 42
+X-Model-Name: gpt2
+X-Model-Device: cuda:0
+
+13
+The quick brown fox
+3
+ is
+2
+ a
+4
+ sub
+7
+species
+5
+ that
+B
+ originated
+3
+ in
+9
+ southern
+9
+ Scotland
+3
+ as
+2
+ a
+8
+ variety
+3
+ of
+4
+ fox
+1
+.
+5
+ This
+0
+
+```
+
+As you can see, we've enabled chunked-encoding by way of the
+`Transfer-Encoding: chunked` header.  And the body of the response is
+comprised of these *"chunks"*; specifically, each bit of decoded text is
+preceded by its length, in bytes, then followed by `\r\n`, then followed by
+the text itself.
+
+The zero-length chunk at the end indicates completion of the transfer, and
+as we requested `Connection: close` in our headers, our HTTP server closes
+the connection once the generation has completed.
+
+::: {.callout-note}
+
+In HTTP/1.1, *"keep-alive"* is the default behavior---i.e., a server won't
+close a connection unless the client specifically requests it.  This is
+the opposite of HTTP/1.0 behavior, where the server will close a connection
+by default unless a client furnishes a `Connection: keep-alive` header.
+
+:::
+
+### Verifying via Curl
+
+If we switch over to `curl` and run the same generation request, we'll see
+the *reassembled* text, and, provided we supply the `--no-buffer` argument,
+`curl` will also display decoded text as soon as it receives it.
+
+```bash
+% curl --no-buffer --verbose \
+    'http://dgx:4444/generate/The%20quick%20brown%20fox?' \
+        'max_length=20&seed=42&device=cuda'
+*   Trying 10.0.132.48:4444...
+* Connected to dgx (10.0.132.48) port 4444 (#0)
+> GET /generate/The%20quick%20brown%20fox?max_length=20&seed=42&device=cuda HTTP/1.1
+> Host: dgx:4444
+> User-Agent: curl/7.81.0
+> Accept: */*
+> 
+* Mark bundle as not supporting multiuse
+< HTTP/1.1 200 OK
+< Server: Parallelopedia Web Server v1.0
+< Date: Fri, 07 Feb 2025 23:05:34 GMT
+< Accept-Ranges: bytes
+< Content-Type: text/plain
+< Access-Control-Allow-Origin: *
+< Transfer-Encoding: chunked
+< Access-Control-Expose-Headers: X-Max-Length, X-Top-K, X-Seed, X-Model-Name, X-Model-Device
+< X-Max-Length: 20
+< X-Top-K: 50
+< X-Seed: 42
+< X-Model-Name: gpt2
+< X-Model-Device: cuda:2
+< 
+The quick brown fox is a subspecies that originated in southern Scotland as a variety of fox. This* Connection #0 to host dgx left intact
+```
+
+### Parallel Generation
+
+#### Netcat Example
+
+To test drive the parallel generation---at least in a very rudimentary
+fashion---I'll enlist the help of `tmux` and the `:setw synchronize-panes`
+command, which sends keystrokes to all active panes within a given `tmux`
+session window.
+
+I captured a 15 frames-per-second GIF of this in action, which you can view
+below if you expand the callout.  It shows terminal sessions to seven
+machines, arranged vertically, all executing the same `echo ... | nc`
+command depicted above.  It's a bit janky, but hopefully you can see that
+the requests are being serviced in parallel by the HTTP server.
+
+::: {.callout-note collapse="true" appearance="simple" icon="false" title="Parallel Netcat Generation GIF"}
+
+![Parallel Netcat Generation](
+images/parallelopedia-multi-threaded-gpu-inference-gpt2-nc.gif)
+
+:::
+
+I extracted the last frame of the GIF, which you can see below, where you
+can see that at least there was some variance between which GPUs were
+selected:
+
+![Parallel Netcat Generation - Last Frame](
+images/parallelopedia-multi-threaded-gpu-inference-gpt2-nc-last-frame-2.png)
+
+#### Curl Example
+
+I did the same thing with the panes arranged horizontally, using `curl`
+instead and a `max_length=1000` and no seed, which helps in visualizing
+the parallel generation, as you can clearly see different clients are
+receiving completely different outputs.
+
+::: {.callout-note collapse="true" appearance="simple" icon="false" title="Parallel Curl Generation GIF"}
+
+![Parallel Curl Generation](
+images/parallelopedia-multi-threaded-gpu-inference-gpt2-curl-1000.gif)
+
+:::
+
+### Launching the React Bootstrap UI
+
+The React Bootstrap UI can be launched as follows:
+
+```bash
+% cd $PARALLELOPEDIA_UI # i.e. root of gh:tpn/parallelopedia-ui
+% conda activate py313t # or whatever has recent nodejs/npm
+% npm start run
+```
+
+::: {.callout-note}
+
+Full disclaimer: I'm not a web developer.  I don't know JavaScript, React,
+or Bootstrap, or anything else in the modern web stack.  So like any good
+developer in 2025 when confronted with a task they have absolutely no
+business doing... I palmed it off to AI---either ChatGPT, local LLMs via
+[LM Studio](https://lmstudio.ai/), or, more recently, [Aider](
+https://aider.chat).
+
+TL;DR: the web interface code probably sucks.
+
+:::
+
 
 
 <!-- vim:set ts=8 sw=2 sts=2 expandtab textwidth=78 -->
