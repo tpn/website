@@ -76,8 +76,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-dark-fad9f07c6447c7e618f17e3bec6a2d81.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
 <script src="../../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../../site_libs/bootstrap/bootstrap-e1dca550fcec1e1c7934dca98c281342.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../../../site_libs/bootstrap/bootstrap-dark-30d7f8590d48599e5b2d2a1d86e332d2.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../../../site_libs/bootstrap/bootstrap-355f04bd89b666a897b7f51c1d813ed3.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../../site_libs/bootstrap/bootstrap-dark-8fcd17223027d7a90be5b37016a63bbe.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
 <script src="../../../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
 <link href="../../../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
 <link href="../../../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
@@ -239,20 +239,20 @@ gtag('config', 'G-8RPR4XKPEW', { 'anonymize_ip': false});
   <li><a href="#launching-the-http-server" id="toc-launching-the-http-server" class="nav-link" data-scroll-target="#launching-the-http-server">Launching the HTTP Server</a></li>
   <li><a href="#visualizing-chunked-encoding" id="toc-visualizing-chunked-encoding" class="nav-link" data-scroll-target="#visualizing-chunked-encoding">Visualizing Chunked-Encoding</a></li>
   <li><a href="#verifying-via-curl" id="toc-verifying-via-curl" class="nav-link" data-scroll-target="#verifying-via-curl">Verifying via Curl</a></li>
+  <li><a href="#launching-the-react-bootstrap-ui" id="toc-launching-the-react-bootstrap-ui" class="nav-link" data-scroll-target="#launching-the-react-bootstrap-ui">Launching the React Bootstrap UI</a></li>
+  </ul></li>
   <li><a href="#parallel-generation" id="toc-parallel-generation" class="nav-link" data-scroll-target="#parallel-generation">Parallel Generation</a>
-  <ul class="collapse">
+  <ul>
   <li><a href="#netcat-example" id="toc-netcat-example" class="nav-link" data-scroll-target="#netcat-example">Netcat Example</a></li>
   <li><a href="#curl-example" id="toc-curl-example" class="nav-link" data-scroll-target="#curl-example">Curl Example</a></li>
-  </ul></li>
   </ul></li>
   <li><a href="#lets-load-test-this-sucker" id="toc-lets-load-test-this-sucker" class="nav-link" data-scroll-target="#lets-load-test-this-sucker">Let’s Load Test This Sucker!</a>
   <ul>
   <li><a href="#ablation-test-re-enable-the-gil" id="toc-ablation-test-re-enable-the-gil" class="nav-link" data-scroll-target="#ablation-test-re-enable-the-gil">Ablation Test: Re-enable the GIL</a></li>
   </ul></li>
-  <li><a href="#launching-the-react-bootstrap-ui" id="toc-launching-the-react-bootstrap-ui" class="nav-link" data-scroll-target="#launching-the-react-bootstrap-ui">Launching the React Bootstrap UI</a></li>
   </ul></li>
   </ul>
-<div class="toc-actions"><ul><li><a href="https://github.com/tpn/website/edit/main/blog/posts/2025-xx-xx-pytorch-and-python-free-threading/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/tpn/website/issues/new/choose" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div><div class="quarto-alternate-notebooks"><h2>Notebooks</h2><ul><li><a href="gpt2_v1-preview.html"><i class="bi bi-journal-code"></i>gpt2_v1.ipynb</a></li><li><a href="wrk-analysis-preview.html"><i class="bi bi-journal-code"></i>wrk-analysis.ipynb</a></li></ul></div></nav>
+<div class="toc-actions"><ul><li><a href="https://github.com/tpn/website/edit/main/blog/posts/2025-xx-xx-pytorch-and-python-free-threading/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/tpn/website/issues/new/choose" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div><div class="quarto-alternate-notebooks"><h2>Notebooks</h2><ul><li><a href="wrk-analysis-preview.html"><i class="bi bi-journal-code"></i>Data Visualization</a></li><li><a href="gpt2_v1-preview.html"><i class="bi bi-journal-code"></i>GPT2 v1</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -345,17 +345,17 @@ gtag('config', 'G-8RPR4XKPEW', { 'anonymize_ip': false});
   <li><a href="#launching-the-http-server" id="toc-launching-the-http-server">Launching the HTTP Server</a></li>
   <li><a href="#visualizing-chunked-encoding" id="toc-visualizing-chunked-encoding">Visualizing Chunked-Encoding</a></li>
   <li><a href="#verifying-via-curl" id="toc-verifying-via-curl">Verifying via Curl</a></li>
+  <li><a href="#launching-the-react-bootstrap-ui" id="toc-launching-the-react-bootstrap-ui">Launching the React Bootstrap UI</a></li>
+  </ul></li>
   <li><a href="#parallel-generation" id="toc-parallel-generation">Parallel Generation</a>
   <ul>
   <li><a href="#netcat-example" id="toc-netcat-example">Netcat Example</a></li>
   <li><a href="#curl-example" id="toc-curl-example">Curl Example</a></li>
   </ul></li>
-  </ul></li>
   <li><a href="#lets-load-test-this-sucker" id="toc-lets-load-test-this-sucker">Let’s Load Test This Sucker!</a>
   <ul>
   <li><a href="#ablation-test-re-enable-the-gil" id="toc-ablation-test-re-enable-the-gil">Ablation Test: Re-enable the GIL</a></li>
   </ul></li>
-  <li><a href="#launching-the-react-bootstrap-ui" id="toc-launching-the-react-bootstrap-ui">Launching the React Bootstrap UI</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -1424,7 +1424,7 @@ Note
 <span id="cb22-482"><a href="#cb22-482" aria-hidden="true" tabindex="-1"></a></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<a class="quarto-notebook-link" id="nblink-1" href="gpt2_v1-preview.html#cell-gpt2-v1-setup">Source: gpt2_v1.ipynb</a></div>
+</div>
 </section>
 <section id="loading-the-model" class="level2">
 <h2 class="anchored" data-anchor-id="loading-the-model">Loading the Model</h2>
@@ -2600,59 +2600,128 @@ Note
 <span id="cb49-25"><a href="#cb49-25" aria-hidden="true" tabindex="-1"></a><span class="op">&lt;</span> </span>
 <span id="cb49-26"><a href="#cb49-26" aria-hidden="true" tabindex="-1"></a><span class="ex">The</span> quick brown fox is a subspecies that originated in southern Scotland as a variety of fox. This<span class="pp">*</span> Connection <span class="co">#0 to host dgx left intact</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
-<section id="parallel-generation" class="level3">
-<h3 class="anchored" data-anchor-id="parallel-generation">Parallel Generation</h3>
-<section id="netcat-example" class="level4">
-<h4 class="anchored" data-anchor-id="netcat-example">Netcat Example</h4>
-<p>To test drive the parallel generation—at least in a very rudimentary fashion—I’ll enlist the help of <code>tmux</code> and the <code>:setw synchronize-panes</code> command, which sends keystrokes to all active panes within a given <code>tmux</code> session window.</p>
-<p>I captured a 15 frames-per-second GIF of this in action, which you can view below if you expand the callout. It shows terminal sessions to six machines, arranged vertically, all executing the same <code>echo ... | nc</code> command depicted above. It’s a bit janky, but hopefully you can see that the requests are being serviced in parallel by the HTTP server.</p>
-<div class="callout callout-style-simple callout-note no-icon callout-titled" title="Parallel Netcat Generation GIF">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-11-contents" aria-controls="callout-11" aria-expanded="false" aria-label="Toggle callout">
+<section id="launching-the-react-bootstrap-ui" class="level3">
+<h3 class="anchored" data-anchor-id="launching-the-react-bootstrap-ui">Launching the React Bootstrap UI</h3>
+<p>The React Bootstrap UI can be launched as follows:</p>
+<div class="sourceCode" id="cb50"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="ex">%</span> cd <span class="va">$PARALLELOPEDIA_UI</span> <span class="co"># i.e. root of gh:tpn/parallelopedia-ui</span></span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a><span class="ex">%</span> conda activate py313t <span class="co"># or whatever has recent nodejs/npm</span></span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a><span class="ex">%</span> npm start run</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Full disclaimer: I’m not a web developer. I don’t know JavaScript, React, or Bootstrap, or anything else in the modern web stack. So like any good developer in 2025 when confronted with a task they have absolutely no business doing… I palmed it off to AI—either ChatGPT, local LLMs via <a href="https://lmstudio.ai/">LM Studio</a>, or, more recently, <a href="https://aider.chat">Aider</a>.</p>
+<p>TL;DR: the web interface code probably sucks.</p>
+</div>
+</div>
+<p>Running <code>npm start run</code> should open up a browser window pointing at <code>http://localhost:3000</code>. Ignore the <em>Wiki</em> tab—that’s for another article—and switch to the <em>GPT2</em> tab. You should see something similar to the GIF below, which is a demo of me using the interface to generate some text:</p>
+<div id="parallelopedia-ui-gpt2-example" class="callout callout-style-simple callout-note no-icon callout-titled" title="Parallelopedia UI Demo">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-12-contents" aria-controls="callout-12" aria-expanded="true" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Parallel Netcat Generation GIF
+Parallelopedia UI Demo
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-11" class="callout-11-contents callout-collapse collapse">
+<div id="callout-12" class="callout-12-contents callout-collapse collapse show">
 <div class="callout-body-container callout-body">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="images/parallelopedia-multi-threaded-gpu-inference-gpt2-nc.gif" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="Parallel Netcat Generation"><img src="images/parallelopedia-multi-threaded-gpu-inference-gpt2-nc.gif" class="img-fluid figure-img" alt="Parallel Netcat Generation"></a></p>
+<p><a href="images/parallelopedia-ui-example.gif" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="Parallelopedia UI Demo"><img src="images/parallelopedia-ui-example.gif" class="img-fluid figure-img" alt="Parallelopedia UI Demo"></a></p>
+<figcaption>Parallelopedia UI Demo</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<p>Not too shabby! Granted, it’s a tad jarring seeing characters per second instead of tokens per second. If we wanted to display a live tokens/sec rate, some possible options might be:</p>
+<ol type="1">
+<li><p>Alter <code>GPT.async_generate_for()</code> to calculate how long it took to generate each token (whilst we’re in the main generation loop), convert that into a tokens/sec rate, and then change our API on both the server side and the JavaScript UI side such that each chunk that gets sent back is encoded with both the rate <em>and</em> the actual chunk. A drawback of this approach is that hitting the <code>/generate</code> endpoint with <code>curl</code> or <code>netcat</code> would look wacky, as you’d see token/sec floats in between each generated set of decoded characters.</p></li>
+<li><p>Send the raw integer tokens back as they’re generated, instead of first decoding them. That would allow client-side JavaScript to calculate tokens/sec, but it would make it impossible to easily inspect the output with our command line tools like <code>curl</code> or <code>echo ... | nc</code>. It would also require adding a JavaScript decoding library on the client side (although that’s not such a big deal, I think you can just do <code>npm    install tiktoken</code> these days).</p></li>
+<li><p>Have the JavaScript client re-encode the decoded characters received back into their GPT2-tokenizer token representation in order to determine actual underlying token count, and recalculate the rate based off that. This rate would differ from the tokens/sec rate observed on the server because it would also include network latency.</p></li>
+<li><p>Do something more advanced with a separate WebSocket or something, where the live tokens/sec generation rate can be displayed independently to the generated decoded tokens.</p></li>
+<li><p>Just YOLO it and have the JavaScript code divide the characters per second by, say, three, and pretend that’s roughly the tokens/sec rate (assuming that on average, one token represents three characters in any given response).</p></li>
+</ol>
+<p>I don’t want to do any of that! So characters per second it is, for now, however jarring it may be.</p>
+</section>
+</section>
+<section id="parallel-generation" class="level2">
+<h2 class="anchored" data-anchor-id="parallel-generation">Parallel Generation</h2>
+<p>Alright, we’ve exercised the <code>/generate</code> endpoint a few different ways via a single client connection, and it looks like it’s behaving the way we hoped it would, albeit with a whopping simultaneous client count of, precisely, one.</p>
+<p>Let’s look at introducing some simultaneous load by way of multiple machines all issuing <code>/generate</code> requests at the same time, first via the <code>echo ... | nc</code> approach, and then via <code>curl</code>.</p>
+<p>I’ll leverage <code>tmux</code> and the <code>:setw synchronize-panes</code> command, which sends my console keystrokes to all active panes within a given <code>tmux</code> session window.</p>
+<section id="netcat-example" class="level3">
+<h3 class="anchored" data-anchor-id="netcat-example">Netcat Example</h3>
+<p>I captured a 15 frames-per-second GIF of this in action, which you can view below. It shows terminal sessions to six machines, arranged vertically, all executing the same <code>echo ... | nc</code> command depicted above.</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>This might seem like a bit of a silly test, especially when it’s working correctly, because the output is pretty benign, and we don’t <em>really</em> know that these requests were actually being served simultaneously by different threads on the server side.</p>
+<p>When I first tried it, though, it absolutely did <em>not</em> work correctly—one server would get correct output, another would get the HTTP headers in triplicate, whilst two other sessions just went straight into the chunked responses, with no preceding HTTP headers in sight. I had a bug in my HTTP routing code (that exists in the PyParallel code I wrote ten years ago upon which I based the new HTTP server on!) which was entirely to blame. With that code ripped out and <code>@route</code> reimplemented in a much simpler fashion, everything worked well.</p>
+</div>
+</div>
+<div id="parallel-netcat-generation" class="callout callout-style-simple callout-note no-icon callout-titled" title="Parallel Netcat Generation">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-14-contents" aria-controls="callout-14" aria-expanded="true" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Parallel Netcat Generation
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-14" class="callout-14-contents callout-collapse collapse show">
+<div class="callout-body-container callout-body">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="images/parallelopedia-multi-threaded-gpu-inference-gpt2-nc.gif" class="lightbox" data-gallery="quarto-lightbox-gallery-2" title="Parallel Netcat Generation"><img src="images/parallelopedia-multi-threaded-gpu-inference-gpt2-nc.gif" class="img-fluid figure-img" alt="Parallel Netcat Generation"></a></p>
 <figcaption>Parallel Netcat Generation</figcaption>
 </figure>
 </div>
 </div>
 </div>
 </div>
-<p>I extracted the last frame of the GIF, which you can see below, where you can see that at least there was some variance between which GPUs were selected:</p>
+<p>I extracted the last frame of the GIF, below, where you can see that at least there was some variance between which GPUs were selected:</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="images/parallelopedia-multi-threaded-gpu-inference-gpt2-nc-last-frame-2.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2" title="Parallel Netcat Generation - Last Frame"><img src="images/parallelopedia-multi-threaded-gpu-inference-gpt2-nc-last-frame-2.png" class="img-fluid figure-img" alt="Parallel Netcat Generation - Last Frame"></a></p>
+<p><a href="images/parallelopedia-multi-threaded-gpu-inference-gpt2-nc-last-frame-2.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3" title="Parallel Netcat Generation - Last Frame"><img src="images/parallelopedia-multi-threaded-gpu-inference-gpt2-nc-last-frame-2.png" class="img-fluid figure-img" alt="Parallel Netcat Generation - Last Frame"></a></p>
 <figcaption>Parallel Netcat Generation - Last Frame</figcaption>
 </figure>
 </div>
 </section>
-<section id="curl-example" class="level4">
-<h4 class="anchored" data-anchor-id="curl-example">Curl Example</h4>
+<section id="curl-example" class="level3">
+<h3 class="anchored" data-anchor-id="curl-example">Curl Example</h3>
 <p>I did the same thing with the panes arranged horizontally, using <code>curl</code> instead and a <code>max_length=1000</code> and no seed, which helps in visualizing the parallel generation, as you can clearly see different clients are receiving completely different outputs.</p>
-<div class="callout callout-style-simple callout-note no-icon callout-titled" title="Parallel Curl Generation GIF">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-12-contents" aria-controls="callout-12" aria-expanded="false" aria-label="Toggle callout">
+<div id="parallel-curl-generation" class="callout callout-style-simple callout-note no-icon callout-titled" title="Parallel Curl Generation">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-15-contents" aria-controls="callout-15" aria-expanded="true" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Parallel Curl Generation GIF
+Parallel Curl Generation
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-12" class="callout-12-contents callout-collapse collapse">
+<div id="callout-15" class="callout-15-contents callout-collapse collapse show">
 <div class="callout-body-container callout-body">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="images/parallelopedia-multi-threaded-gpu-inference-gpt2-curl-1000.gif" class="lightbox" data-gallery="quarto-lightbox-gallery-3" title="Parallel Curl Generation"><img src="images/parallelopedia-multi-threaded-gpu-inference-gpt2-curl-1000.gif" class="img-fluid figure-img" alt="Parallel Curl Generation"></a></p>
+<p><a href="images/parallelopedia-multi-threaded-gpu-inference-gpt2-curl-1000.gif" class="lightbox" data-gallery="quarto-lightbox-gallery-4" title="Parallel Curl Generation"><img src="images/parallelopedia-multi-threaded-gpu-inference-gpt2-curl-1000.gif" class="img-fluid figure-img" alt="Parallel Curl Generation"></a></p>
 <figcaption>Parallel Curl Generation</figcaption>
 </figure>
 </div>
@@ -2661,35 +2730,34 @@ Parallel Curl Generation GIF
 </div>
 </section>
 </section>
-</section>
 <section id="lets-load-test-this-sucker" class="level2">
 <h2 class="anchored" data-anchor-id="lets-load-test-this-sucker">Let’s Load Test This Sucker!</h2>
-<p>These tests are pretty positive! Looks like we can absolutely do PyTorch model generation in parallel via multiple threads thanks to free-threaded Python.</p>
+<p>So far so good! Looks like we can absolutely do PyTorch model generation in parallel via multiple threads thanks to free-threaded Python.</p>
 <p>Let’s ramp it up a notch and see what happens if we attempt to load test the <code>/generate</code> endpoint from a different server. The <code>leopard</code> server you see in the next example is an Intel(R) Xeon(R) W-2275 CPU @ 3.30GHz (14 cores, 28 threads) and is connected to the <code>dgx</code> box via a 10G Ethernet link.</p>
 <p>Using the fork of <a href="https://github.com/tpn/wrk"><code>wrk</code></a> I hacked together some ten years ago or so whilst load testing PyParallel, let’s kick off a run with 14 threads for 30 seconds. There will be one connection per thread, and HTTP/1.1 will be used, so the implicit <em>keep-alive</em> behavior means that as soon as one <code>/generate</code> request completes, another one is immediately dispatched.</p>
 <p>For posterity, the console command being used is as follows:</p>
-<div class="sourceCode" id="cb50"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="ex">%</span> time ./wrk <span class="at">-v</span> <span class="at">--latency</span> <span class="at">-c14</span> <span class="at">-t14</span> <span class="at">-d30s</span> <span class="dt">\</span></span>
-<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">'http://dgx:4444/generate/'</span></span>
-<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">'The%20quick%20brown%20fox?max_length=20&amp;device=cuda&amp;seed=42'</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>If you expand the callout below, the GIF you’ll see depicts two terminal windows. The smaller foreground window on the left is <code>leopard</code>, the session doing the <code>wrk</code> load test. The background window that takes up the rest of the screen is a GPU-enabled build of <a href="https://github.com/aristocratos/btop"><code>btop</code></a>, which is a beautiful console app for displaying resource usage.</p>
+<div class="sourceCode" id="cb51"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="ex">%</span> time ./wrk <span class="at">-v</span> <span class="at">--latency</span> <span class="at">-c14</span> <span class="at">-t14</span> <span class="at">-d30s</span> <span class="dt">\</span></span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">'http://dgx:4444/generate/'</span></span>
+<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">'The%20quick%20brown%20fox?max_length=20&amp;device=cuda&amp;seed=42'</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>In the GIF below you’ll see two terminal windows. The smaller foreground window on the left is <code>leopard</code>, the session doing the <code>wrk</code> load test. The background window that takes up the rest of the screen is logged in to <code>dgx</code>, our server, and it’s running a GPU-enabled build of <a href="https://github.com/aristocratos/btop"><code>btop</code></a>, which is a beautiful console app for displaying resource usage. I particularly like <code>btop</code> in this example as it does a good job of conveying the CPU and GPU load that kicks in when the load test starts.</p>
 <p>The 40 CPU cores can be seen in the top pane, and, as expected, about 14 of them whirr into life as soon as the load test begins, which tracks, as there are now 14 clients attempting to hammer our <code>/generate</code> end point.</p>
 <p>Below that, you can see the four Tesla V100-DGXS-32GB GPUs also whirr into action, handling the generation between them with relative ease.</p>
-<p>On the bottom right, I’ve filtered the process tree to just display our <code>python</code> HTTP server invocation. I would love it if <code>btop</code> showed the individual threads and their load, as it beautifully depicts Python saturating cores in parallel now that there’s no GIL impeding execution.</p>
-<div id="parallel-generation-load-test-no-gil" class="callout callout-style-simple callout-note no-icon callout-titled" title="Parallel Generation Load Test GIF: No GIL">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-13-contents" aria-controls="callout-13" aria-expanded="false" aria-label="Toggle callout">
+<p>On the bottom right, I’ve filtered the process tree to just display our <code>python</code> HTTP server invocation. (I would love it if <code>btop</code> showed the individual threads and their load, as it would beautifully depict Python saturating cores in parallel now that there’s no GIL impeding execution, however, I don’t believe that’s currently possible with this version of <code>btop</code>.)</p>
+<div id="parallel-generation-load-test-no-gil" class="callout callout-style-simple callout-note no-icon callout-titled" title="Parallel Generation Load Test: No GIL">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-16-contents" aria-controls="callout-16" aria-expanded="true" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Parallel Generation Load Test GIF: No GIL
+Parallel Generation Load Test: No GIL
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-13" class="callout-13-contents callout-collapse collapse">
+<div id="callout-16" class="callout-16-contents callout-collapse collapse show">
 <div class="callout-body-container callout-body">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="images/parallelopedia-multi-threaded-gpu-inference-gpt2-wrk-14.gif" class="lightbox" data-gallery="quarto-lightbox-gallery-4" title="Parallel Generation Load Test - No GIL"><img src="images/parallelopedia-multi-threaded-gpu-inference-gpt2-wrk-14.gif" class="img-fluid figure-img" alt="Parallel Generation Load Test - No GIL"></a></p>
+<p><a href="images/parallelopedia-multi-threaded-gpu-inference-gpt2-wrk-14.gif" class="lightbox" data-gallery="quarto-lightbox-gallery-5" title="Parallel Generation Load Test - No GIL"><img src="images/parallelopedia-multi-threaded-gpu-inference-gpt2-wrk-14.gif" class="img-fluid figure-img" alt="Parallel Generation Load Test - No GIL"></a></p>
 <figcaption>Parallel Generation Load Test - No GIL</figcaption>
 </figure>
 </div>
@@ -2699,13 +2767,13 @@ Parallel Generation Load Test GIF: No GIL
 <p>I’ve extracted the last frame, below, to allow closer inspection at the end of the run, without the annoyance of the GIF looping.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="images/parallelopedia-multi-threaded-gpu-inference-gpt2-wrk-14-last-frame-optimized.png" class="lightbox" data-gallery="quarto-lightbox-gallery-5" title="Parallel Generation Load Test No GIL - Last Frame"><img src="images/parallelopedia-multi-threaded-gpu-inference-gpt2-wrk-14-last-frame-optimized.png" class="img-fluid figure-img" alt="Parallel Generation Load Test No GIL - Last Frame"></a></p>
+<p><a href="images/parallelopedia-multi-threaded-gpu-inference-gpt2-wrk-14-last-frame-optimized.png" class="lightbox" data-gallery="quarto-lightbox-gallery-6" title="Parallel Generation Load Test No GIL - Last Frame"><img src="images/parallelopedia-multi-threaded-gpu-inference-gpt2-wrk-14-last-frame-optimized.png" class="img-fluid figure-img" alt="Parallel Generation Load Test No GIL - Last Frame"></a></p>
 <figcaption>Parallel Generation Load Test No GIL - Last Frame</figcaption>
 </figure>
 </div>
 <p>The console output from <code>wrk</code> is captured in the callout below.</p>
 <div class="callout callout-style-simple callout-note no-icon callout-titled" title="Console Output of wrk: No GIL">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-14-contents" aria-controls="callout-14" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-17-contents" aria-controls="callout-17" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon no-icon"></i>
 </div>
@@ -2714,7 +2782,7 @@ Console Output of wrk: No GIL
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-14" class="callout-14-contents callout-collapse collapse">
+<div id="callout-17" class="callout-17-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <pre><code>wrk 4.0.0 [epoll] Copyright (C) 2012 Will Glozer
 Running 30s test @ http://dgx:4444/generate/The%20quick%20brown%20fox?max_length=20&amp;device=cuda&amp;seed=42
@@ -2831,37 +2899,32 @@ Transfer/sec:     39.75KB
 </div>
 </div>
 </div>
-<p>A visualization of the latencies is presented below.</p>
-<div class="quarto-embed-nb-cell">
-<div id="cell-wrk-01-no-gil" class="cell" data-execution_count="4">
-<div class="cell-output cell-output-display">
-<div>
+<p>A visualization of the latencies is presented below. All code for visualization is from the <a href="wrk-analysis-preview.html"><em>Data Visualization</em></a> Jupyter Notebook, which you can <a href="wrk-analysis.ipynb">preview here</a>, or access directly on <a href="https://github.com/tpn/website/blob/main/blog/posts/2025-xx-xx-pytorch-and-python-free-threading/wrk-analysis.ipynb">Github</a>.</p>
+<div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="index_files/figure-html/wrk-analysis-wrk-01-no-gil-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-6"><img src="index_files/figure-html/wrk-analysis-wrk-01-no-gil-output-1.png" id="wrk-01-no-gil" width="699" height="553" class="figure-img"></a></p>
+<p><a href="wrk-01-no-gil.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-7" title="Parallel Load Test Latency Distribution (No GIL)"><img src="wrk-01-no-gil.svg" class="img-fluid figure-img" alt="Parallel Load Test Latency Distribution (No GIL)"></a></p>
+<figcaption>Parallel Load Test Latency Distribution (No GIL)</figcaption>
 </figure>
 </div>
-</div>
-</div>
-<a class="quarto-notebook-link" id="nblink-2" href="wrk-analysis-preview.html#cell-wrk-01-no-gil">Source: wrk-analysis.ipynb</a></div>
 <section id="ablation-test-re-enable-the-gil" class="level3">
 <h3 class="anchored" data-anchor-id="ablation-test-re-enable-the-gil">Ablation Test: Re-enable the GIL</h3>
 <p>Let’s see what happens if we re-enable the GIL. We should see poor resource utilization on the server side, as only one Python thread can run at a time, and the statistics reported on the client side should be equally dismal.</p>
 <p>Expand the callout below to view the GIF. I have used another terminal window to launch the server with the <code>-Xgil=1</code> argument, which re-enables the GIL. I then switch back over to <code>leopard</code> and perform the <code>wrk</code> load test like before.</p>
-<div class="callout callout-style-simple callout-note no-icon callout-titled" title="Parallel Generation Load Test GIF: GIL Enabled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-15-contents" aria-controls="callout-15" aria-expanded="false" aria-label="Toggle callout">
+<div id="parallel-load-test-gil" class="callout callout-style-simple callout-note no-icon callout-titled" title="Parallel Generation Load Test: GIL Enabled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-18-contents" aria-controls="callout-18" aria-expanded="true" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Parallel Generation Load Test GIF: GIL Enabled
+Parallel Generation Load Test: GIL Enabled
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-15" class="callout-15-contents callout-collapse collapse">
+<div id="callout-18" class="callout-18-contents callout-collapse collapse show">
 <div class="callout-body-container callout-body">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="images/parallelopedia-multi-threaded-gpu-inference-gpt2-wrk-14-GIL-enabled.gif" class="lightbox" data-gallery="quarto-lightbox-gallery-7" title="Parallel Generation Load Test - GIL Enabled"><img src="images/parallelopedia-multi-threaded-gpu-inference-gpt2-wrk-14-GIL-enabled.gif" class="img-fluid figure-img" alt="Parallel Generation Load Test - GIL Enabled"></a></p>
+<p><a href="images/parallelopedia-multi-threaded-gpu-inference-gpt2-wrk-14-GIL-enabled.gif" class="lightbox" data-gallery="quarto-lightbox-gallery-8" title="Parallel Generation Load Test - GIL Enabled"><img src="images/parallelopedia-multi-threaded-gpu-inference-gpt2-wrk-14-GIL-enabled.gif" class="img-fluid figure-img" alt="Parallel Generation Load Test - GIL Enabled"></a></p>
 <figcaption>Parallel Generation Load Test - GIL Enabled</figcaption>
 </figure>
 </div>
@@ -2871,14 +2934,14 @@ Parallel Generation Load Test GIF: GIL Enabled
 <p>As with before, I’ve extracted the last frame, below, to allow closer inspection at the end of the run, without the annoyance of the GIF looping.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="images/parallelopedia-multi-threaded-gpu-inference-gpt2-wrk-14-GIL-enabled-last-frame-optimized.png" class="lightbox" data-gallery="quarto-lightbox-gallery-8" title="Parallel Generation Load Test - GIL Enabled - Last Frame"><img src="images/parallelopedia-multi-threaded-gpu-inference-gpt2-wrk-14-GIL-enabled-last-frame-optimized.png" class="img-fluid figure-img" alt="Parallel Generation Load Test - GIL Enabled - Last Frame"></a></p>
+<p><a href="images/parallelopedia-multi-threaded-gpu-inference-gpt2-wrk-14-GIL-enabled-last-frame-optimized.png" class="lightbox" data-gallery="quarto-lightbox-gallery-9" title="Parallel Generation Load Test - GIL Enabled - Last Frame"><img src="images/parallelopedia-multi-threaded-gpu-inference-gpt2-wrk-14-GIL-enabled-last-frame-optimized.png" class="img-fluid figure-img" alt="Parallel Generation Load Test - GIL Enabled - Last Frame"></a></p>
 <figcaption>Parallel Generation Load Test - GIL Enabled - Last Frame</figcaption>
 </figure>
 </div>
 <p>As we expected: re-enabling the GIL absolutely murders resource utilization.</p>
 <p>The console output from <code>wrk</code> follows in the next callout.</p>
 <div class="callout callout-style-simple callout-note no-icon callout-titled" title="Console Output of wrk: GIL Enabled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-16-contents" aria-controls="callout-16" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-19-contents" aria-controls="callout-19" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon no-icon"></i>
 </div>
@@ -2887,7 +2950,7 @@ Console Output of wrk: GIL Enabled
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-16" class="callout-16-contents callout-collapse collapse">
+<div id="callout-19" class="callout-19-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <pre><code>wrk 4.0.0 [epoll] Copyright (C) 2012 Will Glozer
 Running 30s test @ http://dgx:4444/generate/The%20quick%20brown%20fox?max_length=20&amp;device=cuda&amp;seed=42
@@ -3006,67 +3069,31 @@ Transfer/sec:      4.30KB
 </div>
 </div>
 <p>And a visualization of the latencies follows. Note that there were 60 socket timeouts in this case, whereas no timeouts were encountered in the prior run with the GIL disabled.</p>
-<div class="quarto-embed-nb-cell">
-<div id="cell-wrk-01-gil" class="cell" data-execution_count="5">
-<div class="cell-output cell-output-display">
-<div>
+<div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="index_files/figure-html/wrk-analysis-wrk-01-gil-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-9"><img src="index_files/figure-html/wrk-analysis-wrk-01-gil-output-1.png" id="wrk-01-gil" width="699" height="553" class="figure-img"></a></p>
+<p><a href="wrk-01-gil.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-10" title="Parallel Load Test Latency Distribution (GIL Enabled)"><img src="wrk-01-gil.svg" class="img-fluid figure-img" alt="Parallel Load Test Latency Distribution (GIL Enabled)"></a></p>
+<figcaption>Parallel Load Test Latency Distribution (GIL Enabled)</figcaption>
 </figure>
-</div>
-</div>
-</div>
 </div>
 <p>Viewing them side by side:</p>
-<div class="quarto-embed-nb-cell">
-<div id="cell-wrk-01-combined" class="cell" data-execution_count="6">
-<div class="cell-output cell-output-display">
-<div>
+<div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="index_files/figure-html/wrk-analysis-wrk-01-combined-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-10"><img src="index_files/figure-html/wrk-analysis-wrk-01-combined-output-1.png" id="wrk-01-combined" width="699" height="553" class="figure-img"></a></p>
+<p><a href="wrk-01-combined.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-11" title="Parallel Load Test Latency Distribution (No GIL &amp; GIL Enabled Combined)"><img src="wrk-01-combined.svg" class="img-fluid figure-img" alt="Parallel Load Test Latency Distribution (No GIL &amp; GIL Enabled Combined)"></a></p>
+<figcaption>Parallel Load Test Latency Distribution (No GIL &amp; GIL Enabled Combined)</figcaption>
 </figure>
-</div>
-</div>
-</div>
 </div>
 <p>Remember to keep in mind that the No GIL vs GIL requests/sec was 70.80 vs 7.35, nearly a ten-fold increase:</p>
-<div class="quarto-embed-nb-cell">
-<div id="cell-wrk-01-rps-combined" class="cell" data-execution_count="7">
-<div class="cell-output cell-output-display">
-<div>
+<div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><a href="index_files/figure-html/wrk-analysis-wrk-01-rps-combined-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-11"><img src="index_files/figure-html/wrk-analysis-wrk-01-rps-combined-output-1.png" id="wrk-01-rps-combined" width="694" height="553" class="figure-img"></a></p>
+<p><a href="wrk-01-rps-combined.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-12" title="Parallel Load Test Requests/sec (No GIL &amp; GIL Combined)"><img src="wrk-01-rps-combined.svg" class="img-fluid figure-img" alt="Parallel Load Test Requests/sec (No GIL &amp; GIL Combined)"></a></p>
+<figcaption>Parallel Load Test Requests/sec (No GIL &amp; GIL Combined)</figcaption>
 </figure>
 </div>
-</div>
-</div>
-</div>
-</section>
-</section>
-<section id="launching-the-react-bootstrap-ui" class="level2 hidden">
-<h2 class="anchored" data-anchor-id="launching-the-react-bootstrap-ui">Launching the React Bootstrap UI</h2>
-<p>The React Bootstrap UI can be launched as follows:</p>
-<div class="sourceCode" id="cb53"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="ex">%</span> cd <span class="va">$PARALLELOPEDIA_UI</span> <span class="co"># i.e. root of gh:tpn/parallelopedia-ui</span></span>
-<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a><span class="ex">%</span> conda activate py313t <span class="co"># or whatever has recent nodejs/npm</span></span>
-<span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a><span class="ex">%</span> npm start run</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Note
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>Full disclaimer: I’m not a web developer. I don’t know JavaScript, React, or Bootstrap, or anything else in the modern web stack. So like any good developer in 2025 when confronted with a task they have absolutely no business doing… I palmed it off to AI—either ChatGPT, local LLMs via <a href="https://lmstudio.ai/">LM Studio</a>, or, more recently, <a href="https://aider.chat">Aider</a>.</p>
-<p>TL;DR: the web interface code probably sucks.</p>
-</div>
-</div>
-</section>
 <!-- vim:set ts=8 sw=2 sts=2 expandtab textwidth=78 -->
 
 
+</section>
+</section>
 </section>
 
 
@@ -3639,10 +3666,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
 });
 </script>
-<script src="https://giscus.app/client.js" data-repo="tpn/website" data-repo-id="MDEwOlJlcG9zaXRvcnkxMjg2ODc3NTQ=" data-category="Blog" data-category-id="" data-mapping="pathname" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="dark" data-lang="en" crossorigin="anonymous" async="">
-</script>
-<input type="hidden" id="giscus-base-theme" value="dark">
-<input type="hidden" id="giscus-alt-theme" value="dark">
 </div> <!-- /content -->
 <footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/tpn/website/edit/main/blog/posts/2025-xx-xx-pytorch-and-python-free-threading/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/tpn/website/issues/new/choose" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer><script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","descPosition":"bottom","loop":false,"openEffect":"zoom","selector":".lightbox"});
 (function() {

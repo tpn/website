@@ -88,6 +88,21 @@ pre code {
 
 }
 
+/*
+.embed-wrk iframe,
+.embed-wrk img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+*/
+
+.embed-wrk {
+    max-width: 100%;
+    height: auto;
+}
+
+
 /* Hide all by default */
 .phone-only,
 .tablet-only,

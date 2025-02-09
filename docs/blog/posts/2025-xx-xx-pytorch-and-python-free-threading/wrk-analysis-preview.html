@@ -162,8 +162,8 @@
 <link href="../../../site_libs/quarto-html/quarto-syntax-highlighting-dark-fad9f07c6447c7e618f17e3bec6a2d81.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
 <script src="../../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../../site_libs/bootstrap/bootstrap-e1dca550fcec1e1c7934dca98c281342.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../../../site_libs/bootstrap/bootstrap-dark-30d7f8590d48599e5b2d2a1d86e332d2.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../../../site_libs/bootstrap/bootstrap-bd080c1bcf00b36cfb295b2d491e2047.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../../site_libs/bootstrap/bootstrap-dark-915491edca6f06fd32d8a3b8960bc268.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
      <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -203,12 +203,12 @@ gtag('config', 'G-8RPR4XKPEW', { 'anonymize_ip': false});
       <meta property="og:title" content="Trent Nelson">
 <meta property="og:image" content="https://trent.me/blog/posts/2025-xx-xx-pytorch-and-python-free-threading/wrk-analysis_files/figure-html/wrk-01-no-gil-output-1.png">
 <meta property="og:site_name" content="Trent Nelson">
-<meta property="og:image:height" content="1106">
-<meta property="og:image:width" content="1399">
+<meta property="og:image:height" content="1103">
+<meta property="og:image:width" content="1397">
 <meta name="twitter:title" content="Trent Nelson">
 <meta name="twitter:image" content="https://trent.me/blog/posts/2025-xx-xx-pytorch-and-python-free-threading/wrk-analysis_files/figure-html/wrk-01-no-gil-output-1.png">
-<meta name="twitter:image-height" content="1106">
-<meta name="twitter:image-width" content="1399">
+<meta name="twitter:image-height" content="1103">
+<meta name="twitter:image-width" content="1397">
 <meta name="twitter:card" content="summary_large_image">
 </head>
 
@@ -216,7 +216,7 @@ gtag('config', 'G-8RPR4XKPEW', { 'anonymize_ip': false});
     <div id="quarto-embed-header" class="headroom fixed-top bg-primary">
       
       <a onclick="window.quartoBackToArticle(); return false;" class="btn btn-primary quarto-back-link"><i class="bi bi-caret-left"></i> Back to Article</a>
-      <h6><i class="bi bi-journal-code"></i> wrk-analysis.ipynb</h6>
+      <h6><i class="bi bi-journal-code"></i> Data Visualization</h6>
 
             <a href="../../../blog/posts/2025-xx-xx-pytorch-and-python-free-threading/wrk-analysis.ipynb" class="btn btn-primary quarto-download-embed" download="wrk-analysis.ipynb">Download Notebook</a>
           </div>
@@ -281,14 +281,25 @@ gtag('config', 'G-8RPR4XKPEW', { 'anonymize_ip': false});
 <!-- main -->
 <main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"></header>    <div class="cell-container"><div class="cell-decorator"><pre>In [1]:</pre></div><div id="ccb79c83-b59a-463d-856b-bb9df6a294d5" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pylab <span class="im">as</span> plt</span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns<span class="op">;</span> sns.<span class="bu">set</span>()</span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>np.set_printoptions(threshold<span class="op">=</span>np.inf)</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>matplotlib inline</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>config InlineBackend.figure_format <span class="op">=</span> <span class="st">'retina'</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>pd.set_option(<span class="st">'display.max_rows'</span>, <span class="va">None</span>)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>pd.set_option(<span class="st">'display.max_columns'</span>, <span class="va">None</span>)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>pd.set_option(<span class="st">'display.width'</span>, <span class="va">None</span>)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>pd.set_option(<span class="st">'display.max_colwidth'</span>, <span class="va">None</span>)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="co">#FONT_FAMILY = 'Purisa'</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="co">#FONT_FAMILY = 'Sawasdee'</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="co">#FONT_FAMILY = 'NanumGothic'</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>FONT_FAMILY <span class="op">=</span> <span class="st">'Chilanka'</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>plt.rcParams[<span class="st">'font.family'</span>] <span class="op">=</span> FONT_FAMILY</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>matplotlib inline</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>config InlineBackend.figure_format <span class="op">=</span> <span class="st">'retina'</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div></div>
 <div class="cell-container"><div class="cell-decorator"><pre>In [2]:</pre></div><div id="30a317ea-e961-4ff9-8e73-d11d50b4cfdf" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> re</span>
@@ -614,239 +625,297 @@ gtag('config', 'G-8RPR4XKPEW', { 'anonymize_ip': false});
 <span id="cb2-321"><a href="#cb2-321" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Seaborn equivalents below</span></span>
 <span id="cb2-322"><a href="#cb2-322" aria-hidden="true" tabindex="-1"></a>    <span class="co"># ---------------------------------------------------------------------------</span></span>
 <span id="cb2-323"><a href="#cb2-323" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-324"><a href="#cb2-324" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> plot_cdf_seaborn(<span class="va">self</span>):</span>
+<span id="cb2-324"><a href="#cb2-324" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> plot_cdf_seaborn(<span class="va">self</span>, do_plot<span class="op">=</span><span class="va">True</span>, filename: <span class="bu">str</span> <span class="op">=</span> <span class="va">None</span>):</span>
 <span id="cb2-325"><a href="#cb2-325" aria-hidden="true" tabindex="-1"></a>        <span class="co">"""Single-run plot using seaborn (self-contained figure)."""</span></span>
-<span id="cb2-326"><a href="#cb2-326" aria-hidden="true" tabindex="-1"></a>        <span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
-<span id="cb2-327"><a href="#cb2-327" aria-hidden="true" tabindex="-1"></a>        <span class="im">import</span> seaborn <span class="im">as</span> sns</span>
-<span id="cb2-328"><a href="#cb2-328" aria-hidden="true" tabindex="-1"></a>        <span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb2-326"><a href="#cb2-326" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-327"><a href="#cb2-327" aria-hidden="true" tabindex="-1"></a>        plt.rcParams[<span class="st">'font.family'</span>] <span class="op">=</span> FONT_FAMILY</span>
+<span id="cb2-328"><a href="#cb2-328" aria-hidden="true" tabindex="-1"></a>        <span class="co">#plt.rcParams['font.family'] = 'Laksaman'</span></span>
 <span id="cb2-329"><a href="#cb2-329" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-330"><a href="#cb2-330" aria-hidden="true" tabindex="-1"></a>        sns.set_theme(style<span class="op">=</span><span class="st">"whitegrid"</span>)</span>
-<span id="cb2-331"><a href="#cb2-331" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-332"><a href="#cb2-332" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Extract data from self.latency_distribution</span></span>
-<span id="cb2-333"><a href="#cb2-333" aria-hidden="true" tabindex="-1"></a>        percentiles <span class="op">=</span> <span class="bu">sorted</span>(<span class="va">self</span>.latency_distribution.keys())</span>
-<span id="cb2-334"><a href="#cb2-334" aria-hidden="true" tabindex="-1"></a>        latencies <span class="op">=</span> [<span class="va">self</span>.latency_distribution[p] <span class="cf">for</span> p <span class="kw">in</span> percentiles]</span>
-<span id="cb2-335"><a href="#cb2-335" aria-hidden="true" tabindex="-1"></a>        cdf_values <span class="op">=</span> [p <span class="op">/</span> <span class="dv">100</span> <span class="cf">for</span> p <span class="kw">in</span> percentiles]</span>
-<span id="cb2-336"><a href="#cb2-336" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-337"><a href="#cb2-337" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Create a DataFrame for Seaborn</span></span>
-<span id="cb2-338"><a href="#cb2-338" aria-hidden="true" tabindex="-1"></a>        df <span class="op">=</span> pd.DataFrame({</span>
-<span id="cb2-339"><a href="#cb2-339" aria-hidden="true" tabindex="-1"></a>            <span class="st">'Latency (ms)'</span>: latencies,</span>
-<span id="cb2-340"><a href="#cb2-340" aria-hidden="true" tabindex="-1"></a>            <span class="st">'Cumulative Probability'</span>: cdf_values</span>
-<span id="cb2-341"><a href="#cb2-341" aria-hidden="true" tabindex="-1"></a>        })</span>
+<span id="cb2-330"><a href="#cb2-330" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Extract data from self.latency_distribution</span></span>
+<span id="cb2-331"><a href="#cb2-331" aria-hidden="true" tabindex="-1"></a>        percentiles <span class="op">=</span> <span class="bu">sorted</span>(<span class="va">self</span>.latency_distribution.keys())</span>
+<span id="cb2-332"><a href="#cb2-332" aria-hidden="true" tabindex="-1"></a>        latencies <span class="op">=</span> [<span class="va">self</span>.latency_distribution[p] <span class="cf">for</span> p <span class="kw">in</span> percentiles]</span>
+<span id="cb2-333"><a href="#cb2-333" aria-hidden="true" tabindex="-1"></a>        cdf_values <span class="op">=</span> [p <span class="op">/</span> <span class="dv">100</span> <span class="cf">for</span> p <span class="kw">in</span> percentiles]</span>
+<span id="cb2-334"><a href="#cb2-334" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-335"><a href="#cb2-335" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Create a DataFrame for Seaborn</span></span>
+<span id="cb2-336"><a href="#cb2-336" aria-hidden="true" tabindex="-1"></a>        df <span class="op">=</span> pd.DataFrame({</span>
+<span id="cb2-337"><a href="#cb2-337" aria-hidden="true" tabindex="-1"></a>            <span class="st">'Latency (ms)'</span>: latencies,</span>
+<span id="cb2-338"><a href="#cb2-338" aria-hidden="true" tabindex="-1"></a>            <span class="st">'Cumulative Probability'</span>: cdf_values</span>
+<span id="cb2-339"><a href="#cb2-339" aria-hidden="true" tabindex="-1"></a>        })</span>
+<span id="cb2-340"><a href="#cb2-340" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-341"><a href="#cb2-341" aria-hidden="true" tabindex="-1"></a>        plt.figure(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">6</span>))</span>
 <span id="cb2-342"><a href="#cb2-342" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-343"><a href="#cb2-343" aria-hidden="true" tabindex="-1"></a>        plt.figure(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">6</span>))</span>
-<span id="cb2-344"><a href="#cb2-344" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-345"><a href="#cb2-345" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Plot with a label for the line</span></span>
-<span id="cb2-346"><a href="#cb2-346" aria-hidden="true" tabindex="-1"></a>        ax <span class="op">=</span> sns.lineplot(</span>
-<span id="cb2-347"><a href="#cb2-347" aria-hidden="true" tabindex="-1"></a>            data<span class="op">=</span>df,</span>
-<span id="cb2-348"><a href="#cb2-348" aria-hidden="true" tabindex="-1"></a>            x<span class="op">=</span><span class="st">'Latency (ms)'</span>,</span>
-<span id="cb2-349"><a href="#cb2-349" aria-hidden="true" tabindex="-1"></a>            y<span class="op">=</span><span class="st">'Cumulative Probability'</span>,</span>
-<span id="cb2-350"><a href="#cb2-350" aria-hidden="true" tabindex="-1"></a>            marker<span class="op">=</span><span class="va">self</span>.marker <span class="kw">or</span> <span class="st">'o'</span>,</span>
-<span id="cb2-351"><a href="#cb2-351" aria-hidden="true" tabindex="-1"></a>            color<span class="op">=</span><span class="va">self</span>.color <span class="kw">or</span> <span class="st">'blue'</span>,</span>
-<span id="cb2-352"><a href="#cb2-352" aria-hidden="true" tabindex="-1"></a>            label<span class="op">=</span><span class="va">self</span>.label <span class="kw">or</span> <span class="st">'Latency CDF'</span></span>
-<span id="cb2-353"><a href="#cb2-353" aria-hidden="true" tabindex="-1"></a>        )</span>
-<span id="cb2-354"><a href="#cb2-354" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-355"><a href="#cb2-355" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Set line style if needed: adjust only the line just added</span></span>
-<span id="cb2-356"><a href="#cb2-356" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> ax.lines:</span>
-<span id="cb2-357"><a href="#cb2-357" aria-hidden="true" tabindex="-1"></a>            ax.lines[<span class="op">-</span><span class="dv">1</span>].set_linestyle(<span class="va">self</span>.linestyle <span class="kw">or</span> <span class="st">'-'</span>)</span>
-<span id="cb2-358"><a href="#cb2-358" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-359"><a href="#cb2-359" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Set labels and title</span></span>
-<span id="cb2-360"><a href="#cb2-360" aria-hidden="true" tabindex="-1"></a>        ax.set_xlabel(<span class="st">'Latency (ms)'</span>)</span>
-<span id="cb2-361"><a href="#cb2-361" aria-hidden="true" tabindex="-1"></a>        ax.set_ylabel(<span class="st">'Cumulative Probability'</span>)</span>
-<span id="cb2-362"><a href="#cb2-362" aria-hidden="true" tabindex="-1"></a>        ax.set_title(<span class="st">'Latency Distribution CDF'</span>)</span>
-<span id="cb2-363"><a href="#cb2-363" aria-hidden="true" tabindex="-1"></a>        ax.legend()</span>
-<span id="cb2-364"><a href="#cb2-364" aria-hidden="true" tabindex="-1"></a>        plt.show()</span>
-<span id="cb2-365"><a href="#cb2-365" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-366"><a href="#cb2-366" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> plot_cdf_callback_seaborn(<span class="va">self</span>, ax):</span>
-<span id="cb2-367"><a href="#cb2-367" aria-hidden="true" tabindex="-1"></a>        <span class="co">"""</span></span>
-<span id="cb2-368"><a href="#cb2-368" aria-hidden="true" tabindex="-1"></a><span class="co">        Plot the CDF for a single run on the given matplotlib Axes (using seaborn).</span></span>
-<span id="cb2-369"><a href="#cb2-369" aria-hidden="true" tabindex="-1"></a><span class="co">        This is analogous to your matplotlib callback.</span></span>
-<span id="cb2-370"><a href="#cb2-370" aria-hidden="true" tabindex="-1"></a><span class="co">        """</span></span>
-<span id="cb2-371"><a href="#cb2-371" aria-hidden="true" tabindex="-1"></a>        <span class="im">import</span> seaborn <span class="im">as</span> sns</span>
-<span id="cb2-372"><a href="#cb2-372" aria-hidden="true" tabindex="-1"></a>        <span class="im">import</span> pandas <span class="im">as</span> pd</span>
-<span id="cb2-373"><a href="#cb2-373" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-374"><a href="#cb2-374" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Extract data from self.latency_distribution</span></span>
-<span id="cb2-375"><a href="#cb2-375" aria-hidden="true" tabindex="-1"></a>        percentiles <span class="op">=</span> <span class="bu">sorted</span>(<span class="va">self</span>.latency_distribution.keys())</span>
-<span id="cb2-376"><a href="#cb2-376" aria-hidden="true" tabindex="-1"></a>        latencies <span class="op">=</span> [<span class="va">self</span>.latency_distribution[p] <span class="cf">for</span> p <span class="kw">in</span> percentiles]</span>
-<span id="cb2-377"><a href="#cb2-377" aria-hidden="true" tabindex="-1"></a>        cdf_values <span class="op">=</span> [p <span class="op">/</span> <span class="dv">100</span> <span class="cf">for</span> p <span class="kw">in</span> percentiles]</span>
-<span id="cb2-378"><a href="#cb2-378" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-379"><a href="#cb2-379" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Create a DataFrame for seaborn</span></span>
-<span id="cb2-380"><a href="#cb2-380" aria-hidden="true" tabindex="-1"></a>        df <span class="op">=</span> pd.DataFrame({</span>
-<span id="cb2-381"><a href="#cb2-381" aria-hidden="true" tabindex="-1"></a>            <span class="st">'Latency (ms)'</span>: latencies,</span>
-<span id="cb2-382"><a href="#cb2-382" aria-hidden="true" tabindex="-1"></a>            <span class="st">'Cumulative Probability'</span>: cdf_values</span>
-<span id="cb2-383"><a href="#cb2-383" aria-hidden="true" tabindex="-1"></a>        })</span>
+<span id="cb2-343"><a href="#cb2-343" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Plot with a label for the line</span></span>
+<span id="cb2-344"><a href="#cb2-344" aria-hidden="true" tabindex="-1"></a>        ax <span class="op">=</span> sns.lineplot(</span>
+<span id="cb2-345"><a href="#cb2-345" aria-hidden="true" tabindex="-1"></a>            data<span class="op">=</span>df,</span>
+<span id="cb2-346"><a href="#cb2-346" aria-hidden="true" tabindex="-1"></a>            x<span class="op">=</span><span class="st">'Latency (ms)'</span>,</span>
+<span id="cb2-347"><a href="#cb2-347" aria-hidden="true" tabindex="-1"></a>            y<span class="op">=</span><span class="st">'Cumulative Probability'</span>,</span>
+<span id="cb2-348"><a href="#cb2-348" aria-hidden="true" tabindex="-1"></a>            marker<span class="op">=</span><span class="va">self</span>.marker <span class="kw">or</span> <span class="st">'o'</span>,</span>
+<span id="cb2-349"><a href="#cb2-349" aria-hidden="true" tabindex="-1"></a>            color<span class="op">=</span><span class="va">self</span>.color <span class="kw">or</span> <span class="st">'blue'</span>,</span>
+<span id="cb2-350"><a href="#cb2-350" aria-hidden="true" tabindex="-1"></a>            label<span class="op">=</span><span class="va">self</span>.label <span class="kw">or</span> <span class="st">'Latency CDF'</span></span>
+<span id="cb2-351"><a href="#cb2-351" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb2-352"><a href="#cb2-352" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-353"><a href="#cb2-353" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Set line style if needed: adjust only the line just added</span></span>
+<span id="cb2-354"><a href="#cb2-354" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> ax.lines:</span>
+<span id="cb2-355"><a href="#cb2-355" aria-hidden="true" tabindex="-1"></a>            ax.lines[<span class="op">-</span><span class="dv">1</span>].set_linestyle(<span class="va">self</span>.linestyle <span class="kw">or</span> <span class="st">'-'</span>)</span>
+<span id="cb2-356"><a href="#cb2-356" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-357"><a href="#cb2-357" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Set labels and title</span></span>
+<span id="cb2-358"><a href="#cb2-358" aria-hidden="true" tabindex="-1"></a>        ax.set_xlabel(<span class="st">'Latency (ms)'</span>)</span>
+<span id="cb2-359"><a href="#cb2-359" aria-hidden="true" tabindex="-1"></a>        ax.set_ylabel(<span class="st">'Cumulative Probability'</span>)</span>
+<span id="cb2-360"><a href="#cb2-360" aria-hidden="true" tabindex="-1"></a>        ax.set_title(<span class="st">'Latency Distribution CDF'</span>)</span>
+<span id="cb2-361"><a href="#cb2-361" aria-hidden="true" tabindex="-1"></a>        ax.legend()</span>
+<span id="cb2-362"><a href="#cb2-362" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> filename:</span>
+<span id="cb2-363"><a href="#cb2-363" aria-hidden="true" tabindex="-1"></a>            <span class="cf">assert</span> <span class="st">'.'</span> <span class="kw">in</span> filename, <span class="ss">f'Missing extension: </span><span class="sc">{</span>filename<span class="sc">}</span><span class="ss">'</span></span>
+<span id="cb2-364"><a href="#cb2-364" aria-hidden="true" tabindex="-1"></a>            file_format <span class="op">=</span> filename[filename.rfind(<span class="st">'.'</span>)<span class="op">+</span><span class="dv">1</span>:]</span>
+<span id="cb2-365"><a href="#cb2-365" aria-hidden="true" tabindex="-1"></a>            plt.savefig(filename, <span class="bu">format</span><span class="op">=</span>file_format)</span>
+<span id="cb2-366"><a href="#cb2-366" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb2-367"><a href="#cb2-367" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> do_plot:</span>
+<span id="cb2-368"><a href="#cb2-368" aria-hidden="true" tabindex="-1"></a>            plt.show()</span>
+<span id="cb2-369"><a href="#cb2-369" aria-hidden="true" tabindex="-1"></a>        <span class="cf">else</span>:</span>
+<span id="cb2-370"><a href="#cb2-370" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> plt</span>
+<span id="cb2-371"><a href="#cb2-371" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-372"><a href="#cb2-372" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> plot_cdf_callback_seaborn(<span class="va">self</span>, ax):</span>
+<span id="cb2-373"><a href="#cb2-373" aria-hidden="true" tabindex="-1"></a>        <span class="co">"""</span></span>
+<span id="cb2-374"><a href="#cb2-374" aria-hidden="true" tabindex="-1"></a><span class="co">        Plot the CDF for a single run on the given matplotlib Axes (using seaborn).</span></span>
+<span id="cb2-375"><a href="#cb2-375" aria-hidden="true" tabindex="-1"></a><span class="co">        This is analogous to your matplotlib callback.</span></span>
+<span id="cb2-376"><a href="#cb2-376" aria-hidden="true" tabindex="-1"></a><span class="co">        """</span></span>
+<span id="cb2-377"><a href="#cb2-377" aria-hidden="true" tabindex="-1"></a>        <span class="im">import</span> seaborn <span class="im">as</span> sns</span>
+<span id="cb2-378"><a href="#cb2-378" aria-hidden="true" tabindex="-1"></a>        <span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb2-379"><a href="#cb2-379" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-380"><a href="#cb2-380" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Extract data from self.latency_distribution</span></span>
+<span id="cb2-381"><a href="#cb2-381" aria-hidden="true" tabindex="-1"></a>        percentiles <span class="op">=</span> <span class="bu">sorted</span>(<span class="va">self</span>.latency_distribution.keys())</span>
+<span id="cb2-382"><a href="#cb2-382" aria-hidden="true" tabindex="-1"></a>        latencies <span class="op">=</span> [<span class="va">self</span>.latency_distribution[p] <span class="cf">for</span> p <span class="kw">in</span> percentiles]</span>
+<span id="cb2-383"><a href="#cb2-383" aria-hidden="true" tabindex="-1"></a>        cdf_values <span class="op">=</span> [p <span class="op">/</span> <span class="dv">100</span> <span class="cf">for</span> p <span class="kw">in</span> percentiles]</span>
 <span id="cb2-384"><a href="#cb2-384" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-385"><a href="#cb2-385" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Plot using seaborn's lineplot on the provided Axes</span></span>
-<span id="cb2-386"><a href="#cb2-386" aria-hidden="true" tabindex="-1"></a>        sns.lineplot(</span>
-<span id="cb2-387"><a href="#cb2-387" aria-hidden="true" tabindex="-1"></a>            data<span class="op">=</span>df,</span>
-<span id="cb2-388"><a href="#cb2-388" aria-hidden="true" tabindex="-1"></a>            x<span class="op">=</span><span class="st">'Latency (ms)'</span>,</span>
-<span id="cb2-389"><a href="#cb2-389" aria-hidden="true" tabindex="-1"></a>            y<span class="op">=</span><span class="st">'Cumulative Probability'</span>,</span>
-<span id="cb2-390"><a href="#cb2-390" aria-hidden="true" tabindex="-1"></a>            marker<span class="op">=</span><span class="va">self</span>.marker <span class="kw">or</span> <span class="st">'o'</span>,</span>
-<span id="cb2-391"><a href="#cb2-391" aria-hidden="true" tabindex="-1"></a>            color<span class="op">=</span><span class="va">self</span>.color <span class="kw">or</span> <span class="st">'blue'</span>,</span>
-<span id="cb2-392"><a href="#cb2-392" aria-hidden="true" tabindex="-1"></a>            label<span class="op">=</span><span class="va">self</span>.label <span class="kw">or</span> <span class="st">'Latency CDF'</span>,</span>
-<span id="cb2-393"><a href="#cb2-393" aria-hidden="true" tabindex="-1"></a>            ax<span class="op">=</span>ax</span>
-<span id="cb2-394"><a href="#cb2-394" aria-hidden="true" tabindex="-1"></a>        )</span>
-<span id="cb2-395"><a href="#cb2-395" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-396"><a href="#cb2-396" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Adjust the line style for the last line (assumed to be the one just plotted)</span></span>
-<span id="cb2-397"><a href="#cb2-397" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> ax.lines:</span>
-<span id="cb2-398"><a href="#cb2-398" aria-hidden="true" tabindex="-1"></a>            ax.lines[<span class="op">-</span><span class="dv">1</span>].set_linestyle(<span class="va">self</span>.linestyle <span class="kw">or</span> <span class="st">'-'</span>)</span>
-<span id="cb2-399"><a href="#cb2-399" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-400"><a href="#cb2-400" aria-hidden="true" tabindex="-1"></a>    <span class="at">@classmethod</span></span>
-<span id="cb2-401"><a href="#cb2-401" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> plot_cdfs_seaborn(cls, runs: <span class="bu">list</span>[<span class="st">'WrkRun'</span>]):</span>
-<span id="cb2-402"><a href="#cb2-402" aria-hidden="true" tabindex="-1"></a>        <span class="co">"""</span></span>
-<span id="cb2-403"><a href="#cb2-403" aria-hidden="true" tabindex="-1"></a><span class="co">        Plot CDFs for multiple runs using seaborn.</span></span>
-<span id="cb2-404"><a href="#cb2-404" aria-hidden="true" tabindex="-1"></a><span class="co">        Each run's line is drawn on the same Axes so that all appear in one legend.</span></span>
-<span id="cb2-405"><a href="#cb2-405" aria-hidden="true" tabindex="-1"></a><span class="co">        """</span></span>
-<span id="cb2-406"><a href="#cb2-406" aria-hidden="true" tabindex="-1"></a>        <span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
-<span id="cb2-407"><a href="#cb2-407" aria-hidden="true" tabindex="-1"></a>        <span class="im">import</span> seaborn <span class="im">as</span> sns</span>
-<span id="cb2-408"><a href="#cb2-408" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-409"><a href="#cb2-409" aria-hidden="true" tabindex="-1"></a>        sns.set_theme(style<span class="op">=</span><span class="st">"whitegrid"</span>)</span>
-<span id="cb2-410"><a href="#cb2-410" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-411"><a href="#cb2-411" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Create a figure and axis to plot all runs</span></span>
-<span id="cb2-412"><a href="#cb2-412" aria-hidden="true" tabindex="-1"></a>        fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">6</span>))</span>
-<span id="cb2-413"><a href="#cb2-413" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-414"><a href="#cb2-414" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Call the callback for each run to add its line to the same axis</span></span>
-<span id="cb2-415"><a href="#cb2-415" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> run <span class="kw">in</span> runs:</span>
-<span id="cb2-416"><a href="#cb2-416" aria-hidden="true" tabindex="-1"></a>            run.plot_cdf_callback_seaborn(ax)</span>
+<span id="cb2-385"><a href="#cb2-385" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Create a DataFrame for seaborn</span></span>
+<span id="cb2-386"><a href="#cb2-386" aria-hidden="true" tabindex="-1"></a>        df <span class="op">=</span> pd.DataFrame({</span>
+<span id="cb2-387"><a href="#cb2-387" aria-hidden="true" tabindex="-1"></a>            <span class="st">'Latency (ms)'</span>: latencies,</span>
+<span id="cb2-388"><a href="#cb2-388" aria-hidden="true" tabindex="-1"></a>            <span class="st">'Cumulative Probability'</span>: cdf_values</span>
+<span id="cb2-389"><a href="#cb2-389" aria-hidden="true" tabindex="-1"></a>        })</span>
+<span id="cb2-390"><a href="#cb2-390" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-391"><a href="#cb2-391" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Plot using seaborn's lineplot on the provided Axes</span></span>
+<span id="cb2-392"><a href="#cb2-392" aria-hidden="true" tabindex="-1"></a>        sns.lineplot(</span>
+<span id="cb2-393"><a href="#cb2-393" aria-hidden="true" tabindex="-1"></a>            data<span class="op">=</span>df,</span>
+<span id="cb2-394"><a href="#cb2-394" aria-hidden="true" tabindex="-1"></a>            x<span class="op">=</span><span class="st">'Latency (ms)'</span>,</span>
+<span id="cb2-395"><a href="#cb2-395" aria-hidden="true" tabindex="-1"></a>            y<span class="op">=</span><span class="st">'Cumulative Probability'</span>,</span>
+<span id="cb2-396"><a href="#cb2-396" aria-hidden="true" tabindex="-1"></a>            marker<span class="op">=</span><span class="va">self</span>.marker <span class="kw">or</span> <span class="st">'o'</span>,</span>
+<span id="cb2-397"><a href="#cb2-397" aria-hidden="true" tabindex="-1"></a>            color<span class="op">=</span><span class="va">self</span>.color <span class="kw">or</span> <span class="st">'blue'</span>,</span>
+<span id="cb2-398"><a href="#cb2-398" aria-hidden="true" tabindex="-1"></a>            label<span class="op">=</span><span class="va">self</span>.label <span class="kw">or</span> <span class="st">'Latency CDF'</span>,</span>
+<span id="cb2-399"><a href="#cb2-399" aria-hidden="true" tabindex="-1"></a>            ax<span class="op">=</span>ax</span>
+<span id="cb2-400"><a href="#cb2-400" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb2-401"><a href="#cb2-401" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-402"><a href="#cb2-402" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Adjust the line style for the last line (assumed to be the one just plotted)</span></span>
+<span id="cb2-403"><a href="#cb2-403" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> ax.lines:</span>
+<span id="cb2-404"><a href="#cb2-404" aria-hidden="true" tabindex="-1"></a>            ax.lines[<span class="op">-</span><span class="dv">1</span>].set_linestyle(<span class="va">self</span>.linestyle <span class="kw">or</span> <span class="st">'-'</span>)</span>
+<span id="cb2-405"><a href="#cb2-405" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-406"><a href="#cb2-406" aria-hidden="true" tabindex="-1"></a>    <span class="at">@classmethod</span></span>
+<span id="cb2-407"><a href="#cb2-407" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> plot_cdfs_seaborn(cls, runs: <span class="bu">list</span>[<span class="st">'WrkRun'</span>], filename: <span class="bu">str</span> <span class="op">=</span> <span class="va">None</span>):</span>
+<span id="cb2-408"><a href="#cb2-408" aria-hidden="true" tabindex="-1"></a>        <span class="co">"""</span></span>
+<span id="cb2-409"><a href="#cb2-409" aria-hidden="true" tabindex="-1"></a><span class="co">        Plot CDFs for multiple runs using seaborn.</span></span>
+<span id="cb2-410"><a href="#cb2-410" aria-hidden="true" tabindex="-1"></a><span class="co">        Each run's line is drawn on the same Axes so that all appear in one legend.</span></span>
+<span id="cb2-411"><a href="#cb2-411" aria-hidden="true" tabindex="-1"></a><span class="co">        """</span></span>
+<span id="cb2-412"><a href="#cb2-412" aria-hidden="true" tabindex="-1"></a>        <span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb2-413"><a href="#cb2-413" aria-hidden="true" tabindex="-1"></a>        <span class="im">import</span> seaborn <span class="im">as</span> sns</span>
+<span id="cb2-414"><a href="#cb2-414" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-415"><a href="#cb2-415" aria-hidden="true" tabindex="-1"></a>        <span class="co">#sns.set_theme(style="whitegrid")</span></span>
+<span id="cb2-416"><a href="#cb2-416" aria-hidden="true" tabindex="-1"></a>        plt.rcParams[<span class="st">'font.family'</span>] <span class="op">=</span> FONT_FAMILY</span>
 <span id="cb2-417"><a href="#cb2-417" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-418"><a href="#cb2-418" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Set axis labels and title</span></span>
-<span id="cb2-419"><a href="#cb2-419" aria-hidden="true" tabindex="-1"></a>        ax.set_xlabel(<span class="st">'Latency (ms)'</span>)</span>
-<span id="cb2-420"><a href="#cb2-420" aria-hidden="true" tabindex="-1"></a>        ax.set_ylabel(<span class="st">'Cumulative Probability'</span>)</span>
-<span id="cb2-421"><a href="#cb2-421" aria-hidden="true" tabindex="-1"></a>        ax.set_title(<span class="st">'Latency Distribution CDF'</span>)</span>
-<span id="cb2-422"><a href="#cb2-422" aria-hidden="true" tabindex="-1"></a>        ax.grid(<span class="va">True</span>)</span>
-<span id="cb2-423"><a href="#cb2-423" aria-hidden="true" tabindex="-1"></a>        ax.legend()</span>
+<span id="cb2-418"><a href="#cb2-418" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Create a figure and axis to plot all runs</span></span>
+<span id="cb2-419"><a href="#cb2-419" aria-hidden="true" tabindex="-1"></a>        fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">6</span>))</span>
+<span id="cb2-420"><a href="#cb2-420" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-421"><a href="#cb2-421" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Call the callback for each run to add its line to the same axis</span></span>
+<span id="cb2-422"><a href="#cb2-422" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> run <span class="kw">in</span> runs:</span>
+<span id="cb2-423"><a href="#cb2-423" aria-hidden="true" tabindex="-1"></a>            run.plot_cdf_callback_seaborn(ax)</span>
 <span id="cb2-424"><a href="#cb2-424" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-425"><a href="#cb2-425" aria-hidden="true" tabindex="-1"></a>        plt.show()</span>
-<span id="cb2-426"><a href="#cb2-426" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-427"><a href="#cb2-427" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> plot_rps_mbs_seaborn(<span class="va">self</span>):</span>
-<span id="cb2-428"><a href="#cb2-428" aria-hidden="true" tabindex="-1"></a>        <span class="co">"""</span></span>
-<span id="cb2-429"><a href="#cb2-429" aria-hidden="true" tabindex="-1"></a><span class="co">        Plot this run's requests per second and MB per second as vertical bars using seaborn.</span></span>
-<span id="cb2-430"><a href="#cb2-430" aria-hidden="true" tabindex="-1"></a><span class="co">        The left y-axis shows the reqs/sec (blue) and the right y-axis shows the MB/sec (green).</span></span>
-<span id="cb2-431"><a href="#cb2-431" aria-hidden="true" tabindex="-1"></a><span class="co">        """</span></span>
-<span id="cb2-432"><a href="#cb2-432" aria-hidden="true" tabindex="-1"></a>        <span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
-<span id="cb2-433"><a href="#cb2-433" aria-hidden="true" tabindex="-1"></a>        <span class="im">import</span> seaborn <span class="im">as</span> sns</span>
-<span id="cb2-434"><a href="#cb2-434" aria-hidden="true" tabindex="-1"></a>        sns.set_theme(style<span class="op">=</span><span class="st">"whitegrid"</span>)</span>
-<span id="cb2-435"><a href="#cb2-435" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-436"><a href="#cb2-436" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Create a figure with twin y-axes.</span></span>
-<span id="cb2-437"><a href="#cb2-437" aria-hidden="true" tabindex="-1"></a>        fig, ax1 <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">6</span>))</span>
-<span id="cb2-438"><a href="#cb2-438" aria-hidden="true" tabindex="-1"></a>        ax2 <span class="op">=</span> ax1.twinx()</span>
-<span id="cb2-439"><a href="#cb2-439" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-440"><a href="#cb2-440" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Since this is a single run, we use a dummy x position (0) and</span></span>
-<span id="cb2-441"><a href="#cb2-441" aria-hidden="true" tabindex="-1"></a>        <span class="co"># offset the bars slightly so they appear side-by-side.</span></span>
-<span id="cb2-442"><a href="#cb2-442" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> <span class="dv">0</span></span>
-<span id="cb2-443"><a href="#cb2-443" aria-hidden="true" tabindex="-1"></a>        width <span class="op">=</span> <span class="fl">0.4</span></span>
-<span id="cb2-444"><a href="#cb2-444" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-445"><a href="#cb2-445" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Plot the reqs/sec on the left y-axis (ax1)</span></span>
-<span id="cb2-446"><a href="#cb2-446" aria-hidden="true" tabindex="-1"></a>        ax1.bar(x <span class="op">-</span> width <span class="op">/</span> <span class="dv">2</span>, <span class="va">self</span>.requests_per_sec, width<span class="op">=</span>width,</span>
-<span id="cb2-447"><a href="#cb2-447" aria-hidden="true" tabindex="-1"></a>                color<span class="op">=</span><span class="st">'blue'</span>, label<span class="op">=</span><span class="st">'Reqs/sec'</span>)</span>
-<span id="cb2-448"><a href="#cb2-448" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Plot the MB/sec on the right y-axis (ax2)</span></span>
-<span id="cb2-449"><a href="#cb2-449" aria-hidden="true" tabindex="-1"></a>        ax2.bar(x <span class="op">+</span> width <span class="op">/</span> <span class="dv">2</span>, <span class="va">self</span>.mb_per_sec, width<span class="op">=</span>width,</span>
-<span id="cb2-450"><a href="#cb2-450" aria-hidden="true" tabindex="-1"></a>                color<span class="op">=</span><span class="st">'green'</span>, label<span class="op">=</span><span class="st">'MB/sec'</span>)</span>
-<span id="cb2-451"><a href="#cb2-451" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-452"><a href="#cb2-452" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Set a single tick at x and label it with the run’s name.</span></span>
-<span id="cb2-453"><a href="#cb2-453" aria-hidden="true" tabindex="-1"></a>        ax1.set_xticks([x])</span>
-<span id="cb2-454"><a href="#cb2-454" aria-hidden="true" tabindex="-1"></a>        ax1.set_xticklabels([<span class="va">self</span>.name])</span>
-<span id="cb2-455"><a href="#cb2-455" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-456"><a href="#cb2-456" aria-hidden="true" tabindex="-1"></a>        ax1.set_ylabel(<span class="st">'Requests per Second'</span>, color<span class="op">=</span><span class="st">'blue'</span>)</span>
-<span id="cb2-457"><a href="#cb2-457" aria-hidden="true" tabindex="-1"></a>        ax2.set_ylabel(<span class="st">'MB per Second'</span>, color<span class="op">=</span><span class="st">'green'</span>)</span>
+<span id="cb2-425"><a href="#cb2-425" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Set axis labels and title</span></span>
+<span id="cb2-426"><a href="#cb2-426" aria-hidden="true" tabindex="-1"></a>        ax.set_xlabel(<span class="st">'Latency (ms)'</span>)</span>
+<span id="cb2-427"><a href="#cb2-427" aria-hidden="true" tabindex="-1"></a>        ax.set_ylabel(<span class="st">'Cumulative Probability'</span>)</span>
+<span id="cb2-428"><a href="#cb2-428" aria-hidden="true" tabindex="-1"></a>        ax.set_title(<span class="st">'Latency Distribution CDF'</span>)</span>
+<span id="cb2-429"><a href="#cb2-429" aria-hidden="true" tabindex="-1"></a>        ax.grid(<span class="va">True</span>)</span>
+<span id="cb2-430"><a href="#cb2-430" aria-hidden="true" tabindex="-1"></a>        ax.legend()</span>
+<span id="cb2-431"><a href="#cb2-431" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-432"><a href="#cb2-432" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> filename:</span>
+<span id="cb2-433"><a href="#cb2-433" aria-hidden="true" tabindex="-1"></a>            <span class="cf">assert</span> <span class="st">'.'</span> <span class="kw">in</span> filename, <span class="ss">f'Missing extension: </span><span class="sc">{</span>filename<span class="sc">}</span><span class="ss">'</span></span>
+<span id="cb2-434"><a href="#cb2-434" aria-hidden="true" tabindex="-1"></a>            file_format <span class="op">=</span> filename[filename.rfind(<span class="st">'.'</span>)<span class="op">+</span><span class="dv">1</span>:]</span>
+<span id="cb2-435"><a href="#cb2-435" aria-hidden="true" tabindex="-1"></a>            plt.savefig(filename, <span class="bu">format</span><span class="op">=</span>file_format)</span>
+<span id="cb2-436"><a href="#cb2-436" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-437"><a href="#cb2-437" aria-hidden="true" tabindex="-1"></a>        plt.show()</span>
+<span id="cb2-438"><a href="#cb2-438" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-439"><a href="#cb2-439" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> plot_rps_mbs_seaborn(<span class="va">self</span>):</span>
+<span id="cb2-440"><a href="#cb2-440" aria-hidden="true" tabindex="-1"></a>        <span class="co">"""</span></span>
+<span id="cb2-441"><a href="#cb2-441" aria-hidden="true" tabindex="-1"></a><span class="co">        Plot this run's requests per second and MB per second as vertical bars using seaborn.</span></span>
+<span id="cb2-442"><a href="#cb2-442" aria-hidden="true" tabindex="-1"></a><span class="co">        The left y-axis shows the reqs/sec (blue) and the right y-axis shows the MB/sec (green).</span></span>
+<span id="cb2-443"><a href="#cb2-443" aria-hidden="true" tabindex="-1"></a><span class="co">        """</span></span>
+<span id="cb2-444"><a href="#cb2-444" aria-hidden="true" tabindex="-1"></a>        <span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb2-445"><a href="#cb2-445" aria-hidden="true" tabindex="-1"></a>        <span class="im">import</span> seaborn <span class="im">as</span> sns</span>
+<span id="cb2-446"><a href="#cb2-446" aria-hidden="true" tabindex="-1"></a>        <span class="co">#sns.set_theme(style="whitegrid")</span></span>
+<span id="cb2-447"><a href="#cb2-447" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-448"><a href="#cb2-448" aria-hidden="true" tabindex="-1"></a>        plt.rcParams[<span class="st">'font.family'</span>] <span class="op">=</span> FONT_FAMILY</span>
+<span id="cb2-449"><a href="#cb2-449" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb2-450"><a href="#cb2-450" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Create a figure with twin y-axes.</span></span>
+<span id="cb2-451"><a href="#cb2-451" aria-hidden="true" tabindex="-1"></a>        fig, ax1 <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">6</span>))</span>
+<span id="cb2-452"><a href="#cb2-452" aria-hidden="true" tabindex="-1"></a>        ax2 <span class="op">=</span> ax1.twinx()</span>
+<span id="cb2-453"><a href="#cb2-453" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-454"><a href="#cb2-454" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Since this is a single run, we use a dummy x position (0) and</span></span>
+<span id="cb2-455"><a href="#cb2-455" aria-hidden="true" tabindex="-1"></a>        <span class="co"># offset the bars slightly so they appear side-by-side.</span></span>
+<span id="cb2-456"><a href="#cb2-456" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb2-457"><a href="#cb2-457" aria-hidden="true" tabindex="-1"></a>        width <span class="op">=</span> <span class="fl">0.4</span></span>
 <span id="cb2-458"><a href="#cb2-458" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-459"><a href="#cb2-459" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Combine legends from both axes.</span></span>
-<span id="cb2-460"><a href="#cb2-460" aria-hidden="true" tabindex="-1"></a>        handles1, labels1 <span class="op">=</span> ax1.get_legend_handles_labels()</span>
-<span id="cb2-461"><a href="#cb2-461" aria-hidden="true" tabindex="-1"></a>        handles2, labels2 <span class="op">=</span> ax2.get_legend_handles_labels()</span>
-<span id="cb2-462"><a href="#cb2-462" aria-hidden="true" tabindex="-1"></a>        ax1.legend(handles1 <span class="op">+</span> handles2, labels1 <span class="op">+</span> labels2, loc<span class="op">=</span><span class="st">'upper right'</span>)</span>
-<span id="cb2-463"><a href="#cb2-463" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-464"><a href="#cb2-464" aria-hidden="true" tabindex="-1"></a>        plt.title(<span class="ss">f'</span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>name<span class="sc">}</span><span class="ss">: Requests/sec and MB/sec'</span>)</span>
-<span id="cb2-465"><a href="#cb2-465" aria-hidden="true" tabindex="-1"></a>        plt.show()</span>
-<span id="cb2-466"><a href="#cb2-466" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-467"><a href="#cb2-467" aria-hidden="true" tabindex="-1"></a>    <span class="at">@classmethod</span></span>
-<span id="cb2-468"><a href="#cb2-468" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> plot_rps_mbs_seaborn_runs(cls, runs: <span class="bu">list</span>[<span class="st">"WrkRun"</span>], log_yscale: <span class="bu">list</span>[<span class="bu">bool</span>] <span class="op">=</span> <span class="va">None</span>):</span>
-<span id="cb2-469"><a href="#cb2-469" aria-hidden="true" tabindex="-1"></a>        <span class="co">"""</span></span>
-<span id="cb2-470"><a href="#cb2-470" aria-hidden="true" tabindex="-1"></a><span class="co">        Plot requests per second and MB per second for multiple runs as vertical bars using seaborn.</span></span>
-<span id="cb2-471"><a href="#cb2-471" aria-hidden="true" tabindex="-1"></a><span class="co">        For each run, two bars are plotted side-by-side:</span></span>
-<span id="cb2-472"><a href="#cb2-472" aria-hidden="true" tabindex="-1"></a><span class="co">          - The blue bar (on the left y-axis) shows requests per second.</span></span>
-<span id="cb2-473"><a href="#cb2-473" aria-hidden="true" tabindex="-1"></a><span class="co">          - The green bar (on the right y-axis) shows MB per second.</span></span>
-<span id="cb2-474"><a href="#cb2-474" aria-hidden="true" tabindex="-1"></a><span class="co">        The x-axis groups runs by their name.</span></span>
-<span id="cb2-475"><a href="#cb2-475" aria-hidden="true" tabindex="-1"></a><span class="co">        """</span></span>
-<span id="cb2-476"><a href="#cb2-476" aria-hidden="true" tabindex="-1"></a>        <span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
-<span id="cb2-477"><a href="#cb2-477" aria-hidden="true" tabindex="-1"></a>        <span class="im">import</span> seaborn <span class="im">as</span> sns</span>
-<span id="cb2-478"><a href="#cb2-478" aria-hidden="true" tabindex="-1"></a>        <span class="im">import</span> numpy <span class="im">as</span> np</span>
-<span id="cb2-479"><a href="#cb2-479" aria-hidden="true" tabindex="-1"></a>        sns.set_theme(style<span class="op">=</span><span class="st">"whitegrid"</span>)</span>
+<span id="cb2-459"><a href="#cb2-459" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Plot the reqs/sec on the left y-axis (ax1)</span></span>
+<span id="cb2-460"><a href="#cb2-460" aria-hidden="true" tabindex="-1"></a>        ax1.bar(x <span class="op">-</span> width <span class="op">/</span> <span class="dv">2</span>, <span class="va">self</span>.requests_per_sec, width<span class="op">=</span>width,</span>
+<span id="cb2-461"><a href="#cb2-461" aria-hidden="true" tabindex="-1"></a>                color<span class="op">=</span><span class="st">'blue'</span>, label<span class="op">=</span><span class="st">'Reqs/sec'</span>)</span>
+<span id="cb2-462"><a href="#cb2-462" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Plot the MB/sec on the right y-axis (ax2)</span></span>
+<span id="cb2-463"><a href="#cb2-463" aria-hidden="true" tabindex="-1"></a>        ax2.bar(x <span class="op">+</span> width <span class="op">/</span> <span class="dv">2</span>, <span class="va">self</span>.mb_per_sec, width<span class="op">=</span>width,</span>
+<span id="cb2-464"><a href="#cb2-464" aria-hidden="true" tabindex="-1"></a>                color<span class="op">=</span><span class="st">'green'</span>, label<span class="op">=</span><span class="st">'MB/sec'</span>)</span>
+<span id="cb2-465"><a href="#cb2-465" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-466"><a href="#cb2-466" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Set a single tick at x and label it with the run’s name.</span></span>
+<span id="cb2-467"><a href="#cb2-467" aria-hidden="true" tabindex="-1"></a>        ax1.set_xticks([x])</span>
+<span id="cb2-468"><a href="#cb2-468" aria-hidden="true" tabindex="-1"></a>        ax1.set_xticklabels([<span class="va">self</span>.name])</span>
+<span id="cb2-469"><a href="#cb2-469" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-470"><a href="#cb2-470" aria-hidden="true" tabindex="-1"></a>        ax1.set_ylabel(<span class="st">'Requests per Second'</span>, color<span class="op">=</span><span class="st">'blue'</span>)</span>
+<span id="cb2-471"><a href="#cb2-471" aria-hidden="true" tabindex="-1"></a>        ax2.set_ylabel(<span class="st">'MB per Second'</span>, color<span class="op">=</span><span class="st">'green'</span>)</span>
+<span id="cb2-472"><a href="#cb2-472" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-473"><a href="#cb2-473" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Combine legends from both axes.</span></span>
+<span id="cb2-474"><a href="#cb2-474" aria-hidden="true" tabindex="-1"></a>        handles1, labels1 <span class="op">=</span> ax1.get_legend_handles_labels()</span>
+<span id="cb2-475"><a href="#cb2-475" aria-hidden="true" tabindex="-1"></a>        handles2, labels2 <span class="op">=</span> ax2.get_legend_handles_labels()</span>
+<span id="cb2-476"><a href="#cb2-476" aria-hidden="true" tabindex="-1"></a>        ax1.legend(handles1 <span class="op">+</span> handles2, labels1 <span class="op">+</span> labels2, loc<span class="op">=</span><span class="st">'upper right'</span>)</span>
+<span id="cb2-477"><a href="#cb2-477" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-478"><a href="#cb2-478" aria-hidden="true" tabindex="-1"></a>        plt.title(<span class="ss">f'</span><span class="sc">{</span><span class="va">self</span><span class="sc">.</span>name<span class="sc">}</span><span class="ss">: Requests/sec and MB/sec'</span>)</span>
+<span id="cb2-479"><a href="#cb2-479" aria-hidden="true" tabindex="-1"></a>        plt.show()</span>
 <span id="cb2-480"><a href="#cb2-480" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-481"><a href="#cb2-481" aria-hidden="true" tabindex="-1"></a>        fig, ax1 <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">6</span>))</span>
-<span id="cb2-482"><a href="#cb2-482" aria-hidden="true" tabindex="-1"></a>        ax2 <span class="op">=</span> ax1.twinx()</span>
-<span id="cb2-483"><a href="#cb2-483" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-484"><a href="#cb2-484" aria-hidden="true" tabindex="-1"></a>        n <span class="op">=</span> <span class="bu">len</span>(runs)</span>
-<span id="cb2-485"><a href="#cb2-485" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> np.arange(n)  <span class="co"># one x position per run</span></span>
-<span id="cb2-486"><a href="#cb2-486" aria-hidden="true" tabindex="-1"></a>        width <span class="op">=</span> <span class="fl">0.35</span>     <span class="co"># width for each bar</span></span>
-<span id="cb2-487"><a href="#cb2-487" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-488"><a href="#cb2-488" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Gather data from each run.</span></span>
-<span id="cb2-489"><a href="#cb2-489" aria-hidden="true" tabindex="-1"></a>        reqs <span class="op">=</span> [run.requests_per_sec <span class="cf">for</span> run <span class="kw">in</span> runs]</span>
-<span id="cb2-490"><a href="#cb2-490" aria-hidden="true" tabindex="-1"></a>        mbs <span class="op">=</span> [run.mb_per_sec <span class="cf">for</span> run <span class="kw">in</span> runs]</span>
-<span id="cb2-491"><a href="#cb2-491" aria-hidden="true" tabindex="-1"></a>        names <span class="op">=</span> [run.name <span class="cf">for</span> run <span class="kw">in</span> runs]</span>
-<span id="cb2-492"><a href="#cb2-492" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-493"><a href="#cb2-493" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Plot reqs/sec on the left axis (ax1) and MB/sec on the right axis (ax2).</span></span>
-<span id="cb2-494"><a href="#cb2-494" aria-hidden="true" tabindex="-1"></a>        ax1.bar(x <span class="op">-</span> width<span class="op">/</span><span class="dv">2</span>, reqs, width<span class="op">=</span>width, color<span class="op">=</span><span class="st">'blue'</span>, label<span class="op">=</span><span class="st">'Reqs/sec'</span>)</span>
-<span id="cb2-495"><a href="#cb2-495" aria-hidden="true" tabindex="-1"></a>        ax2.bar(x <span class="op">+</span> width<span class="op">/</span><span class="dv">2</span>, mbs, width<span class="op">=</span>width, color<span class="op">=</span><span class="st">'green'</span>, label<span class="op">=</span><span class="st">'MB/sec'</span>)</span>
+<span id="cb2-481"><a href="#cb2-481" aria-hidden="true" tabindex="-1"></a>    <span class="at">@classmethod</span></span>
+<span id="cb2-482"><a href="#cb2-482" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> plot_rps_mbs_seaborn_runs(cls, runs: <span class="bu">list</span>[<span class="st">"WrkRun"</span>], log_yscale: <span class="bu">list</span>[<span class="bu">bool</span>] <span class="op">=</span> <span class="va">None</span>):</span>
+<span id="cb2-483"><a href="#cb2-483" aria-hidden="true" tabindex="-1"></a>        <span class="co">"""</span></span>
+<span id="cb2-484"><a href="#cb2-484" aria-hidden="true" tabindex="-1"></a><span class="co">        Plot requests per second and MB per second for multiple runs as vertical bars using seaborn.</span></span>
+<span id="cb2-485"><a href="#cb2-485" aria-hidden="true" tabindex="-1"></a><span class="co">        For each run, two bars are plotted side-by-side:</span></span>
+<span id="cb2-486"><a href="#cb2-486" aria-hidden="true" tabindex="-1"></a><span class="co">          - The blue bar (on the left y-axis) shows requests per second.</span></span>
+<span id="cb2-487"><a href="#cb2-487" aria-hidden="true" tabindex="-1"></a><span class="co">          - The green bar (on the right y-axis) shows MB per second.</span></span>
+<span id="cb2-488"><a href="#cb2-488" aria-hidden="true" tabindex="-1"></a><span class="co">        The x-axis groups runs by their name.</span></span>
+<span id="cb2-489"><a href="#cb2-489" aria-hidden="true" tabindex="-1"></a><span class="co">        """</span></span>
+<span id="cb2-490"><a href="#cb2-490" aria-hidden="true" tabindex="-1"></a>        <span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb2-491"><a href="#cb2-491" aria-hidden="true" tabindex="-1"></a>        <span class="im">import</span> seaborn <span class="im">as</span> sns</span>
+<span id="cb2-492"><a href="#cb2-492" aria-hidden="true" tabindex="-1"></a>        <span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb2-493"><a href="#cb2-493" aria-hidden="true" tabindex="-1"></a>        <span class="co">#sns.set_theme(style="whitegrid")</span></span>
+<span id="cb2-494"><a href="#cb2-494" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-495"><a href="#cb2-495" aria-hidden="true" tabindex="-1"></a>        plt.rcParams[<span class="st">'font.family'</span>] <span class="op">=</span> FONT_FAMILY</span>
 <span id="cb2-496"><a href="#cb2-496" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-497"><a href="#cb2-497" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Set both y-axes to log scale.</span></span>
-<span id="cb2-498"><a href="#cb2-498" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> log_yscale:</span>
-<span id="cb2-499"><a href="#cb2-499" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> log_yscale[<span class="dv">0</span>]:</span>
-<span id="cb2-500"><a href="#cb2-500" aria-hidden="true" tabindex="-1"></a>                ax1.set_yscale(<span class="st">'log'</span>)</span>
-<span id="cb2-501"><a href="#cb2-501" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> log_yscale[<span class="dv">1</span>]:</span>
-<span id="cb2-502"><a href="#cb2-502" aria-hidden="true" tabindex="-1"></a>                ax2.set_yscale(<span class="st">'log'</span>)</span>
+<span id="cb2-497"><a href="#cb2-497" aria-hidden="true" tabindex="-1"></a>        fig, ax1 <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">6</span>))</span>
+<span id="cb2-498"><a href="#cb2-498" aria-hidden="true" tabindex="-1"></a>        ax2 <span class="op">=</span> ax1.twinx()</span>
+<span id="cb2-499"><a href="#cb2-499" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-500"><a href="#cb2-500" aria-hidden="true" tabindex="-1"></a>        n <span class="op">=</span> <span class="bu">len</span>(runs)</span>
+<span id="cb2-501"><a href="#cb2-501" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> np.arange(n)  <span class="co"># one x position per run</span></span>
+<span id="cb2-502"><a href="#cb2-502" aria-hidden="true" tabindex="-1"></a>        width <span class="op">=</span> <span class="fl">0.35</span>     <span class="co"># width for each bar</span></span>
 <span id="cb2-503"><a href="#cb2-503" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-504"><a href="#cb2-504" aria-hidden="true" tabindex="-1"></a>        ax1.set_xlabel(<span class="st">'Run'</span>)</span>
-<span id="cb2-505"><a href="#cb2-505" aria-hidden="true" tabindex="-1"></a>        ax1.set_ylabel(<span class="st">'Requests per Second'</span>, color<span class="op">=</span><span class="st">'blue'</span>)</span>
-<span id="cb2-506"><a href="#cb2-506" aria-hidden="true" tabindex="-1"></a>        ax2.set_ylabel(<span class="st">'MB per Second'</span>, color<span class="op">=</span><span class="st">'green'</span>)</span>
-<span id="cb2-507"><a href="#cb2-507" aria-hidden="true" tabindex="-1"></a>        ax1.set_xticks(x)</span>
-<span id="cb2-508"><a href="#cb2-508" aria-hidden="true" tabindex="-1"></a>        ax1.set_xticklabels(names)</span>
-<span id="cb2-509"><a href="#cb2-509" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-510"><a href="#cb2-510" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Combine legends from both axes.</span></span>
-<span id="cb2-511"><a href="#cb2-511" aria-hidden="true" tabindex="-1"></a>        handles1, labels1 <span class="op">=</span> ax1.get_legend_handles_labels()</span>
-<span id="cb2-512"><a href="#cb2-512" aria-hidden="true" tabindex="-1"></a>        handles2, labels2 <span class="op">=</span> ax2.get_legend_handles_labels()</span>
-<span id="cb2-513"><a href="#cb2-513" aria-hidden="true" tabindex="-1"></a>        ax1.legend(handles1 <span class="op">+</span> handles2, labels1 <span class="op">+</span> labels2, loc<span class="op">=</span><span class="st">'upper right'</span>)</span>
-<span id="cb2-514"><a href="#cb2-514" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-515"><a href="#cb2-515" aria-hidden="true" tabindex="-1"></a>        plt.title(<span class="st">'Requests/sec and MB/sec for Multiple Runs'</span>)</span>
-<span id="cb2-516"><a href="#cb2-516" aria-hidden="true" tabindex="-1"></a>        plt.show()</span>
-<span id="cb2-517"><a href="#cb2-517" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-518"><a href="#cb2-518" aria-hidden="true" tabindex="-1"></a>    <span class="at">@classmethod</span></span>
-<span id="cb2-519"><a href="#cb2-519" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> plot_rps_seaborn_runs(cls, runs: <span class="bu">list</span>[<span class="st">"WrkRun"</span>], log_yscale: <span class="bu">bool</span> <span class="op">=</span> <span class="va">False</span>):</span>
-<span id="cb2-520"><a href="#cb2-520" aria-hidden="true" tabindex="-1"></a>        <span class="co">"""</span></span>
-<span id="cb2-521"><a href="#cb2-521" aria-hidden="true" tabindex="-1"></a><span class="co">        Plot requests per second for multiple runs as vertical bars using seaborn.</span></span>
-<span id="cb2-522"><a href="#cb2-522" aria-hidden="true" tabindex="-1"></a><span class="co">        Each run's RPS is plotted as a single bar with the run's name on the x-axis.</span></span>
-<span id="cb2-523"><a href="#cb2-523" aria-hidden="true" tabindex="-1"></a><span class="co">        Optionally, the y-axis is set to a log scale if log_yscale is True.</span></span>
-<span id="cb2-524"><a href="#cb2-524" aria-hidden="true" tabindex="-1"></a><span class="co">    </span></span>
-<span id="cb2-525"><a href="#cb2-525" aria-hidden="true" tabindex="-1"></a><span class="co">        :param runs: List of WrkRun objects.</span></span>
-<span id="cb2-526"><a href="#cb2-526" aria-hidden="true" tabindex="-1"></a><span class="co">        :param log_yscale: If True, sets the y-axis to a logarithmic scale.</span></span>
-<span id="cb2-527"><a href="#cb2-527" aria-hidden="true" tabindex="-1"></a><span class="co">        """</span></span>
-<span id="cb2-528"><a href="#cb2-528" aria-hidden="true" tabindex="-1"></a>        <span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
-<span id="cb2-529"><a href="#cb2-529" aria-hidden="true" tabindex="-1"></a>        <span class="im">import</span> seaborn <span class="im">as</span> sns</span>
-<span id="cb2-530"><a href="#cb2-530" aria-hidden="true" tabindex="-1"></a>        <span class="im">import</span> numpy <span class="im">as</span> np</span>
-<span id="cb2-531"><a href="#cb2-531" aria-hidden="true" tabindex="-1"></a>        sns.set_theme(style<span class="op">=</span><span class="st">"whitegrid"</span>)</span>
-<span id="cb2-532"><a href="#cb2-532" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb2-533"><a href="#cb2-533" aria-hidden="true" tabindex="-1"></a>        fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">6</span>))</span>
-<span id="cb2-534"><a href="#cb2-534" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb2-535"><a href="#cb2-535" aria-hidden="true" tabindex="-1"></a>        n <span class="op">=</span> <span class="bu">len</span>(runs)</span>
-<span id="cb2-536"><a href="#cb2-536" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> np.arange(n)  <span class="co"># one x position per run</span></span>
-<span id="cb2-537"><a href="#cb2-537" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb2-538"><a href="#cb2-538" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Gather data from each run.</span></span>
-<span id="cb2-539"><a href="#cb2-539" aria-hidden="true" tabindex="-1"></a>        reqs <span class="op">=</span> [run.requests_per_sec <span class="cf">for</span> run <span class="kw">in</span> runs]</span>
-<span id="cb2-540"><a href="#cb2-540" aria-hidden="true" tabindex="-1"></a>        names <span class="op">=</span> [run.name <span class="cf">for</span> run <span class="kw">in</span> runs]</span>
-<span id="cb2-541"><a href="#cb2-541" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb2-542"><a href="#cb2-542" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Plot the RPS as vertical bars.</span></span>
-<span id="cb2-543"><a href="#cb2-543" aria-hidden="true" tabindex="-1"></a>        ax.bar(x, reqs, width<span class="op">=</span><span class="fl">0.6</span>, color<span class="op">=</span><span class="st">'blue'</span>, label<span class="op">=</span><span class="st">'Reqs/sec'</span>)</span>
-<span id="cb2-544"><a href="#cb2-544" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb2-545"><a href="#cb2-545" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Set the y-axis to log scale if requested.</span></span>
-<span id="cb2-546"><a href="#cb2-546" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> log_yscale:</span>
-<span id="cb2-547"><a href="#cb2-547" aria-hidden="true" tabindex="-1"></a>            ax.set_yscale(<span class="st">'log'</span>)</span>
-<span id="cb2-548"><a href="#cb2-548" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb2-549"><a href="#cb2-549" aria-hidden="true" tabindex="-1"></a>        ax.set_xlabel(<span class="st">'Run'</span>)</span>
-<span id="cb2-550"><a href="#cb2-550" aria-hidden="true" tabindex="-1"></a>        ax.set_ylabel(<span class="st">'Requests per Second'</span>)</span>
-<span id="cb2-551"><a href="#cb2-551" aria-hidden="true" tabindex="-1"></a>        ax.set_xticks(x)</span>
-<span id="cb2-552"><a href="#cb2-552" aria-hidden="true" tabindex="-1"></a>        ax.set_xticklabels(names)</span>
-<span id="cb2-553"><a href="#cb2-553" aria-hidden="true" tabindex="-1"></a>        ax.legend(loc<span class="op">=</span><span class="st">'upper right'</span>)</span>
-<span id="cb2-554"><a href="#cb2-554" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb2-555"><a href="#cb2-555" aria-hidden="true" tabindex="-1"></a>        plt.title(<span class="st">'Requests/sec for Multiple Runs'</span>)</span>
-<span id="cb2-556"><a href="#cb2-556" aria-hidden="true" tabindex="-1"></a>        plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-504"><a href="#cb2-504" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Gather data from each run.</span></span>
+<span id="cb2-505"><a href="#cb2-505" aria-hidden="true" tabindex="-1"></a>        reqs <span class="op">=</span> [run.requests_per_sec <span class="cf">for</span> run <span class="kw">in</span> runs]</span>
+<span id="cb2-506"><a href="#cb2-506" aria-hidden="true" tabindex="-1"></a>        mbs <span class="op">=</span> [run.mb_per_sec <span class="cf">for</span> run <span class="kw">in</span> runs]</span>
+<span id="cb2-507"><a href="#cb2-507" aria-hidden="true" tabindex="-1"></a>        names <span class="op">=</span> [run.name <span class="cf">for</span> run <span class="kw">in</span> runs]</span>
+<span id="cb2-508"><a href="#cb2-508" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-509"><a href="#cb2-509" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Plot reqs/sec on the left axis (ax1) and MB/sec on the right axis (ax2).</span></span>
+<span id="cb2-510"><a href="#cb2-510" aria-hidden="true" tabindex="-1"></a>        ax1.bar(x <span class="op">-</span> width<span class="op">/</span><span class="dv">2</span>, reqs, width<span class="op">=</span>width, color<span class="op">=</span><span class="st">'blue'</span>, label<span class="op">=</span><span class="st">'Reqs/sec'</span>)</span>
+<span id="cb2-511"><a href="#cb2-511" aria-hidden="true" tabindex="-1"></a>        ax2.bar(x <span class="op">+</span> width<span class="op">/</span><span class="dv">2</span>, mbs, width<span class="op">=</span>width, color<span class="op">=</span><span class="st">'green'</span>, label<span class="op">=</span><span class="st">'MB/sec'</span>)</span>
+<span id="cb2-512"><a href="#cb2-512" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-513"><a href="#cb2-513" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Set both y-axes to log scale.</span></span>
+<span id="cb2-514"><a href="#cb2-514" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> log_yscale:</span>
+<span id="cb2-515"><a href="#cb2-515" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> log_yscale[<span class="dv">0</span>]:</span>
+<span id="cb2-516"><a href="#cb2-516" aria-hidden="true" tabindex="-1"></a>                ax1.set_yscale(<span class="st">'log'</span>)</span>
+<span id="cb2-517"><a href="#cb2-517" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> log_yscale[<span class="dv">1</span>]:</span>
+<span id="cb2-518"><a href="#cb2-518" aria-hidden="true" tabindex="-1"></a>                ax2.set_yscale(<span class="st">'log'</span>)</span>
+<span id="cb2-519"><a href="#cb2-519" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-520"><a href="#cb2-520" aria-hidden="true" tabindex="-1"></a>        ax1.set_xlabel(<span class="st">'Run'</span>)</span>
+<span id="cb2-521"><a href="#cb2-521" aria-hidden="true" tabindex="-1"></a>        ax1.set_ylabel(<span class="st">'Requests per Second'</span>, color<span class="op">=</span><span class="st">'blue'</span>)</span>
+<span id="cb2-522"><a href="#cb2-522" aria-hidden="true" tabindex="-1"></a>        ax2.set_ylabel(<span class="st">'MB per Second'</span>, color<span class="op">=</span><span class="st">'green'</span>)</span>
+<span id="cb2-523"><a href="#cb2-523" aria-hidden="true" tabindex="-1"></a>        ax1.set_xticks(x)</span>
+<span id="cb2-524"><a href="#cb2-524" aria-hidden="true" tabindex="-1"></a>        ax1.set_xticklabels(names)</span>
+<span id="cb2-525"><a href="#cb2-525" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-526"><a href="#cb2-526" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Combine legends from both axes.</span></span>
+<span id="cb2-527"><a href="#cb2-527" aria-hidden="true" tabindex="-1"></a>        handles1, labels1 <span class="op">=</span> ax1.get_legend_handles_labels()</span>
+<span id="cb2-528"><a href="#cb2-528" aria-hidden="true" tabindex="-1"></a>        handles2, labels2 <span class="op">=</span> ax2.get_legend_handles_labels()</span>
+<span id="cb2-529"><a href="#cb2-529" aria-hidden="true" tabindex="-1"></a>        ax1.legend(handles1 <span class="op">+</span> handles2, labels1 <span class="op">+</span> labels2, loc<span class="op">=</span><span class="st">'upper right'</span>)</span>
+<span id="cb2-530"><a href="#cb2-530" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-531"><a href="#cb2-531" aria-hidden="true" tabindex="-1"></a>        plt.title(<span class="st">'Requests/sec and MB/sec for Multiple Runs'</span>)</span>
+<span id="cb2-532"><a href="#cb2-532" aria-hidden="true" tabindex="-1"></a>        plt.show()</span>
+<span id="cb2-533"><a href="#cb2-533" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-534"><a href="#cb2-534" aria-hidden="true" tabindex="-1"></a>    <span class="at">@classmethod</span></span>
+<span id="cb2-535"><a href="#cb2-535" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> plot_rps_seaborn_runs(cls, runs: <span class="bu">list</span>[<span class="st">"WrkRun"</span>], log_yscale: <span class="bu">bool</span> <span class="op">=</span> <span class="va">False</span>,</span>
+<span id="cb2-536"><a href="#cb2-536" aria-hidden="true" tabindex="-1"></a>                                   filename: <span class="bu">str</span> <span class="op">=</span> <span class="va">None</span>):</span>
+<span id="cb2-537"><a href="#cb2-537" aria-hidden="true" tabindex="-1"></a>        <span class="co">"""</span></span>
+<span id="cb2-538"><a href="#cb2-538" aria-hidden="true" tabindex="-1"></a><span class="co">        Plot requests per second for multiple runs as vertical bars using seaborn.</span></span>
+<span id="cb2-539"><a href="#cb2-539" aria-hidden="true" tabindex="-1"></a><span class="co">        Each run's RPS is plotted as a single bar with the run's name on the x-axis.</span></span>
+<span id="cb2-540"><a href="#cb2-540" aria-hidden="true" tabindex="-1"></a><span class="co">        Optionally, the y-axis is set to a log scale if log_yscale is True.</span></span>
+<span id="cb2-541"><a href="#cb2-541" aria-hidden="true" tabindex="-1"></a><span class="co">    </span></span>
+<span id="cb2-542"><a href="#cb2-542" aria-hidden="true" tabindex="-1"></a><span class="co">        :param runs: List of WrkRun objects.</span></span>
+<span id="cb2-543"><a href="#cb2-543" aria-hidden="true" tabindex="-1"></a><span class="co">        :param log_yscale: If True, sets the y-axis to a logarithmic scale.</span></span>
+<span id="cb2-544"><a href="#cb2-544" aria-hidden="true" tabindex="-1"></a><span class="co">        """</span></span>
+<span id="cb2-545"><a href="#cb2-545" aria-hidden="true" tabindex="-1"></a>        <span class="co">#sns.set_theme(style="whitegrid")</span></span>
+<span id="cb2-546"><a href="#cb2-546" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb2-547"><a href="#cb2-547" aria-hidden="true" tabindex="-1"></a>        plt.rcParams[<span class="st">'font.family'</span>] <span class="op">=</span> FONT_FAMILY</span>
+<span id="cb2-548"><a href="#cb2-548" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb2-549"><a href="#cb2-549" aria-hidden="true" tabindex="-1"></a>        fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">6</span>))</span>
+<span id="cb2-550"><a href="#cb2-550" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-551"><a href="#cb2-551" aria-hidden="true" tabindex="-1"></a>        n <span class="op">=</span> <span class="bu">len</span>(runs)</span>
+<span id="cb2-552"><a href="#cb2-552" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> np.arange(n)  <span class="co"># one x position per run</span></span>
+<span id="cb2-553"><a href="#cb2-553" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-554"><a href="#cb2-554" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Gather data from each run.</span></span>
+<span id="cb2-555"><a href="#cb2-555" aria-hidden="true" tabindex="-1"></a>        reqs <span class="op">=</span> [run.requests_per_sec <span class="cf">for</span> run <span class="kw">in</span> runs]</span>
+<span id="cb2-556"><a href="#cb2-556" aria-hidden="true" tabindex="-1"></a>        names <span class="op">=</span> [run.name <span class="cf">for</span> run <span class="kw">in</span> runs]</span>
+<span id="cb2-557"><a href="#cb2-557" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-558"><a href="#cb2-558" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Plot the RPS as vertical bars.</span></span>
+<span id="cb2-559"><a href="#cb2-559" aria-hidden="true" tabindex="-1"></a>        ax.bar(x, reqs, width<span class="op">=</span><span class="fl">0.6</span>, color<span class="op">=</span><span class="st">'blue'</span>, label<span class="op">=</span><span class="st">'Reqs/sec'</span>)</span>
+<span id="cb2-560"><a href="#cb2-560" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-561"><a href="#cb2-561" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Set the y-axis to log scale if requested.</span></span>
+<span id="cb2-562"><a href="#cb2-562" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> log_yscale:</span>
+<span id="cb2-563"><a href="#cb2-563" aria-hidden="true" tabindex="-1"></a>            ax.set_yscale(<span class="st">'log'</span>)</span>
+<span id="cb2-564"><a href="#cb2-564" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-565"><a href="#cb2-565" aria-hidden="true" tabindex="-1"></a>        ax.set_xlabel(<span class="st">'Run'</span>)</span>
+<span id="cb2-566"><a href="#cb2-566" aria-hidden="true" tabindex="-1"></a>        ax.set_ylabel(<span class="st">'Requests per Second'</span>)</span>
+<span id="cb2-567"><a href="#cb2-567" aria-hidden="true" tabindex="-1"></a>        ax.set_xticks(x)</span>
+<span id="cb2-568"><a href="#cb2-568" aria-hidden="true" tabindex="-1"></a>        ax.set_xticklabels(names)</span>
+<span id="cb2-569"><a href="#cb2-569" aria-hidden="true" tabindex="-1"></a>        ax.legend(loc<span class="op">=</span><span class="st">'upper right'</span>)</span>
+<span id="cb2-570"><a href="#cb2-570" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-571"><a href="#cb2-571" aria-hidden="true" tabindex="-1"></a>        plt.title(<span class="st">'Requests/sec for Multiple Runs'</span>)</span>
+<span id="cb2-572"><a href="#cb2-572" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-573"><a href="#cb2-573" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> filename:</span>
+<span id="cb2-574"><a href="#cb2-574" aria-hidden="true" tabindex="-1"></a>            <span class="cf">assert</span> <span class="st">'.'</span> <span class="kw">in</span> filename, <span class="ss">f'Missing extension: </span><span class="sc">{</span>filename<span class="sc">}</span><span class="ss">'</span></span>
+<span id="cb2-575"><a href="#cb2-575" aria-hidden="true" tabindex="-1"></a>            file_format <span class="op">=</span> filename[filename.rfind(<span class="st">'.'</span>)<span class="op">+</span><span class="dv">1</span>:]</span>
+<span id="cb2-576"><a href="#cb2-576" aria-hidden="true" tabindex="-1"></a>            plt.savefig(filename, <span class="bu">format</span><span class="op">=</span>file_format)</span>
+<span id="cb2-577"><a href="#cb2-577" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb2-578"><a href="#cb2-578" aria-hidden="true" tabindex="-1"></a>        plt.show()</span>
+<span id="cb2-579"><a href="#cb2-579" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-580"><a href="#cb2-580" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> plot_cdf_bokeh(<span class="va">self</span>):</span>
+<span id="cb2-581"><a href="#cb2-581" aria-hidden="true" tabindex="-1"></a>        <span class="im">from</span> bokeh.plotting <span class="im">import</span> figure, show</span>
+<span id="cb2-582"><a href="#cb2-582" aria-hidden="true" tabindex="-1"></a>        <span class="im">from</span> bokeh.io <span class="im">import</span> output_notebook</span>
+<span id="cb2-583"><a href="#cb2-583" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-584"><a href="#cb2-584" aria-hidden="true" tabindex="-1"></a>        percentiles <span class="op">=</span> <span class="bu">sorted</span>(<span class="va">self</span>.latency_distribution.keys())</span>
+<span id="cb2-585"><a href="#cb2-585" aria-hidden="true" tabindex="-1"></a>        latencies <span class="op">=</span> [<span class="va">self</span>.latency_distribution[p] <span class="cf">for</span> p <span class="kw">in</span> percentiles]</span>
+<span id="cb2-586"><a href="#cb2-586" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-587"><a href="#cb2-587" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Convert percentiles to cumulative probabilities (0 to 1)</span></span>
+<span id="cb2-588"><a href="#cb2-588" aria-hidden="true" tabindex="-1"></a>        cdf_values <span class="op">=</span> [p <span class="op">/</span> <span class="dv">100</span> <span class="cf">for</span> p <span class="kw">in</span> percentiles]</span>
+<span id="cb2-589"><a href="#cb2-589" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-590"><a href="#cb2-590" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Initialize the Bokeh figure</span></span>
+<span id="cb2-591"><a href="#cb2-591" aria-hidden="true" tabindex="-1"></a>        p <span class="op">=</span> figure(</span>
+<span id="cb2-592"><a href="#cb2-592" aria-hidden="true" tabindex="-1"></a>            title<span class="op">=</span><span class="st">'Latency Distribution CDF'</span>,</span>
+<span id="cb2-593"><a href="#cb2-593" aria-hidden="true" tabindex="-1"></a>            x_axis_label<span class="op">=</span><span class="st">'Latency (ms)'</span>,</span>
+<span id="cb2-594"><a href="#cb2-594" aria-hidden="true" tabindex="-1"></a>            y_axis_label<span class="op">=</span><span class="st">'Cumulative Probability'</span>,</span>
+<span id="cb2-595"><a href="#cb2-595" aria-hidden="true" tabindex="-1"></a>            width<span class="op">=</span><span class="dv">800</span>,</span>
+<span id="cb2-596"><a href="#cb2-596" aria-hidden="true" tabindex="-1"></a>            height<span class="op">=</span><span class="dv">400</span>,</span>
+<span id="cb2-597"><a href="#cb2-597" aria-hidden="true" tabindex="-1"></a>            tools<span class="op">=</span><span class="st">"pan,wheel_zoom,box_zoom,reset"</span></span>
+<span id="cb2-598"><a href="#cb2-598" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb2-599"><a href="#cb2-599" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-600"><a href="#cb2-600" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Plot the CDF</span></span>
+<span id="cb2-601"><a href="#cb2-601" aria-hidden="true" tabindex="-1"></a>        p.line(</span>
+<span id="cb2-602"><a href="#cb2-602" aria-hidden="true" tabindex="-1"></a>            latencies,</span>
+<span id="cb2-603"><a href="#cb2-603" aria-hidden="true" tabindex="-1"></a>            cdf_values,</span>
+<span id="cb2-604"><a href="#cb2-604" aria-hidden="true" tabindex="-1"></a>            legend_label<span class="op">=</span><span class="va">self</span>.label,</span>
+<span id="cb2-605"><a href="#cb2-605" aria-hidden="true" tabindex="-1"></a>            line_width<span class="op">=</span><span class="dv">2</span>,</span>
+<span id="cb2-606"><a href="#cb2-606" aria-hidden="true" tabindex="-1"></a>            line_color<span class="op">=</span><span class="va">self</span>.color <span class="kw">or</span> <span class="st">'blue'</span>,</span>
+<span id="cb2-607"><a href="#cb2-607" aria-hidden="true" tabindex="-1"></a>            <span class="co">#marker=self.marker or 'circle',</span></span>
+<span id="cb2-608"><a href="#cb2-608" aria-hidden="true" tabindex="-1"></a>            <span class="co">#marker_size=5,</span></span>
+<span id="cb2-609"><a href="#cb2-609" aria-hidden="true" tabindex="-1"></a>            <span class="co">#marker_line_color="black",</span></span>
+<span id="cb2-610"><a href="#cb2-610" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb2-611"><a href="#cb2-611" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-612"><a href="#cb2-612" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Show the plot</span></span>
+<span id="cb2-613"><a href="#cb2-613" aria-hidden="true" tabindex="-1"></a>        output_notebook()</span>
+<span id="cb2-614"><a href="#cb2-614" aria-hidden="true" tabindex="-1"></a>        show(p)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div></div>
 <div class="cell-container"><div class="cell-decorator"><pre>In [3]:</pre></div><div id="c5c4f25d-6473-472f-ad4e-d94a4c40b2e3" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>wr01_1 <span class="op">=</span> WrkRun.from_console_output(<span class="st">'wrk-leopard-01-no-gil.txt'</span>)</span>
@@ -855,101 +924,105 @@ gtag('config', 'G-8RPR4XKPEW', { 'anonymize_ip': false});
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>wr01_1.set_plot_details(marker<span class="op">=</span><span class="st">'o'</span>, linestyle<span class="op">=</span><span class="st">'-'</span>, color<span class="op">=</span><span class="st">'blue'</span>, name<span class="op">=</span><span class="st">'No GIL'</span>)</span>
 <span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>wr01_2.set_plot_details(marker<span class="op">=</span><span class="st">'o'</span>, linestyle<span class="op">=</span><span class="st">'-'</span>, color<span class="op">=</span><span class="st">'red'</span>, name<span class="op">=</span><span class="st">'GIL Enabled'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div></div>
-<div class="cell-container"><div class="cell-decorator"><pre>In [4]:</pre></div><div id="cell-wrk-01-no-gil" class="cell" data-execution_count="4">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>wr01_1.plot_cdf_seaborn()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-container"><div class="cell-decorator"><pre>In [4]:</pre></div><div id="wrk-01-bokeh" class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">#wr01_1.plot_cdf_bokeh()</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div></div>
+<div class="cell-container"><div class="cell-decorator"><pre>In [5]:</pre></div><div id="cell-wrk-01-no-gil" class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>wr01_1.plot_cdf_seaborn(filename<span class="op">=</span><span class="st">'wrk-01-no-gil.svg'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
-<div class="">
+<div id="wrk-01-no-gil" class="quarto-figure quarto-figure-center anchored">
 <figure class="figure">
-<p class=""><img src="wrk-analysis_files/figure-html/wrk-01-no-gil-output-1.png" id="wrk-01-no-gil" width="699" height="553" class="figure-img"></p>
+<p class=""><img src="wrk-analysis_files/figure-html/wrk-01-no-gil-output-1.png" width="698" height="551" class="figure-img"></p>
+<figcaption>Parallel Load Test Latency Distribution (No GIL)</figcaption>
 </figure>
 </div>
 </div>
 </div></div>
-<div class="cell-container"><div class="cell-decorator"><pre>In [5]:</pre></div><div id="cell-wrk-01-gil" class="cell" data-execution_count="5">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>wr01_2.plot_cdf_seaborn()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-container"><div class="cell-decorator"><pre>In [6]:</pre></div><div id="cell-wrk-01-gil" class="cell" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>wr01_2.plot_cdf_seaborn(filename<span class="op">=</span><span class="st">'wrk-01-gil.svg'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
-<div class="">
+<div id="wrk-01-gil" class="quarto-figure quarto-figure-center anchored">
 <figure class="figure">
-<p class=""><img src="wrk-analysis_files/figure-html/wrk-01-gil-output-1.png" id="wrk-01-gil" width="699" height="553" class="figure-img"></p>
+<p class=""><img src="wrk-analysis_files/figure-html/wrk-01-gil-output-1.png" width="698" height="551" class="figure-img"></p>
+<figcaption>Parallel Load Test Latency Distribution (GIL Enabled)</figcaption>
 </figure>
 </div>
 </div>
 </div></div>
-<div class="cell-container"><div class="cell-decorator"><pre>In [6]:</pre></div><div id="cell-wrk-01-combined" class="cell" data-execution_count="6">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>wr01_1.stats_in_label <span class="op">=</span> <span class="va">False</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>wr01_2.stats_in_label <span class="op">=</span> <span class="va">False</span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>WrkRun.plot_cdfs_seaborn(runs<span class="op">=</span>[wr01_1, wr01_2])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-container"><div class="cell-decorator"><pre>In [7]:</pre></div><div id="cell-wrk-01-combined" class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>wr01_1.stats_in_label <span class="op">=</span> <span class="va">False</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>wr01_2.stats_in_label <span class="op">=</span> <span class="va">False</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>WrkRun.plot_cdfs_seaborn(runs<span class="op">=</span>[wr01_1, wr01_2], filename<span class="op">=</span><span class="st">"wrk-01-combined.svg"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
-<div class="">
+<div id="wrk-01-combined" class="quarto-figure quarto-figure-center anchored">
 <figure class="figure">
-<p class=""><img src="wrk-analysis_files/figure-html/wrk-01-combined-output-1.png" id="wrk-01-combined" width="699" height="553" class="figure-img"></p>
+<p class=""><img src="wrk-analysis_files/figure-html/wrk-01-combined-output-1.png" width="698" height="551" class="figure-img"></p>
+<figcaption>Parallel Load Test Latency Distribution (No GIL &amp; GIL Combined)</figcaption>
 </figure>
 </div>
 </div>
 </div></div>
-<div class="cell-container"><div class="cell-decorator"><pre>In [7]:</pre></div><div id="cell-wrk-01-rps-combined" class="cell" data-execution_count="7">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>WrkRun.plot_rps_seaborn_runs(runs<span class="op">=</span>[wr01_1, wr01_2])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-container"><div class="cell-decorator"><pre>In [8]:</pre></div><div id="cell-wrk-01-rps-combined" class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>WrkRun.plot_rps_seaborn_runs(runs<span class="op">=</span>[wr01_1, wr01_2], filename<span class="op">=</span><span class="st">'wrk-01-rps-combined.svg'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <div class="">
 <figure class="figure">
-<p class=""><img src="wrk-analysis_files/figure-html/wrk-01-rps-combined-output-1.png" id="wrk-01-rps-combined" width="694" height="553" class="figure-img"></p>
+<p class=""><img src="wrk-analysis_files/figure-html/wrk-01-rps-combined-output-1.png" id="wrk-01-rps-combined" width="693" height="550" class="figure-img"></p>
 </figure>
 </div>
 </div>
 </div></div>
-<div class="cell-container"><div class="cell-decorator"><pre>In [8]:</pre></div><div id="912c483f-7029-46d1-ab2e-a02132aeabb1" class="cell" data-execution_count="8">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>wr02_1 <span class="op">=</span> WrkRun.from_console_output(<span class="st">'wrk-leopard-02-no-gil.txt'</span>)</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>wr02_2 <span class="op">=</span> WrkRun.from_console_output(<span class="st">'wrk-leopard-01-gil.txt'</span>)</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>wr02_1.set_plot_details(marker<span class="op">=</span><span class="st">'o'</span>, linestyle<span class="op">=</span><span class="st">'-'</span>, color<span class="op">=</span><span class="st">'blue'</span>, name<span class="op">=</span><span class="st">'No GIL'</span>)</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>wr02_2.set_plot_details(marker<span class="op">=</span><span class="st">'o'</span>, linestyle<span class="op">=</span><span class="st">'-'</span>, color<span class="op">=</span><span class="st">'red'</span>, name<span class="op">=</span><span class="st">'GIL Enabled'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-container"><div class="cell-decorator"><pre>In [9]:</pre></div><div id="912c483f-7029-46d1-ab2e-a02132aeabb1" class="cell" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>wr02_1 <span class="op">=</span> WrkRun.from_console_output(<span class="st">'wrk-leopard-02-no-gil.txt'</span>)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>wr02_2 <span class="op">=</span> WrkRun.from_console_output(<span class="st">'wrk-leopard-02-gil.txt'</span>)</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>wr02_1.set_plot_details(marker<span class="op">=</span><span class="st">'o'</span>, linestyle<span class="op">=</span><span class="st">'-'</span>, color<span class="op">=</span><span class="st">'blue'</span>, name<span class="op">=</span><span class="st">'No GIL'</span>)</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>wr02_2.set_plot_details(marker<span class="op">=</span><span class="st">'o'</span>, linestyle<span class="op">=</span><span class="st">'-'</span>, color<span class="op">=</span><span class="st">'red'</span>, name<span class="op">=</span><span class="st">'GIL Enabled'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div></div>
-<div class="cell-container"><div class="cell-decorator"><pre>In [9]:</pre></div><div id="cell-wrk-02-no-gil" class="cell" data-execution_count="9">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>wr02_1.plot_cdf_seaborn()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-container"><div class="cell-decorator"><pre>In [10]:</pre></div><div id="cell-wrk-02-no-gil" class="cell" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>wr02_1.plot_cdf_seaborn(filename<span class="op">=</span><span class="st">'wrk-02-no-gil.svg'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
-<div class="">
+<div id="wrk-02-no-gil" class="quarto-figure quarto-figure-center anchored">
 <figure class="figure">
-<p class=""><img src="wrk-analysis_files/figure-html/wrk-02-no-gil-output-1.png" id="wrk-02-no-gil" width="699" height="553" class="figure-img"></p>
+<p class=""><img src="wrk-analysis_files/figure-html/wrk-02-no-gil-output-1.png" width="698" height="551" class="figure-img"></p>
+<figcaption>Plaintext Load Test Latency Distribution (No GIL)</figcaption>
 </figure>
 </div>
 </div>
 </div></div>
-<div class="cell-container"><div class="cell-decorator"><pre>In [10]:</pre></div><div id="cell-wrk-02-gil" class="cell" data-execution_count="10">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>wr02_2.plot_cdf_seaborn()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-container"><div class="cell-decorator"><pre>In [11]:</pre></div><div id="cell-wrk-02-gil" class="cell" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>wr02_2.plot_cdf_seaborn(filename<span class="op">=</span><span class="st">'wrk-02-gil.svg'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
-<div class="">
+<div id="wrk-02-gil" class="quarto-figure quarto-figure-center anchored">
 <figure class="figure">
-<p class=""><img src="wrk-analysis_files/figure-html/wrk-02-gil-output-1.png" id="wrk-02-gil" width="699" height="553" class="figure-img"></p>
+<p class=""><img src="wrk-analysis_files/figure-html/wrk-02-gil-output-1.png" width="699" height="551" class="figure-img"></p>
+<figcaption>Plaintext Load Test Latency Distribution (GIL Enabled)</figcaption>
 </figure>
 </div>
 </div>
 </div></div>
-<div class="cell-container"><div class="cell-decorator"><pre>In [11]:</pre></div><div id="cell-wrk-02-combined" class="cell" data-execution_count="11">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>wr02_1.stats_in_label <span class="op">=</span> <span class="va">False</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>wr02_2.stats_in_label <span class="op">=</span> <span class="va">False</span></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>WrkRun.plot_cdfs_seaborn(runs<span class="op">=</span>[wr02_1, wr02_2])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-container"><div class="cell-decorator"><pre>In [12]:</pre></div><div id="cell-wrk-02-combined" class="cell" data-execution_count="12">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>wr02_1.stats_in_label <span class="op">=</span> <span class="va">False</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>wr02_2.stats_in_label <span class="op">=</span> <span class="va">False</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>WrkRun.plot_cdfs_seaborn(runs<span class="op">=</span>[wr02_1, wr02_2], filename<span class="op">=</span><span class="st">'wrk-02-combined.svg'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
-<div class="">
+<div id="wrk-02-combined" class="quarto-figure quarto-figure-center anchored">
 <figure class="figure">
-<p class=""><img src="wrk-analysis_files/figure-html/wrk-02-combined-output-1.png" id="wrk-02-combined" width="699" height="553" class="figure-img"></p>
+<p class=""><img src="wrk-analysis_files/figure-html/wrk-02-combined-output-1.png" width="698" height="551" class="figure-img"></p>
+<figcaption>Plaintext Load Test Latency Distribution (No GIL &amp; GIL)</figcaption>
 </figure>
 </div>
 </div>
 </div></div>
-<div class="cell-container"><div class="cell-decorator"><pre>In [12]:</pre></div><div id="cell-wrk-02-rps-combined" class="cell" data-execution_count="12">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>WrkRun.plot_rps_seaborn_runs(runs<span class="op">=</span>[wr02_1, wr02_2], log_yscale<span class="op">=</span><span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-container"><div class="cell-decorator"><pre>In [13]:</pre></div><div id="cell-wrk-02-rps-combined" class="cell" data-execution_count="13">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>WrkRun.plot_rps_seaborn_runs(runs<span class="op">=</span>[wr02_1, wr02_2], log_yscale<span class="op">=</span><span class="va">True</span>, filename<span class="op">=</span><span class="st">'wrk-02-rps-combined.svg'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
-<div class="">
+<div id="wrk-02-rps-combined" class="quarto-figure quarto-figure-center anchored">
 <figure class="figure">
-<p class=""><img src="wrk-analysis_files/figure-html/wrk-02-rps-combined-output-1.png" id="wrk-02-rps-combined" width="701" height="553" class="figure-img"></p>
+<p class=""><img src="wrk-analysis_files/figure-html/wrk-02-rps-combined-output-1.png" width="694" height="550" class="figure-img"></p>
+<figcaption>Plaintext Load Test Requests/sec (No GIL &amp; GIL)</figcaption>
 </figure>
 </div>
-</div>
-</div></div>
-<div class="cell-container"><div class="cell-decorator"><pre>In [13]:</pre></div><div id="a41557a7-8f3b-4f89-8926-3efc15a963ae" class="cell" data-execution_count="13">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>wr02_2.requests_per_sec</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="13">
-<pre><code>7.35</code></pre>
 </div>
 </div></div>
 

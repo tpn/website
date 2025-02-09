@@ -30,6 +30,16 @@ execute:
   output: true
   error: true
 lightbox: true
+comments: false
+format:
+  html:
+    grid:
+      gutter-width: 1rem
+notebook-view:
+  - notebook: gpt2_v1.ipynb
+    title: "GPT2 v1"
+  - notebook: wrk-analysis.ipynb
+    title: "Data Visualization"
 ---
 
 This blog post is sponsored in part by [Meta](https://meta.com) in
@@ -1628,176 +1638,7 @@ the *reassembled* text, and, provided we supply the `--no-buffer` argument,
 The quick brown fox is a subspecies that originated in southern Scotland as a variety of fox. This* Connection #0 to host dgx left intact
 ```
 
-### Parallel Generation
-
-#### Netcat Example
-
-To test drive the parallel generation---at least in a very rudimentary
-fashion---I'll enlist the help of `tmux` and the `:setw synchronize-panes`
-command, which sends keystrokes to all active panes within a given `tmux`
-session window.
-
-I captured a 15 frames-per-second GIF of this in action, which you can view
-below if you expand the callout.  It shows terminal sessions to six
-machines, arranged vertically, all executing the same `echo ... | nc`
-command depicted above.  It's a bit janky, but hopefully you can see that
-the requests are being serviced in parallel by the HTTP server.
-
-::: {.callout-note collapse="true" appearance="simple" icon="false" title="Parallel Netcat Generation GIF"}
-
-![Parallel Netcat Generation](
-images/parallelopedia-multi-threaded-gpu-inference-gpt2-nc.gif)
-
-:::
-
-I extracted the last frame of the GIF, which you can see below, where you
-can see that at least there was some variance between which GPUs were
-selected:
-
-![Parallel Netcat Generation - Last Frame](
-images/parallelopedia-multi-threaded-gpu-inference-gpt2-nc-last-frame-2.png)
-
-#### Curl Example
-
-I did the same thing with the panes arranged horizontally, using `curl`
-instead and a `max_length=1000` and no seed, which helps in visualizing
-the parallel generation, as you can clearly see different clients are
-receiving completely different outputs.
-
-::: {.callout-note collapse="true" appearance="simple" icon="false" title="Parallel Curl Generation GIF"}
-
-![Parallel Curl Generation](
-images/parallelopedia-multi-threaded-gpu-inference-gpt2-curl-1000.gif)
-
-:::
-
-## Let's Load Test This Sucker!
-
-These tests are pretty positive!  Looks like we can absolutely do PyTorch
-model generation in parallel via multiple threads thanks to free-threaded
-Python.
-
-Let's ramp it up a notch and see what happens if we attempt to load test
-the `/generate` endpoint from a different server.  The `leopard` server
-you see in the next example is an Intel(R) Xeon(R) W-2275 CPU @ 3.30GHz
-(14 cores, 28 threads) and is connected to the `dgx` box via a 10G Ethernet
-link.
-
-Using the fork of [`wrk`](https://github.com/tpn/wrk) I hacked together some
-ten years ago or so whilst load testing PyParallel, let's kick off a run
-with 14 threads for 30 seconds.  There will be one connection per thread,
-and HTTP/1.1 will be used, so the implicit *keep-alive* behavior means that
-as soon as one `/generate` request completes, another one is immediately
-dispatched.
-
-For posterity, the console command being used is as follows:
-
-```bash
-% time ./wrk -v --latency -c14 -t14 -d30s \
-    'http://dgx:4444/generate/'
-    'The%20quick%20brown%20fox?max_length=20&device=cuda&seed=42'
-```
-
-If you expand the callout below, the GIF you'll see depicts two terminal
-windows.  The smaller foreground window on the left is `leopard`, the
-session doing the `wrk` load test.  The background window that takes up the
-rest of the screen is a GPU-enabled build of [`btop`](
-https://github.com/aristocratos/btop), which is a beautiful console app for
-displaying resource usage.
-
-The 40 CPU cores can be seen in the top pane, and, as expected, about 14 of
-them whirr into life as soon as the load test begins, which tracks, as there
-are now 14 clients attempting to hammer our `/generate` end point.
-
-Below that, you can see the four Tesla V100-DGXS-32GB GPUs also whirr into
-action, handling the generation between them with relative ease.
-
-On the bottom right, I've filtered the process tree to just display our
-`python` HTTP server invocation.  I would love it if `btop` showed the
-individual threads and their load, as it beautifully depicts Python
-saturating cores in parallel now that there's no GIL impeding execution.
-
-::: {.callout-note #parallel-generation-load-test-no-gil collapse="true" appearance="simple" icon="false" title="Parallel Generation Load Test GIF: No GIL"}
-
-![Parallel Generation Load Test - No GIL](
-images/parallelopedia-multi-threaded-gpu-inference-gpt2-wrk-14.gif)
-
-:::
-
-I've extracted the last frame, below, to allow closer inspection at the end
-of the run, without the annoyance of the GIF looping.
-
-![Parallel Generation Load Test No GIL - Last Frame](
-images/parallelopedia-multi-threaded-gpu-inference-gpt2-wrk-14-last-frame-optimized.png)
-
-The console output from `wrk` is captured in the callout below.
-
-::: {.callout-note collapse="true" appearance="simple" icon="false" title="Console Output of wrk: No GIL"}
-
-```
-{{< include wrk-leopard-01-no-gil.txt >}}
-```
-
-:::
-
-A visualization of the latencies is presented below.
-
-{{< embed wrk-analysis.ipynb#wrk-01-no-gil >}}
-
-### Ablation Test: Re-enable the GIL
-
-Let's see what happens if we re-enable the GIL.  We should see poor resource
-utilization on the server side, as only one Python thread can run at a time,
-and the statistics reported on the client side should be equally dismal.
-
-Expand the callout below to view the GIF.  I have used another terminal
-window to launch the server with the `-Xgil=1` argument, which re-enables
-the GIL.  I then switch back over to `leopard` and perform the `wrk` load
-test like before.
-
-::: {.callout-note collapse="true" appearance="simple" icon="false" title="Parallel Generation Load Test GIF: GIL Enabled"}
-
-![Parallel Generation Load Test - GIL Enabled](
-images/parallelopedia-multi-threaded-gpu-inference-gpt2-wrk-14-GIL-enabled.gif)
-
-:::
-
-As with before, I've extracted the last frame, below, to allow closer
-inspection at the end of the run, without the annoyance of the GIF looping.
-
-![Parallel Generation Load Test - GIL Enabled - Last Frame](
-images/parallelopedia-multi-threaded-gpu-inference-gpt2-wrk-14-GIL-enabled-last-frame-optimized.png)
-
-As we expected: re-enabling the GIL absolutely murders resource utilization.
-
-The console output from `wrk` follows in the next callout.
-
-::: {.callout-note collapse="true" appearance="simple" icon="false" title="Console Output of wrk: GIL Enabled"}
-
-```
-{{< include wrk-leopard-01-gil.txt >}}
-```
-
-:::
-
-And a visualization of the latencies follows.  Note that there were 60
-socket timeouts in this case, whereas no timeouts were encountered in the
-prior run with the GIL disabled.
-
-{{< embed wrk-analysis.ipynb#wrk-01-gil >}}
-
-Viewing them side by side:
-
-{{< embed wrk-analysis.ipynb#wrk-01-combined >}}
-
-Remember to keep in mind that the No GIL vs GIL requests/sec was 70.80 vs
-7.35, nearly a ten-fold increase:
-
-{{< embed wrk-analysis.ipynb#wrk-01-rps-combined >}}
-
-::: {.hidden}
-
-## Launching the React Bootstrap UI
+### Launching the React Bootstrap UI
 
 The React Bootstrap UI can be launched as follows:
 
@@ -1820,6 +1661,253 @@ TL;DR: the web interface code probably sucks.
 
 :::
 
+Running `npm start run` should open up a browser window pointing at
+`http://localhost:3000`.  Ignore the *Wiki* tab---that's for another
+article---and switch to the *GPT2* tab.  You should see something similar
+to the GIF below, which is a demo of me using the interface to generate
+some text:
+
+::: {.callout-note #parallelopedia-ui-gpt2-example collapse="false" appearance="simple" icon="false" title="Parallelopedia UI Demo"}
+
+![Parallelopedia UI Demo](images/parallelopedia-ui-example.gif)
+
 :::
+
+Not too shabby!  Granted, it's a tad jarring seeing characters per second
+instead of tokens per second.  If we wanted to display a live tokens/sec
+rate, some possible options might be:
+
+1. Alter `GPT.async_generate_for()` to calculate how long it took to
+   generate each token (whilst we're in the main generation loop),
+   convert that into a tokens/sec rate, and then change our API on both the
+   server side and the JavaScript UI side such that each chunk that gets
+   sent back is encoded with both the rate *and* the actual chunk.  A
+   drawback of this approach is that hitting the `/generate` endpoint with
+   `curl` or `netcat` would look wacky, as you'd see token/sec floats in
+   between each generated set of decoded characters.
+
+2. Send the raw integer tokens back as they're generated, instead of first
+   decoding them.  That would allow client-side JavaScript to calculate
+   tokens/sec, but it would make it impossible to easily inspect the output
+   with our command line tools like `curl` or `echo ... | nc`.  It would
+   also require adding a JavaScript decoding library on the client side
+   (although that's not such a big deal, I think you can just do `npm
+   install tiktoken` these days).
+
+3. Have the JavaScript client re-encode the decoded characters received back
+   into their GPT2-tokenizer token representation in order to determine
+   actual underlying token count, and recalculate the rate based off that.
+   This rate would differ from the tokens/sec rate observed on the server
+   because it would also include network latency.
+
+4. Do something more advanced with a separate WebSocket or something,
+   where the live tokens/sec generation rate can be displayed independently
+   to the generated decoded tokens.
+
+4. Just YOLO it and have the JavaScript code divide the characters per
+   second by, say, three, and pretend that's roughly the tokens/sec rate
+   (assuming that on average, one token represents three characters in any
+   given response).
+
+I don't want to do any of that!  So characters per second it is, for now,
+however jarring it may be.
+
+## Parallel Generation
+
+Alright, we've exercised the `/generate` endpoint a few different ways via a
+single client connection, and it looks like it's behaving the way we hoped
+it would, albeit with a whopping simultaneous client count of, precisely,
+one.
+
+Let's look at introducing some simultaneous load by way of multiple machines
+all issuing `/generate` requests at the same time, first via the
+`echo ... | nc` approach, and then via `curl`.
+
+I'll leverage `tmux` and the `:setw synchronize-panes` command, which sends
+my console keystrokes to all active panes within a given `tmux` session
+window.
+
+### Netcat Example
+
+I captured a 15 frames-per-second GIF of this in action, which you can view
+below.  It shows terminal sessions to six machines, arranged vertically, all
+executing the same `echo ... | nc` command depicted above.
+
+::: {.callout-note}
+
+This might seem like a bit of a silly test, especially when it's working
+correctly, because the output is pretty benign, and we don't *really* know
+that these requests were actually being served simultaneously by different
+threads on the server side.
+
+When I first tried it, though, it absolutely did *not* work correctly---one
+server would get correct output, another would get the HTTP headers in
+triplicate, whilst two other sessions just went straight into the chunked
+responses, with no preceding HTTP headers in sight.  I had a bug in my HTTP
+routing code (that exists in the PyParallel code I wrote ten years ago upon
+which I based the new HTTP server on!) which was entirely to blame.  With
+that code ripped out and `@route` reimplemented in a much simpler fashion,
+everything worked well.
+
+:::
+
+::: {.callout-note #parallel-netcat-generation collapse="false" appearance="simple" icon="false" title="Parallel Netcat Generation"}
+
+![Parallel Netcat Generation](
+images/parallelopedia-multi-threaded-gpu-inference-gpt2-nc.gif)
+
+:::
+
+I extracted the last frame of the GIF, below, where you can see that at
+least there was some variance between which GPUs were selected:
+
+![Parallel Netcat Generation - Last Frame](
+images/parallelopedia-multi-threaded-gpu-inference-gpt2-nc-last-frame-2.png)
+
+### Curl Example
+
+I did the same thing with the panes arranged horizontally, using `curl`
+instead and a `max_length=1000` and no seed, which helps in visualizing
+the parallel generation, as you can clearly see different clients are
+receiving completely different outputs.
+
+::: {.callout-note #parallel-curl-generation collapse="false" appearance="simple" icon="false" title="Parallel Curl Generation"}
+
+![Parallel Curl Generation](
+images/parallelopedia-multi-threaded-gpu-inference-gpt2-curl-1000.gif)
+
+:::
+
+## Let's Load Test This Sucker!
+
+So far so good!  Looks like we can absolutely do PyTorch model generation in
+parallel via multiple threads thanks to free-threaded Python.
+
+Let's ramp it up a notch and see what happens if we attempt to load test
+the `/generate` endpoint from a different server.  The `leopard` server
+you see in the next example is an Intel(R) Xeon(R) W-2275 CPU @ 3.30GHz
+(14 cores, 28 threads) and is connected to the `dgx` box via a 10G Ethernet
+link.
+
+Using the fork of [`wrk`](https://github.com/tpn/wrk) I hacked together some
+ten years ago or so whilst load testing PyParallel, let's kick off a run
+with 14 threads for 30 seconds.  There will be one connection per thread,
+and HTTP/1.1 will be used, so the implicit *keep-alive* behavior means that
+as soon as one `/generate` request completes, another one is immediately
+dispatched.
+
+For posterity, the console command being used is as follows:
+
+```bash
+% time ./wrk -v --latency -c14 -t14 -d30s \
+    'http://dgx:4444/generate/'
+    'The%20quick%20brown%20fox?max_length=20&device=cuda&seed=42'
+```
+
+In the GIF below you'll see two terminal windows.  The smaller foreground
+window on the left is `leopard`, the session doing the `wrk` load test.  The
+background window that takes up the rest of the screen is logged in to
+`dgx`, our server, and it's running a GPU-enabled build of [`btop`](
+https://github.com/aristocratos/btop), which is a beautiful console app for
+displaying resource usage.  I particularly like `btop` in this example as it
+does a good job of conveying the CPU and GPU load that kicks in when the
+load test starts.
+
+The 40 CPU cores can be seen in the top pane, and, as expected, about 14 of
+them whirr into life as soon as the load test begins, which tracks, as there
+are now 14 clients attempting to hammer our `/generate` end point.
+
+Below that, you can see the four Tesla V100-DGXS-32GB GPUs also whirr into
+action, handling the generation between them with relative ease.
+
+On the bottom right, I've filtered the process tree to just display our
+`python` HTTP server invocation.  (I would love it if `btop` showed the
+individual threads and their load, as it would beautifully depict Python
+saturating cores in parallel now that there's no GIL impeding execution,
+however, I don't believe that's currently possible with this version of
+`btop`.)
+
+::: {.callout-note #parallel-generation-load-test-no-gil collapse="false" appearance="simple" icon="false" title="Parallel Generation Load Test: No GIL"}
+
+![Parallel Generation Load Test - No GIL](
+images/parallelopedia-multi-threaded-gpu-inference-gpt2-wrk-14.gif)
+
+:::
+
+I've extracted the last frame, below, to allow closer inspection at the end
+of the run, without the annoyance of the GIF looping.
+
+![Parallel Generation Load Test No GIL - Last Frame](
+images/parallelopedia-multi-threaded-gpu-inference-gpt2-wrk-14-last-frame-optimized.png)
+
+The console output from `wrk` is captured in the callout below.
+
+::: {.callout-note collapse="true" appearance="simple" icon="false" title="Console Output of wrk: No GIL"}
+
+```
+{{< include wrk-leopard-01-no-gil.txt >}}
+```
+
+:::
+
+A visualization of the latencies is presented below.  All code for
+visualization is from the [*Data Visualization*](wrk-analysis-preview.html)
+Jupyter Notebook, which you can [preview here](wrk-analysis.ipynb), or
+access directly on [Github](
+https://github.com/tpn/website/blob/main/blog/posts/2025-xx-xx-pytorch-and-python-free-threading/wrk-analysis.ipynb).
+
+![Parallel Load Test Latency Distribution (No GIL)](wrk-01-no-gil.svg)
+
+### Ablation Test: Re-enable the GIL
+
+Let's see what happens if we re-enable the GIL.  We should see poor resource
+utilization on the server side, as only one Python thread can run at a time,
+and the statistics reported on the client side should be equally dismal.
+
+Expand the callout below to view the GIF.  I have used another terminal
+window to launch the server with the `-Xgil=1` argument, which re-enables
+the GIL.  I then switch back over to `leopard` and perform the `wrk` load
+test like before.
+
+::: {.callout-note #parallel-load-test-gil collapse="false" appearance="simple" icon="false" title="Parallel Generation Load Test: GIL Enabled"}
+
+![Parallel Generation Load Test - GIL Enabled](
+images/parallelopedia-multi-threaded-gpu-inference-gpt2-wrk-14-GIL-enabled.gif)
+
+:::
+
+As with before, I've extracted the last frame, below, to allow closer
+inspection at the end of the run, without the annoyance of the GIF looping.
+
+![Parallel Generation Load Test - GIL Enabled - Last Frame](
+images/parallelopedia-multi-threaded-gpu-inference-gpt2-wrk-14-GIL-enabled-last-frame-optimized.png)
+
+As we expected: re-enabling the GIL absolutely murders resource utilization.
+
+The console output from `wrk` follows in the next callout.
+
+::: {.callout-note collapse="true" appearance="simple" icon="false" title="Console Output of wrk: GIL Enabled"}
+
+```
+{{< include wrk-leopard-01-gil.txt >}}
+```
+:::
+
+And a visualization of the latencies follows.  Note that there were 60
+socket timeouts in this case, whereas no timeouts were encountered in the
+prior run with the GIL disabled.
+
+![Parallel Load Test Latency Distribution (GIL Enabled)](wrk-01-gil.svg)
+
+Viewing them side by side:
+
+![Parallel Load Test Latency Distribution (No GIL & GIL Enabled Combined)](
+wrk-01-combined.svg)
+
+Remember to keep in mind that the No GIL vs GIL requests/sec was 70.80 vs
+7.35, nearly a ten-fold increase:
+
+![Parallel Load Test Requests/sec (No GIL & GIL Combined)](
+wrk-01-rps-combined.svg)
 
 <!-- vim:set ts=8 sw=2 sts=2 expandtab textwidth=78 -->
