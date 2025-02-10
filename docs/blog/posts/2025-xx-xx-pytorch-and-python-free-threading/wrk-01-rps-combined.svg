@@ -6,7 +6,7 @@
   <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
    <cc:Work>
     <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
-    <dc:date>2025-02-08T21:24:57.007080</dc:date>
+    <dc:date>2025-02-09T12:13:43.411713</dc:date>
     <dc:format>image/svg+xml</dc:format>
     <dc:creator>
      <cc:Agent>
@@ -40,13 +40,13 @@ z
    <g id="matplotlib.axis_1">
     <g id="xtick_1">
      <g id="line2d_1">
-      <path d="M 168.381818 384.48 
-L 168.381818 51.84 
-" clip-path="url(#p712fe434c5)" style="fill: none; stroke: #ffffff; stroke-linecap: round"/>
+      <path d="M 150.264935 384.48 
+L 150.264935 51.84 
+" clip-path="url(#p76a5a8b224)" style="fill: none; stroke: #ffffff; stroke-linecap: round"/>
      </g>
      <g id="text_1">
       <!-- No GIL -->
-      <g style="fill: #262626" transform="translate(150.945099 401.870781) scale(0.11 -0.11)">
+      <g style="fill: #262626" transform="translate(132.828216 401.870781) scale(0.11 -0.11)">
        <defs>
         <path id="Chilanka-Regular-4e" d="M 628 -103 
 C 738 -103 841 -6 838 106 
@@ -163,13 +163,13 @@ z
     </g>
     <g id="xtick_2">
      <g id="line2d_2">
-      <path d="M 422.018182 384.48 
-L 422.018182 51.84 
-" clip-path="url(#p712fe434c5)" style="fill: none; stroke: #ffffff; stroke-linecap: round"/>
+      <path d="M 440.135065 384.48 
+L 440.135065 51.84 
+" clip-path="url(#p76a5a8b224)" style="fill: none; stroke: #ffffff; stroke-linecap: round"/>
      </g>
      <g id="text_2">
       <!-- GIL Enabled -->
-      <g style="fill: #262626" transform="translate(390.820291 401.870781) scale(0.11 -0.11)">
+      <g style="fill: #262626" transform="translate(408.937174 401.870781) scale(0.11 -0.11)">
        <defs>
         <path id="Chilanka-Regular-45" d="M 1538 4072 
 C 2469 4072 3113 3997 3459 3844 
@@ -376,7 +376,7 @@ z
     </g>
     <g id="text_3">
      <!-- Run -->
-     <g style="fill: #262626" transform="translate(284.1225 416.857656) scale(0.12 -0.12)">
+     <g transform="translate(284.1225 416.857656) scale(0.12 -0.12)">
       <defs>
        <path id="Chilanka-Regular-52" d="M 547 -119 
 C 650 -119 750 -34 756 72 
@@ -448,7 +448,7 @@ z
      <g id="line2d_3">
       <path d="M 72 384.48 
 L 518.4 384.48 
-" clip-path="url(#p712fe434c5)" style="fill: none; stroke: #ffffff; stroke-linecap: round"/>
+" clip-path="url(#p76a5a8b224)" style="fill: none; stroke: #ffffff; stroke-linecap: round"/>
      </g>
      <g id="text_4">
       <!-- 0 -->
@@ -489,7 +489,7 @@ z
      <g id="line2d_4">
       <path d="M 72 339.734237 
 L 518.4 339.734237 
-" clip-path="url(#p712fe434c5)" style="fill: none; stroke: #ffffff; stroke-linecap: round"/>
+" clip-path="url(#p76a5a8b224)" style="fill: none; stroke: #ffffff; stroke-linecap: round"/>
      </g>
      <g id="text_5">
       <!-- 10 -->
@@ -523,7 +523,7 @@ z
      <g id="line2d_5">
       <path d="M 72 294.988475 
 L 518.4 294.988475 
-" clip-path="url(#p712fe434c5)" style="fill: none; stroke: #ffffff; stroke-linecap: round"/>
+" clip-path="url(#p76a5a8b224)" style="fill: none; stroke: #ffffff; stroke-linecap: round"/>
      </g>
      <g id="text_6">
       <!-- 20 -->
@@ -572,7 +572,7 @@ z
      <g id="line2d_6">
       <path d="M 72 250.242712 
 L 518.4 250.242712 
-" clip-path="url(#p712fe434c5)" style="fill: none; stroke: #ffffff; stroke-linecap: round"/>
+" clip-path="url(#p76a5a8b224)" style="fill: none; stroke: #ffffff; stroke-linecap: round"/>
      </g>
      <g id="text_7">
       <!-- 30 -->
@@ -621,7 +621,7 @@ z
      <g id="line2d_7">
       <path d="M 72 205.496949 
 L 518.4 205.496949 
-" clip-path="url(#p712fe434c5)" style="fill: none; stroke: #ffffff; stroke-linecap: round"/>
+" clip-path="url(#p76a5a8b224)" style="fill: none; stroke: #ffffff; stroke-linecap: round"/>
      </g>
      <g id="text_8">
       <!-- 40 -->
@@ -670,7 +670,7 @@ z
      <g id="line2d_8">
       <path d="M 72 160.751186 
 L 518.4 160.751186 
-" clip-path="url(#p712fe434c5)" style="fill: none; stroke: #ffffff; stroke-linecap: round"/>
+" clip-path="url(#p76a5a8b224)" style="fill: none; stroke: #ffffff; stroke-linecap: round"/>
      </g>
      <g id="text_9">
       <!-- 50 -->
@@ -718,7 +718,7 @@ z
      <g id="line2d_9">
       <path d="M 72 116.005424 
 L 518.4 116.005424 
-" clip-path="url(#p712fe434c5)" style="fill: none; stroke: #ffffff; stroke-linecap: round"/>
+" clip-path="url(#p76a5a8b224)" style="fill: none; stroke: #ffffff; stroke-linecap: round"/>
      </g>
      <g id="text_10">
       <!-- 60 -->
@@ -759,7 +759,7 @@ z
      <g id="line2d_10">
       <path d="M 72 71.259661 
 L 518.4 71.259661 
-" clip-path="url(#p712fe434c5)" style="fill: none; stroke: #ffffff; stroke-linecap: round"/>
+" clip-path="url(#p76a5a8b224)" style="fill: none; stroke: #ffffff; stroke-linecap: round"/>
      </g>
      <g id="text_11">
       <!-- 70 -->
@@ -792,7 +792,7 @@ z
     </g>
     <g id="text_12">
      <!-- Requests per Second -->
-     <g style="fill: #262626" transform="translate(41.725313 277.94625) rotate(-90) scale(0.12 -0.12)">
+     <g transform="translate(41.725313 277.94625) rotate(-90) scale(0.12 -0.12)">
       <defs>
        <path id="Chilanka-Regular-71" d="M 3375 1869 
 C 3375 2181 3422 2581 3422 2859 
@@ -1015,19 +1015,19 @@ z
    </g>
    <g id="patch_3">
     <path d="M 92.290909 384.48 
-L 244.472727 384.48 
-L 244.472727 67.68 
+L 208.238961 384.48 
+L 208.238961 67.68 
 L 92.290909 67.68 
 z
-" clip-path="url(#p712fe434c5)" style="fill: #0000ff; stroke: #ffffff; stroke-linejoin: miter"/>
+" clip-path="url(#p76a5a8b224)" style="fill: #40b4c4; stroke: #ffffff; stroke-linejoin: miter"/>
    </g>
    <g id="patch_4">
-    <path d="M 345.927273 384.48 
+    <path d="M 382.161039 384.48 
 L 498.109091 384.48 
 L 498.109091 351.591864 
-L 345.927273 351.591864 
+L 382.161039 351.591864 
 z
-" clip-path="url(#p712fe434c5)" style="fill: #0000ff; stroke: #ffffff; stroke-linejoin: miter"/>
+" clip-path="url(#p76a5a8b224)" style="fill: #ff6961; stroke: #ffffff; stroke-linejoin: miter"/>
    </g>
    <g id="patch_5">
     <path d="M 72 384.48 
@@ -1050,9 +1050,118 @@ L 518.4 51.84
 " style="fill: none; stroke: #ffffff; stroke-width: 1.25; stroke-linejoin: miter; stroke-linecap: square"/>
    </g>
    <g id="text_13">
-    <!-- Requests/sec for Multiple Runs -->
-    <g style="fill: #262626" transform="translate(208.0425 45.84) scale(0.12 -0.12)">
+    <!-- 70.80 -->
+    <g transform="translate(135.325873 65.085) scale(0.12 -0.12)">
      <defs>
+      <path id="Chilanka-Regular-2e" d="M 1003 269 
+C 1003 488 819 831 628 831 
+C 491 831 363 584 334 472 
+C 322 419 316 369 316 319 
+C 316 103 434 -66 663 -66 
+C 863 -66 1003 88 1003 269 
+z
+" transform="scale(0.015625)"/>
+      <path id="Chilanka-Regular-38" d="M 2653 3116 
+C 2788 3116 2853 3281 2853 3431 
+C 2853 3641 2706 3828 2409 3988 
+C 2222 4088 1941 4138 1572 4138 
+C 941 4138 309 3866 309 3297 
+C 309 3031 450 2750 644 2506 
+C 722 2409 944 2244 1313 2009 
+C 800 1556 541 1166 541 838 
+C 541 563 719 328 1075 138 
+C 1297 19 1613 -38 2019 -38 
+C 2456 -38 2788 28 3000 159 
+C 3206 288 3331 425 3378 578 
+C 3397 644 3409 706 3409 769 
+C 3409 853 3391 938 3350 1016 
+C 3281 1153 3172 1306 3022 1475 
+C 2872 1644 2684 1781 2459 1881 
+C 2234 1981 2097 2047 2050 2069 
+C 2122 2122 2294 2244 2569 2434 
+C 2844 2625 3038 2781 3150 2900 
+C 3209 2963 3241 3022 3241 3075 
+C 3241 3169 3122 3281 3031 3281 
+C 2978 3281 2925 3253 2869 3194 
+C 2766 3084 2569 2931 2278 2728 
+C 1988 2525 1778 2375 1650 2278 
+C 1419 2416 1188 2575 959 2759 
+C 800 2966 722 3147 722 3297 
+C 722 3591 1025 3728 1534 3728 
+C 1869 3728 2103 3691 2244 3616 
+C 2366 3550 2431 3475 2431 3397 
+C 2431 3359 2413 3319 2413 3284 
+C 2413 3200 2525 3116 2653 3116 
+z
+M 1688 1794 
+C 1894 1691 2125 1597 2316 1500 
+C 2578 1372 2788 1172 2941 906 
+C 2984 831 3009 766 3009 722 
+C 3009 644 2922 588 2775 497 
+C 2634 413 2372 366 2016 366 
+C 1675 366 1409 419 1213 525 
+C 1044 616 959 722 959 841 
+C 959 863 963 888 969 913 
+C 1038 1166 1278 1459 1688 1794 
+z
+" transform="scale(0.015625)"/>
+     </defs>
+     <use xlink:href="#Chilanka-Regular-37"/>
+     <use xlink:href="#Chilanka-Regular-30" x="58.59375"/>
+     <use xlink:href="#Chilanka-Regular-2e" x="114.453125"/>
+     <use xlink:href="#Chilanka-Regular-38" x="135.058594"/>
+     <use xlink:href="#Chilanka-Regular-30" x="193.115234"/>
+    </g>
+   </g>
+   <g id="text_14">
+    <!-- 7.35 -->
+    <g transform="translate(428.096627 348.996864) scale(0.12 -0.12)">
+     <use xlink:href="#Chilanka-Regular-37"/>
+     <use xlink:href="#Chilanka-Regular-2e" x="58.59375"/>
+     <use xlink:href="#Chilanka-Regular-33" x="79.199219"/>
+     <use xlink:href="#Chilanka-Regular-35" x="136.865234"/>
+    </g>
+   </g>
+   <g id="text_15">
+    <!-- Parallel Load Test Requests/sec (No GIL vs GIL) -->
+    <g transform="translate(162.372187 45.84) scale(0.12 -0.12)">
+     <defs>
+      <path id="Chilanka-Regular-50" d="M 725 1959 
+C 784 1956 847 1956 903 1956 
+C 1519 1956 2000 2091 2347 2363 
+C 2622 2578 2763 2834 2763 3134 
+C 2763 3469 2600 3744 2281 3984 
+C 1872 4294 1284 4463 522 4488 
+C 519 4488 519 4488 516 4488 
+C 409 4488 313 4391 313 4284 
+L 322 56 
+C 322 -75 422 -141 525 -141 
+C 625 -141 728 -75 728 56 
+L 725 1959 
+z
+M 722 2366 
+L 719 4069 
+C 1291 4025 1731 3888 2038 3659 
+C 2244 3506 2356 3319 2356 3134 
+C 2356 2975 2275 2819 2097 2681 
+C 1822 2466 1422 2363 897 2363 
+C 841 2363 781 2363 722 2366 
+z
+" transform="scale(0.015625)"/>
+      <path id="Chilanka-Regular-54" d="M 2219 -81 
+C 2328 -81 2422 13 2422 122 
+L 2422 4106 
+C 2891 4103 3356 4106 3825 4103 
+C 3956 4103 4022 4206 4022 4306 
+C 4022 4409 3956 4509 3828 4509 
+L 516 4522 
+C 384 4522 319 4422 319 4319 
+C 319 4219 384 4116 516 4116 
+L 2016 4109 
+L 2016 122 
+C 2016 13 2109 -81 2219 -81 
+z
+" transform="scale(0.015625)"/>
       <path id="Chilanka-Regular-2f" d="M 519 -553 
 C 600 -553 669 -497 700 -438 
 L 2916 4100 
@@ -1064,152 +1173,219 @@ C 319 -294 313 -322 313 -350
 C 313 -463 406 -553 519 -553 
 z
 " transform="scale(0.015625)"/>
-      <path id="Chilanka-Regular-66" d="M 516 2663 
-L 1066 2663 
-C 1063 2425 1063 1813 1056 822 
-L 1053 203 
-C 1053 72 1156 6 1256 6 
-C 1359 6 1459 72 1459 200 
-L 1463 822 
-C 1469 1819 1469 2431 1472 2663 
-L 2003 2663 
-C 2113 2663 2206 2756 2206 2866 
-C 2206 2975 2113 3069 2003 3069 
-L 1475 3069 
-C 1478 3341 1481 3550 1484 3697 
-C 1494 3969 1756 4144 2063 4144 
-C 2122 4144 2184 4138 2244 4125 
-C 2453 4078 2625 3941 2772 3716 
-C 2813 3650 2872 3625 2931 3625 
-C 3041 3625 3150 3716 3150 3828 
-C 3150 3863 3141 3900 3116 3938 
-C 2909 4256 2647 4453 2331 4522 
-C 2238 4544 2147 4553 2056 4553 
-C 1531 4553 1091 4216 1078 3694 
-C 1075 3553 1072 3347 1069 3069 
-L 516 3069 
-C 406 3069 313 2975 313 2866 
-C 313 2756 406 2663 516 2663 
+      <path id="Chilanka-Regular-28" d="M 1944 -925 
+C 1944 -878 1922 -831 1878 -784 
+C 1328 -181 956 463 766 1150 
+C 725 1300 703 1459 703 1631 
+C 703 1869 744 2125 825 2403 
+C 966 2881 1275 3394 1756 3944 
+C 1819 4016 1850 4081 1850 4141 
+C 1850 4247 1738 4341 1613 4328 
+C 1544 4325 1369 4141 1097 3778 
+C 575 3084 313 2384 313 1678 
+C 313 778 734 -134 1578 -1059 
+C 1625 -1113 1675 -1138 1725 -1138 
+C 1822 -1138 1944 -1019 1944 -925 
 z
 " transform="scale(0.015625)"/>
-      <path id="Chilanka-Regular-4d" d="M 4144 4531 
-C 4066 4531 3991 4478 3959 4425 
-L 3838 4203 
-C 3650 3866 3381 3422 3031 2875 
-C 2831 2563 2656 2344 2503 2219 
-C 2288 2378 1856 2884 1206 3744 
-L 675 4466 
-C 631 4516 575 4538 519 4538 
-C 413 4538 309 4459 313 4334 
-L 366 78 
-C 366 -50 466 -116 566 -116 
-C 669 -116 775 -47 772 84 
-L 728 3709 
-L 878 3503 
-C 1244 3022 1700 2378 2153 1959 
-C 2278 1844 2394 1788 2500 1788 
-C 2550 1788 2600 1800 2647 1825 
-C 2750 1878 2897 2022 3084 2256 
-C 3272 2491 3556 2928 3941 3569 
-L 3963 38 
-C 3963 -94 4066 -159 4166 -159 
-C 4269 -159 4372 -94 4369 38 
-L 4341 4325 
-C 4341 4419 4266 4531 4144 4531 
+      <path id="Chilanka-Regular-76" d="M 316 2981 
+C 438 2103 566 1422 703 931 
+C 838 441 1006 144 1203 41 
+C 1266 6 1325 -9 1388 -9 
+C 1575 -9 1756 147 1928 463 
+C 2159 878 2428 1700 2731 2925 
+C 2734 2944 2738 2959 2738 2975 
+C 2738 3100 2631 3169 2525 3169 
+C 2441 3169 2356 3122 2334 3022 
+C 1947 1456 1631 584 1384 409 
+C 1156 594 934 1469 716 3038 
+C 703 3153 613 3206 522 3206 
+C 419 3206 313 3138 313 3016 
+C 313 3006 313 2994 316 2981 
 z
 " transform="scale(0.015625)"/>
-      <path id="Chilanka-Regular-69" d="M 313 3797 
-C 313 3619 447 3472 600 3472 
-C 672 3472 753 3494 844 3541 
-C 1006 3597 1109 3741 1109 3894 
-C 1109 4056 953 4263 759 4263 
-C 559 4263 313 4028 313 3797 
-z
-M 819 509 
-C 850 1134 850 1634 850 2313 
-C 850 2519 847 2728 844 2950 
-C 844 3081 747 3144 647 3144 
-C 544 3144 441 3078 441 2944 
-C 444 2781 444 2609 444 2434 
-C 444 1953 447 463 353 250 
-C 344 222 338 194 338 169 
-C 338 53 434 -38 544 -38 
-C 738 -38 806 175 819 509 
+      <path id="Chilanka-Regular-29" d="M 313 -925 
+C 313 -1019 434 -1138 531 -1138 
+C 581 -1138 631 -1113 678 -1059 
+C 1522 -134 1944 778 1944 1678 
+C 1944 2384 1681 3084 1159 3778 
+C 888 4141 713 4325 644 4328 
+C 519 4341 406 4250 406 4141 
+C 406 4081 438 4016 500 3944 
+C 981 3394 1291 2881 1431 2403 
+C 1513 2125 1553 1869 1553 1631 
+C 1553 1459 1531 1300 1491 1150 
+C 1300 463 928 -181 378 -784 
+C 334 -831 313 -878 313 -925 
 z
 " transform="scale(0.015625)"/>
      </defs>
-     <use xlink:href="#Chilanka-Regular-52"/>
-     <use xlink:href="#Chilanka-Regular-65" x="66.992188"/>
-     <use xlink:href="#Chilanka-Regular-71" x="123.4375"/>
-     <use xlink:href="#Chilanka-Regular-75" x="181.738281"/>
-     <use xlink:href="#Chilanka-Regular-65" x="236.132812"/>
-     <use xlink:href="#Chilanka-Regular-73" x="292.578125"/>
-     <use xlink:href="#Chilanka-Regular-74" x="344.140625"/>
-     <use xlink:href="#Chilanka-Regular-73" x="383.789062"/>
-     <use xlink:href="#Chilanka-Regular-2f" x="435.351562"/>
-     <use xlink:href="#Chilanka-Regular-73" x="486.083984"/>
-     <use xlink:href="#Chilanka-Regular-65" x="537.646484"/>
-     <use xlink:href="#Chilanka-Regular-63" x="594.091797"/>
-     <use xlink:href="#Chilanka-Regular-20" x="641.162109"/>
-     <use xlink:href="#Chilanka-Regular-66" x="668.505859"/>
-     <use xlink:href="#Chilanka-Regular-6f" x="722.509766"/>
-     <use xlink:href="#Chilanka-Regular-72" x="781.542969"/>
-     <use xlink:href="#Chilanka-Regular-20" x="821.923828"/>
-     <use xlink:href="#Chilanka-Regular-4d" x="849.267578"/>
-     <use xlink:href="#Chilanka-Regular-75" x="922.363281"/>
-     <use xlink:href="#Chilanka-Regular-6c" x="976.757812"/>
-     <use xlink:href="#Chilanka-Regular-74" x="994.482422"/>
-     <use xlink:href="#Chilanka-Regular-69" x="1034.130859"/>
-     <use xlink:href="#Chilanka-Regular-70" x="1056.347656"/>
-     <use xlink:href="#Chilanka-Regular-6c" x="1114.892578"/>
-     <use xlink:href="#Chilanka-Regular-65" x="1132.617188"/>
-     <use xlink:href="#Chilanka-Regular-20" x="1189.0625"/>
-     <use xlink:href="#Chilanka-Regular-52" x="1216.40625"/>
-     <use xlink:href="#Chilanka-Regular-75" x="1283.398438"/>
-     <use xlink:href="#Chilanka-Regular-6e" x="1337.792969"/>
-     <use xlink:href="#Chilanka-Regular-73" x="1401.025391"/>
+     <use xlink:href="#Chilanka-Regular-50"/>
+     <use xlink:href="#Chilanka-Regular-61" x="47.998047"/>
+     <use xlink:href="#Chilanka-Regular-72" x="101.464844"/>
+     <use xlink:href="#Chilanka-Regular-61" x="141.845703"/>
+     <use xlink:href="#Chilanka-Regular-6c" x="195.3125"/>
+     <use xlink:href="#Chilanka-Regular-6c" x="213.037109"/>
+     <use xlink:href="#Chilanka-Regular-65" x="230.761719"/>
+     <use xlink:href="#Chilanka-Regular-6c" x="287.207031"/>
+     <use xlink:href="#Chilanka-Regular-20" x="304.931641"/>
+     <use xlink:href="#Chilanka-Regular-4c" x="332.275391"/>
+     <use xlink:href="#Chilanka-Regular-6f" x="394.140625"/>
+     <use xlink:href="#Chilanka-Regular-61" x="453.173828"/>
+     <use xlink:href="#Chilanka-Regular-64" x="506.640625"/>
+     <use xlink:href="#Chilanka-Regular-20" x="564.84375"/>
+     <use xlink:href="#Chilanka-Regular-54" x="592.1875"/>
+     <use xlink:href="#Chilanka-Regular-65" x="660.009766"/>
+     <use xlink:href="#Chilanka-Regular-73" x="716.455078"/>
+     <use xlink:href="#Chilanka-Regular-74" x="768.017578"/>
+     <use xlink:href="#Chilanka-Regular-20" x="807.666016"/>
+     <use xlink:href="#Chilanka-Regular-52" x="835.009766"/>
+     <use xlink:href="#Chilanka-Regular-65" x="902.001953"/>
+     <use xlink:href="#Chilanka-Regular-71" x="958.447266"/>
+     <use xlink:href="#Chilanka-Regular-75" x="1016.748047"/>
+     <use xlink:href="#Chilanka-Regular-65" x="1071.142578"/>
+     <use xlink:href="#Chilanka-Regular-73" x="1127.587891"/>
+     <use xlink:href="#Chilanka-Regular-74" x="1179.150391"/>
+     <use xlink:href="#Chilanka-Regular-73" x="1218.798828"/>
+     <use xlink:href="#Chilanka-Regular-2f" x="1270.361328"/>
+     <use xlink:href="#Chilanka-Regular-73" x="1321.09375"/>
+     <use xlink:href="#Chilanka-Regular-65" x="1372.65625"/>
+     <use xlink:href="#Chilanka-Regular-63" x="1429.101562"/>
+     <use xlink:href="#Chilanka-Regular-20" x="1476.171875"/>
+     <use xlink:href="#Chilanka-Regular-28" x="1503.515625"/>
+     <use xlink:href="#Chilanka-Regular-4e" x="1538.720703"/>
+     <use xlink:href="#Chilanka-Regular-6f" x="1600.439453"/>
+     <use xlink:href="#Chilanka-Regular-20" x="1659.472656"/>
+     <use xlink:href="#Chilanka-Regular-47" x="1686.816406"/>
+     <use xlink:href="#Chilanka-Regular-49" x="1777.197266"/>
+     <use xlink:href="#Chilanka-Regular-4c" x="1793.896484"/>
+     <use xlink:href="#Chilanka-Regular-20" x="1855.761719"/>
+     <use xlink:href="#Chilanka-Regular-76" x="1883.105469"/>
+     <use xlink:href="#Chilanka-Regular-73" x="1930.712891"/>
+     <use xlink:href="#Chilanka-Regular-20" x="1982.275391"/>
+     <use xlink:href="#Chilanka-Regular-47" x="2009.619141"/>
+     <use xlink:href="#Chilanka-Regular-49" x="2100"/>
+     <use xlink:href="#Chilanka-Regular-4c" x="2116.699219"/>
+     <use xlink:href="#Chilanka-Regular-29" x="2178.564453"/>
     </g>
    </g>
    <g id="legend_1">
     <g id="patch_9">
-     <path d="M 427.194531 76.409531 
-L 510.7 76.409531 
-Q 512.9 76.409531 512.9 74.209531 
+     <path d="M 413.104219 108.882187 
+L 510.7 108.882187 
+Q 512.9 108.882187 512.9 106.682187 
 L 512.9 59.54 
 Q 512.9 57.34 510.7 57.34 
-L 427.194531 57.34 
-Q 424.994531 57.34 424.994531 59.54 
-L 424.994531 74.209531 
-Q 424.994531 76.409531 427.194531 76.409531 
+L 413.104219 57.34 
+Q 410.904219 57.34 410.904219 59.54 
+L 410.904219 106.682187 
+Q 410.904219 108.882187 413.104219 108.882187 
 z
 " style="fill: #eaeaf2; opacity: 0.8; stroke: #cccccc; stroke-linejoin: miter"/>
     </g>
-    <g id="patch_10">
-     <path d="M 429.394531 69.630781 
-L 451.394531 69.630781 
-L 451.394531 61.930781 
-L 429.394531 61.930781 
+    <g id="text_16">
+     <!-- Run Names -->
+     <g style="fill: #262626" transform="translate(431.048984 70.348125) scale(0.12 -0.12)">
+      <defs>
+       <path id="Chilanka-Regular-6d" d="M 1663 3063 
+C 1359 3063 1106 2872 916 2488 
+C 856 2709 775 2881 675 3009 
+C 631 3063 578 3084 525 3084 
+C 416 3084 309 2991 309 2878 
+C 309 2838 322 2797 356 2756 
+C 528 2541 622 2113 641 1466 
+C 606 1203 591 909 591 588 
+C 591 453 594 313 600 166 
+C 606 44 706 -22 806 -22 
+C 903 -22 997 38 1006 156 
+L 1025 372 
+C 1044 575 1050 813 1050 1088 
+C 1050 1200 1050 1319 1047 1444 
+C 1100 1841 1188 2150 1316 2372 
+C 1428 2566 1550 2663 1678 2663 
+C 1828 2663 1991 2534 2166 2275 
+C 2325 2038 2434 1719 2494 1316 
+C 2481 1163 2478 997 2478 825 
+C 2478 619 2484 400 2500 166 
+C 2513 47 2609 -16 2706 -16 
+C 2800 -16 2894 41 2906 156 
+C 2934 375 2944 566 2944 741 
+C 2944 947 2928 1134 2903 1325 
+C 2938 1728 3016 2097 3197 2416 
+C 3309 2613 3453 2709 3606 2709 
+C 3744 2709 3888 2628 4019 2469 
+C 4219 2225 4341 1856 4341 1394 
+C 4341 1031 4241 644 4038 234 
+C 3959 78 4097 -53 4219 -53 
+C 4294 -53 4366 -19 4403 53 
+C 4631 519 4747 966 4747 1397 
+C 4747 1953 4597 2403 4347 2706 
+C 4141 2959 3878 3125 3600 3125 
+C 3456 3125 3309 3078 3163 2975 
+C 2947 2822 2778 2566 2659 2209 
+C 2469 2638 2122 3063 1663 3063 
 z
-" style="fill: #0000ff; stroke: #ffffff; stroke-linejoin: miter"/>
-    </g>
-    <g id="text_14">
-     <!-- Reqs/sec -->
-     <g style="fill: #262626" transform="translate(460.194531 69.630781) scale(0.11 -0.11)">
+" transform="scale(0.015625)"/>
+      </defs>
       <use xlink:href="#Chilanka-Regular-52"/>
-      <use xlink:href="#Chilanka-Regular-65" x="66.992188"/>
-      <use xlink:href="#Chilanka-Regular-71" x="123.4375"/>
-      <use xlink:href="#Chilanka-Regular-73" x="181.738281"/>
-      <use xlink:href="#Chilanka-Regular-2f" x="233.300781"/>
-      <use xlink:href="#Chilanka-Regular-73" x="284.033203"/>
-      <use xlink:href="#Chilanka-Regular-65" x="335.595703"/>
-      <use xlink:href="#Chilanka-Regular-63" x="392.041016"/>
+      <use xlink:href="#Chilanka-Regular-75" x="66.992188"/>
+      <use xlink:href="#Chilanka-Regular-6e" x="121.386719"/>
+      <use xlink:href="#Chilanka-Regular-20" x="184.619141"/>
+      <use xlink:href="#Chilanka-Regular-4e" x="211.962891"/>
+      <use xlink:href="#Chilanka-Regular-61" x="273.681641"/>
+      <use xlink:href="#Chilanka-Regular-6d" x="327.148438"/>
+      <use xlink:href="#Chilanka-Regular-65" x="406.201172"/>
+      <use xlink:href="#Chilanka-Regular-73" x="462.646484"/>
+     </g>
+    </g>
+    <g id="patch_10">
+     <path d="M 415.304219 86.333906 
+L 437.304219 86.333906 
+L 437.304219 78.633906 
+L 415.304219 78.633906 
+z
+" style="fill: #40b4c4; stroke: #ffffff; stroke-linejoin: miter"/>
+    </g>
+    <g id="text_17">
+     <!-- No GIL -->
+     <g style="fill: #262626" transform="translate(446.104219 86.333906) scale(0.11 -0.11)">
+      <use xlink:href="#Chilanka-Regular-4e"/>
+      <use xlink:href="#Chilanka-Regular-6f" x="61.71875"/>
+      <use xlink:href="#Chilanka-Regular-20" x="120.751953"/>
+      <use xlink:href="#Chilanka-Regular-47" x="148.095703"/>
+      <use xlink:href="#Chilanka-Regular-49" x="238.476562"/>
+      <use xlink:href="#Chilanka-Regular-4c" x="255.175781"/>
+     </g>
+    </g>
+    <g id="patch_11">
+     <path d="M 415.304219 102.103437 
+L 437.304219 102.103437 
+L 437.304219 94.403437 
+L 415.304219 94.403437 
+z
+" style="fill: #ff6961; stroke: #ffffff; stroke-linejoin: miter"/>
+    </g>
+    <g id="text_18">
+     <!-- GIL Enabled -->
+     <g style="fill: #262626" transform="translate(446.104219 102.103437) scale(0.11 -0.11)">
+      <use xlink:href="#Chilanka-Regular-47"/>
+      <use xlink:href="#Chilanka-Regular-49" x="90.380859"/>
+      <use xlink:href="#Chilanka-Regular-4c" x="107.080078"/>
+      <use xlink:href="#Chilanka-Regular-20" x="168.945312"/>
+      <use xlink:href="#Chilanka-Regular-45" x="196.289062"/>
+      <use xlink:href="#Chilanka-Regular-6e" x="259.619141"/>
+      <use xlink:href="#Chilanka-Regular-61" x="322.851562"/>
+      <use xlink:href="#Chilanka-Regular-62" x="376.318359"/>
+      <use xlink:href="#Chilanka-Regular-6c" x="434.863281"/>
+      <use xlink:href="#Chilanka-Regular-65" x="452.587891"/>
+      <use xlink:href="#Chilanka-Regular-64" x="509.033203"/>
      </g>
     </g>
    </g>
   </g>
  </g>
  <defs>
-  <clipPath id="p712fe434c5">
+  <clipPath id="p76a5a8b224">
    <rect x="72" y="51.84" width="446.4" height="332.64"/>
   </clipPath>
  </defs>

@@ -36,15 +36,22 @@ format:
     grid:
       gutter-width: 1rem
 notebook-view:
-  - notebook: gpt2_v1.ipynb
+  - notebook: gpt2-v1.ipynb
     title: "GPT2 v1"
   - notebook: wrk-analysis.ipynb
     title: "Data Visualization"
 ---
 
-This blog post is sponsored in part by [Meta](https://meta.com) in
+This post is sponsored in part by [Meta](https://meta.com) in
 collaboration with [Quansight](https://quansight.com) and
 [OpenTeams](https://openteams.com).
+
+::: {.callout-tip}
+
+Toggle the little radio button in the navigation bar at the top to switch
+between native *Light Mode* and *Dark Mode* themes.
+
+:::
 
 # Introduction
 
@@ -112,12 +119,14 @@ prominent projects such as [TikToken](https://github.com/openai/tiktoken)
 and [Pydantic](https://docs.pydantic.dev/latest/), upon which a lot of the
 Python AI ecosystem is built.  PyO3 only recently grew support for
 free-threaded Python in their 0.23.3 release, which came out in December,
-2025, and many dependent projects are yet to update to it.
+2024, and many dependent projects are yet to update to it.
 
 Thus, this post and its supporting code should not be considered the state
 of the art for production deployments---its primary goal is exploratory in
 nature, and minimizing the number of moving pieces in the stack helps
 achieve this goal.
+
+::: {.callout-note collapse="true" appearance="simple" icon="false" title="Environment Setup Details"}
 
 ## Environments
 
@@ -299,6 +308,11 @@ to tweak by adding the `-Xgil=0` startup flag to the Python interpreter:
   }
 ```
 
+::: {.hidden}
+
+(Hidden for now as we removed the immediate need for `datrie` by fixing the
+HTTP server routing logic.)
+
 #### Datrie and Cython
 
 [datrie](https://github.com/pytries/datrie) is a Python library that provides
@@ -335,20 +349,21 @@ Type "help", "copyright", "credits" or "license" for more information.
 >>>
 ```
 
+:::
+
 ### Normal 3.13 Env (py313)
 
 The second `py313` environment is almost identical to `py313t`, except it is
 not a `python-freethreading` installation, and, additionally, we install
 Jupyter Lab.  We can install `tiktoken` directly via `pip`, so we don't need
-the supporting Rust cruft.  Likewise for `datrie`, we don't need to first
-install Cython and then build `datrie` from git.
+the supporting Rust cruft.
 
 ```bash
 conda create -n py313 python=3.13 \
     nodejs pip tqdm flake8 jupyterlab requests \
         -c conda-forge
 conda activate py313
-pip install numpy datrie tiktoken safetensors
+pip install numpy tiktoken safetensors
 pip install torch==2.6 --index-url https://download.pytorch.org/whl/cu126
 ```
 
@@ -424,6 +439,7 @@ options:
                         The listen backlog for the server.
 
 ```
+:::
 
 # PyTorch and LLM Crash Course
 
@@ -535,7 +551,7 @@ creating a new notebook to use the `py313t` Python kernel, which will be the
 free-threaded version.  On the right of this page you should see all of the
 notebooks referenced.
 
-## First Version
+## Initial Implementation
 
 The code below roughly corresponds to my first version of the code in the
 commit [3ed4fe6: Add gpt2.py](
@@ -543,19 +559,18 @@ https://github.com/tpn/parallelopedia/blob/3ed4fe60a767a12b31fca183fed00fef43c65
 with some formatting and style tweaks to ensure the code is viewable on mobile
 devices without requiring horizontal scrolling.
 
-There are a number of deficiencies in this code, which we'll address in
-subsequent versions.  For now, it's a good starting point to get a feel for
-how we can use PyTorch to load a GPT-2 model checkpoint, tokenize some input
-text, and generate some output text.
+We'll revise this code later in the post, but for now, it's a good starting
+point to get a feel for how we can use PyTorch to load a GPT-2 model
+checkpoint, tokenize some input text, and generate some output text.
 
-{{< embed gpt2_v1.ipynb#gpt2-v1-setup >}}
+{{< embed gpt2-v1.ipynb#gpt2-v1-setup >}}
 
 ## Loading the Model
 
 With the code above executed in a preceding Jupyter Notebook cell, we can
 load the model as follows:
 
-{{< embed gpt2_v1.ipynb#gpt2-v1-load-model >}}
+{{< embed gpt2-v1.ipynb#gpt2-v1-load-model >}}
 
 ## Generating Text
 
@@ -578,15 +593,15 @@ make sense when placed together, that sort of thing.  It just has no clue
 about underlying semantics.
 
 ::: {.desktop-only}
-{{< embed gpt2_v1.ipynb#gpt2-v1-generate-1-desktop >}}
+{{< embed gpt2-v1.ipynb#gpt2-v1-generate-1-desktop >}}
 :::
 
 ::: {.tablet-only}
-{{< embed gpt2_v1.ipynb#gpt2-v1-generate-1-tablet >}}
+{{< embed gpt2-v1.ipynb#gpt2-v1-generate-1-tablet >}}
 :::
 
 ::: {.phone-only}
-{{< embed gpt2_v1.ipynb#gpt2-v1-generate-1-phone >}}
+{{< embed gpt2-v1.ipynb#gpt2-v1-generate-1-phone >}}
 :::
 
 Now, it's worth noting at this point that a 124 million parameter GPT2 model,
@@ -610,34 +625,30 @@ an identical prompt as the one prior, it just streams nonsense until hitting
 its max token limit, nary a stop token in sight.
 
 ::: {.desktop-only}
-{{< embed gpt2_v1.ipynb#gpt2-v1-generate-2-desktop >}}
+{{< embed gpt2-v1.ipynb#gpt2-v1-generate-2-desktop >}}
 :::
 
 ::: {.tablet-only}
-{{< embed gpt2_v1.ipynb#gpt2-v1-generate-2-tablet >}}
+{{< embed gpt2-v1.ipynb#gpt2-v1-generate-2-tablet >}}
 :::
 
 ::: {.phone-only}
-{{< embed gpt2_v1.ipynb#gpt2-v1-generate-2-phone >}}
+{{< embed gpt2-v1.ipynb#gpt2-v1-generate-2-phone >}}
 :::
 
 lolwat.
 
 :::
 
-## Tweaked Version
-
-TODO.
-
 # Parallel PyTorch Inference
 
-Now we finally get to the fun part: let's investigate whether or not PyTorch
-model inference can be done simultaneously, in parallel, by multiple
-threads, running on multiple cores at the same time, in a single
-free-threaded Python process.  And ideally, we should only need one GPU,
-with all of these threads *sharing* it as fairly as possible.  Although if
-we have multiple GPUs, we should be able to distribute the incoming work
-evenly across those too, if we want.
+Now that we've got generation working, let's tackle the fun part:
+investigating whether or not PyTorch model inference can be done
+simultaneously, in parallel, by multiple threads, running on multiple cores
+at the same time, in a single free-threaded Python process.  And ideally, we
+should only need one GPU, with all of these threads *sharing* it as fairly
+as possible.  Although if we have multiple GPUs, we should be able to
+distribute the incoming work evenly across those too, if we want.
 
 This is novel, uncharted territory we're able to now explore thanks to
 the free-threaded version of Python.
@@ -671,7 +682,7 @@ https://speakerdeck.com/trent/parallelism-and-concurrency-with-python).
 
 :::
 
-So how do we try this out?  I guess we could spin up some threads and have
+So how do we test this out?  I guess we could spin up some threads and have
 them all call `model.generate()`, but that's a little boring.
 
 Why not try implement a pure Python, multi-threaded `asyncio`-based HTTP
@@ -1671,6 +1682,9 @@ some text:
 
 ![Parallelopedia UI Demo](images/parallelopedia-ui-example.gif)
 
+[GPT2.jsx Code](
+https://github.com/tpn/parallelopedia-ui/blob/main/src/GPT2.jsx)
+
 :::
 
 Not too shabby!  Granted, it's a tad jarring seeing characters per second
@@ -1827,6 +1841,8 @@ saturating cores in parallel now that there's no GIL impeding execution,
 however, I don't believe that's currently possible with this version of
 `btop`.)
 
+### Parallel Load Testing (No GIL)
+
 ::: {.callout-note #parallel-generation-load-test-no-gil collapse="false" appearance="simple" icon="false" title="Parallel Generation Load Test: No GIL"}
 
 ![Parallel Generation Load Test - No GIL](
@@ -1856,7 +1872,13 @@ Jupyter Notebook, which you can [preview here](wrk-analysis.ipynb), or
 access directly on [Github](
 https://github.com/tpn/website/blob/main/blog/posts/2025-xx-xx-pytorch-and-python-free-threading/wrk-analysis.ipynb).
 
+::: {.theme-light}
 ![Parallel Load Test Latency Distribution (No GIL)](wrk-01-no-gil.svg)
+:::
+
+::: {.theme-dark}
+![Parallel Load Test Latency Distribution (No GIL)](wrk-01-no-gil-dark.svg)
+:::
 
 ### Ablation Test: Re-enable the GIL
 
@@ -1897,17 +1919,592 @@ And a visualization of the latencies follows.  Note that there were 60
 socket timeouts in this case, whereas no timeouts were encountered in the
 prior run with the GIL disabled.
 
+::: {.theme-light}
 ![Parallel Load Test Latency Distribution (GIL Enabled)](wrk-01-gil.svg)
+:::
+
+::: {.theme-dark}
+![Parallel Load Test Latency Distribution (GIL Enabled)](wrk-01-gil-dark.svg)
+:::
+
+### Parallel Load Testing: No GIL vs GIL
 
 Viewing them side by side:
 
+::: {.theme-light}
 ![Parallel Load Test Latency Distribution (No GIL & GIL Enabled Combined)](
 wrk-01-combined.svg)
+:::
+
+::: {.theme-dark}
+![Parallel Load Test Latency Distribution (No GIL & GIL Enabled Combined)](
+wrk-01-combined-dark.svg)
+:::
 
 Remember to keep in mind that the No GIL vs GIL requests/sec was 70.80 vs
 7.35, nearly a ten-fold increase:
 
-![Parallel Load Test Requests/sec (No GIL & GIL Combined)](
+::: {.theme-light}
+![Parallel Load Test Requests/sec (No GIL vs GIL)](
 wrk-01-rps-combined.svg)
+:::
+
+::: {.theme-dark}
+![Parallel Load Test Requests/sec (No GIL vs GIL)](
+wrk-01-rps-combined-dark.svg)
+:::
+
+### Parallel Load Testing: How does Plaintext Fare?
+
+As we launched our HTTP server invocation earlier with the `PlaintextApp`
+class, which simply responds to the `/plaintext` endpoint with `b'Hello
+World\n'`, let's throw some load at that too.
+
+This doesn't have anything to do with PyTorch; it's an orthogonal load test
+that's fun because it depicts the stark difference between GIL vs no GIL.
+
+The console command was issued on `leopard`, like last time, as follows:
+
+```bash
+% time ./wrk -v --latency -c14 -t14 -d30s 'http://dgx:4444/plaintext'
+```
+
+Console outputs for both tests follow.
+
+::: {.callout-note collapse="true" appearance="simple" icon="false" title="Console Output of wrk Plaintext: No GIL"}
+```
+{{< include wrk-leopard-02-no-gil.txt >}}
+```
+:::
+
+::: {.callout-note collapse="true" appearance="simple" icon="false" title="Console Output of wrk Plaintext: GIL Enabled"}
+```
+{{< include wrk-leopard-02-gil.txt >}}
+```
+:::
+
+Combined requests/sec visualization depicts a similar 10x improvement:
+
+::: {.theme-light}
+![Plaintext Parallel Load Test Requests/sec (No GIL vs GIL)](
+wrk-02-rps-combined.svg)
+:::
+
+::: {.theme-dark}
+![Plaintext Parallel Load Test Requests/sec (No GIL vs GIL)](
+wrk-02-rps-combined-dark.svg)
+:::
+
+The latencies are a bit misleading when viewed in isolation, as you can see
+the tail end of the *No GIL* run incur higher latencies compared to the
+*GIL* run---however, as can be seen above, the *No GIL* run was doing 10x
+more requests/sec.
+
+::: {.theme-light}
+![Plaintext Parallel Load Test Latency Distribution (No GIL vs GIL)](
+wrk-02-combined.svg)
+:::
+
+::: {.theme-dark}
+![Plaintext Parallel Load Test Latency Distribution (No GIL vs GIL)](
+wrk-02-combined-dark.svg)
+:::
+
+### Parallel Load Test Summary
+
+I think it's safe to say we've achieved our original goals in a satisfactory
+manner.  We can absolutely now do parallel model inference in a single
+Python process, thanks to free-threading, and the whole thing works great
+when wrapped around an `asyncio`-based HTTP server that yields tokens
+one-by-one as soon as they're generated, which is a closer representation of
+what you'd want in the real world if you were to deploy such a thing.
+
+My takeaway from all of this: free-threading kicks ass.  Having devoted so
+much time toward a parallel Python solution with [PyParallel](
+https://pyparallel.org) over a decade ago, it makes me incredibly happy to
+see a working, performant solution finally getting mainlined into the core
+Python language.
+
+It's important to consider how many other things are simultaneously unlocked
+by Python free-threading.  The HTTP server we've demonstrated above also has
+directory/file-serving behavior built-in, so it also functions like a normal
+web server would.  In a separate article, I'll introduce the *Wiki* server
+component, which features a `WikiApp` HTTP app that loads a 56GB XML file,
+plus about 12GB of supporting index structures (by way of `datrie` digital
+search tries, and NumPy arrays).  This app happily loads in the same single
+Python process as our existing `Gpt2App`---demonstrating the power of
+accessing huge data structures in parallel by multiple threads, something
+that couldn't be done with `multiprocessing` without paying for the cost to
+replicate that memory overhead in every process.
+
+# Finishing Up
+
+I'll tackle two more topics before we conclude this post.  First, I want to
+briefly touch on a handful of the changes I made to the GPT-2 implementation
+after the version we introduced in the [Initial Implementation](
+#initial-implementation) section.
+
+Second, let's see what happens if we throw the new graph compilation
+optimizations in PyTorch 2.0 at our solution; specifically, can we still use
+`model = torch.compile(model)` in our free-threading solution?
+
+## Reviewing Initial Implementation
+
+1. Skipping weight initialization.
+
+2. Adding profiling.
+
+4. OpenAI's GPT-2 XL Model?
+
+```python
+
+class GPT:
+
+    ...
+    @classmethod
+    def from_pretrained(
+        cls, model_name: str,
+        map_location: Optional[str] = None,
+        manual_seed: Optional[int] = None,
+        torch_profile_activities: Optional[List[type]] = None,
+    ) -> "GPT":
+        """
+        Load a GPT model from a pretrained model downloaded from
+        HuggingFace.
+
+        Arguments:
+
+            model_name (str): Supplies the model name to use.
+                For more information, see the docstring for
+                `.util.get_huggingface_safetensors()`.
+
+            map_location (str): Optionally supplies the device
+                to map the loaded tensor parameters to.  If None,
+                "cuda" will be used if available, otherwise "cpu".
+
+            manual_seed (int): Optionally supplies the manual seed
+                to use for the model.  If None, a random seed will
+                be used.
+
+            torch_profile_activities (list): Optionally supplies a
+                list of torch.profiler.ProfilerActivity to profile.
+
+        """
+        if manual_seed is None:
+            # Use a random seed.
+            manual_seed = random.randint(0, 2**32 - 1)
+
+        if map_location is None:
+            if torch.cuda.is_available():
+                map_location = "cuda"
+            else:
+                map_location = "cpu"
+
+        timer = ElapsedTimer()
+        with timer:
+            hf_model = get_huggingface_model(model_name)
+        msg = (
+            f'Loaded HuggingFace model {model_name} in '
+            f'{timer.elapsed:.3f} seconds.'
+        )
+        logging.info(msg)
+
+        config = GPTConfig(**{
+            'block_size': hf_model.config['n_ctx'],
+            'vocab_size': hf_model.config['vocab_size'],
+            'n_layer': hf_model.config['n_layer'],
+            'n_head': hf_model.config['n_head'],
+            'n_embd': hf_model.config['n_embd'],
+        })
+        checkpoint = GPTCheckpoint(**{
+            'model': None,
+            'step': 0,
+            'val_loss': 0.0,
+            'config': config,
+        })
+
+        with timer:
+            model = cls(
+                checkpoint=checkpoint,
+                device=map_location,
+                manual_seed=manual_seed,
+                torch_profile_activities=torch_profile_activities,
+            )
+        logging.info(f'Created GPT model in {timer.elapsed:.3f} seconds.')
+
+        # This logic is based heavily off build-nanogpt's `train_gpt2.py`;
+        # specifically: GPT.from_pretrained().
+
+        exclude = ('.attn.bias', '.attn.masked_bias', 'lm_head.weight')
+        transpose = (
+            'attn.c_attn.weight',
+            'attn.c_proj.weight',
+            'mlp.c_fc.weight',
+            'mlp.c_proj.weight',
+        )
+
+        # Identify the HuggingFace keys we're interested in.
+        st = hf_model.safetensors
+
+        # Identify our model keys we're interested in.
+        sd = model.state_dict()
+        sd_keys = [k for k in sd.keys() if not k.endswith(exclude)]
+        hf_keys = [k.replace('transformer.', '') for k in sd_keys]
+
+        # Copying tensors in parallel yields decent speedups, at least on my
+        # V100s which have five concurrent copy engines.
+        def copy_tensor(hf_key, sd_key):
+            hf_tensor = st.get_tensor(hf_key)
+            if hf_key.endswith(transpose):
+                assert hf_tensor.shape[::-1] == sd[sd_key].shape
+                with torch.no_grad():
+                    sd[sd_key].copy_(hf_tensor.t())
+            else:
+                assert hf_tensor.shape == sd[sd_key].shape
+                with torch.no_grad():
+                    sd[sd_key].copy_(hf_tensor)
+
+        keys = zip(hf_keys, sd_keys)
+        max_workers = min(os.cpu_count(), len(sd_keys))
+        with timer:
+            with ThreadPoolExecutor(max_workers=max_workers) as executor:
+                futures = {
+                    executor.submit(copy_tensor, hf_key, sd_key):
+                        (hf_key, sd_key) for (hf_key, sd_key) in keys
+                }
+                for future in as_completed(futures):
+                    future.result()
+        logging.info(
+            f'Copied weights with {max_workers} thread(s) '
+            f'in {timer.elapsed:.3f} seconds.'
+        )
+
+        device = map_location
+        with timer:
+            model.to(device)
+        msg = f'Moved model to {device} in {timer.elapsed:.3f} seconds.'
+        logging.info(msg)
+
+        return model
+```
+
+3. Multi-GPU Support
+
+
+
+```python
+NUM_GPUS = torch.cuda.device_count()
+# Add a CPU version at the end.
+TOTAL_MODELS = NUM_GPUS + 1
+MODELS = [None] * TOTAL_MODELS
+MODELS_ROUND_ROBIN = itertools.cycle(range(TOTAL_MODELS))
+
+def get_next_model_random():
+    # Randomly select a GPU to use.
+    return MODELS[random.randint(0, TOTAL_MODELS - 1)]
+
+def get_next_model_round_robin():
+    with MODELS_LOCK:
+        index = next(MODELS_ROUND_ROBIN)
+    return MODELS[index]
+
+get_next_model = get_next_model_round_robin
+
+def load_models():
+    global MODELS
+    max_workers = min(TOTAL_MODELS, os.cpu_count())
+    timer = ElapsedTimer()
+    with timer:
+        with ThreadPoolExecutor(max_workers=max_workers) as executor:
+            futures = {
+                executor.submit(
+                    GPT.from_local_pretrained,
+                    model_path=MODEL_CHECKPOINT,
+                    map_location=f'cuda:{i}',
+                    torch_profile_activities=TORCH_PROFILE_ACTIVITIES,
+                ): i for i in range(NUM_GPUS)
+            }
+            # Add the CPU model.
+            futures[executor.submit(
+                GPT.from_local_pretrained,
+                model_path=MODEL_CHECKPOINT,
+                map_location='cpu',
+                torch_profile_activities=TORCH_PROFILE_ACTIVITIES,
+            )] = NUM_GPUS
+            for future in as_completed(futures):
+                i = futures[future]
+                model = future.result()
+                MODELS[i] = model
+    msg = (
+        f'Loaded model on {NUM_GPUS} GPU(s) and 1 CPU in '
+        f'{timer.elapsed:.3f} seconds.'
+    )
+    logging.info(msg)
+
+PRETRAINED_MODELS = [None] * TOTAL_MODELS
+PRETRAINED_MODELS_ROUND_ROBIN = itertools.cycle(range(TOTAL_MODELS))
+
+def get_next_pretrained_model_random():
+    # Randomly select a GPU to use.
+    return PRETRAINED_MODELS[random.randint(0, TOTAL_MODELS - 1)]
+
+def get_next_pretrained_model_round_robin():
+    with PRETRAINED_MODELS_LOCK:
+        index = next(PRETRAINED_MODELS_ROUND_ROBIN)
+    return PRETRAINED_MODELS[index]
+
+get_next_pretrained_model = get_next_pretrained_model_round_robin
+
+def load_pretrained_models():
+    global PRETRAINED_MODELS
+    max_workers = min(TOTAL_MODELS, os.cpu_count())
+    timer = ElapsedTimer()
+    with timer:
+        with ThreadPoolExecutor(max_workers=max_workers) as executor:
+            futures = {
+                executor.submit(
+                    GPT.from_pretrained,
+                    model_name='openai-community/gpt2-xl',
+                    map_location=f'cuda:{i}',
+                    torch_profile_activities=TORCH_PROFILE_ACTIVITIES,
+                ): i for i in range(NUM_GPUS)
+            }
+            # Add the CPU model.
+            futures[executor.submit(
+                GPT.from_pretrained,
+                model_name='openai-community/gpt2-xl',
+                map_location='cpu',
+                torch_profile_activities=TORCH_PROFILE_ACTIVITIES,
+            )] = NUM_GPUS
+            for future in as_completed(futures):
+                i = futures[future]
+                model = future.result()
+                PRETRAINED_MODELS[i] = model
+    msg = (
+        f'Loaded gpt2-xl model on {NUM_GPUS} GPU(s) and 1 CPU in '
+        f'{timer.elapsed:.3f} seconds.'
+    )
+    logging.info(msg)
+```
+
+3. Can we load OpenAI's GPT-2 XL?
+
+4. Copying tensors in parallel.
+
+## Model Optimization
+
+Two facilities are available to speed up your model in PyTorch:
+[TorchScript](https://pytorch.org/docs/stable/jit.html), and [Torch Dynamo](
+https://pytorch.org/docs/stable/torch.compiler_dynamo_overview.html), with
+the latter being a newer approach than the former.
+
+In our [parallelopedia.gpt2](
+https://github.com/tpn/parallelopedia/blob/main/src/parallelopedia/gpt2.py)
+module, our `Gpt2App` class has a `classmethod` named `init_once()`, which,
+as you can probably guess, gets called once by the HTTP server when starting
+up.  This is where you stash expensive setup code like loading and compiling
+models.
+
+The code looks similar to the following.  We have two globals,
+`TORCH_JIT_COMPILE` and `TORCH_DYNAMO_COMPILE` that, when set, will attempt
+to optimize the models using the selected method.
+
+```python
+
+class Gpt2App(HttpApp):
+
+    ...
+
+    @classmethod
+    def init_once(cls):
+        load_models()
+        load_pretrained_models()
+
+        global MODELS, PRETRAINED_MODELS
+
+        # This doesn't work because torch.jit doesn't handle our
+        # async generator.
+        global TRY_JIT_COMPILE
+        if TRY_JIT_COMPILE:
+            for (i, model) in enumerate(MODELS):
+                model.config = dataclasses.asdict(model.config)
+                timer = ElapsedTimer()
+                with timer:
+                    model = torch.jit.script(model)
+                    MODELS[i] = model
+                logging.info(
+                    f'JIT compiled model {i} in {timer.elapsed:.3f} seconds.'
+                )
+
+        global TRY_TORCH_COMPILE
+        if TRY_TORCH_COMPILE:
+            for (i, model) in enumerate(MODELS):
+                model.config = dataclasses.asdict(model.config)
+                timer = ElapsedTimer()
+                with timer:
+                    model = torch.compile(model)
+                    MODELS[i] = model
+                logging.info(
+                    f'torch.compiled model {i} in '
+                    f'{timer.elapsed:.3f} seconds.'
+                )
+
+            for (i, model) in enumerate(PRETRAINED_MODELS):
+                model.config = dataclasses.asdict(model.config)
+                timer = ElapsedTimer()
+                with timer:
+                    model = torch.compile(model)
+                    PRETRAINED_MODELS[i] = model
+                logging.info(
+                    f'torch.compiled pretrained model {i} in '
+                    f'{timer.elapsed:.3f} seconds.'
+                )
+```
+### TorchScript
+
+TorchScript doesn't work at all for our model---it balks on the `async def
+generate_async_for()` routine that is the workhorse of our asynchronous
+token-by-token generation.
+
+And that ended my TorchScript experiment :-)
+
+### Torch Dynamo (torch.compile)
+
+Torch Dynamo is a new feature that was introduced by PyTorch 2.0 that hooks
+into the Python interpreter and traces model execution and then builds
+optimized kernels based on the information observed during runtime tracing.
+
+When it works, it works really well, and you can get significant speedups
+both in training and inference with literally a single line:
+
+```python
+model = torch.compile(model)
+```
+
+The first problem we hit with Dynamo is that it's explicitly not supported
+by PyTorch on free-threaded builds:
+
+```python
+>>> model = torch.compile(model)
+---------------------------------------------------------------------------
+RuntimeError                              Traceback (most recent call last)
+Cell In[3], line 1
+----> 1 model = torch.compile(model)
+
+File ~/mambaforge/envs/py313t/lib/python3.13t/site-packages/torch/__init__.py:2526, in compile(model, fullgraph, dynamic, backend, mode, options, disable)
+   2524     raise RuntimeError("torch.compile is not supported on Python 3.14+")
+   2525 elif sysconfig.get_config_var("Py_GIL_DISABLED") == 1:
+-> 2526     raise RuntimeError(
+   2527         "torch.compile is not supported on Python built with GIL disabled"
+   2528     )
+   2530 # Decorator mode
+   2531 if model is None:
+
+RuntimeError: torch.compile is not supported on Python built with GIL disabled
+```
+
+Let's hack that `torch/__init__.py` file as follows and try again.
+
+```diff
+--- __init__.py.orig    2025-02-09 13:28:27.892979258 -0800
++++ __init__.py 2025-02-09 13:30:13.879909529 -0800
+@@ -2523,9 +2523,7 @@
+     if sys.version_info >= (3, 14):
+         raise RuntimeError("torch.compile is not supported on Python 3.14+")
+     elif sysconfig.get_config_var("Py_GIL_DISABLED") == 1:
+-        raise RuntimeError(
+-            "torch.compile is not supported on Python built with GIL disabled"
+-        )
++        print("torch.__init__: Ignoring unsupported torch.compile() with no GIL unsupported")
+
+     # Decorator mode
+     if model is None:
+```
+
+```python
+>>> model = torch.compile(model)
+torch.__init__: Ignoring unsupported torch.compile() with no GIL unsupported
+---------------------------------------------------------------------------
+RuntimeError                              Traceback (most recent call last)
+Cell In[3], line 1
+----> 1 model = torch.compile(model)
+
+File ~/mambaforge/envs/py313t/lib/python3.13t/site-packages/torch/__init__.py:2563, in compile(model, fullgraph, dynamic, backend, mode, options, disable)
+   2560 else:
+   2561     backend = _TorchCompileWrapper(backend, mode, options, dynamic)
+-> 2563 return torch._dynamo.optimize(
+   2564     backend=backend,
+   2565     nopython=fullgraph,
+   2566     dynamic=dynamic,
+   2567     disable=disable,
+   2568 )(model)
+
+File ~/mambaforge/envs/py313t/lib/python3.13t/site-packages/torch/_dynamo/eval_frame.py:842, in optimize(*args, **kwargs)
+    839         kwargs["nopython"] = ca_kwargs_override["fullgraph"]
+    840     return optimize(*args, **kwargs)
+--> 842 return _optimize(rebuild_ctx, *args, **kwargs)
+
+File ~/mambaforge/envs/py313t/lib/python3.13t/site-packages/torch/_dynamo/eval_frame.py:881, in _optimize(rebuild_ctx, backend, nopython, guard_export_fn, guard_fail_fn, disable, dynamic)
+    845 def _optimize(
+    846     rebuild_ctx: Callable[[], Union[OptimizeContext, _NullDecorator]],
+    847     backend="inductor",
+   (...)
+    853     dynamic=None,
+    854 ) -> Union[OptimizeContext, _NullDecorator]:
+    855     """
+    856     The main entrypoint of TorchDynamo.  Do graph capture and call
+    857     backend() to optimize extracted graphs.
+   (...)
+    879             ...
+    880     """
+--> 881     check_if_dynamo_supported()
+    882     # Note: The hooks object could be global instead of passed around, *however* that would make
+    883     # for a confusing API usage and plumbing story wherein we nest multiple .optimize calls.
+    884     # There is some prior art around this, w/r/t nesting backend calls are enforced to be the same
+    885     # compiler, however, this feels onerous for callback and hooks, and it feels better to give our users an
+    886     # easier to understand UX at the cost of a little more plumbing on our end.
+    887     hooks = Hooks(guard_export_fn=guard_export_fn, guard_fail_fn=guard_fail_fn)
+
+File ~/mambaforge/envs/py313t/lib/python3.13t/site-packages/torch/_dynamo/eval_frame.py:805, in check_if_dynamo_supported()
+    803     raise RuntimeError("Python 3.14+ not yet supported for torch.compile")
+    804 elif sysconfig.get_config_var("Py_GIL_DISABLED") == 1:
+--> 805     raise RuntimeError(
+    806         "torch.compile is not supported on Python built with GIL disabled"
+    807     )
+
+RuntimeError: torch.compile is not supported on Python built with GIL disabled
+```
+
+Let's hack `torch/_dynamo/eval_frame.py` too:
+
+```diff
+--- eval_frame.py.orig  2025-02-09 13:32:18.266470283 -0800
++++ eval_frame.py       2025-02-09 13:32:32.746291774 -0800
+@@ -802,9 +802,7 @@
+     if sys.version_info >= (3, 14):
+         raise RuntimeError("Python 3.14+ not yet supported for torch.compile")
+     elif sysconfig.get_config_var("Py_GIL_DISABLED") == 1:
+-        raise RuntimeError(
+-            "torch.compile is not supported on Python built with GIL disabled"
+-        )
++        print("torch._dynamo.eval_frame: Ignoring unsupported torch.compile() with no GIL unsupported")
+
+
+ def is_dynamo_supported():
+```
+
+Now let's try again:
+
+```python
+>>> model = torch.compile(model)
+torch.__init__: Ignoring unsupported torch.compile() with no GIL unsupported
+torch._dynamo.eval_frame: Ignoring unsupported torch.compile() with no GIL unsupported
+>>>
+```
+
+So we can forcibly coerce PyTorch Dynamo to compile our model even if we're
+in free-threaded mode.  And it works, we can at least generate text as we
+could before.
+
 
 <!-- vim:set ts=8 sw=2 sts=2 expandtab textwidth=78 -->
