@@ -6,7 +6,7 @@
   <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
    <cc:Work>
     <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
-    <dc:date>2025-02-09T12:30:25.635086</dc:date>
+    <dc:date>2025-02-09T21:06:14.055546</dc:date>
     <dc:format>image/svg+xml</dc:format>
     <dc:creator>
      <cc:Agent>
@@ -26,7 +26,7 @@ L 576 432
 L 576 0 
 L 0 0 
 z
-" style="fill: #181818"/>
+" style="fill: #ffffff"/>
   </g>
   <g id="axes_1">
    <g id="patch_2">
@@ -35,18 +35,18 @@ L 518.4 384.48
 L 518.4 51.84 
 L 72 51.84 
 z
-" style="fill: #181818"/>
+" style="fill: #eaeaf2"/>
    </g>
    <g id="matplotlib.axis_1">
     <g id="xtick_1">
      <g id="line2d_1">
       <path d="M 150.264935 384.48 
 L 150.264935 51.84 
-" clip-path="url(#pda6e91cc07)" style="fill: none; stroke: #808080; stroke-linecap: round"/>
+" clip-path="url(#p488b3e1f59)" style="fill: none; stroke: #ffffff; stroke-linecap: round"/>
      </g>
      <g id="text_1">
       <!-- No GIL -->
-      <g style="fill: #ffffff" transform="translate(132.828216 401.870781) scale(0.11 -0.11)">
+      <g style="fill: #262626" transform="translate(132.828216 401.870781) scale(0.11 -0.11)">
        <defs>
         <path id="Chilanka-Regular-4e" d="M 628 -103 
 C 738 -103 841 -6 838 106 
@@ -165,11 +165,11 @@ z
      <g id="line2d_2">
       <path d="M 440.135065 384.48 
 L 440.135065 51.84 
-" clip-path="url(#pda6e91cc07)" style="fill: none; stroke: #808080; stroke-linecap: round"/>
+" clip-path="url(#p488b3e1f59)" style="fill: none; stroke: #ffffff; stroke-linecap: round"/>
      </g>
      <g id="text_2">
       <!-- GIL Enabled -->
-      <g style="fill: #ffffff" transform="translate(408.937174 401.870781) scale(0.11 -0.11)">
+      <g style="fill: #262626" transform="translate(408.937174 401.870781) scale(0.11 -0.11)">
        <defs>
         <path id="Chilanka-Regular-45" d="M 1538 4072 
 C 2469 4072 3113 3997 3459 3844 
@@ -376,7 +376,7 @@ z
     </g>
     <g id="text_3">
      <!-- Run -->
-     <g style="fill: #ffffff" transform="translate(284.1225 416.857656) scale(0.12 -0.12)">
+     <g transform="translate(284.1225 416.857656) scale(0.12 -0.12)">
       <defs>
        <path id="Chilanka-Regular-52" d="M 547 -119 
 C 650 -119 750 -34 756 72 
@@ -448,11 +448,11 @@ z
      <g id="line2d_3">
       <path d="M 72 384.48 
 L 518.4 384.48 
-" clip-path="url(#pda6e91cc07)" style="fill: none; stroke: #808080; stroke-linecap: round"/>
+" clip-path="url(#p488b3e1f59)" style="fill: none; stroke: #ffffff; stroke-linecap: round"/>
      </g>
      <g id="text_4">
       <!-- 0 -->
-      <g style="fill: #ffffff" transform="translate(56.355469 388.425391) scale(0.11 -0.11)">
+      <g style="fill: #262626" transform="translate(56.355469 388.425391) scale(0.11 -0.11)">
        <defs>
         <path id="Chilanka-Regular-30" d="M 2050 3828 
 C 2125 3875 2163 3928 2163 3988 
@@ -489,11 +489,11 @@ z
      <g id="line2d_4">
       <path d="M 72 336.226067 
 L 518.4 336.226067 
-" clip-path="url(#pda6e91cc07)" style="fill: none; stroke: #808080; stroke-linecap: round"/>
+" clip-path="url(#p488b3e1f59)" style="fill: none; stroke: #ffffff; stroke-linecap: round"/>
      </g>
      <g id="text_5">
       <!-- 10000 -->
-      <g style="fill: #ffffff" transform="translate(35.364375 340.171458) scale(0.11 -0.11)">
+      <g style="fill: #262626" transform="translate(35.364375 340.171458) scale(0.11 -0.11)">
        <defs>
         <path id="Chilanka-Regular-31" d="M 313 4081 
 C 313 3975 400 3875 513 3875 
@@ -526,11 +526,11 @@ z
      <g id="line2d_5">
       <path d="M 72 287.972135 
 L 518.4 287.972135 
-" clip-path="url(#pda6e91cc07)" style="fill: none; stroke: #808080; stroke-linecap: round"/>
+" clip-path="url(#p488b3e1f59)" style="fill: none; stroke: #ffffff; stroke-linecap: round"/>
      </g>
      <g id="text_6">
       <!-- 20000 -->
-      <g style="fill: #ffffff" transform="translate(30.773594 291.917525) scale(0.11 -0.11)">
+      <g style="fill: #262626" transform="translate(30.773594 291.917525) scale(0.11 -0.11)">
        <defs>
         <path id="Chilanka-Regular-32" d="M 519 3166 
 C 572 3166 622 3191 669 3247 
@@ -578,11 +578,11 @@ z
      <g id="line2d_6">
       <path d="M 72 239.718202 
 L 518.4 239.718202 
-" clip-path="url(#pda6e91cc07)" style="fill: none; stroke: #808080; stroke-linecap: round"/>
+" clip-path="url(#p488b3e1f59)" style="fill: none; stroke: #ffffff; stroke-linecap: round"/>
      </g>
      <g id="text_7">
       <!-- 30000 -->
-      <g style="fill: #ffffff" transform="translate(31.577969 243.663593) scale(0.11 -0.11)">
+      <g style="fill: #262626" transform="translate(31.577969 243.663593) scale(0.11 -0.11)">
        <defs>
         <path id="Chilanka-Regular-33" d="M 2303 353 
 C 1872 353 1309 553 619 953 
@@ -630,11 +630,11 @@ z
      <g id="line2d_7">
       <path d="M 72 191.464269 
 L 518.4 191.464269 
-" clip-path="url(#pda6e91cc07)" style="fill: none; stroke: #808080; stroke-linecap: round"/>
+" clip-path="url(#p488b3e1f59)" style="fill: none; stroke: #ffffff; stroke-linecap: round"/>
      </g>
      <g id="text_8">
       <!-- 40000 -->
-      <g style="fill: #ffffff" transform="translate(29.886719 195.40966) scale(0.11 -0.11)">
+      <g style="fill: #262626" transform="translate(29.886719 195.40966) scale(0.11 -0.11)">
        <defs>
         <path id="Chilanka-Regular-34" d="M 4363 1944 
 C 4363 2109 4238 2234 4006 2325 
@@ -682,11 +682,11 @@ z
      <g id="line2d_8">
       <path d="M 72 143.210337 
 L 518.4 143.210337 
-" clip-path="url(#pda6e91cc07)" style="fill: none; stroke: #808080; stroke-linecap: round"/>
+" clip-path="url(#p488b3e1f59)" style="fill: none; stroke: #ffffff; stroke-linecap: round"/>
      </g>
      <g id="text_9">
       <!-- 50000 -->
-      <g style="fill: #ffffff" transform="translate(30.907656 147.155727) scale(0.11 -0.11)">
+      <g style="fill: #262626" transform="translate(30.907656 147.155727) scale(0.11 -0.11)">
        <defs>
         <path id="Chilanka-Regular-35" d="M 1163 4356 
 C 881 4356 691 4328 594 4269 
@@ -733,11 +733,11 @@ z
      <g id="line2d_9">
       <path d="M 72 94.956404 
 L 518.4 94.956404 
-" clip-path="url(#pda6e91cc07)" style="fill: none; stroke: #808080; stroke-linecap: round"/>
+" clip-path="url(#p488b3e1f59)" style="fill: none; stroke: #ffffff; stroke-linecap: round"/>
      </g>
      <g id="text_10">
       <!-- 60000 -->
-      <g style="fill: #ffffff" transform="translate(31.600313 98.901795) scale(0.11 -0.11)">
+      <g style="fill: #262626" transform="translate(31.600313 98.901795) scale(0.11 -0.11)">
        <defs>
         <path id="Chilanka-Regular-36" d="M 1928 4188 
 C 1781 4188 1550 4031 1238 3719 
@@ -775,7 +775,7 @@ z
     </g>
     <g id="text_11">
      <!-- Requests per Second -->
-     <g style="fill: #ffffff" transform="translate(23.291719 277.94625) rotate(-90) scale(0.12 -0.12)">
+     <g transform="translate(23.291719 277.94625) rotate(-90) scale(0.12 -0.12)">
       <defs>
        <path id="Chilanka-Regular-71" d="M 3375 1869 
 C 3375 2181 3422 2581 3422 2859 
@@ -1002,7 +1002,7 @@ L 208.238961 384.48
 L 208.238961 67.68 
 L 92.290909 67.68 
 z
-" clip-path="url(#pda6e91cc07)" style="fill: #66c2ff; stroke: #ffffff; stroke-linejoin: miter"/>
+" clip-path="url(#p488b3e1f59)" style="fill: #40b4c4; stroke: #ffffff; stroke-linejoin: miter"/>
    </g>
    <g id="patch_4">
     <path d="M 382.161039 384.48 
@@ -1010,7 +1010,7 @@ L 498.109091 384.48
 L 498.109091 355.034051 
 L 382.161039 355.034051 
 z
-" clip-path="url(#pda6e91cc07)" style="fill: #f08080; stroke: #ffffff; stroke-linejoin: miter"/>
+" clip-path="url(#p488b3e1f59)" style="fill: #ff6961; stroke: #ffffff; stroke-linejoin: miter"/>
    </g>
    <g id="patch_5">
     <path d="M 72 384.48 
@@ -1034,7 +1034,7 @@ L 518.4 51.84
    </g>
    <g id="text_12">
     <!-- 65,652.68 -->
-    <g style="fill: #ffffff" transform="translate(122.345248 65.085) scale(0.12 -0.12)">
+    <g transform="translate(122.345248 65.085) scale(0.12 -0.12)">
      <defs>
       <path id="Chilanka-Regular-2c" d="M 697 497 
 C 634 497 578 478 525 441 
@@ -1116,7 +1116,7 @@ z
    </g>
    <g id="text_13">
     <!-- 6,102.29 -->
-    <g style="fill: #ffffff" transform="translate(418.33819 352.439051) scale(0.12 -0.12)">
+    <g transform="translate(418.33819 352.439051) scale(0.12 -0.12)">
      <defs>
       <path id="Chilanka-Regular-39" d="M 1156 1863 
 C 1672 1863 2188 2350 2506 2713 
@@ -1158,7 +1158,7 @@ z
    </g>
    <g id="text_14">
     <!-- Plaintext Load Test Requests/sec (No GIL &amp; GIL) -->
-    <g style="fill: #ffffff" transform="translate(159.080625 45.84) scale(0.12 -0.12)">
+    <g transform="translate(159.080625 45.84) scale(0.12 -0.12)">
      <defs>
       <path id="Chilanka-Regular-50" d="M 725 1959 
 C 784 1956 847 1956 903 1956 
@@ -1390,11 +1390,11 @@ Q 410.904219 57.34 410.904219 59.54
 L 410.904219 106.682187 
 Q 410.904219 108.882187 413.104219 108.882187 
 z
-" style="fill: #181818; opacity: 0.8; stroke: #cccccc; stroke-linejoin: miter"/>
+" style="fill: #eaeaf2; opacity: 0.8; stroke: #cccccc; stroke-linejoin: miter"/>
     </g>
     <g id="text_15">
      <!-- Run Names -->
-     <g style="fill: #ffffff" transform="translate(431.048984 70.348125) scale(0.12 -0.12)">
+     <g style="fill: #262626" transform="translate(431.048984 70.348125) scale(0.12 -0.12)">
       <defs>
        <path id="Chilanka-Regular-6d" d="M 1663 3063 
 C 1359 3063 1106 2872 916 2488 
@@ -1453,11 +1453,11 @@ L 437.304219 86.333906
 L 437.304219 78.633906 
 L 415.304219 78.633906 
 z
-" style="fill: #66c2ff; stroke: #ffffff; stroke-linejoin: miter"/>
+" style="fill: #40b4c4; stroke: #ffffff; stroke-linejoin: miter"/>
     </g>
     <g id="text_16">
      <!-- No GIL -->
-     <g style="fill: #ffffff" transform="translate(446.104219 86.333906) scale(0.11 -0.11)">
+     <g style="fill: #262626" transform="translate(446.104219 86.333906) scale(0.11 -0.11)">
       <use xlink:href="#Chilanka-Regular-4e"/>
       <use xlink:href="#Chilanka-Regular-6f" x="61.71875"/>
       <use xlink:href="#Chilanka-Regular-20" x="120.751953"/>
@@ -1472,11 +1472,11 @@ L 437.304219 102.103437
 L 437.304219 94.403437 
 L 415.304219 94.403437 
 z
-" style="fill: #f08080; stroke: #ffffff; stroke-linejoin: miter"/>
+" style="fill: #ff6961; stroke: #ffffff; stroke-linejoin: miter"/>
     </g>
     <g id="text_17">
      <!-- GIL Enabled -->
-     <g style="fill: #ffffff" transform="translate(446.104219 102.103437) scale(0.11 -0.11)">
+     <g style="fill: #262626" transform="translate(446.104219 102.103437) scale(0.11 -0.11)">
       <use xlink:href="#Chilanka-Regular-47"/>
       <use xlink:href="#Chilanka-Regular-49" x="90.380859"/>
       <use xlink:href="#Chilanka-Regular-4c" x="107.080078"/>
@@ -1494,7 +1494,7 @@ z
   </g>
  </g>
  <defs>
-  <clipPath id="pda6e91cc07">
+  <clipPath id="p488b3e1f59">
    <rect x="72" y="51.84" width="446.4" height="332.64"/>
   </clipPath>
  </defs>

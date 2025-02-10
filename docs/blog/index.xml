@@ -10,7 +10,7 @@
 <atom:link href="https://trent.me/blog/index.xml" rel="self" type="application/rss+xml"/>
 <description></description>
 <generator>quarto-1.6.40</generator>
-<lastBuildDate>Mon, 10 Feb 2025 04:51:40 GMT</lastBuildDate>
+<lastBuildDate>Mon, 10 Feb 2025 05:08:03 GMT</lastBuildDate>
 <item>
   <title>DRAFT: PyTorch and Python Free-Threading</title>
   <dc:creator>Trent Nelson</dc:creator>
@@ -13703,7 +13703,7 @@ font-style: inherit;">&gt;&gt;&gt;</span></span></code></pre></div>
   <category>LLM</category>
   <category>GPT2</category>
   <guid>https://trent.me/blog/posts/2025-xx-xx-pytorch-and-python-free-threading/</guid>
-  <pubDate>Mon, 10 Feb 2025 04:51:40 GMT</pubDate>
+  <pubDate>Mon, 10 Feb 2025 05:08:03 GMT</pubDate>
   <media:content url="https://trent.me/blog/posts/2025-xx-xx-pytorch-and-python-free-threading/images/pytorch-and-python-free-threading.png" medium="image" type="image/png" height="144" width="144"/>
 </item>
 </channel>
