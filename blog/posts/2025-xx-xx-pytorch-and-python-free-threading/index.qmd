@@ -2910,7 +2910,7 @@ allows you to flip between images nicely.
 #### Normal Python (py313)
 
 Normal Python (not just free-threaded Python with the GIL enabled, but
-full-blown old-school normal Python with no knowledge of GIL remove---i.e.
+full-blown old-school normal Python with no knowledge of GIL removal---i.e.
 our `py313` environment) was pretty similar:
 
 ::: {.theme-light}

@@ -10,7 +10,7 @@
 <atom:link href="https://trent.me/blog/index.xml" rel="self" type="application/rss+xml"/>
 <description></description>
 <generator>quarto-1.6.40</generator>
-<lastBuildDate>Tue, 11 Feb 2025 06:52:21 GMT</lastBuildDate>
+<lastBuildDate>Tue, 11 Feb 2025 06:57:57 GMT</lastBuildDate>
 <item>
   <title>DRAFT: PyTorch and Python Free-Threading</title>
   <dc:creator>Trent Nelson</dc:creator>
@@ -25588,7 +25588,7 @@ font-style: inherit;">}</span></span></code></pre></div>
 </section>
 <section id="normal-python-py313" class="level4">
 <h4 class="anchored" data-anchor-id="normal-python-py313">Normal Python (py313)</h4>
-<p>Normal Python (not just free-threaded Python with the GIL enabled, but full-blown old-school normal Python with no knowledge of GIL remove—i.e. our <code>py313</code> environment) was pretty similar:</p>
+<p>Normal Python (not just free-threaded Python with the GIL enabled, but full-blown old-school normal Python with no knowledge of GIL removal—i.e. our <code>py313</code> environment) was pretty similar:</p>
 <div class="theme-light">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
@@ -25934,7 +25934,7 @@ font-style: inherit;">return</span> x</span></code></pre></div>
   <category>LLM</category>
   <category>GPT2</category>
   <guid>https://trent.me/blog/posts/2025-xx-xx-pytorch-and-python-free-threading/</guid>
-  <pubDate>Tue, 11 Feb 2025 06:52:21 GMT</pubDate>
+  <pubDate>Tue, 11 Feb 2025 06:57:57 GMT</pubDate>
   <media:content url="https://trent.me/blog/posts/2025-xx-xx-pytorch-and-python-free-threading/images/pytorch-and-python-free-threading.png" medium="image" type="image/png" height="144" width="144"/>
 </item>
 </channel>
