@@ -1,259 +1,15 @@
 GPT.generate() variants
-2025-02-09 19:11:43,077 - INFO - Loaded /mnt/raid1/trent/src/parallelopedia/data/model_19072.pt checkpoint in 0.513 seconds.
-2025-02-09 19:11:43,108 - INFO - Initialized GPT model in 0.031 seconds.
-2025-02-09 19:11:43,337 - INFO - Loaded model weights in 0.228 seconds.
-2025-02-09 19:11:43,727 - INFO - Created GPT model in 0.649 seconds.
-2025-02-09 19:11:43,834 - INFO - Moved model to cuda:3 in 0.107 seconds.
-2025-02-09 19:11:43,834 - INFO - Loaded model from step 19072, val_loss 3.0519702434539795
-2025-02-09 19:11:43,834 - INFO - Loaded gpt2 on cuda:3 in 1.270 seconds.
-2025-02-09 19:11:43,834 - INFO - Round 1 of 20.
-2025-02-09 19:11:44,645 - INFO - Generated 91 tokens in 0.81 seconds (112.38 tokens/sec)
-2025-02-09 19:11:44,645 - INFO - Output:
-Einstein's Theory of Relativity states that the speed of
-light in a vacuum is simply the speed of the electrons in
-that vacuum, since light has a speed. Since the speed of
-light in a vacuum is equal to the speed of the electrons in
-a solid, the light from this source has a speed of
-approximately 1/299,792 m/s. Einstein's theory of relativity
-explains this speed by a phenomenon known as the speed at
-the end of time. In other words, this speed is
-2025-02-09 19:11:44,645 - INFO - Round 2 of 20.
-2025-02-09 19:11:45,279 - INFO - Generated 91 tokens in 0.63 seconds (143.63 tokens/sec)
-2025-02-09 19:11:45,279 - INFO - Output:
-Einstein's Theory of Relativity states that the speed of
-light in a vacuum is simply the speed of the electrons in
-that vacuum, since light has a speed. Since the speed of
-light in a vacuum is equal to the speed of the electrons in
-a solid, the light from this source has a speed of
-approximately 1/299,792 m/s. Einstein's theory of relativity
-explains this speed by a phenomenon known as the speed at
-the end of time. In other words, this speed is
-2025-02-09 19:11:45,279 - INFO - Round 3 of 20.
-2025-02-09 19:11:45,914 - INFO - Generated 91 tokens in 0.63 seconds (143.52 tokens/sec)
-2025-02-09 19:11:45,914 - INFO - Output:
-Einstein's Theory of Relativity states that the speed of
-light in a vacuum is simply the speed of the electrons in
-that vacuum, since light has a speed. Since the speed of
-light in a vacuum is equal to the speed of the electrons in
-a solid, the light from this source has a speed of
-approximately 1/299,792 m/s. Einstein's theory of relativity
-explains this speed by a phenomenon known as the speed at
-the end of time. In other words, this speed is
-2025-02-09 19:11:45,914 - INFO - Round 4 of 20.
-2025-02-09 19:11:46,547 - INFO - Generated 91 tokens in 0.63 seconds (143.80 tokens/sec)
-2025-02-09 19:11:46,547 - INFO - Output:
-Einstein's Theory of Relativity states that the speed of
-light in a vacuum is simply the speed of the electrons in
-that vacuum, since light has a speed. Since the speed of
-light in a vacuum is equal to the speed of the electrons in
-a solid, the light from this source has a speed of
-approximately 1/299,792 m/s. Einstein's theory of relativity
-explains this speed by a phenomenon known as the speed at
-the end of time. In other words, this speed is
-2025-02-09 19:11:46,547 - INFO - Round 5 of 20.
-2025-02-09 19:11:47,180 - INFO - Generated 91 tokens in 0.63 seconds (143.91 tokens/sec)
-2025-02-09 19:11:47,180 - INFO - Output:
-Einstein's Theory of Relativity states that the speed of
-light in a vacuum is simply the speed of the electrons in
-that vacuum, since light has a speed. Since the speed of
-light in a vacuum is equal to the speed of the electrons in
-a solid, the light from this source has a speed of
-approximately 1/299,792 m/s. Einstein's theory of relativity
-explains this speed by a phenomenon known as the speed at
-the end of time. In other words, this speed is
-2025-02-09 19:11:47,180 - INFO - Round 6 of 20.
-2025-02-09 19:11:47,814 - INFO - Generated 91 tokens in 0.63 seconds (143.70 tokens/sec)
-2025-02-09 19:11:47,814 - INFO - Output:
-Einstein's Theory of Relativity states that the speed of
-light in a vacuum is simply the speed of the electrons in
-that vacuum, since light has a speed. Since the speed of
-light in a vacuum is equal to the speed of the electrons in
-a solid, the light from this source has a speed of
-approximately 1/299,792 m/s. Einstein's theory of relativity
-explains this speed by a phenomenon known as the speed at
-the end of time. In other words, this speed is
-2025-02-09 19:11:47,814 - INFO - Round 7 of 20.
-2025-02-09 19:11:48,448 - INFO - Generated 91 tokens in 0.63 seconds (143.66 tokens/sec)
-2025-02-09 19:11:48,448 - INFO - Output:
-Einstein's Theory of Relativity states that the speed of
-light in a vacuum is simply the speed of the electrons in
-that vacuum, since light has a speed. Since the speed of
-light in a vacuum is equal to the speed of the electrons in
-a solid, the light from this source has a speed of
-approximately 1/299,792 m/s. Einstein's theory of relativity
-explains this speed by a phenomenon known as the speed at
-the end of time. In other words, this speed is
-2025-02-09 19:11:48,448 - INFO - Round 8 of 20.
-2025-02-09 19:11:49,081 - INFO - Generated 91 tokens in 0.63 seconds (143.96 tokens/sec)
-2025-02-09 19:11:49,081 - INFO - Output:
-Einstein's Theory of Relativity states that the speed of
-light in a vacuum is simply the speed of the electrons in
-that vacuum, since light has a speed. Since the speed of
-light in a vacuum is equal to the speed of the electrons in
-a solid, the light from this source has a speed of
-approximately 1/299,792 m/s. Einstein's theory of relativity
-explains this speed by a phenomenon known as the speed at
-the end of time. In other words, this speed is
-2025-02-09 19:11:49,081 - INFO - Round 9 of 20.
-2025-02-09 19:11:49,714 - INFO - Generated 91 tokens in 0.63 seconds (143.83 tokens/sec)
-2025-02-09 19:11:49,714 - INFO - Output:
-Einstein's Theory of Relativity states that the speed of
-light in a vacuum is simply the speed of the electrons in
-that vacuum, since light has a speed. Since the speed of
-light in a vacuum is equal to the speed of the electrons in
-a solid, the light from this source has a speed of
-approximately 1/299,792 m/s. Einstein's theory of relativity
-explains this speed by a phenomenon known as the speed at
-the end of time. In other words, this speed is
-2025-02-09 19:11:49,714 - INFO - Round 10 of 20.
-2025-02-09 19:11:50,360 - INFO - Generated 91 tokens in 0.65 seconds (141.05 tokens/sec)
-2025-02-09 19:11:50,360 - INFO - Output:
-Einstein's Theory of Relativity states that the speed of
-light in a vacuum is simply the speed of the electrons in
-that vacuum, since light has a speed. Since the speed of
-light in a vacuum is equal to the speed of the electrons in
-a solid, the light from this source has a speed of
-approximately 1/299,792 m/s. Einstein's theory of relativity
-explains this speed by a phenomenon known as the speed at
-the end of time. In other words, this speed is
-2025-02-09 19:11:50,360 - INFO - Round 11 of 20.
-2025-02-09 19:11:51,016 - INFO - Generated 91 tokens in 0.66 seconds (138.89 tokens/sec)
-2025-02-09 19:11:51,016 - INFO - Output:
-Einstein's Theory of Relativity states that the speed of
-light in a vacuum is simply the speed of the electrons in
-that vacuum, since light has a speed. Since the speed of
-light in a vacuum is equal to the speed of the electrons in
-a solid, the light from this source has a speed of
-approximately 1/299,792 m/s. Einstein's theory of relativity
-explains this speed by a phenomenon known as the speed at
-the end of time. In other words, this speed is
-2025-02-09 19:11:51,016 - INFO - Round 12 of 20.
-2025-02-09 19:11:51,670 - INFO - Generated 91 tokens in 0.65 seconds (139.28 tokens/sec)
-2025-02-09 19:11:51,671 - INFO - Output:
-Einstein's Theory of Relativity states that the speed of
-light in a vacuum is simply the speed of the electrons in
-that vacuum, since light has a speed. Since the speed of
-light in a vacuum is equal to the speed of the electrons in
-a solid, the light from this source has a speed of
-approximately 1/299,792 m/s. Einstein's theory of relativity
-explains this speed by a phenomenon known as the speed at
-the end of time. In other words, this speed is
-2025-02-09 19:11:51,671 - INFO - Round 13 of 20.
-2025-02-09 19:11:52,324 - INFO - Generated 91 tokens in 0.65 seconds (139.34 tokens/sec)
-2025-02-09 19:11:52,324 - INFO - Output:
-Einstein's Theory of Relativity states that the speed of
-light in a vacuum is simply the speed of the electrons in
-that vacuum, since light has a speed. Since the speed of
-light in a vacuum is equal to the speed of the electrons in
-a solid, the light from this source has a speed of
-approximately 1/299,792 m/s. Einstein's theory of relativity
-explains this speed by a phenomenon known as the speed at
-the end of time. In other words, this speed is
-2025-02-09 19:11:52,325 - INFO - Round 14 of 20.
-2025-02-09 19:11:52,978 - INFO - Generated 91 tokens in 0.65 seconds (139.34 tokens/sec)
-2025-02-09 19:11:52,978 - INFO - Output:
-Einstein's Theory of Relativity states that the speed of
-light in a vacuum is simply the speed of the electrons in
-that vacuum, since light has a speed. Since the speed of
-light in a vacuum is equal to the speed of the electrons in
-a solid, the light from this source has a speed of
-approximately 1/299,792 m/s. Einstein's theory of relativity
-explains this speed by a phenomenon known as the speed at
-the end of time. In other words, this speed is
-2025-02-09 19:11:52,978 - INFO - Round 15 of 20.
-2025-02-09 19:11:53,632 - INFO - Generated 91 tokens in 0.65 seconds (139.32 tokens/sec)
-2025-02-09 19:11:53,632 - INFO - Output:
-Einstein's Theory of Relativity states that the speed of
-light in a vacuum is simply the speed of the electrons in
-that vacuum, since light has a speed. Since the speed of
-light in a vacuum is equal to the speed of the electrons in
-a solid, the light from this source has a speed of
-approximately 1/299,792 m/s. Einstein's theory of relativity
-explains this speed by a phenomenon known as the speed at
-the end of time. In other words, this speed is
-2025-02-09 19:11:53,632 - INFO - Round 16 of 20.
-2025-02-09 19:11:54,285 - INFO - Generated 91 tokens in 0.65 seconds (139.31 tokens/sec)
-2025-02-09 19:11:54,286 - INFO - Output:
-Einstein's Theory of Relativity states that the speed of
-light in a vacuum is simply the speed of the electrons in
-that vacuum, since light has a speed. Since the speed of
-light in a vacuum is equal to the speed of the electrons in
-a solid, the light from this source has a speed of
-approximately 1/299,792 m/s. Einstein's theory of relativity
-explains this speed by a phenomenon known as the speed at
-the end of time. In other words, this speed is
-2025-02-09 19:11:54,286 - INFO - Round 17 of 20.
-2025-02-09 19:11:54,940 - INFO - Generated 91 tokens in 0.65 seconds (139.25 tokens/sec)
-2025-02-09 19:11:54,940 - INFO - Output:
-Einstein's Theory of Relativity states that the speed of
-light in a vacuum is simply the speed of the electrons in
-that vacuum, since light has a speed. Since the speed of
-light in a vacuum is equal to the speed of the electrons in
-a solid, the light from this source has a speed of
-approximately 1/299,792 m/s. Einstein's theory of relativity
-explains this speed by a phenomenon known as the speed at
-the end of time. In other words, this speed is
-2025-02-09 19:11:54,940 - INFO - Round 18 of 20.
-2025-02-09 19:11:55,594 - INFO - Generated 91 tokens in 0.65 seconds (139.20 tokens/sec)
-2025-02-09 19:11:55,594 - INFO - Output:
-Einstein's Theory of Relativity states that the speed of
-light in a vacuum is simply the speed of the electrons in
-that vacuum, since light has a speed. Since the speed of
-light in a vacuum is equal to the speed of the electrons in
-a solid, the light from this source has a speed of
-approximately 1/299,792 m/s. Einstein's theory of relativity
-explains this speed by a phenomenon known as the speed at
-the end of time. In other words, this speed is
-2025-02-09 19:11:55,594 - INFO - Round 19 of 20.
-2025-02-09 19:11:56,246 - INFO - Generated 91 tokens in 0.65 seconds (139.72 tokens/sec)
-2025-02-09 19:11:56,246 - INFO - Output:
-Einstein's Theory of Relativity states that the speed of
-light in a vacuum is simply the speed of the electrons in
-that vacuum, since light has a speed. Since the speed of
-light in a vacuum is equal to the speed of the electrons in
-a solid, the light from this source has a speed of
-approximately 1/299,792 m/s. Einstein's theory of relativity
-explains this speed by a phenomenon known as the speed at
-the end of time. In other words, this speed is
-2025-02-09 19:11:56,246 - INFO - Round 20 of 20.
-2025-02-09 19:11:56,899 - INFO - Generated 91 tokens in 0.65 seconds (139.41 tokens/sec)
-2025-02-09 19:11:56,900 - INFO - Output:
-Einstein's Theory of Relativity states that the speed of
-light in a vacuum is simply the speed of the electrons in
-that vacuum, since light has a speed. Since the speed of
-light in a vacuum is equal to the speed of the electrons in
-a solid, the light from this source has a speed of
-approximately 1/299,792 m/s. Einstein's theory of relativity
-explains this speed by a phenomenon known as the speed at
-the end of time. In other words, this speed is
-2025-02-09 19:11:56,900 - INFO - Run details saved to gpt2-rates-2025-02-09-19-11-56-900238-py313t.json.
-
-real	0m16.900s
-user	0m20.601s
-sys	0m0.891s
-2025-02-09 19:11:59,891 - INFO - Loaded /mnt/raid1/trent/src/parallelopedia/data/model_19072.pt checkpoint in 0.513 seconds.
-2025-02-09 19:11:59,922 - INFO - Initialized GPT model in 0.030 seconds.
-2025-02-09 19:12:00,156 - INFO - Loaded model weights in 0.234 seconds.
-2025-02-09 19:12:00,552 - INFO - Created GPT model in 0.661 seconds.
-2025-02-09 19:12:00,639 - INFO - Moved model to cuda:3 in 0.087 seconds.
-2025-02-09 19:12:00,639 - INFO - Loaded model from step 19072, val_loss 3.0519702434539795
-2025-02-09 19:12:00,640 - INFO - Loaded gpt2 on cuda:3 in 1.261 seconds.
-2025-02-09 19:12:03,416 - INFO - torch.compiled model in 2.776 seconds.
-2025-02-09 19:12:03,416 - INFO - Round 1 of 20.
-2025-02-09 19:12:04,242 - INFO - Generated 91 tokens in 0.83 seconds (110.21 tokens/sec)
-2025-02-09 19:12:04,243 - INFO - Output:
-Einstein's Theory of Relativity states that the speed of
-light in a vacuum is simply the speed of the electrons in
-that vacuum, since light has a speed. Since the speed of
-light in a vacuum is equal to the speed of the electrons in
-a solid, the light from this source has a speed of
-approximately 1/299,792 m/s. Einstein's theory of relativity
-explains this speed by a phenomenon known as the speed at
-the end of time. In other words, this speed is
-2025-02-09 19:12:04,243 - INFO - Round 2 of 20.
+2025-02-10 20:47:17,958 - INFO - Loaded /mnt/raid1/trent/src/parallelopedia/data/model_19072.pt checkpoint in 0.463 seconds.
+2025-02-10 20:47:17,965 - INFO - Initialized GPT model in 0.007 seconds.
+2025-02-10 20:47:18,191 - INFO - Loaded model weights in 0.226 seconds.
 <frozen importlib._bootstrap>:488: RuntimeWarning: The global interpreter lock (GIL) has been enabled to load module 'triton._C.libtriton', which has not declared that it can run safely without the GIL. To override this behavior and keep the GIL disabled (at your own risk), run with PYTHON_GIL=0 or -Xgil=0.
-2025-02-09 19:12:04,892 - INFO - Generated 91 tokens in 0.65 seconds (140.29 tokens/sec)
-2025-02-09 19:12:04,892 - INFO - Output:
+2025-02-10 20:47:18,558 - INFO - Created GPT model in 0.600 seconds.
+2025-02-10 20:47:18,642 - INFO - Moved model to cuda:3 in 0.083 seconds.
+2025-02-10 20:47:18,642 - INFO - Loaded model from step 19072, val_loss 3.0519702434539795
+2025-02-10 20:47:18,642 - INFO - Loaded gpt2 on cuda:3 in 1.148 seconds.
+2025-02-10 20:47:18,642 - INFO - Round 1 of 20.
+2025-02-10 20:47:19,454 - INFO - Generated 91 tokens in 0.81 seconds (112.32 tokens/sec)
+2025-02-10 20:47:19,454 - INFO - Output:
 Einstein's Theory of Relativity states that the speed of
 light in a vacuum is simply the speed of the electrons in
 that vacuum, since light has a speed. Since the speed of
@@ -262,9 +18,9 @@ a solid, the light from this source has a speed of
 approximately 1/299,792 m/s. Einstein's theory of relativity
 explains this speed by a phenomenon known as the speed at
 the end of time. In other words, this speed is
-2025-02-09 19:12:04,892 - INFO - Round 3 of 20.
-2025-02-09 19:12:05,540 - INFO - Generated 91 tokens in 0.65 seconds (140.54 tokens/sec)
-2025-02-09 19:12:05,541 - INFO - Output:
+2025-02-10 20:47:19,454 - INFO - Round 2 of 20.
+2025-02-10 20:47:20,091 - INFO - Generated 91 tokens in 0.64 seconds (142.89 tokens/sec)
+2025-02-10 20:47:20,092 - INFO - Output:
 Einstein's Theory of Relativity states that the speed of
 light in a vacuum is simply the speed of the electrons in
 that vacuum, since light has a speed. Since the speed of
@@ -273,9 +29,9 @@ a solid, the light from this source has a speed of
 approximately 1/299,792 m/s. Einstein's theory of relativity
 explains this speed by a phenomenon known as the speed at
 the end of time. In other words, this speed is
-2025-02-09 19:12:05,541 - INFO - Round 4 of 20.
-2025-02-09 19:12:06,190 - INFO - Generated 91 tokens in 0.65 seconds (140.35 tokens/sec)
-2025-02-09 19:12:06,190 - INFO - Output:
+2025-02-10 20:47:20,092 - INFO - Round 3 of 20.
+2025-02-10 20:47:20,731 - INFO - Generated 91 tokens in 0.64 seconds (142.49 tokens/sec)
+2025-02-10 20:47:20,731 - INFO - Output:
 Einstein's Theory of Relativity states that the speed of
 light in a vacuum is simply the speed of the electrons in
 that vacuum, since light has a speed. Since the speed of
@@ -284,9 +40,9 @@ a solid, the light from this source has a speed of
 approximately 1/299,792 m/s. Einstein's theory of relativity
 explains this speed by a phenomenon known as the speed at
 the end of time. In other words, this speed is
-2025-02-09 19:12:06,190 - INFO - Round 5 of 20.
-2025-02-09 19:12:06,839 - INFO - Generated 91 tokens in 0.65 seconds (140.34 tokens/sec)
-2025-02-09 19:12:06,839 - INFO - Output:
+2025-02-10 20:47:20,731 - INFO - Round 4 of 20.
+2025-02-10 20:47:21,366 - INFO - Generated 91 tokens in 0.63 seconds (143.47 tokens/sec)
+2025-02-10 20:47:21,366 - INFO - Output:
 Einstein's Theory of Relativity states that the speed of
 light in a vacuum is simply the speed of the electrons in
 that vacuum, since light has a speed. Since the speed of
@@ -295,9 +51,9 @@ a solid, the light from this source has a speed of
 approximately 1/299,792 m/s. Einstein's theory of relativity
 explains this speed by a phenomenon known as the speed at
 the end of time. In other words, this speed is
-2025-02-09 19:12:06,839 - INFO - Round 6 of 20.
-2025-02-09 19:12:07,486 - INFO - Generated 91 tokens in 0.65 seconds (140.69 tokens/sec)
-2025-02-09 19:12:07,487 - INFO - Output:
+2025-02-10 20:47:21,366 - INFO - Round 5 of 20.
+2025-02-10 20:47:22,000 - INFO - Generated 91 tokens in 0.63 seconds (143.62 tokens/sec)
+2025-02-10 20:47:22,000 - INFO - Output:
 Einstein's Theory of Relativity states that the speed of
 light in a vacuum is simply the speed of the electrons in
 that vacuum, since light has a speed. Since the speed of
@@ -306,9 +62,9 @@ a solid, the light from this source has a speed of
 approximately 1/299,792 m/s. Einstein's theory of relativity
 explains this speed by a phenomenon known as the speed at
 the end of time. In other words, this speed is
-2025-02-09 19:12:07,487 - INFO - Round 7 of 20.
-2025-02-09 19:12:08,134 - INFO - Generated 91 tokens in 0.65 seconds (140.80 tokens/sec)
-2025-02-09 19:12:08,134 - INFO - Output:
+2025-02-10 20:47:22,000 - INFO - Round 6 of 20.
+2025-02-10 20:47:22,634 - INFO - Generated 91 tokens in 0.63 seconds (143.62 tokens/sec)
+2025-02-10 20:47:22,635 - INFO - Output:
 Einstein's Theory of Relativity states that the speed of
 light in a vacuum is simply the speed of the electrons in
 that vacuum, since light has a speed. Since the speed of
@@ -317,9 +73,9 @@ a solid, the light from this source has a speed of
 approximately 1/299,792 m/s. Einstein's theory of relativity
 explains this speed by a phenomenon known as the speed at
 the end of time. In other words, this speed is
-2025-02-09 19:12:08,134 - INFO - Round 8 of 20.
-2025-02-09 19:12:08,780 - INFO - Generated 91 tokens in 0.65 seconds (140.96 tokens/sec)
-2025-02-09 19:12:08,781 - INFO - Output:
+2025-02-10 20:47:22,635 - INFO - Round 7 of 20.
+2025-02-10 20:47:23,270 - INFO - Generated 91 tokens in 0.64 seconds (143.25 tokens/sec)
+2025-02-10 20:47:23,271 - INFO - Output:
 Einstein's Theory of Relativity states that the speed of
 light in a vacuum is simply the speed of the electrons in
 that vacuum, since light has a speed. Since the speed of
@@ -328,9 +84,9 @@ a solid, the light from this source has a speed of
 approximately 1/299,792 m/s. Einstein's theory of relativity
 explains this speed by a phenomenon known as the speed at
 the end of time. In other words, this speed is
-2025-02-09 19:12:08,781 - INFO - Round 9 of 20.
-2025-02-09 19:12:09,427 - INFO - Generated 91 tokens in 0.65 seconds (140.95 tokens/sec)
-2025-02-09 19:12:09,427 - INFO - Output:
+2025-02-10 20:47:23,271 - INFO - Round 8 of 20.
+2025-02-10 20:47:23,904 - INFO - Generated 91 tokens in 0.63 seconds (143.67 tokens/sec)
+2025-02-10 20:47:23,905 - INFO - Output:
 Einstein's Theory of Relativity states that the speed of
 light in a vacuum is simply the speed of the electrons in
 that vacuum, since light has a speed. Since the speed of
@@ -339,9 +95,9 @@ a solid, the light from this source has a speed of
 approximately 1/299,792 m/s. Einstein's theory of relativity
 explains this speed by a phenomenon known as the speed at
 the end of time. In other words, this speed is
-2025-02-09 19:12:09,427 - INFO - Round 10 of 20.
-2025-02-09 19:12:10,072 - INFO - Generated 91 tokens in 0.64 seconds (141.11 tokens/sec)
-2025-02-09 19:12:10,073 - INFO - Output:
+2025-02-10 20:47:23,905 - INFO - Round 9 of 20.
+2025-02-10 20:47:24,539 - INFO - Generated 91 tokens in 0.63 seconds (143.56 tokens/sec)
+2025-02-10 20:47:24,539 - INFO - Output:
 Einstein's Theory of Relativity states that the speed of
 light in a vacuum is simply the speed of the electrons in
 that vacuum, since light has a speed. Since the speed of
@@ -350,9 +106,9 @@ a solid, the light from this source has a speed of
 approximately 1/299,792 m/s. Einstein's theory of relativity
 explains this speed by a phenomenon known as the speed at
 the end of time. In other words, this speed is
-2025-02-09 19:12:10,073 - INFO - Round 11 of 20.
-2025-02-09 19:12:10,723 - INFO - Generated 91 tokens in 0.65 seconds (140.04 tokens/sec)
-2025-02-09 19:12:10,723 - INFO - Output:
+2025-02-10 20:47:24,539 - INFO - Round 10 of 20.
+2025-02-10 20:47:25,174 - INFO - Generated 91 tokens in 0.63 seconds (143.56 tokens/sec)
+2025-02-10 20:47:25,174 - INFO - Output:
 Einstein's Theory of Relativity states that the speed of
 light in a vacuum is simply the speed of the electrons in
 that vacuum, since light has a speed. Since the speed of
@@ -361,9 +117,9 @@ a solid, the light from this source has a speed of
 approximately 1/299,792 m/s. Einstein's theory of relativity
 explains this speed by a phenomenon known as the speed at
 the end of time. In other words, this speed is
-2025-02-09 19:12:10,723 - INFO - Round 12 of 20.
-2025-02-09 19:12:11,376 - INFO - Generated 91 tokens in 0.65 seconds (139.43 tokens/sec)
-2025-02-09 19:12:11,377 - INFO - Output:
+2025-02-10 20:47:25,174 - INFO - Round 11 of 20.
+2025-02-10 20:47:25,812 - INFO - Generated 91 tokens in 0.64 seconds (142.78 tokens/sec)
+2025-02-10 20:47:25,812 - INFO - Output:
 Einstein's Theory of Relativity states that the speed of
 light in a vacuum is simply the speed of the electrons in
 that vacuum, since light has a speed. Since the speed of
@@ -372,9 +128,9 @@ a solid, the light from this source has a speed of
 approximately 1/299,792 m/s. Einstein's theory of relativity
 explains this speed by a phenomenon known as the speed at
 the end of time. In other words, this speed is
-2025-02-09 19:12:11,377 - INFO - Round 13 of 20.
-2025-02-09 19:12:12,024 - INFO - Generated 91 tokens in 0.65 seconds (140.72 tokens/sec)
-2025-02-09 19:12:12,024 - INFO - Output:
+2025-02-10 20:47:25,812 - INFO - Round 12 of 20.
+2025-02-10 20:47:26,444 - INFO - Generated 91 tokens in 0.63 seconds (143.92 tokens/sec)
+2025-02-10 20:47:26,445 - INFO - Output:
 Einstein's Theory of Relativity states that the speed of
 light in a vacuum is simply the speed of the electrons in
 that vacuum, since light has a speed. Since the speed of
@@ -383,9 +139,9 @@ a solid, the light from this source has a speed of
 approximately 1/299,792 m/s. Einstein's theory of relativity
 explains this speed by a phenomenon known as the speed at
 the end of time. In other words, this speed is
-2025-02-09 19:12:12,025 - INFO - Round 14 of 20.
-2025-02-09 19:12:12,670 - INFO - Generated 91 tokens in 0.65 seconds (140.96 tokens/sec)
-2025-02-09 19:12:12,671 - INFO - Output:
+2025-02-10 20:47:26,445 - INFO - Round 13 of 20.
+2025-02-10 20:47:27,080 - INFO - Generated 91 tokens in 0.63 seconds (143.34 tokens/sec)
+2025-02-10 20:47:27,080 - INFO - Output:
 Einstein's Theory of Relativity states that the speed of
 light in a vacuum is simply the speed of the electrons in
 that vacuum, since light has a speed. Since the speed of
@@ -394,9 +150,9 @@ a solid, the light from this source has a speed of
 approximately 1/299,792 m/s. Einstein's theory of relativity
 explains this speed by a phenomenon known as the speed at
 the end of time. In other words, this speed is
-2025-02-09 19:12:12,671 - INFO - Round 15 of 20.
-2025-02-09 19:12:13,316 - INFO - Generated 91 tokens in 0.65 seconds (141.06 tokens/sec)
-2025-02-09 19:12:13,317 - INFO - Output:
+2025-02-10 20:47:27,081 - INFO - Round 14 of 20.
+2025-02-10 20:47:27,716 - INFO - Generated 91 tokens in 0.63 seconds (143.34 tokens/sec)
+2025-02-10 20:47:27,716 - INFO - Output:
 Einstein's Theory of Relativity states that the speed of
 light in a vacuum is simply the speed of the electrons in
 that vacuum, since light has a speed. Since the speed of
@@ -405,9 +161,9 @@ a solid, the light from this source has a speed of
 approximately 1/299,792 m/s. Einstein's theory of relativity
 explains this speed by a phenomenon known as the speed at
 the end of time. In other words, this speed is
-2025-02-09 19:12:13,317 - INFO - Round 16 of 20.
-2025-02-09 19:12:13,962 - INFO - Generated 91 tokens in 0.64 seconds (141.18 tokens/sec)
-2025-02-09 19:12:13,962 - INFO - Output:
+2025-02-10 20:47:27,716 - INFO - Round 15 of 20.
+2025-02-10 20:47:28,350 - INFO - Generated 91 tokens in 0.63 seconds (143.65 tokens/sec)
+2025-02-10 20:47:28,350 - INFO - Output:
 Einstein's Theory of Relativity states that the speed of
 light in a vacuum is simply the speed of the electrons in
 that vacuum, since light has a speed. Since the speed of
@@ -416,9 +172,9 @@ a solid, the light from this source has a speed of
 approximately 1/299,792 m/s. Einstein's theory of relativity
 explains this speed by a phenomenon known as the speed at
 the end of time. In other words, this speed is
-2025-02-09 19:12:13,962 - INFO - Round 17 of 20.
-2025-02-09 19:12:14,609 - INFO - Generated 91 tokens in 0.65 seconds (140.79 tokens/sec)
-2025-02-09 19:12:14,609 - INFO - Output:
+2025-02-10 20:47:28,350 - INFO - Round 16 of 20.
+2025-02-10 20:47:28,984 - INFO - Generated 91 tokens in 0.63 seconds (143.73 tokens/sec)
+2025-02-10 20:47:28,984 - INFO - Output:
 Einstein's Theory of Relativity states that the speed of
 light in a vacuum is simply the speed of the electrons in
 that vacuum, since light has a speed. Since the speed of
@@ -427,9 +183,9 @@ a solid, the light from this source has a speed of
 approximately 1/299,792 m/s. Einstein's theory of relativity
 explains this speed by a phenomenon known as the speed at
 the end of time. In other words, this speed is
-2025-02-09 19:12:14,609 - INFO - Round 18 of 20.
-2025-02-09 19:12:15,262 - INFO - Generated 91 tokens in 0.65 seconds (139.51 tokens/sec)
-2025-02-09 19:12:15,262 - INFO - Output:
+2025-02-10 20:47:28,984 - INFO - Round 17 of 20.
+2025-02-10 20:47:29,617 - INFO - Generated 91 tokens in 0.63 seconds (143.79 tokens/sec)
+2025-02-10 20:47:29,618 - INFO - Output:
 Einstein's Theory of Relativity states that the speed of
 light in a vacuum is simply the speed of the electrons in
 that vacuum, since light has a speed. Since the speed of
@@ -438,9 +194,9 @@ a solid, the light from this source has a speed of
 approximately 1/299,792 m/s. Einstein's theory of relativity
 explains this speed by a phenomenon known as the speed at
 the end of time. In other words, this speed is
-2025-02-09 19:12:15,262 - INFO - Round 19 of 20.
-2025-02-09 19:12:15,916 - INFO - Generated 91 tokens in 0.65 seconds (139.13 tokens/sec)
-2025-02-09 19:12:15,917 - INFO - Output:
+2025-02-10 20:47:29,618 - INFO - Round 18 of 20.
+2025-02-10 20:47:30,260 - INFO - Generated 91 tokens in 0.64 seconds (141.71 tokens/sec)
+2025-02-10 20:47:30,261 - INFO - Output:
 Einstein's Theory of Relativity states that the speed of
 light in a vacuum is simply the speed of the electrons in
 that vacuum, since light has a speed. Since the speed of
@@ -449,9 +205,9 @@ a solid, the light from this source has a speed of
 approximately 1/299,792 m/s. Einstein's theory of relativity
 explains this speed by a phenomenon known as the speed at
 the end of time. In other words, this speed is
-2025-02-09 19:12:15,917 - INFO - Round 20 of 20.
-2025-02-09 19:12:16,563 - INFO - Generated 91 tokens in 0.65 seconds (140.83 tokens/sec)
-2025-02-09 19:12:16,563 - INFO - Output:
+2025-02-10 20:47:30,261 - INFO - Round 19 of 20.
+2025-02-10 20:47:30,896 - INFO - Generated 91 tokens in 0.63 seconds (143.36 tokens/sec)
+2025-02-10 20:47:30,896 - INFO - Output:
 Einstein's Theory of Relativity states that the speed of
 light in a vacuum is simply the speed of the electrons in
 that vacuum, since light has a speed. Since the speed of
@@ -460,273 +216,38 @@ a solid, the light from this source has a speed of
 approximately 1/299,792 m/s. Einstein's theory of relativity
 explains this speed by a phenomenon known as the speed at
 the end of time. In other words, this speed is
-2025-02-09 19:12:16,564 - INFO - Run details saved to gpt2-rates-2025-02-09-19-12-16-563946-torch-compile-py313t.json.
+2025-02-10 20:47:30,896 - INFO - Round 20 of 20.
+2025-02-10 20:47:31,530 - INFO - Generated 91 tokens in 0.63 seconds (143.55 tokens/sec)
+2025-02-10 20:47:31,531 - INFO - Output:
+Einstein's Theory of Relativity states that the speed of
+light in a vacuum is simply the speed of the electrons in
+that vacuum, since light has a speed. Since the speed of
+light in a vacuum is equal to the speed of the electrons in
+a solid, the light from this source has a speed of
+approximately 1/299,792 m/s. Einstein's theory of relativity
+explains this speed by a phenomenon known as the speed at
+the end of time. In other words, this speed is
+2025-02-10 20:47:31,531 - INFO - Run details saved to gpt2-rates-2025-02-10-20-47-31-531204-py313t.json.
 torch.__init__: Ignoring unsupported torch.compile() with no GIL unsupported
 torch._dynamo.eval_frame: Ignoring unsupported torch.compile() with no GIL unsupported
 
-real	0m19.993s
-user	0m23.115s
-sys	0m1.444s
-Exception ignored in: <_io.BufferedWriter name=65>
+real	0m19.736s
+user	0m22.944s
+sys	0m1.382s
+Exception ignored in: <_io.BufferedWriter name=41>
 BrokenPipeError: [Errno 32] Broken pipe
-2025-02-09 19:12:19,916 - INFO - Loaded /mnt/raid1/trent/src/parallelopedia/data/model_19072.pt checkpoint in 0.503 seconds.
-2025-02-09 19:12:19,941 - INFO - Initialized GPT model in 0.025 seconds.
-2025-02-09 19:12:20,169 - INFO - Loaded model weights in 0.228 seconds.
-2025-02-09 19:12:20,567 - INFO - Created GPT model in 0.651 seconds.
-2025-02-09 19:12:20,653 - INFO - Moved model to cuda:3 in 0.086 seconds.
-2025-02-09 19:12:20,653 - INFO - Loaded model from step 19072, val_loss 3.0519702434539795
-2025-02-09 19:12:20,653 - INFO - Loaded gpt2 on cuda:3 in 1.240 seconds.
-2025-02-09 19:12:21,817 - INFO - torch.compiled model in 1.163 seconds.
-2025-02-09 19:12:21,817 - INFO - Round 1 of 20.
-2025-02-09 19:12:22,649 - INFO - Generated 91 tokens in 0.83 seconds (109.50 tokens/sec)
-2025-02-09 19:12:22,649 - INFO - Output:
-Einstein's Theory of Relativity states that the speed of
-light in a vacuum is simply the speed of the electrons in
-that vacuum, since light has a speed. Since the speed of
-light in a vacuum is equal to the speed of the electrons in
-a solid, the light from this source has a speed of
-approximately 1/299,792 m/s. Einstein's theory of relativity
-explains this speed by a phenomenon known as the speed at
-the end of time. In other words, this speed is
-2025-02-09 19:12:22,649 - INFO - Round 2 of 20.
-2025-02-09 19:12:23,290 - INFO - Generated 91 tokens in 0.64 seconds (141.99 tokens/sec)
-2025-02-09 19:12:23,291 - INFO - Output:
-Einstein's Theory of Relativity states that the speed of
-light in a vacuum is simply the speed of the electrons in
-that vacuum, since light has a speed. Since the speed of
-light in a vacuum is equal to the speed of the electrons in
-a solid, the light from this source has a speed of
-approximately 1/299,792 m/s. Einstein's theory of relativity
-explains this speed by a phenomenon known as the speed at
-the end of time. In other words, this speed is
-2025-02-09 19:12:23,291 - INFO - Round 3 of 20.
-2025-02-09 19:12:23,932 - INFO - Generated 91 tokens in 0.64 seconds (141.86 tokens/sec)
-2025-02-09 19:12:23,933 - INFO - Output:
-Einstein's Theory of Relativity states that the speed of
-light in a vacuum is simply the speed of the electrons in
-that vacuum, since light has a speed. Since the speed of
-light in a vacuum is equal to the speed of the electrons in
-a solid, the light from this source has a speed of
-approximately 1/299,792 m/s. Einstein's theory of relativity
-explains this speed by a phenomenon known as the speed at
-the end of time. In other words, this speed is
-2025-02-09 19:12:23,933 - INFO - Round 4 of 20.
-2025-02-09 19:12:24,579 - INFO - Generated 91 tokens in 0.65 seconds (140.77 tokens/sec)
-2025-02-09 19:12:24,580 - INFO - Output:
-Einstein's Theory of Relativity states that the speed of
-light in a vacuum is simply the speed of the electrons in
-that vacuum, since light has a speed. Since the speed of
-light in a vacuum is equal to the speed of the electrons in
-a solid, the light from this source has a speed of
-approximately 1/299,792 m/s. Einstein's theory of relativity
-explains this speed by a phenomenon known as the speed at
-the end of time. In other words, this speed is
-2025-02-09 19:12:24,580 - INFO - Round 5 of 20.
-2025-02-09 19:12:25,254 - INFO - Generated 91 tokens in 0.67 seconds (135.03 tokens/sec)
-2025-02-09 19:12:25,254 - INFO - Output:
-Einstein's Theory of Relativity states that the speed of
-light in a vacuum is simply the speed of the electrons in
-that vacuum, since light has a speed. Since the speed of
-light in a vacuum is equal to the speed of the electrons in
-a solid, the light from this source has a speed of
-approximately 1/299,792 m/s. Einstein's theory of relativity
-explains this speed by a phenomenon known as the speed at
-the end of time. In other words, this speed is
-2025-02-09 19:12:25,255 - INFO - Round 6 of 20.
-2025-02-09 19:12:25,881 - INFO - Generated 91 tokens in 0.63 seconds (145.28 tokens/sec)
-2025-02-09 19:12:25,881 - INFO - Output:
-Einstein's Theory of Relativity states that the speed of
-light in a vacuum is simply the speed of the electrons in
-that vacuum, since light has a speed. Since the speed of
-light in a vacuum is equal to the speed of the electrons in
-a solid, the light from this source has a speed of
-approximately 1/299,792 m/s. Einstein's theory of relativity
-explains this speed by a phenomenon known as the speed at
-the end of time. In other words, this speed is
-2025-02-09 19:12:25,882 - INFO - Round 7 of 20.
-2025-02-09 19:12:26,509 - INFO - Generated 91 tokens in 0.63 seconds (144.99 tokens/sec)
-2025-02-09 19:12:26,510 - INFO - Output:
-Einstein's Theory of Relativity states that the speed of
-light in a vacuum is simply the speed of the electrons in
-that vacuum, since light has a speed. Since the speed of
-light in a vacuum is equal to the speed of the electrons in
-a solid, the light from this source has a speed of
-approximately 1/299,792 m/s. Einstein's theory of relativity
-explains this speed by a phenomenon known as the speed at
-the end of time. In other words, this speed is
-2025-02-09 19:12:26,510 - INFO - Round 8 of 20.
-2025-02-09 19:12:27,139 - INFO - Generated 91 tokens in 0.63 seconds (144.64 tokens/sec)
-2025-02-09 19:12:27,140 - INFO - Output:
-Einstein's Theory of Relativity states that the speed of
-light in a vacuum is simply the speed of the electrons in
-that vacuum, since light has a speed. Since the speed of
-light in a vacuum is equal to the speed of the electrons in
-a solid, the light from this source has a speed of
-approximately 1/299,792 m/s. Einstein's theory of relativity
-explains this speed by a phenomenon known as the speed at
-the end of time. In other words, this speed is
-2025-02-09 19:12:27,140 - INFO - Round 9 of 20.
-2025-02-09 19:12:27,765 - INFO - Generated 91 tokens in 0.63 seconds (145.59 tokens/sec)
-2025-02-09 19:12:27,765 - INFO - Output:
-Einstein's Theory of Relativity states that the speed of
-light in a vacuum is simply the speed of the electrons in
-that vacuum, since light has a speed. Since the speed of
-light in a vacuum is equal to the speed of the electrons in
-a solid, the light from this source has a speed of
-approximately 1/299,792 m/s. Einstein's theory of relativity
-explains this speed by a phenomenon known as the speed at
-the end of time. In other words, this speed is
-2025-02-09 19:12:27,765 - INFO - Round 10 of 20.
-2025-02-09 19:12:28,388 - INFO - Generated 91 tokens in 0.62 seconds (146.11 tokens/sec)
-2025-02-09 19:12:28,389 - INFO - Output:
-Einstein's Theory of Relativity states that the speed of
-light in a vacuum is simply the speed of the electrons in
-that vacuum, since light has a speed. Since the speed of
-light in a vacuum is equal to the speed of the electrons in
-a solid, the light from this source has a speed of
-approximately 1/299,792 m/s. Einstein's theory of relativity
-explains this speed by a phenomenon known as the speed at
-the end of time. In other words, this speed is
-2025-02-09 19:12:28,389 - INFO - Round 11 of 20.
-2025-02-09 19:12:29,015 - INFO - Generated 91 tokens in 0.63 seconds (145.36 tokens/sec)
-2025-02-09 19:12:29,015 - INFO - Output:
-Einstein's Theory of Relativity states that the speed of
-light in a vacuum is simply the speed of the electrons in
-that vacuum, since light has a speed. Since the speed of
-light in a vacuum is equal to the speed of the electrons in
-a solid, the light from this source has a speed of
-approximately 1/299,792 m/s. Einstein's theory of relativity
-explains this speed by a phenomenon known as the speed at
-the end of time. In other words, this speed is
-2025-02-09 19:12:29,015 - INFO - Round 12 of 20.
-2025-02-09 19:12:29,640 - INFO - Generated 91 tokens in 0.62 seconds (145.61 tokens/sec)
-2025-02-09 19:12:29,641 - INFO - Output:
-Einstein's Theory of Relativity states that the speed of
-light in a vacuum is simply the speed of the electrons in
-that vacuum, since light has a speed. Since the speed of
-light in a vacuum is equal to the speed of the electrons in
-a solid, the light from this source has a speed of
-approximately 1/299,792 m/s. Einstein's theory of relativity
-explains this speed by a phenomenon known as the speed at
-the end of time. In other words, this speed is
-2025-02-09 19:12:29,641 - INFO - Round 13 of 20.
-2025-02-09 19:12:30,268 - INFO - Generated 91 tokens in 0.63 seconds (145.05 tokens/sec)
-2025-02-09 19:12:30,269 - INFO - Output:
-Einstein's Theory of Relativity states that the speed of
-light in a vacuum is simply the speed of the electrons in
-that vacuum, since light has a speed. Since the speed of
-light in a vacuum is equal to the speed of the electrons in
-a solid, the light from this source has a speed of
-approximately 1/299,792 m/s. Einstein's theory of relativity
-explains this speed by a phenomenon known as the speed at
-the end of time. In other words, this speed is
-2025-02-09 19:12:30,269 - INFO - Round 14 of 20.
-2025-02-09 19:12:30,896 - INFO - Generated 91 tokens in 0.63 seconds (145.13 tokens/sec)
-2025-02-09 19:12:30,896 - INFO - Output:
-Einstein's Theory of Relativity states that the speed of
-light in a vacuum is simply the speed of the electrons in
-that vacuum, since light has a speed. Since the speed of
-light in a vacuum is equal to the speed of the electrons in
-a solid, the light from this source has a speed of
-approximately 1/299,792 m/s. Einstein's theory of relativity
-explains this speed by a phenomenon known as the speed at
-the end of time. In other words, this speed is
-2025-02-09 19:12:30,896 - INFO - Round 15 of 20.
-2025-02-09 19:12:31,524 - INFO - Generated 91 tokens in 0.63 seconds (144.99 tokens/sec)
-2025-02-09 19:12:31,525 - INFO - Output:
-Einstein's Theory of Relativity states that the speed of
-light in a vacuum is simply the speed of the electrons in
-that vacuum, since light has a speed. Since the speed of
-light in a vacuum is equal to the speed of the electrons in
-a solid, the light from this source has a speed of
-approximately 1/299,792 m/s. Einstein's theory of relativity
-explains this speed by a phenomenon known as the speed at
-the end of time. In other words, this speed is
-2025-02-09 19:12:31,525 - INFO - Round 16 of 20.
-2025-02-09 19:12:32,151 - INFO - Generated 91 tokens in 0.63 seconds (145.40 tokens/sec)
-2025-02-09 19:12:32,151 - INFO - Output:
-Einstein's Theory of Relativity states that the speed of
-light in a vacuum is simply the speed of the electrons in
-that vacuum, since light has a speed. Since the speed of
-light in a vacuum is equal to the speed of the electrons in
-a solid, the light from this source has a speed of
-approximately 1/299,792 m/s. Einstein's theory of relativity
-explains this speed by a phenomenon known as the speed at
-the end of time. In other words, this speed is
-2025-02-09 19:12:32,151 - INFO - Round 17 of 20.
-2025-02-09 19:12:32,776 - INFO - Generated 91 tokens in 0.62 seconds (145.68 tokens/sec)
-2025-02-09 19:12:32,776 - INFO - Output:
-Einstein's Theory of Relativity states that the speed of
-light in a vacuum is simply the speed of the electrons in
-that vacuum, since light has a speed. Since the speed of
-light in a vacuum is equal to the speed of the electrons in
-a solid, the light from this source has a speed of
-approximately 1/299,792 m/s. Einstein's theory of relativity
-explains this speed by a phenomenon known as the speed at
-the end of time. In other words, this speed is
-2025-02-09 19:12:32,776 - INFO - Round 18 of 20.
-2025-02-09 19:12:33,405 - INFO - Generated 91 tokens in 0.63 seconds (144.92 tokens/sec)
-2025-02-09 19:12:33,405 - INFO - Output:
-Einstein's Theory of Relativity states that the speed of
-light in a vacuum is simply the speed of the electrons in
-that vacuum, since light has a speed. Since the speed of
-light in a vacuum is equal to the speed of the electrons in
-a solid, the light from this source has a speed of
-approximately 1/299,792 m/s. Einstein's theory of relativity
-explains this speed by a phenomenon known as the speed at
-the end of time. In other words, this speed is
-2025-02-09 19:12:33,405 - INFO - Round 19 of 20.
-2025-02-09 19:12:34,030 - INFO - Generated 91 tokens in 0.62 seconds (145.60 tokens/sec)
-2025-02-09 19:12:34,031 - INFO - Output:
-Einstein's Theory of Relativity states that the speed of
-light in a vacuum is simply the speed of the electrons in
-that vacuum, since light has a speed. Since the speed of
-light in a vacuum is equal to the speed of the electrons in
-a solid, the light from this source has a speed of
-approximately 1/299,792 m/s. Einstein's theory of relativity
-explains this speed by a phenomenon known as the speed at
-the end of time. In other words, this speed is
-2025-02-09 19:12:34,031 - INFO - Round 20 of 20.
-2025-02-09 19:12:34,659 - INFO - Generated 91 tokens in 0.63 seconds (144.86 tokens/sec)
-2025-02-09 19:12:34,659 - INFO - Output:
-Einstein's Theory of Relativity states that the speed of
-light in a vacuum is simply the speed of the electrons in
-that vacuum, since light has a speed. Since the speed of
-light in a vacuum is equal to the speed of the electrons in
-a solid, the light from this source has a speed of
-approximately 1/299,792 m/s. Einstein's theory of relativity
-explains this speed by a phenomenon known as the speed at
-the end of time. In other words, this speed is
-2025-02-09 19:12:34,660 - INFO - Run details saved to gpt2-rates-2025-02-09-19-12-34-659897-torch-compile-fullgraph-py313t.json.
-torch.__init__: Ignoring unsupported torch.compile() with no GIL unsupported
-torch._dynamo.eval_frame: Ignoring unsupported torch.compile() with no GIL unsupported
-
-real	0m17.974s
-user	0m21.532s
-sys	0m1.029s
-2025-02-09 19:12:37,866 - INFO - Loaded /mnt/raid1/trent/src/parallelopedia/data/model_19072.pt checkpoint in 0.486 seconds.
-2025-02-09 19:12:37,896 - INFO - Initialized GPT model in 0.030 seconds.
-2025-02-09 19:12:38,125 - INFO - Loaded model weights in 0.228 seconds.
-2025-02-09 19:12:38,516 - INFO - Created GPT model in 0.649 seconds.
-2025-02-09 19:12:38,602 - INFO - Moved model to cuda:3 in 0.086 seconds.
-2025-02-09 19:12:38,602 - INFO - Loaded model from step 19072, val_loss 3.0519702434539795
-2025-02-09 19:12:38,603 - INFO - Loaded gpt2 on cuda:3 in 1.222 seconds.
-2025-02-09 19:12:41,471 - INFO - torch.compiled model in 2.868 seconds.
-2025-02-09 19:12:41,471 - INFO - Round 1 of 20.
-2025-02-09 19:12:42,281 - INFO - Generated 91 tokens in 0.81 seconds (112.44 tokens/sec)
-2025-02-09 19:12:42,282 - INFO - Output:
-Einstein's Theory of Relativity states that the speed of
-light in a vacuum is simply the speed of the electrons in
-that vacuum, since light has a speed. Since the speed of
-light in a vacuum is equal to the speed of the electrons in
-a solid, the light from this source has a speed of
-approximately 1/299,792 m/s. Einstein's theory of relativity
-explains this speed by a phenomenon known as the speed at
-the end of time. In other words, this speed is
-2025-02-09 19:12:42,282 - INFO - Round 2 of 20.
+2025-02-10 20:47:37,663 - INFO - Loaded /mnt/raid1/trent/src/parallelopedia/data/model_19072.pt checkpoint in 0.484 seconds.
+2025-02-10 20:47:37,670 - INFO - Initialized GPT model in 0.006 seconds.
+2025-02-10 20:47:37,896 - INFO - Loaded model weights in 0.226 seconds.
 <frozen importlib._bootstrap>:488: RuntimeWarning: The global interpreter lock (GIL) has been enabled to load module 'triton._C.libtriton', which has not declared that it can run safely without the GIL. To override this behavior and keep the GIL disabled (at your own risk), run with PYTHON_GIL=0 or -Xgil=0.
-2025-02-09 19:12:42,927 - INFO - Generated 91 tokens in 0.64 seconds (141.12 tokens/sec)
-2025-02-09 19:12:42,927 - INFO - Output:
+2025-02-10 20:47:38,263 - INFO - Created GPT model in 0.600 seconds.
+2025-02-10 20:47:38,347 - INFO - Moved model to cuda:3 in 0.083 seconds.
+2025-02-10 20:47:38,347 - INFO - Loaded model from step 19072, val_loss 3.0519702434539795
+2025-02-10 20:47:38,347 - INFO - Loaded gpt2 on cuda:3 in 1.168 seconds.
+2025-02-10 20:47:38,349 - INFO - torch.compiled model in 0.002 seconds.
+2025-02-10 20:47:38,349 - INFO - Round 1 of 20.
+2025-02-10 20:47:39,174 - INFO - Generated 91 tokens in 0.82 seconds (110.47 tokens/sec)
+2025-02-10 20:47:39,174 - INFO - Output:
 Einstein's Theory of Relativity states that the speed of
 light in a vacuum is simply the speed of the electrons in
 that vacuum, since light has a speed. Since the speed of
@@ -735,9 +256,9 @@ a solid, the light from this source has a speed of
 approximately 1/299,792 m/s. Einstein's theory of relativity
 explains this speed by a phenomenon known as the speed at
 the end of time. In other words, this speed is
-2025-02-09 19:12:42,927 - INFO - Round 3 of 20.
-2025-02-09 19:12:43,564 - INFO - Generated 91 tokens in 0.64 seconds (143.01 tokens/sec)
-2025-02-09 19:12:43,564 - INFO - Output:
+2025-02-10 20:47:39,174 - INFO - Round 2 of 20.
+2025-02-10 20:47:39,828 - INFO - Generated 91 tokens in 0.65 seconds (139.24 tokens/sec)
+2025-02-10 20:47:39,829 - INFO - Output:
 Einstein's Theory of Relativity states that the speed of
 light in a vacuum is simply the speed of the electrons in
 that vacuum, since light has a speed. Since the speed of
@@ -746,9 +267,9 @@ a solid, the light from this source has a speed of
 approximately 1/299,792 m/s. Einstein's theory of relativity
 explains this speed by a phenomenon known as the speed at
 the end of time. In other words, this speed is
-2025-02-09 19:12:43,564 - INFO - Round 4 of 20.
-2025-02-09 19:12:44,220 - INFO - Generated 91 tokens in 0.66 seconds (138.89 tokens/sec)
-2025-02-09 19:12:44,220 - INFO - Output:
+2025-02-10 20:47:39,829 - INFO - Round 3 of 20.
+2025-02-10 20:47:40,483 - INFO - Generated 91 tokens in 0.65 seconds (139.04 tokens/sec)
+2025-02-10 20:47:40,484 - INFO - Output:
 Einstein's Theory of Relativity states that the speed of
 light in a vacuum is simply the speed of the electrons in
 that vacuum, since light has a speed. Since the speed of
@@ -757,9 +278,9 @@ a solid, the light from this source has a speed of
 approximately 1/299,792 m/s. Einstein's theory of relativity
 explains this speed by a phenomenon known as the speed at
 the end of time. In other words, this speed is
-2025-02-09 19:12:44,220 - INFO - Round 5 of 20.
-2025-02-09 19:12:44,860 - INFO - Generated 91 tokens in 0.64 seconds (142.18 tokens/sec)
-2025-02-09 19:12:44,861 - INFO - Output:
+2025-02-10 20:47:40,484 - INFO - Round 4 of 20.
+2025-02-10 20:47:41,138 - INFO - Generated 91 tokens in 0.65 seconds (139.23 tokens/sec)
+2025-02-10 20:47:41,138 - INFO - Output:
 Einstein's Theory of Relativity states that the speed of
 light in a vacuum is simply the speed of the electrons in
 that vacuum, since light has a speed. Since the speed of
@@ -768,9 +289,9 @@ a solid, the light from this source has a speed of
 approximately 1/299,792 m/s. Einstein's theory of relativity
 explains this speed by a phenomenon known as the speed at
 the end of time. In other words, this speed is
-2025-02-09 19:12:44,861 - INFO - Round 6 of 20.
-2025-02-09 19:12:45,492 - INFO - Generated 91 tokens in 0.63 seconds (144.28 tokens/sec)
-2025-02-09 19:12:45,492 - INFO - Output:
+2025-02-10 20:47:41,138 - INFO - Round 5 of 20.
+2025-02-10 20:47:41,791 - INFO - Generated 91 tokens in 0.65 seconds (139.47 tokens/sec)
+2025-02-10 20:47:41,791 - INFO - Output:
 Einstein's Theory of Relativity states that the speed of
 light in a vacuum is simply the speed of the electrons in
 that vacuum, since light has a speed. Since the speed of
@@ -779,9 +300,9 @@ a solid, the light from this source has a speed of
 approximately 1/299,792 m/s. Einstein's theory of relativity
 explains this speed by a phenomenon known as the speed at
 the end of time. In other words, this speed is
-2025-02-09 19:12:45,492 - INFO - Round 7 of 20.
-2025-02-09 19:12:46,117 - INFO - Generated 91 tokens in 0.62 seconds (145.78 tokens/sec)
-2025-02-09 19:12:46,117 - INFO - Output:
+2025-02-10 20:47:41,791 - INFO - Round 6 of 20.
+2025-02-10 20:47:42,445 - INFO - Generated 91 tokens in 0.65 seconds (139.29 tokens/sec)
+2025-02-10 20:47:42,445 - INFO - Output:
 Einstein's Theory of Relativity states that the speed of
 light in a vacuum is simply the speed of the electrons in
 that vacuum, since light has a speed. Since the speed of
@@ -790,9 +311,9 @@ a solid, the light from this source has a speed of
 approximately 1/299,792 m/s. Einstein's theory of relativity
 explains this speed by a phenomenon known as the speed at
 the end of time. In other words, this speed is
-2025-02-09 19:12:46,117 - INFO - Round 8 of 20.
-2025-02-09 19:12:46,740 - INFO - Generated 91 tokens in 0.62 seconds (146.17 tokens/sec)
-2025-02-09 19:12:46,740 - INFO - Output:
+2025-02-10 20:47:42,445 - INFO - Round 7 of 20.
+2025-02-10 20:47:43,099 - INFO - Generated 91 tokens in 0.65 seconds (139.09 tokens/sec)
+2025-02-10 20:47:43,100 - INFO - Output:
 Einstein's Theory of Relativity states that the speed of
 light in a vacuum is simply the speed of the electrons in
 that vacuum, since light has a speed. Since the speed of
@@ -801,9 +322,9 @@ a solid, the light from this source has a speed of
 approximately 1/299,792 m/s. Einstein's theory of relativity
 explains this speed by a phenomenon known as the speed at
 the end of time. In other words, this speed is
-2025-02-09 19:12:46,740 - INFO - Round 9 of 20.
-2025-02-09 19:12:47,394 - INFO - Generated 91 tokens in 0.65 seconds (139.30 tokens/sec)
-2025-02-09 19:12:47,394 - INFO - Output:
+2025-02-10 20:47:43,100 - INFO - Round 8 of 20.
+2025-02-10 20:47:43,755 - INFO - Generated 91 tokens in 0.66 seconds (138.85 tokens/sec)
+2025-02-10 20:47:43,756 - INFO - Output:
 Einstein's Theory of Relativity states that the speed of
 light in a vacuum is simply the speed of the electrons in
 that vacuum, since light has a speed. Since the speed of
@@ -812,9 +333,9 @@ a solid, the light from this source has a speed of
 approximately 1/299,792 m/s. Einstein's theory of relativity
 explains this speed by a phenomenon known as the speed at
 the end of time. In other words, this speed is
-2025-02-09 19:12:47,394 - INFO - Round 10 of 20.
-2025-02-09 19:12:48,077 - INFO - Generated 91 tokens in 0.68 seconds (133.39 tokens/sec)
-2025-02-09 19:12:48,077 - INFO - Output:
+2025-02-10 20:47:43,756 - INFO - Round 9 of 20.
+2025-02-10 20:47:44,409 - INFO - Generated 91 tokens in 0.65 seconds (139.29 tokens/sec)
+2025-02-10 20:47:44,410 - INFO - Output:
 Einstein's Theory of Relativity states that the speed of
 light in a vacuum is simply the speed of the electrons in
 that vacuum, since light has a speed. Since the speed of
@@ -823,9 +344,9 @@ a solid, the light from this source has a speed of
 approximately 1/299,792 m/s. Einstein's theory of relativity
 explains this speed by a phenomenon known as the speed at
 the end of time. In other words, this speed is
-2025-02-09 19:12:48,077 - INFO - Round 11 of 20.
-2025-02-09 19:12:48,729 - INFO - Generated 91 tokens in 0.65 seconds (139.56 tokens/sec)
-2025-02-09 19:12:48,730 - INFO - Output:
+2025-02-10 20:47:44,410 - INFO - Round 10 of 20.
+2025-02-10 20:47:45,063 - INFO - Generated 91 tokens in 0.65 seconds (139.29 tokens/sec)
+2025-02-10 20:47:45,064 - INFO - Output:
 Einstein's Theory of Relativity states that the speed of
 light in a vacuum is simply the speed of the electrons in
 that vacuum, since light has a speed. Since the speed of
@@ -834,9 +355,9 @@ a solid, the light from this source has a speed of
 approximately 1/299,792 m/s. Einstein's theory of relativity
 explains this speed by a phenomenon known as the speed at
 the end of time. In other words, this speed is
-2025-02-09 19:12:48,730 - INFO - Round 12 of 20.
-2025-02-09 19:12:49,372 - INFO - Generated 91 tokens in 0.64 seconds (141.74 tokens/sec)
-2025-02-09 19:12:49,372 - INFO - Output:
+2025-02-10 20:47:45,064 - INFO - Round 11 of 20.
+2025-02-10 20:47:45,718 - INFO - Generated 91 tokens in 0.65 seconds (139.11 tokens/sec)
+2025-02-10 20:47:45,718 - INFO - Output:
 Einstein's Theory of Relativity states that the speed of
 light in a vacuum is simply the speed of the electrons in
 that vacuum, since light has a speed. Since the speed of
@@ -845,9 +366,9 @@ a solid, the light from this source has a speed of
 approximately 1/299,792 m/s. Einstein's theory of relativity
 explains this speed by a phenomenon known as the speed at
 the end of time. In other words, this speed is
-2025-02-09 19:12:49,372 - INFO - Round 13 of 20.
-2025-02-09 19:12:50,014 - INFO - Generated 91 tokens in 0.64 seconds (141.89 tokens/sec)
-2025-02-09 19:12:50,014 - INFO - Output:
+2025-02-10 20:47:45,719 - INFO - Round 12 of 20.
+2025-02-10 20:47:46,371 - INFO - Generated 91 tokens in 0.65 seconds (139.47 tokens/sec)
+2025-02-10 20:47:46,372 - INFO - Output:
 Einstein's Theory of Relativity states that the speed of
 light in a vacuum is simply the speed of the electrons in
 that vacuum, since light has a speed. Since the speed of
@@ -856,9 +377,9 @@ a solid, the light from this source has a speed of
 approximately 1/299,792 m/s. Einstein's theory of relativity
 explains this speed by a phenomenon known as the speed at
 the end of time. In other words, this speed is
-2025-02-09 19:12:50,014 - INFO - Round 14 of 20.
-2025-02-09 19:12:50,656 - INFO - Generated 91 tokens in 0.64 seconds (141.77 tokens/sec)
-2025-02-09 19:12:50,657 - INFO - Output:
+2025-02-10 20:47:46,372 - INFO - Round 13 of 20.
+2025-02-10 20:47:47,046 - INFO - Generated 91 tokens in 0.67 seconds (135.03 tokens/sec)
+2025-02-10 20:47:47,046 - INFO - Output:
 Einstein's Theory of Relativity states that the speed of
 light in a vacuum is simply the speed of the electrons in
 that vacuum, since light has a speed. Since the speed of
@@ -867,9 +388,9 @@ a solid, the light from this source has a speed of
 approximately 1/299,792 m/s. Einstein's theory of relativity
 explains this speed by a phenomenon known as the speed at
 the end of time. In other words, this speed is
-2025-02-09 19:12:50,657 - INFO - Round 15 of 20.
-2025-02-09 19:12:51,297 - INFO - Generated 91 tokens in 0.64 seconds (142.10 tokens/sec)
-2025-02-09 19:12:51,298 - INFO - Output:
+2025-02-10 20:47:47,046 - INFO - Round 14 of 20.
+2025-02-10 20:47:47,692 - INFO - Generated 91 tokens in 0.65 seconds (140.90 tokens/sec)
+2025-02-10 20:47:47,693 - INFO - Output:
 Einstein's Theory of Relativity states that the speed of
 light in a vacuum is simply the speed of the electrons in
 that vacuum, since light has a speed. Since the speed of
@@ -878,9 +399,9 @@ a solid, the light from this source has a speed of
 approximately 1/299,792 m/s. Einstein's theory of relativity
 explains this speed by a phenomenon known as the speed at
 the end of time. In other words, this speed is
-2025-02-09 19:12:51,298 - INFO - Round 16 of 20.
-2025-02-09 19:12:51,938 - INFO - Generated 91 tokens in 0.64 seconds (142.22 tokens/sec)
-2025-02-09 19:12:51,938 - INFO - Output:
+2025-02-10 20:47:47,693 - INFO - Round 15 of 20.
+2025-02-10 20:47:48,339 - INFO - Generated 91 tokens in 0.65 seconds (140.84 tokens/sec)
+2025-02-10 20:47:48,339 - INFO - Output:
 Einstein's Theory of Relativity states that the speed of
 light in a vacuum is simply the speed of the electrons in
 that vacuum, since light has a speed. Since the speed of
@@ -889,9 +410,9 @@ a solid, the light from this source has a speed of
 approximately 1/299,792 m/s. Einstein's theory of relativity
 explains this speed by a phenomenon known as the speed at
 the end of time. In other words, this speed is
-2025-02-09 19:12:51,938 - INFO - Round 17 of 20.
-2025-02-09 19:12:52,581 - INFO - Generated 91 tokens in 0.64 seconds (141.60 tokens/sec)
-2025-02-09 19:12:52,582 - INFO - Output:
+2025-02-10 20:47:48,340 - INFO - Round 16 of 20.
+2025-02-10 20:47:48,986 - INFO - Generated 91 tokens in 0.65 seconds (140.90 tokens/sec)
+2025-02-10 20:47:48,986 - INFO - Output:
 Einstein's Theory of Relativity states that the speed of
 light in a vacuum is simply the speed of the electrons in
 that vacuum, since light has a speed. Since the speed of
@@ -900,9 +421,9 @@ a solid, the light from this source has a speed of
 approximately 1/299,792 m/s. Einstein's theory of relativity
 explains this speed by a phenomenon known as the speed at
 the end of time. In other words, this speed is
-2025-02-09 19:12:52,582 - INFO - Round 18 of 20.
-2025-02-09 19:12:53,224 - INFO - Generated 91 tokens in 0.64 seconds (141.73 tokens/sec)
-2025-02-09 19:12:53,224 - INFO - Output:
+2025-02-10 20:47:48,986 - INFO - Round 17 of 20.
+2025-02-10 20:47:49,634 - INFO - Generated 91 tokens in 0.65 seconds (140.40 tokens/sec)
+2025-02-10 20:47:49,635 - INFO - Output:
 Einstein's Theory of Relativity states that the speed of
 light in a vacuum is simply the speed of the electrons in
 that vacuum, since light has a speed. Since the speed of
@@ -911,9 +432,9 @@ a solid, the light from this source has a speed of
 approximately 1/299,792 m/s. Einstein's theory of relativity
 explains this speed by a phenomenon known as the speed at
 the end of time. In other words, this speed is
-2025-02-09 19:12:53,225 - INFO - Round 19 of 20.
-2025-02-09 19:12:53,866 - INFO - Generated 91 tokens in 0.64 seconds (141.87 tokens/sec)
-2025-02-09 19:12:53,867 - INFO - Output:
+2025-02-10 20:47:49,635 - INFO - Round 18 of 20.
+2025-02-10 20:47:50,282 - INFO - Generated 91 tokens in 0.65 seconds (140.63 tokens/sec)
+2025-02-10 20:47:50,283 - INFO - Output:
 Einstein's Theory of Relativity states that the speed of
 light in a vacuum is simply the speed of the electrons in
 that vacuum, since light has a speed. Since the speed of
@@ -922,9 +443,9 @@ a solid, the light from this source has a speed of
 approximately 1/299,792 m/s. Einstein's theory of relativity
 explains this speed by a phenomenon known as the speed at
 the end of time. In other words, this speed is
-2025-02-09 19:12:53,867 - INFO - Round 20 of 20.
-2025-02-09 19:12:54,508 - INFO - Generated 91 tokens in 0.64 seconds (142.01 tokens/sec)
-2025-02-09 19:12:54,508 - INFO - Output:
+2025-02-10 20:47:50,283 - INFO - Round 19 of 20.
+2025-02-10 20:47:50,929 - INFO - Generated 91 tokens in 0.65 seconds (140.73 tokens/sec)
+2025-02-10 20:47:50,930 - INFO - Output:
 Einstein's Theory of Relativity states that the speed of
 light in a vacuum is simply the speed of the electrons in
 that vacuum, since light has a speed. Since the speed of
@@ -933,508 +454,40 @@ a solid, the light from this source has a speed of
 approximately 1/299,792 m/s. Einstein's theory of relativity
 explains this speed by a phenomenon known as the speed at
 the end of time. In other words, this speed is
-2025-02-09 19:12:54,509 - INFO - Run details saved to gpt2-rates-2025-02-09-19-12-54-508635-torch-compile-reduce-overhead-py313t.json.
+2025-02-10 20:47:50,930 - INFO - Round 20 of 20.
+2025-02-10 20:47:51,578 - INFO - Generated 91 tokens in 0.65 seconds (140.41 tokens/sec)
+2025-02-10 20:47:51,579 - INFO - Output:
+Einstein's Theory of Relativity states that the speed of
+light in a vacuum is simply the speed of the electrons in
+that vacuum, since light has a speed. Since the speed of
+light in a vacuum is equal to the speed of the electrons in
+a solid, the light from this source has a speed of
+approximately 1/299,792 m/s. Einstein's theory of relativity
+explains this speed by a phenomenon known as the speed at
+the end of time. In other words, this speed is
+2025-02-10 20:47:51,579 - INFO - Run details saved to gpt2-rates-2025-02-10-20-47-51-579116-torch-compile-py313t.json.
+torch.__init__: Ignoring unsupported torch.compile() with no GIL unsupported
+torch._dynamo.eval_frame: Ignoring unsupported torch.compile() with no GIL unsupported
 torch.__init__: Ignoring unsupported torch.compile() with no GIL unsupported
 torch._dynamo.eval_frame: Ignoring unsupported torch.compile() with no GIL unsupported
 
-real	0m20.014s
-user	0m23.117s
-sys	0m1.488s
-Exception ignored in: <_io.BufferedWriter name=65>
+real	0m20.073s
+user	0m23.400s
+sys	0m1.313s
+Exception ignored in: <_io.BufferedWriter name=41>
 BrokenPipeError: [Errno 32] Broken pipe
-2025-02-09 19:12:57,962 - INFO - Loaded /mnt/raid1/trent/src/parallelopedia/data/model_19072.pt checkpoint in 0.527 seconds.
-2025-02-09 19:12:57,992 - INFO - Initialized GPT model in 0.030 seconds.
-2025-02-09 19:12:58,224 - INFO - Loaded model weights in 0.232 seconds.
-2025-02-09 19:12:58,618 - INFO - Created GPT model in 0.655 seconds.
-2025-02-09 19:12:58,705 - INFO - Moved model to cuda:3 in 0.087 seconds.
-2025-02-09 19:12:58,705 - INFO - Loaded model from step 19072, val_loss 3.0519702434539795
-2025-02-09 19:12:58,706 - INFO - Loaded gpt2 on cuda:3 in 1.270 seconds.
-2025-02-09 19:12:59,890 - INFO - torch.compiled model in 1.184 seconds.
-2025-02-09 19:12:59,890 - INFO - Round 1 of 20.
-2025-02-09 19:13:00,724 - INFO - Generated 91 tokens in 0.83 seconds (109.24 tokens/sec)
-2025-02-09 19:13:00,724 - INFO - Output:
-Einstein's Theory of Relativity states that the speed of
-light in a vacuum is simply the speed of the electrons in
-that vacuum, since light has a speed. Since the speed of
-light in a vacuum is equal to the speed of the electrons in
-a solid, the light from this source has a speed of
-approximately 1/299,792 m/s. Einstein's theory of relativity
-explains this speed by a phenomenon known as the speed at
-the end of time. In other words, this speed is
-2025-02-09 19:13:00,724 - INFO - Round 2 of 20.
-2025-02-09 19:13:01,383 - INFO - Generated 91 tokens in 0.66 seconds (138.05 tokens/sec)
-2025-02-09 19:13:01,384 - INFO - Output:
-Einstein's Theory of Relativity states that the speed of
-light in a vacuum is simply the speed of the electrons in
-that vacuum, since light has a speed. Since the speed of
-light in a vacuum is equal to the speed of the electrons in
-a solid, the light from this source has a speed of
-approximately 1/299,792 m/s. Einstein's theory of relativity
-explains this speed by a phenomenon known as the speed at
-the end of time. In other words, this speed is
-2025-02-09 19:13:01,384 - INFO - Round 3 of 20.
-2025-02-09 19:13:02,044 - INFO - Generated 91 tokens in 0.66 seconds (137.89 tokens/sec)
-2025-02-09 19:13:02,044 - INFO - Output:
-Einstein's Theory of Relativity states that the speed of
-light in a vacuum is simply the speed of the electrons in
-that vacuum, since light has a speed. Since the speed of
-light in a vacuum is equal to the speed of the electrons in
-a solid, the light from this source has a speed of
-approximately 1/299,792 m/s. Einstein's theory of relativity
-explains this speed by a phenomenon known as the speed at
-the end of time. In other words, this speed is
-2025-02-09 19:13:02,044 - INFO - Round 4 of 20.
-2025-02-09 19:13:02,704 - INFO - Generated 91 tokens in 0.66 seconds (137.97 tokens/sec)
-2025-02-09 19:13:02,705 - INFO - Output:
-Einstein's Theory of Relativity states that the speed of
-light in a vacuum is simply the speed of the electrons in
-that vacuum, since light has a speed. Since the speed of
-light in a vacuum is equal to the speed of the electrons in
-a solid, the light from this source has a speed of
-approximately 1/299,792 m/s. Einstein's theory of relativity
-explains this speed by a phenomenon known as the speed at
-the end of time. In other words, this speed is
-2025-02-09 19:13:02,705 - INFO - Round 5 of 20.
-2025-02-09 19:13:03,391 - INFO - Generated 91 tokens in 0.69 seconds (132.73 tokens/sec)
-2025-02-09 19:13:03,391 - INFO - Output:
-Einstein's Theory of Relativity states that the speed of
-light in a vacuum is simply the speed of the electrons in
-that vacuum, since light has a speed. Since the speed of
-light in a vacuum is equal to the speed of the electrons in
-a solid, the light from this source has a speed of
-approximately 1/299,792 m/s. Einstein's theory of relativity
-explains this speed by a phenomenon known as the speed at
-the end of time. In other words, this speed is
-2025-02-09 19:13:03,391 - INFO - Round 6 of 20.
-2025-02-09 19:13:04,024 - INFO - Generated 91 tokens in 0.63 seconds (143.70 tokens/sec)
-2025-02-09 19:13:04,025 - INFO - Output:
-Einstein's Theory of Relativity states that the speed of
-light in a vacuum is simply the speed of the electrons in
-that vacuum, since light has a speed. Since the speed of
-light in a vacuum is equal to the speed of the electrons in
-a solid, the light from this source has a speed of
-approximately 1/299,792 m/s. Einstein's theory of relativity
-explains this speed by a phenomenon known as the speed at
-the end of time. In other words, this speed is
-2025-02-09 19:13:04,025 - INFO - Round 7 of 20.
-2025-02-09 19:13:04,658 - INFO - Generated 91 tokens in 0.63 seconds (143.74 tokens/sec)
-2025-02-09 19:13:04,659 - INFO - Output:
-Einstein's Theory of Relativity states that the speed of
-light in a vacuum is simply the speed of the electrons in
-that vacuum, since light has a speed. Since the speed of
-light in a vacuum is equal to the speed of the electrons in
-a solid, the light from this source has a speed of
-approximately 1/299,792 m/s. Einstein's theory of relativity
-explains this speed by a phenomenon known as the speed at
-the end of time. In other words, this speed is
-2025-02-09 19:13:04,659 - INFO - Round 8 of 20.
-2025-02-09 19:13:05,290 - INFO - Generated 91 tokens in 0.63 seconds (144.19 tokens/sec)
-2025-02-09 19:13:05,290 - INFO - Output:
-Einstein's Theory of Relativity states that the speed of
-light in a vacuum is simply the speed of the electrons in
-that vacuum, since light has a speed. Since the speed of
-light in a vacuum is equal to the speed of the electrons in
-a solid, the light from this source has a speed of
-approximately 1/299,792 m/s. Einstein's theory of relativity
-explains this speed by a phenomenon known as the speed at
-the end of time. In other words, this speed is
-2025-02-09 19:13:05,290 - INFO - Round 9 of 20.
-2025-02-09 19:13:05,922 - INFO - Generated 91 tokens in 0.63 seconds (144.04 tokens/sec)
-2025-02-09 19:13:05,923 - INFO - Output:
-Einstein's Theory of Relativity states that the speed of
-light in a vacuum is simply the speed of the electrons in
-that vacuum, since light has a speed. Since the speed of
-light in a vacuum is equal to the speed of the electrons in
-a solid, the light from this source has a speed of
-approximately 1/299,792 m/s. Einstein's theory of relativity
-explains this speed by a phenomenon known as the speed at
-the end of time. In other words, this speed is
-2025-02-09 19:13:05,923 - INFO - Round 10 of 20.
-2025-02-09 19:13:06,555 - INFO - Generated 91 tokens in 0.63 seconds (144.06 tokens/sec)
-2025-02-09 19:13:06,555 - INFO - Output:
-Einstein's Theory of Relativity states that the speed of
-light in a vacuum is simply the speed of the electrons in
-that vacuum, since light has a speed. Since the speed of
-light in a vacuum is equal to the speed of the electrons in
-a solid, the light from this source has a speed of
-approximately 1/299,792 m/s. Einstein's theory of relativity
-explains this speed by a phenomenon known as the speed at
-the end of time. In other words, this speed is
-2025-02-09 19:13:06,555 - INFO - Round 11 of 20.
-2025-02-09 19:13:07,188 - INFO - Generated 91 tokens in 0.63 seconds (143.85 tokens/sec)
-2025-02-09 19:13:07,188 - INFO - Output:
-Einstein's Theory of Relativity states that the speed of
-light in a vacuum is simply the speed of the electrons in
-that vacuum, since light has a speed. Since the speed of
-light in a vacuum is equal to the speed of the electrons in
-a solid, the light from this source has a speed of
-approximately 1/299,792 m/s. Einstein's theory of relativity
-explains this speed by a phenomenon known as the speed at
-the end of time. In other words, this speed is
-2025-02-09 19:13:07,188 - INFO - Round 12 of 20.
-2025-02-09 19:13:07,820 - INFO - Generated 91 tokens in 0.63 seconds (144.17 tokens/sec)
-2025-02-09 19:13:07,820 - INFO - Output:
-Einstein's Theory of Relativity states that the speed of
-light in a vacuum is simply the speed of the electrons in
-that vacuum, since light has a speed. Since the speed of
-light in a vacuum is equal to the speed of the electrons in
-a solid, the light from this source has a speed of
-approximately 1/299,792 m/s. Einstein's theory of relativity
-explains this speed by a phenomenon known as the speed at
-the end of time. In other words, this speed is
-2025-02-09 19:13:07,820 - INFO - Round 13 of 20.
-2025-02-09 19:13:08,452 - INFO - Generated 91 tokens in 0.63 seconds (144.11 tokens/sec)
-2025-02-09 19:13:08,452 - INFO - Output:
-Einstein's Theory of Relativity states that the speed of
-light in a vacuum is simply the speed of the electrons in
-that vacuum, since light has a speed. Since the speed of
-light in a vacuum is equal to the speed of the electrons in
-a solid, the light from this source has a speed of
-approximately 1/299,792 m/s. Einstein's theory of relativity
-explains this speed by a phenomenon known as the speed at
-the end of time. In other words, this speed is
-2025-02-09 19:13:08,452 - INFO - Round 14 of 20.
-2025-02-09 19:13:09,083 - INFO - Generated 91 tokens in 0.63 seconds (144.18 tokens/sec)
-2025-02-09 19:13:09,084 - INFO - Output:
-Einstein's Theory of Relativity states that the speed of
-light in a vacuum is simply the speed of the electrons in
-that vacuum, since light has a speed. Since the speed of
-light in a vacuum is equal to the speed of the electrons in
-a solid, the light from this source has a speed of
-approximately 1/299,792 m/s. Einstein's theory of relativity
-explains this speed by a phenomenon known as the speed at
-the end of time. In other words, this speed is
-2025-02-09 19:13:09,084 - INFO - Round 15 of 20.
-2025-02-09 19:13:09,716 - INFO - Generated 91 tokens in 0.63 seconds (144.02 tokens/sec)
-2025-02-09 19:13:09,716 - INFO - Output:
-Einstein's Theory of Relativity states that the speed of
-light in a vacuum is simply the speed of the electrons in
-that vacuum, since light has a speed. Since the speed of
-light in a vacuum is equal to the speed of the electrons in
-a solid, the light from this source has a speed of
-approximately 1/299,792 m/s. Einstein's theory of relativity
-explains this speed by a phenomenon known as the speed at
-the end of time. In other words, this speed is
-2025-02-09 19:13:09,716 - INFO - Round 16 of 20.
-2025-02-09 19:13:10,348 - INFO - Generated 91 tokens in 0.63 seconds (144.13 tokens/sec)
-2025-02-09 19:13:10,348 - INFO - Output:
-Einstein's Theory of Relativity states that the speed of
-light in a vacuum is simply the speed of the electrons in
-that vacuum, since light has a speed. Since the speed of
-light in a vacuum is equal to the speed of the electrons in
-a solid, the light from this source has a speed of
-approximately 1/299,792 m/s. Einstein's theory of relativity
-explains this speed by a phenomenon known as the speed at
-the end of time. In other words, this speed is
-2025-02-09 19:13:10,348 - INFO - Round 17 of 20.
-2025-02-09 19:13:10,979 - INFO - Generated 91 tokens in 0.63 seconds (144.27 tokens/sec)
-2025-02-09 19:13:10,980 - INFO - Output:
-Einstein's Theory of Relativity states that the speed of
-light in a vacuum is simply the speed of the electrons in
-that vacuum, since light has a speed. Since the speed of
-light in a vacuum is equal to the speed of the electrons in
-a solid, the light from this source has a speed of
-approximately 1/299,792 m/s. Einstein's theory of relativity
-explains this speed by a phenomenon known as the speed at
-the end of time. In other words, this speed is
-2025-02-09 19:13:10,980 - INFO - Round 18 of 20.
-2025-02-09 19:13:11,611 - INFO - Generated 91 tokens in 0.63 seconds (144.25 tokens/sec)
-2025-02-09 19:13:11,611 - INFO - Output:
-Einstein's Theory of Relativity states that the speed of
-light in a vacuum is simply the speed of the electrons in
-that vacuum, since light has a speed. Since the speed of
-light in a vacuum is equal to the speed of the electrons in
-a solid, the light from this source has a speed of
-approximately 1/299,792 m/s. Einstein's theory of relativity
-explains this speed by a phenomenon known as the speed at
-the end of time. In other words, this speed is
-2025-02-09 19:13:11,611 - INFO - Round 19 of 20.
-2025-02-09 19:13:12,251 - INFO - Generated 91 tokens in 0.64 seconds (142.23 tokens/sec)
-2025-02-09 19:13:12,252 - INFO - Output:
-Einstein's Theory of Relativity states that the speed of
-light in a vacuum is simply the speed of the electrons in
-that vacuum, since light has a speed. Since the speed of
-light in a vacuum is equal to the speed of the electrons in
-a solid, the light from this source has a speed of
-approximately 1/299,792 m/s. Einstein's theory of relativity
-explains this speed by a phenomenon known as the speed at
-the end of time. In other words, this speed is
-2025-02-09 19:13:12,252 - INFO - Round 20 of 20.
-2025-02-09 19:13:12,885 - INFO - Generated 91 tokens in 0.63 seconds (143.79 tokens/sec)
-2025-02-09 19:13:12,885 - INFO - Output:
-Einstein's Theory of Relativity states that the speed of
-light in a vacuum is simply the speed of the electrons in
-that vacuum, since light has a speed. Since the speed of
-light in a vacuum is equal to the speed of the electrons in
-a solid, the light from this source has a speed of
-approximately 1/299,792 m/s. Einstein's theory of relativity
-explains this speed by a phenomenon known as the speed at
-the end of time. In other words, this speed is
-2025-02-09 19:13:12,886 - INFO - Run details saved to gpt2-rates-2025-02-09-19-13-12-885606-torch-compile-reduce-overhead-fullgraph-py313t.json.
-torch.__init__: Ignoring unsupported torch.compile() with no GIL unsupported
-torch._dynamo.eval_frame: Ignoring unsupported torch.compile() with no GIL unsupported
-
-real	0m18.167s
-user	0m21.776s
-sys	0m1.010s
-2025-02-09 19:13:15,994 - INFO - Loaded /mnt/raid1/trent/src/parallelopedia/data/model_19072.pt checkpoint in 0.488 seconds.
-2025-02-09 19:13:16,025 - INFO - Initialized GPT model in 0.031 seconds.
-2025-02-09 19:13:16,281 - INFO - Loaded model weights in 0.257 seconds.
-2025-02-09 19:13:16,673 - INFO - Created GPT model in 0.678 seconds.
-2025-02-09 19:13:16,759 - INFO - Moved model to cuda:3 in 0.087 seconds.
-2025-02-09 19:13:16,760 - INFO - Loaded model from step 19072, val_loss 3.0519702434539795
-2025-02-09 19:13:16,760 - INFO - Loaded gpt2 on cuda:3 in 1.254 seconds.
-2025-02-09 19:13:17,927 - INFO - torch.compiled model in 1.167 seconds.
-2025-02-09 19:13:17,927 - INFO - Round 1 of 20.
-2025-02-09 19:13:18,732 - INFO - Generated 91 tokens in 0.80 seconds (113.24 tokens/sec)
-2025-02-09 19:13:18,732 - INFO - Output:
-Einstein's Theory of Relativity states that the speed of
-light in a vacuum is simply the speed of the electrons in
-that vacuum, since light has a speed. Since the speed of
-light in a vacuum is equal to the speed of the electrons in
-a solid, the light from this source has a speed of
-approximately 1/299,792 m/s. Einstein's theory of relativity
-explains this speed by a phenomenon known as the speed at
-the end of time. In other words, this speed is
-2025-02-09 19:13:18,732 - INFO - Round 2 of 20.
-2025-02-09 19:13:19,366 - INFO - Generated 91 tokens in 0.63 seconds (143.56 tokens/sec)
-2025-02-09 19:13:19,367 - INFO - Output:
-Einstein's Theory of Relativity states that the speed of
-light in a vacuum is simply the speed of the electrons in
-that vacuum, since light has a speed. Since the speed of
-light in a vacuum is equal to the speed of the electrons in
-a solid, the light from this source has a speed of
-approximately 1/299,792 m/s. Einstein's theory of relativity
-explains this speed by a phenomenon known as the speed at
-the end of time. In other words, this speed is
-2025-02-09 19:13:19,367 - INFO - Round 3 of 20.
-2025-02-09 19:13:20,000 - INFO - Generated 91 tokens in 0.63 seconds (143.79 tokens/sec)
-2025-02-09 19:13:20,000 - INFO - Output:
-Einstein's Theory of Relativity states that the speed of
-light in a vacuum is simply the speed of the electrons in
-that vacuum, since light has a speed. Since the speed of
-light in a vacuum is equal to the speed of the electrons in
-a solid, the light from this source has a speed of
-approximately 1/299,792 m/s. Einstein's theory of relativity
-explains this speed by a phenomenon known as the speed at
-the end of time. In other words, this speed is
-2025-02-09 19:13:20,000 - INFO - Round 4 of 20.
-2025-02-09 19:13:20,640 - INFO - Generated 91 tokens in 0.64 seconds (142.37 tokens/sec)
-2025-02-09 19:13:20,640 - INFO - Output:
-Einstein's Theory of Relativity states that the speed of
-light in a vacuum is simply the speed of the electrons in
-that vacuum, since light has a speed. Since the speed of
-light in a vacuum is equal to the speed of the electrons in
-a solid, the light from this source has a speed of
-approximately 1/299,792 m/s. Einstein's theory of relativity
-explains this speed by a phenomenon known as the speed at
-the end of time. In other words, this speed is
-2025-02-09 19:13:20,640 - INFO - Round 5 of 20.
-2025-02-09 19:13:21,272 - INFO - Generated 91 tokens in 0.63 seconds (143.95 tokens/sec)
-2025-02-09 19:13:21,273 - INFO - Output:
-Einstein's Theory of Relativity states that the speed of
-light in a vacuum is simply the speed of the electrons in
-that vacuum, since light has a speed. Since the speed of
-light in a vacuum is equal to the speed of the electrons in
-a solid, the light from this source has a speed of
-approximately 1/299,792 m/s. Einstein's theory of relativity
-explains this speed by a phenomenon known as the speed at
-the end of time. In other words, this speed is
-2025-02-09 19:13:21,273 - INFO - Round 6 of 20.
-2025-02-09 19:13:21,905 - INFO - Generated 91 tokens in 0.63 seconds (143.98 tokens/sec)
-2025-02-09 19:13:21,905 - INFO - Output:
-Einstein's Theory of Relativity states that the speed of
-light in a vacuum is simply the speed of the electrons in
-that vacuum, since light has a speed. Since the speed of
-light in a vacuum is equal to the speed of the electrons in
-a solid, the light from this source has a speed of
-approximately 1/299,792 m/s. Einstein's theory of relativity
-explains this speed by a phenomenon known as the speed at
-the end of time. In other words, this speed is
-2025-02-09 19:13:21,905 - INFO - Round 7 of 20.
-2025-02-09 19:13:22,541 - INFO - Generated 91 tokens in 0.64 seconds (143.17 tokens/sec)
-2025-02-09 19:13:22,542 - INFO - Output:
-Einstein's Theory of Relativity states that the speed of
-light in a vacuum is simply the speed of the electrons in
-that vacuum, since light has a speed. Since the speed of
-light in a vacuum is equal to the speed of the electrons in
-a solid, the light from this source has a speed of
-approximately 1/299,792 m/s. Einstein's theory of relativity
-explains this speed by a phenomenon known as the speed at
-the end of time. In other words, this speed is
-2025-02-09 19:13:22,542 - INFO - Round 8 of 20.
-2025-02-09 19:13:23,178 - INFO - Generated 91 tokens in 0.64 seconds (143.11 tokens/sec)
-2025-02-09 19:13:23,178 - INFO - Output:
-Einstein's Theory of Relativity states that the speed of
-light in a vacuum is simply the speed of the electrons in
-that vacuum, since light has a speed. Since the speed of
-light in a vacuum is equal to the speed of the electrons in
-a solid, the light from this source has a speed of
-approximately 1/299,792 m/s. Einstein's theory of relativity
-explains this speed by a phenomenon known as the speed at
-the end of time. In other words, this speed is
-2025-02-09 19:13:23,178 - INFO - Round 9 of 20.
-2025-02-09 19:13:23,812 - INFO - Generated 91 tokens in 0.63 seconds (143.66 tokens/sec)
-2025-02-09 19:13:23,812 - INFO - Output:
-Einstein's Theory of Relativity states that the speed of
-light in a vacuum is simply the speed of the electrons in
-that vacuum, since light has a speed. Since the speed of
-light in a vacuum is equal to the speed of the electrons in
-a solid, the light from this source has a speed of
-approximately 1/299,792 m/s. Einstein's theory of relativity
-explains this speed by a phenomenon known as the speed at
-the end of time. In other words, this speed is
-2025-02-09 19:13:23,812 - INFO - Round 10 of 20.
-2025-02-09 19:13:24,444 - INFO - Generated 91 tokens in 0.63 seconds (144.11 tokens/sec)
-2025-02-09 19:13:24,444 - INFO - Output:
-Einstein's Theory of Relativity states that the speed of
-light in a vacuum is simply the speed of the electrons in
-that vacuum, since light has a speed. Since the speed of
-light in a vacuum is equal to the speed of the electrons in
-a solid, the light from this source has a speed of
-approximately 1/299,792 m/s. Einstein's theory of relativity
-explains this speed by a phenomenon known as the speed at
-the end of time. In other words, this speed is
-2025-02-09 19:13:24,444 - INFO - Round 11 of 20.
-2025-02-09 19:13:25,077 - INFO - Generated 91 tokens in 0.63 seconds (143.87 tokens/sec)
-2025-02-09 19:13:25,077 - INFO - Output:
-Einstein's Theory of Relativity states that the speed of
-light in a vacuum is simply the speed of the electrons in
-that vacuum, since light has a speed. Since the speed of
-light in a vacuum is equal to the speed of the electrons in
-a solid, the light from this source has a speed of
-approximately 1/299,792 m/s. Einstein's theory of relativity
-explains this speed by a phenomenon known as the speed at
-the end of time. In other words, this speed is
-2025-02-09 19:13:25,078 - INFO - Round 12 of 20.
-2025-02-09 19:13:25,710 - INFO - Generated 91 tokens in 0.63 seconds (143.92 tokens/sec)
-2025-02-09 19:13:25,710 - INFO - Output:
-Einstein's Theory of Relativity states that the speed of
-light in a vacuum is simply the speed of the electrons in
-that vacuum, since light has a speed. Since the speed of
-light in a vacuum is equal to the speed of the electrons in
-a solid, the light from this source has a speed of
-approximately 1/299,792 m/s. Einstein's theory of relativity
-explains this speed by a phenomenon known as the speed at
-the end of time. In other words, this speed is
-2025-02-09 19:13:25,710 - INFO - Round 13 of 20.
-2025-02-09 19:13:26,375 - INFO - Generated 91 tokens in 0.66 seconds (136.93 tokens/sec)
-2025-02-09 19:13:26,376 - INFO - Output:
-Einstein's Theory of Relativity states that the speed of
-light in a vacuum is simply the speed of the electrons in
-that vacuum, since light has a speed. Since the speed of
-light in a vacuum is equal to the speed of the electrons in
-a solid, the light from this source has a speed of
-approximately 1/299,792 m/s. Einstein's theory of relativity
-explains this speed by a phenomenon known as the speed at
-the end of time. In other words, this speed is
-2025-02-09 19:13:26,376 - INFO - Round 14 of 20.
-2025-02-09 19:13:27,017 - INFO - Generated 91 tokens in 0.64 seconds (141.92 tokens/sec)
-2025-02-09 19:13:27,017 - INFO - Output:
-Einstein's Theory of Relativity states that the speed of
-light in a vacuum is simply the speed of the electrons in
-that vacuum, since light has a speed. Since the speed of
-light in a vacuum is equal to the speed of the electrons in
-a solid, the light from this source has a speed of
-approximately 1/299,792 m/s. Einstein's theory of relativity
-explains this speed by a phenomenon known as the speed at
-the end of time. In other words, this speed is
-2025-02-09 19:13:27,017 - INFO - Round 15 of 20.
-2025-02-09 19:13:27,658 - INFO - Generated 91 tokens in 0.64 seconds (142.20 tokens/sec)
-2025-02-09 19:13:27,658 - INFO - Output:
-Einstein's Theory of Relativity states that the speed of
-light in a vacuum is simply the speed of the electrons in
-that vacuum, since light has a speed. Since the speed of
-light in a vacuum is equal to the speed of the electrons in
-a solid, the light from this source has a speed of
-approximately 1/299,792 m/s. Einstein's theory of relativity
-explains this speed by a phenomenon known as the speed at
-the end of time. In other words, this speed is
-2025-02-09 19:13:27,658 - INFO - Round 16 of 20.
-2025-02-09 19:13:28,298 - INFO - Generated 91 tokens in 0.64 seconds (142.17 tokens/sec)
-2025-02-09 19:13:28,299 - INFO - Output:
-Einstein's Theory of Relativity states that the speed of
-light in a vacuum is simply the speed of the electrons in
-that vacuum, since light has a speed. Since the speed of
-light in a vacuum is equal to the speed of the electrons in
-a solid, the light from this source has a speed of
-approximately 1/299,792 m/s. Einstein's theory of relativity
-explains this speed by a phenomenon known as the speed at
-the end of time. In other words, this speed is
-2025-02-09 19:13:28,299 - INFO - Round 17 of 20.
-2025-02-09 19:13:28,939 - INFO - Generated 91 tokens in 0.64 seconds (142.10 tokens/sec)
-2025-02-09 19:13:28,940 - INFO - Output:
-Einstein's Theory of Relativity states that the speed of
-light in a vacuum is simply the speed of the electrons in
-that vacuum, since light has a speed. Since the speed of
-light in a vacuum is equal to the speed of the electrons in
-a solid, the light from this source has a speed of
-approximately 1/299,792 m/s. Einstein's theory of relativity
-explains this speed by a phenomenon known as the speed at
-the end of time. In other words, this speed is
-2025-02-09 19:13:28,940 - INFO - Round 18 of 20.
-2025-02-09 19:13:29,580 - INFO - Generated 91 tokens in 0.64 seconds (142.12 tokens/sec)
-2025-02-09 19:13:29,580 - INFO - Output:
-Einstein's Theory of Relativity states that the speed of
-light in a vacuum is simply the speed of the electrons in
-that vacuum, since light has a speed. Since the speed of
-light in a vacuum is equal to the speed of the electrons in
-a solid, the light from this source has a speed of
-approximately 1/299,792 m/s. Einstein's theory of relativity
-explains this speed by a phenomenon known as the speed at
-the end of time. In other words, this speed is
-2025-02-09 19:13:29,581 - INFO - Round 19 of 20.
-2025-02-09 19:13:30,221 - INFO - Generated 91 tokens in 0.64 seconds (142.09 tokens/sec)
-2025-02-09 19:13:30,222 - INFO - Output:
-Einstein's Theory of Relativity states that the speed of
-light in a vacuum is simply the speed of the electrons in
-that vacuum, since light has a speed. Since the speed of
-light in a vacuum is equal to the speed of the electrons in
-a solid, the light from this source has a speed of
-approximately 1/299,792 m/s. Einstein's theory of relativity
-explains this speed by a phenomenon known as the speed at
-the end of time. In other words, this speed is
-2025-02-09 19:13:30,222 - INFO - Round 20 of 20.
-2025-02-09 19:13:30,866 - INFO - Generated 91 tokens in 0.64 seconds (141.19 tokens/sec)
-2025-02-09 19:13:30,867 - INFO - Output:
-Einstein's Theory of Relativity states that the speed of
-light in a vacuum is simply the speed of the electrons in
-that vacuum, since light has a speed. Since the speed of
-light in a vacuum is equal to the speed of the electrons in
-a solid, the light from this source has a speed of
-approximately 1/299,792 m/s. Einstein's theory of relativity
-explains this speed by a phenomenon known as the speed at
-the end of time. In other words, this speed is
-2025-02-09 19:13:30,867 - INFO - Run details saved to gpt2-rates-2025-02-09-19-13-30-867249-torch-compile-reduce-overhead-fullgraph-py313t.json.
-torch.__init__: Ignoring unsupported torch.compile() with no GIL unsupported
-torch._dynamo.eval_frame: Ignoring unsupported torch.compile() with no GIL unsupported
-
-real	0m18.003s
-user	0m21.632s
-sys	0m0.980s
-2025-02-09 19:13:34,036 - INFO - Loaded /mnt/raid1/trent/src/parallelopedia/data/model_19072.pt checkpoint in 0.502 seconds.
-2025-02-09 19:13:34,066 - INFO - Initialized GPT model in 0.029 seconds.
-2025-02-09 19:13:34,295 - INFO - Loaded model weights in 0.230 seconds.
-2025-02-09 19:13:34,693 - INFO - Created GPT model in 0.656 seconds.
-2025-02-09 19:13:34,779 - INFO - Moved model to cuda:3 in 0.086 seconds.
-2025-02-09 19:13:34,779 - INFO - Loaded model from step 19072, val_loss 3.0519702434539795
-2025-02-09 19:13:34,779 - INFO - Loaded gpt2 on cuda:3 in 1.245 seconds.
-2025-02-09 19:13:37,533 - INFO - torch.compiled model in 2.754 seconds.
-2025-02-09 19:13:37,533 - INFO - Round 1 of 20.
-2025-02-09 19:13:38,322 - INFO - Generated 91 tokens in 0.79 seconds (115.43 tokens/sec)
-2025-02-09 19:13:38,322 - INFO - Output:
-Einstein's Theory of Relativity states that the speed of
-light in a vacuum is simply the speed of the electrons in
-that vacuum, since light has a speed. Since the speed of
-light in a vacuum is equal to the speed of the electrons in
-a solid, the light from this source has a speed of
-approximately 1/299,792 m/s. Einstein's theory of relativity
-explains this speed by a phenomenon known as the speed at
-the end of time. In other words, this speed is
-2025-02-09 19:13:38,322 - INFO - Round 2 of 20.
+2025-02-10 20:47:57,975 - INFO - Loaded /mnt/raid1/trent/src/parallelopedia/data/model_19072.pt checkpoint in 0.486 seconds.
+2025-02-10 20:47:57,982 - INFO - Initialized GPT model in 0.006 seconds.
+2025-02-10 20:47:58,209 - INFO - Loaded model weights in 0.227 seconds.
 <frozen importlib._bootstrap>:488: RuntimeWarning: The global interpreter lock (GIL) has been enabled to load module 'triton._C.libtriton', which has not declared that it can run safely without the GIL. To override this behavior and keep the GIL disabled (at your own risk), run with PYTHON_GIL=0 or -Xgil=0.
-2025-02-09 19:13:38,939 - INFO - Generated 91 tokens in 0.62 seconds (147.77 tokens/sec)
-2025-02-09 19:13:38,939 - INFO - Output:
+2025-02-10 20:47:58,575 - INFO - Created GPT model in 0.599 seconds.
+2025-02-10 20:47:58,659 - INFO - Moved model to cuda:3 in 0.084 seconds.
+2025-02-10 20:47:58,659 - INFO - Loaded model from step 19072, val_loss 3.0519702434539795
+2025-02-10 20:47:58,659 - INFO - Loaded gpt2 on cuda:3 in 1.170 seconds.
+2025-02-10 20:47:58,660 - INFO - torch.compiled model in 0.001 seconds.
+2025-02-10 20:47:58,661 - INFO - Round 1 of 20.
+2025-02-10 20:47:59,483 - INFO - Generated 91 tokens in 0.82 seconds (110.79 tokens/sec)
+2025-02-10 20:47:59,483 - INFO - Output:
 Einstein's Theory of Relativity states that the speed of
 light in a vacuum is simply the speed of the electrons in
 that vacuum, since light has a speed. Since the speed of
@@ -1443,9 +496,9 @@ a solid, the light from this source has a speed of
 approximately 1/299,792 m/s. Einstein's theory of relativity
 explains this speed by a phenomenon known as the speed at
 the end of time. In other words, this speed is
-2025-02-09 19:13:38,939 - INFO - Round 3 of 20.
-2025-02-09 19:13:39,554 - INFO - Generated 91 tokens in 0.61 seconds (148.05 tokens/sec)
-2025-02-09 19:13:39,554 - INFO - Output:
+2025-02-10 20:47:59,483 - INFO - Round 2 of 20.
+2025-02-10 20:48:00,153 - INFO - Generated 91 tokens in 0.67 seconds (135.92 tokens/sec)
+2025-02-10 20:48:00,153 - INFO - Output:
 Einstein's Theory of Relativity states that the speed of
 light in a vacuum is simply the speed of the electrons in
 that vacuum, since light has a speed. Since the speed of
@@ -1454,9 +507,9 @@ a solid, the light from this source has a speed of
 approximately 1/299,792 m/s. Einstein's theory of relativity
 explains this speed by a phenomenon known as the speed at
 the end of time. In other words, this speed is
-2025-02-09 19:13:39,554 - INFO - Round 4 of 20.
-2025-02-09 19:13:40,171 - INFO - Generated 91 tokens in 0.62 seconds (147.53 tokens/sec)
-2025-02-09 19:13:40,172 - INFO - Output:
+2025-02-10 20:48:00,153 - INFO - Round 3 of 20.
+2025-02-10 20:48:00,796 - INFO - Generated 91 tokens in 0.64 seconds (141.66 tokens/sec)
+2025-02-10 20:48:00,796 - INFO - Output:
 Einstein's Theory of Relativity states that the speed of
 light in a vacuum is simply the speed of the electrons in
 that vacuum, since light has a speed. Since the speed of
@@ -1465,9 +518,9 @@ a solid, the light from this source has a speed of
 approximately 1/299,792 m/s. Einstein's theory of relativity
 explains this speed by a phenomenon known as the speed at
 the end of time. In other words, this speed is
-2025-02-09 19:13:40,172 - INFO - Round 5 of 20.
-2025-02-09 19:13:40,828 - INFO - Generated 91 tokens in 0.66 seconds (138.73 tokens/sec)
-2025-02-09 19:13:40,828 - INFO - Output:
+2025-02-10 20:48:00,796 - INFO - Round 4 of 20.
+2025-02-10 20:48:01,439 - INFO - Generated 91 tokens in 0.64 seconds (141.69 tokens/sec)
+2025-02-10 20:48:01,439 - INFO - Output:
 Einstein's Theory of Relativity states that the speed of
 light in a vacuum is simply the speed of the electrons in
 that vacuum, since light has a speed. Since the speed of
@@ -1476,9 +529,9 @@ a solid, the light from this source has a speed of
 approximately 1/299,792 m/s. Einstein's theory of relativity
 explains this speed by a phenomenon known as the speed at
 the end of time. In other words, this speed is
-2025-02-09 19:13:40,828 - INFO - Round 6 of 20.
-2025-02-09 19:13:41,460 - INFO - Generated 91 tokens in 0.63 seconds (144.11 tokens/sec)
-2025-02-09 19:13:41,460 - INFO - Output:
+2025-02-10 20:48:01,439 - INFO - Round 5 of 20.
+2025-02-10 20:48:02,086 - INFO - Generated 91 tokens in 0.65 seconds (140.83 tokens/sec)
+2025-02-10 20:48:02,086 - INFO - Output:
 Einstein's Theory of Relativity states that the speed of
 light in a vacuum is simply the speed of the electrons in
 that vacuum, since light has a speed. Since the speed of
@@ -1487,9 +540,9 @@ a solid, the light from this source has a speed of
 approximately 1/299,792 m/s. Einstein's theory of relativity
 explains this speed by a phenomenon known as the speed at
 the end of time. In other words, this speed is
-2025-02-09 19:13:41,460 - INFO - Round 7 of 20.
-2025-02-09 19:13:42,092 - INFO - Generated 91 tokens in 0.63 seconds (144.24 tokens/sec)
-2025-02-09 19:13:42,092 - INFO - Output:
+2025-02-10 20:48:02,086 - INFO - Round 6 of 20.
+2025-02-10 20:48:02,730 - INFO - Generated 91 tokens in 0.64 seconds (141.33 tokens/sec)
+2025-02-10 20:48:02,731 - INFO - Output:
 Einstein's Theory of Relativity states that the speed of
 light in a vacuum is simply the speed of the electrons in
 that vacuum, since light has a speed. Since the speed of
@@ -1498,9 +551,9 @@ a solid, the light from this source has a speed of
 approximately 1/299,792 m/s. Einstein's theory of relativity
 explains this speed by a phenomenon known as the speed at
 the end of time. In other words, this speed is
-2025-02-09 19:13:42,092 - INFO - Round 8 of 20.
-2025-02-09 19:13:42,729 - INFO - Generated 91 tokens in 0.64 seconds (142.98 tokens/sec)
-2025-02-09 19:13:42,729 - INFO - Output:
+2025-02-10 20:48:02,731 - INFO - Round 7 of 20.
+2025-02-10 20:48:03,374 - INFO - Generated 91 tokens in 0.64 seconds (141.45 tokens/sec)
+2025-02-10 20:48:03,375 - INFO - Output:
 Einstein's Theory of Relativity states that the speed of
 light in a vacuum is simply the speed of the electrons in
 that vacuum, since light has a speed. Since the speed of
@@ -1509,9 +562,9 @@ a solid, the light from this source has a speed of
 approximately 1/299,792 m/s. Einstein's theory of relativity
 explains this speed by a phenomenon known as the speed at
 the end of time. In other words, this speed is
-2025-02-09 19:13:42,729 - INFO - Round 9 of 20.
-2025-02-09 19:13:43,360 - INFO - Generated 91 tokens in 0.63 seconds (144.22 tokens/sec)
-2025-02-09 19:13:43,361 - INFO - Output:
+2025-02-10 20:48:03,375 - INFO - Round 8 of 20.
+2025-02-10 20:48:04,017 - INFO - Generated 91 tokens in 0.64 seconds (141.76 tokens/sec)
+2025-02-10 20:48:04,017 - INFO - Output:
 Einstein's Theory of Relativity states that the speed of
 light in a vacuum is simply the speed of the electrons in
 that vacuum, since light has a speed. Since the speed of
@@ -1520,9 +573,9 @@ a solid, the light from this source has a speed of
 approximately 1/299,792 m/s. Einstein's theory of relativity
 explains this speed by a phenomenon known as the speed at
 the end of time. In other words, this speed is
-2025-02-09 19:13:43,361 - INFO - Round 10 of 20.
-2025-02-09 19:13:43,992 - INFO - Generated 91 tokens in 0.63 seconds (144.22 tokens/sec)
-2025-02-09 19:13:43,992 - INFO - Output:
+2025-02-10 20:48:04,017 - INFO - Round 9 of 20.
+2025-02-10 20:48:04,661 - INFO - Generated 91 tokens in 0.64 seconds (141.46 tokens/sec)
+2025-02-10 20:48:04,661 - INFO - Output:
 Einstein's Theory of Relativity states that the speed of
 light in a vacuum is simply the speed of the electrons in
 that vacuum, since light has a speed. Since the speed of
@@ -1531,9 +584,9 @@ a solid, the light from this source has a speed of
 approximately 1/299,792 m/s. Einstein's theory of relativity
 explains this speed by a phenomenon known as the speed at
 the end of time. In other words, this speed is
-2025-02-09 19:13:43,992 - INFO - Round 11 of 20.
-2025-02-09 19:13:44,623 - INFO - Generated 91 tokens in 0.63 seconds (144.43 tokens/sec)
-2025-02-09 19:13:44,623 - INFO - Output:
+2025-02-10 20:48:04,661 - INFO - Round 10 of 20.
+2025-02-10 20:48:05,303 - INFO - Generated 91 tokens in 0.64 seconds (141.82 tokens/sec)
+2025-02-10 20:48:05,303 - INFO - Output:
 Einstein's Theory of Relativity states that the speed of
 light in a vacuum is simply the speed of the electrons in
 that vacuum, since light has a speed. Since the speed of
@@ -1542,9 +595,9 @@ a solid, the light from this source has a speed of
 approximately 1/299,792 m/s. Einstein's theory of relativity
 explains this speed by a phenomenon known as the speed at
 the end of time. In other words, this speed is
-2025-02-09 19:13:44,623 - INFO - Round 12 of 20.
-2025-02-09 19:13:45,274 - INFO - Generated 91 tokens in 0.65 seconds (139.81 tokens/sec)
-2025-02-09 19:13:45,275 - INFO - Output:
+2025-02-10 20:48:05,303 - INFO - Round 11 of 20.
+2025-02-10 20:48:05,945 - INFO - Generated 91 tokens in 0.64 seconds (141.91 tokens/sec)
+2025-02-10 20:48:05,945 - INFO - Output:
 Einstein's Theory of Relativity states that the speed of
 light in a vacuum is simply the speed of the electrons in
 that vacuum, since light has a speed. Since the speed of
@@ -1553,9 +606,9 @@ a solid, the light from this source has a speed of
 approximately 1/299,792 m/s. Einstein's theory of relativity
 explains this speed by a phenomenon known as the speed at
 the end of time. In other words, this speed is
-2025-02-09 19:13:45,275 - INFO - Round 13 of 20.
-2025-02-09 19:13:45,898 - INFO - Generated 91 tokens in 0.62 seconds (145.97 tokens/sec)
-2025-02-09 19:13:45,899 - INFO - Output:
+2025-02-10 20:48:05,945 - INFO - Round 12 of 20.
+2025-02-10 20:48:06,587 - INFO - Generated 91 tokens in 0.64 seconds (141.83 tokens/sec)
+2025-02-10 20:48:06,587 - INFO - Output:
 Einstein's Theory of Relativity states that the speed of
 light in a vacuum is simply the speed of the electrons in
 that vacuum, since light has a speed. Since the speed of
@@ -1564,9 +617,9 @@ a solid, the light from this source has a speed of
 approximately 1/299,792 m/s. Einstein's theory of relativity
 explains this speed by a phenomenon known as the speed at
 the end of time. In other words, this speed is
-2025-02-09 19:13:45,899 - INFO - Round 14 of 20.
-2025-02-09 19:13:46,520 - INFO - Generated 91 tokens in 0.62 seconds (146.50 tokens/sec)
-2025-02-09 19:13:46,520 - INFO - Output:
+2025-02-10 20:48:06,587 - INFO - Round 13 of 20.
+2025-02-10 20:48:07,229 - INFO - Generated 91 tokens in 0.64 seconds (141.93 tokens/sec)
+2025-02-10 20:48:07,229 - INFO - Output:
 Einstein's Theory of Relativity states that the speed of
 light in a vacuum is simply the speed of the electrons in
 that vacuum, since light has a speed. Since the speed of
@@ -1575,9 +628,9 @@ a solid, the light from this source has a speed of
 approximately 1/299,792 m/s. Einstein's theory of relativity
 explains this speed by a phenomenon known as the speed at
 the end of time. In other words, this speed is
-2025-02-09 19:13:46,520 - INFO - Round 15 of 20.
-2025-02-09 19:13:47,148 - INFO - Generated 91 tokens in 0.63 seconds (145.08 tokens/sec)
-2025-02-09 19:13:47,148 - INFO - Output:
+2025-02-10 20:48:07,229 - INFO - Round 14 of 20.
+2025-02-10 20:48:07,871 - INFO - Generated 91 tokens in 0.64 seconds (141.88 tokens/sec)
+2025-02-10 20:48:07,871 - INFO - Output:
 Einstein's Theory of Relativity states that the speed of
 light in a vacuum is simply the speed of the electrons in
 that vacuum, since light has a speed. Since the speed of
@@ -1586,9 +639,9 @@ a solid, the light from this source has a speed of
 approximately 1/299,792 m/s. Einstein's theory of relativity
 explains this speed by a phenomenon known as the speed at
 the end of time. In other words, this speed is
-2025-02-09 19:13:47,148 - INFO - Round 16 of 20.
-2025-02-09 19:13:47,773 - INFO - Generated 91 tokens in 0.62 seconds (145.65 tokens/sec)
-2025-02-09 19:13:47,774 - INFO - Output:
+2025-02-10 20:48:07,871 - INFO - Round 15 of 20.
+2025-02-10 20:48:08,513 - INFO - Generated 91 tokens in 0.64 seconds (141.74 tokens/sec)
+2025-02-10 20:48:08,514 - INFO - Output:
 Einstein's Theory of Relativity states that the speed of
 light in a vacuum is simply the speed of the electrons in
 that vacuum, since light has a speed. Since the speed of
@@ -1597,9 +650,9 @@ a solid, the light from this source has a speed of
 approximately 1/299,792 m/s. Einstein's theory of relativity
 explains this speed by a phenomenon known as the speed at
 the end of time. In other words, this speed is
-2025-02-09 19:13:47,774 - INFO - Round 17 of 20.
-2025-02-09 19:13:48,397 - INFO - Generated 91 tokens in 0.62 seconds (146.14 tokens/sec)
-2025-02-09 19:13:48,397 - INFO - Output:
+2025-02-10 20:48:08,514 - INFO - Round 16 of 20.
+2025-02-10 20:48:09,157 - INFO - Generated 91 tokens in 0.64 seconds (141.58 tokens/sec)
+2025-02-10 20:48:09,157 - INFO - Output:
 Einstein's Theory of Relativity states that the speed of
 light in a vacuum is simply the speed of the electrons in
 that vacuum, since light has a speed. Since the speed of
@@ -1608,9 +661,9 @@ a solid, the light from this source has a speed of
 approximately 1/299,792 m/s. Einstein's theory of relativity
 explains this speed by a phenomenon known as the speed at
 the end of time. In other words, this speed is
-2025-02-09 19:13:48,397 - INFO - Round 18 of 20.
-2025-02-09 19:13:49,021 - INFO - Generated 91 tokens in 0.62 seconds (145.98 tokens/sec)
-2025-02-09 19:13:49,021 - INFO - Output:
+2025-02-10 20:48:09,157 - INFO - Round 17 of 20.
+2025-02-10 20:48:09,799 - INFO - Generated 91 tokens in 0.64 seconds (141.79 tokens/sec)
+2025-02-10 20:48:09,800 - INFO - Output:
 Einstein's Theory of Relativity states that the speed of
 light in a vacuum is simply the speed of the electrons in
 that vacuum, since light has a speed. Since the speed of
@@ -1619,9 +672,9 @@ a solid, the light from this source has a speed of
 approximately 1/299,792 m/s. Einstein's theory of relativity
 explains this speed by a phenomenon known as the speed at
 the end of time. In other words, this speed is
-2025-02-09 19:13:49,021 - INFO - Round 19 of 20.
-2025-02-09 19:13:49,644 - INFO - Generated 91 tokens in 0.62 seconds (146.10 tokens/sec)
-2025-02-09 19:13:49,645 - INFO - Output:
+2025-02-10 20:48:09,800 - INFO - Round 18 of 20.
+2025-02-10 20:48:10,442 - INFO - Generated 91 tokens in 0.64 seconds (141.75 tokens/sec)
+2025-02-10 20:48:10,442 - INFO - Output:
 Einstein's Theory of Relativity states that the speed of
 light in a vacuum is simply the speed of the electrons in
 that vacuum, since light has a speed. Since the speed of
@@ -1630,9 +683,9 @@ a solid, the light from this source has a speed of
 approximately 1/299,792 m/s. Einstein's theory of relativity
 explains this speed by a phenomenon known as the speed at
 the end of time. In other words, this speed is
-2025-02-09 19:13:49,645 - INFO - Round 20 of 20.
-2025-02-09 19:13:50,266 - INFO - Generated 91 tokens in 0.62 seconds (146.57 tokens/sec)
-2025-02-09 19:13:50,266 - INFO - Output:
+2025-02-10 20:48:10,442 - INFO - Round 19 of 20.
+2025-02-10 20:48:11,084 - INFO - Generated 91 tokens in 0.64 seconds (141.77 tokens/sec)
+2025-02-10 20:48:11,085 - INFO - Output:
 Einstein's Theory of Relativity states that the speed of
 light in a vacuum is simply the speed of the electrons in
 that vacuum, since light has a speed. Since the speed of
@@ -1641,26 +694,40 @@ a solid, the light from this source has a speed of
 approximately 1/299,792 m/s. Einstein's theory of relativity
 explains this speed by a phenomenon known as the speed at
 the end of time. In other words, this speed is
-2025-02-09 19:13:50,267 - INFO - Run details saved to gpt2-rates-2025-02-09-19-13-50-266819-torch-compile-max-autotune-py313t.json.
+2025-02-10 20:48:11,085 - INFO - Round 20 of 20.
+2025-02-10 20:48:11,727 - INFO - Generated 91 tokens in 0.64 seconds (141.75 tokens/sec)
+2025-02-10 20:48:11,727 - INFO - Output:
+Einstein's Theory of Relativity states that the speed of
+light in a vacuum is simply the speed of the electrons in
+that vacuum, since light has a speed. Since the speed of
+light in a vacuum is equal to the speed of the electrons in
+a solid, the light from this source has a speed of
+approximately 1/299,792 m/s. Einstein's theory of relativity
+explains this speed by a phenomenon known as the speed at
+the end of time. In other words, this speed is
+2025-02-10 20:48:11,728 - INFO - Run details saved to gpt2-rates-2025-02-10-20-48-11-727901-torch-compile-fullgraph-py313t.json.
+torch.__init__: Ignoring unsupported torch.compile() with no GIL unsupported
+torch._dynamo.eval_frame: Ignoring unsupported torch.compile() with no GIL unsupported
 torch.__init__: Ignoring unsupported torch.compile() with no GIL unsupported
 torch._dynamo.eval_frame: Ignoring unsupported torch.compile() with no GIL unsupported
 
-real	0m19.601s
-user	0m22.777s
-sys	0m1.413s
-Exception ignored in: <_io.BufferedWriter name=65>
+real	0m20.125s
+user	0m23.218s
+sys	0m1.382s
+Exception ignored in: <_io.BufferedWriter name=41>
 BrokenPipeError: [Errno 32] Broken pipe
-2025-02-09 19:13:53,676 - INFO - Loaded /mnt/raid1/trent/src/parallelopedia/data/model_19072.pt checkpoint in 0.484 seconds.
-2025-02-09 19:13:53,701 - INFO - Initialized GPT model in 0.025 seconds.
-2025-02-09 19:13:53,931 - INFO - Loaded model weights in 0.230 seconds.
-2025-02-09 19:13:54,324 - INFO - Created GPT model in 0.648 seconds.
-2025-02-09 19:13:54,410 - INFO - Moved model to cuda:3 in 0.086 seconds.
-2025-02-09 19:13:54,411 - INFO - Loaded model from step 19072, val_loss 3.0519702434539795
-2025-02-09 19:13:54,411 - INFO - Loaded gpt2 on cuda:3 in 1.220 seconds.
-2025-02-09 19:13:55,634 - INFO - torch.compiled model in 1.223 seconds.
-2025-02-09 19:13:55,634 - INFO - Round 1 of 20.
-2025-02-09 19:13:56,466 - INFO - Generated 91 tokens in 0.83 seconds (109.44 tokens/sec)
-2025-02-09 19:13:56,467 - INFO - Output:
+2025-02-10 20:48:17,900 - INFO - Loaded /mnt/raid1/trent/src/parallelopedia/data/model_19072.pt checkpoint in 0.486 seconds.
+2025-02-10 20:48:17,907 - INFO - Initialized GPT model in 0.006 seconds.
+2025-02-10 20:48:18,132 - INFO - Loaded model weights in 0.225 seconds.
+<frozen importlib._bootstrap>:488: RuntimeWarning: The global interpreter lock (GIL) has been enabled to load module 'triton._C.libtriton', which has not declared that it can run safely without the GIL. To override this behavior and keep the GIL disabled (at your own risk), run with PYTHON_GIL=0 or -Xgil=0.
+2025-02-10 20:48:18,494 - INFO - Created GPT model in 0.594 seconds.
+2025-02-10 20:48:18,577 - INFO - Moved model to cuda:3 in 0.082 seconds.
+2025-02-10 20:48:18,577 - INFO - Loaded model from step 19072, val_loss 3.0519702434539795
+2025-02-10 20:48:18,577 - INFO - Loaded gpt2 on cuda:3 in 1.162 seconds.
+2025-02-10 20:48:18,581 - INFO - torch.compiled model in 0.004 seconds.
+2025-02-10 20:48:18,581 - INFO - Round 1 of 20.
+2025-02-10 20:48:19,397 - INFO - Generated 91 tokens in 0.82 seconds (111.57 tokens/sec)
+2025-02-10 20:48:19,398 - INFO - Output:
 Einstein's Theory of Relativity states that the speed of
 light in a vacuum is simply the speed of the electrons in
 that vacuum, since light has a speed. Since the speed of
@@ -1669,9 +736,9 @@ a solid, the light from this source has a speed of
 approximately 1/299,792 m/s. Einstein's theory of relativity
 explains this speed by a phenomenon known as the speed at
 the end of time. In other words, this speed is
-2025-02-09 19:13:56,467 - INFO - Round 2 of 20.
-2025-02-09 19:13:57,113 - INFO - Generated 91 tokens in 0.65 seconds (140.86 tokens/sec)
-2025-02-09 19:13:57,113 - INFO - Output:
+2025-02-10 20:48:19,398 - INFO - Round 2 of 20.
+2025-02-10 20:48:20,044 - INFO - Generated 91 tokens in 0.65 seconds (140.99 tokens/sec)
+2025-02-10 20:48:20,044 - INFO - Output:
 Einstein's Theory of Relativity states that the speed of
 light in a vacuum is simply the speed of the electrons in
 that vacuum, since light has a speed. Since the speed of
@@ -1680,9 +747,9 @@ a solid, the light from this source has a speed of
 approximately 1/299,792 m/s. Einstein's theory of relativity
 explains this speed by a phenomenon known as the speed at
 the end of time. In other words, this speed is
-2025-02-09 19:13:57,113 - INFO - Round 3 of 20.
-2025-02-09 19:13:57,780 - INFO - Generated 91 tokens in 0.67 seconds (136.64 tokens/sec)
-2025-02-09 19:13:57,780 - INFO - Output:
+2025-02-10 20:48:20,044 - INFO - Round 3 of 20.
+2025-02-10 20:48:20,690 - INFO - Generated 91 tokens in 0.65 seconds (140.95 tokens/sec)
+2025-02-10 20:48:20,690 - INFO - Output:
 Einstein's Theory of Relativity states that the speed of
 light in a vacuum is simply the speed of the electrons in
 that vacuum, since light has a speed. Since the speed of
@@ -1691,9 +758,9 @@ a solid, the light from this source has a speed of
 approximately 1/299,792 m/s. Einstein's theory of relativity
 explains this speed by a phenomenon known as the speed at
 the end of time. In other words, this speed is
-2025-02-09 19:13:57,780 - INFO - Round 4 of 20.
-2025-02-09 19:13:58,423 - INFO - Generated 91 tokens in 0.64 seconds (141.66 tokens/sec)
-2025-02-09 19:13:58,423 - INFO - Output:
+2025-02-10 20:48:20,690 - INFO - Round 4 of 20.
+2025-02-10 20:48:21,335 - INFO - Generated 91 tokens in 0.64 seconds (141.16 tokens/sec)
+2025-02-10 20:48:21,336 - INFO - Output:
 Einstein's Theory of Relativity states that the speed of
 light in a vacuum is simply the speed of the electrons in
 that vacuum, since light has a speed. Since the speed of
@@ -1702,9 +769,9 @@ a solid, the light from this source has a speed of
 approximately 1/299,792 m/s. Einstein's theory of relativity
 explains this speed by a phenomenon known as the speed at
 the end of time. In other words, this speed is
-2025-02-09 19:13:58,423 - INFO - Round 5 of 20.
-2025-02-09 19:13:59,066 - INFO - Generated 91 tokens in 0.64 seconds (141.67 tokens/sec)
-2025-02-09 19:13:59,066 - INFO - Output:
+2025-02-10 20:48:21,336 - INFO - Round 5 of 20.
+2025-02-10 20:48:21,981 - INFO - Generated 91 tokens in 0.64 seconds (141.10 tokens/sec)
+2025-02-10 20:48:21,981 - INFO - Output:
 Einstein's Theory of Relativity states that the speed of
 light in a vacuum is simply the speed of the electrons in
 that vacuum, since light has a speed. Since the speed of
@@ -1713,9 +780,9 @@ a solid, the light from this source has a speed of
 approximately 1/299,792 m/s. Einstein's theory of relativity
 explains this speed by a phenomenon known as the speed at
 the end of time. In other words, this speed is
-2025-02-09 19:13:59,066 - INFO - Round 6 of 20.
-2025-02-09 19:13:59,709 - INFO - Generated 91 tokens in 0.64 seconds (141.58 tokens/sec)
-2025-02-09 19:13:59,709 - INFO - Output:
+2025-02-10 20:48:21,981 - INFO - Round 6 of 20.
+2025-02-10 20:48:22,627 - INFO - Generated 91 tokens in 0.65 seconds (141.03 tokens/sec)
+2025-02-10 20:48:22,627 - INFO - Output:
 Einstein's Theory of Relativity states that the speed of
 light in a vacuum is simply the speed of the electrons in
 that vacuum, since light has a speed. Since the speed of
@@ -1724,9 +791,9 @@ a solid, the light from this source has a speed of
 approximately 1/299,792 m/s. Einstein's theory of relativity
 explains this speed by a phenomenon known as the speed at
 the end of time. In other words, this speed is
-2025-02-09 19:13:59,709 - INFO - Round 7 of 20.
-2025-02-09 19:14:00,380 - INFO - Generated 91 tokens in 0.67 seconds (135.82 tokens/sec)
-2025-02-09 19:14:00,380 - INFO - Output:
+2025-02-10 20:48:22,627 - INFO - Round 7 of 20.
+2025-02-10 20:48:23,274 - INFO - Generated 91 tokens in 0.65 seconds (140.67 tokens/sec)
+2025-02-10 20:48:23,275 - INFO - Output:
 Einstein's Theory of Relativity states that the speed of
 light in a vacuum is simply the speed of the electrons in
 that vacuum, since light has a speed. Since the speed of
@@ -1735,9 +802,9 @@ a solid, the light from this source has a speed of
 approximately 1/299,792 m/s. Einstein's theory of relativity
 explains this speed by a phenomenon known as the speed at
 the end of time. In other words, this speed is
-2025-02-09 19:14:00,380 - INFO - Round 8 of 20.
-2025-02-09 19:14:01,007 - INFO - Generated 91 tokens in 0.63 seconds (145.09 tokens/sec)
-2025-02-09 19:14:01,008 - INFO - Output:
+2025-02-10 20:48:23,275 - INFO - Round 8 of 20.
+2025-02-10 20:48:23,950 - INFO - Generated 91 tokens in 0.68 seconds (134.77 tokens/sec)
+2025-02-10 20:48:23,950 - INFO - Output:
 Einstein's Theory of Relativity states that the speed of
 light in a vacuum is simply the speed of the electrons in
 that vacuum, since light has a speed. Since the speed of
@@ -1746,9 +813,9 @@ a solid, the light from this source has a speed of
 approximately 1/299,792 m/s. Einstein's theory of relativity
 explains this speed by a phenomenon known as the speed at
 the end of time. In other words, this speed is
-2025-02-09 19:14:01,008 - INFO - Round 9 of 20.
-2025-02-09 19:14:01,635 - INFO - Generated 91 tokens in 0.63 seconds (145.12 tokens/sec)
-2025-02-09 19:14:01,635 - INFO - Output:
+2025-02-10 20:48:23,951 - INFO - Round 9 of 20.
+2025-02-10 20:48:24,637 - INFO - Generated 91 tokens in 0.69 seconds (132.66 tokens/sec)
+2025-02-10 20:48:24,637 - INFO - Output:
 Einstein's Theory of Relativity states that the speed of
 light in a vacuum is simply the speed of the electrons in
 that vacuum, since light has a speed. Since the speed of
@@ -1757,9 +824,9 @@ a solid, the light from this source has a speed of
 approximately 1/299,792 m/s. Einstein's theory of relativity
 explains this speed by a phenomenon known as the speed at
 the end of time. In other words, this speed is
-2025-02-09 19:14:01,635 - INFO - Round 10 of 20.
-2025-02-09 19:14:02,263 - INFO - Generated 91 tokens in 0.63 seconds (145.14 tokens/sec)
-2025-02-09 19:14:02,263 - INFO - Output:
+2025-02-10 20:48:24,637 - INFO - Round 10 of 20.
+2025-02-10 20:48:25,293 - INFO - Generated 91 tokens in 0.66 seconds (138.78 tokens/sec)
+2025-02-10 20:48:25,294 - INFO - Output:
 Einstein's Theory of Relativity states that the speed of
 light in a vacuum is simply the speed of the electrons in
 that vacuum, since light has a speed. Since the speed of
@@ -1768,9 +835,9 @@ a solid, the light from this source has a speed of
 approximately 1/299,792 m/s. Einstein's theory of relativity
 explains this speed by a phenomenon known as the speed at
 the end of time. In other words, this speed is
-2025-02-09 19:14:02,263 - INFO - Round 11 of 20.
-2025-02-09 19:14:02,891 - INFO - Generated 91 tokens in 0.63 seconds (145.06 tokens/sec)
-2025-02-09 19:14:02,891 - INFO - Output:
+2025-02-10 20:48:25,294 - INFO - Round 11 of 20.
+2025-02-10 20:48:25,952 - INFO - Generated 91 tokens in 0.66 seconds (138.35 tokens/sec)
+2025-02-10 20:48:25,952 - INFO - Output:
 Einstein's Theory of Relativity states that the speed of
 light in a vacuum is simply the speed of the electrons in
 that vacuum, since light has a speed. Since the speed of
@@ -1779,9 +846,9 @@ a solid, the light from this source has a speed of
 approximately 1/299,792 m/s. Einstein's theory of relativity
 explains this speed by a phenomenon known as the speed at
 the end of time. In other words, this speed is
-2025-02-09 19:14:02,891 - INFO - Round 12 of 20.
-2025-02-09 19:14:03,520 - INFO - Generated 91 tokens in 0.63 seconds (144.67 tokens/sec)
-2025-02-09 19:14:03,521 - INFO - Output:
+2025-02-10 20:48:25,952 - INFO - Round 12 of 20.
+2025-02-10 20:48:26,609 - INFO - Generated 91 tokens in 0.66 seconds (138.65 tokens/sec)
+2025-02-10 20:48:26,609 - INFO - Output:
 Einstein's Theory of Relativity states that the speed of
 light in a vacuum is simply the speed of the electrons in
 that vacuum, since light has a speed. Since the speed of
@@ -1790,9 +857,9 @@ a solid, the light from this source has a speed of
 approximately 1/299,792 m/s. Einstein's theory of relativity
 explains this speed by a phenomenon known as the speed at
 the end of time. In other words, this speed is
-2025-02-09 19:14:03,521 - INFO - Round 13 of 20.
-2025-02-09 19:14:04,148 - INFO - Generated 91 tokens in 0.63 seconds (145.10 tokens/sec)
-2025-02-09 19:14:04,148 - INFO - Output:
+2025-02-10 20:48:26,609 - INFO - Round 13 of 20.
+2025-02-10 20:48:27,265 - INFO - Generated 91 tokens in 0.66 seconds (138.73 tokens/sec)
+2025-02-10 20:48:27,265 - INFO - Output:
 Einstein's Theory of Relativity states that the speed of
 light in a vacuum is simply the speed of the electrons in
 that vacuum, since light has a speed. Since the speed of
@@ -1801,9 +868,9 @@ a solid, the light from this source has a speed of
 approximately 1/299,792 m/s. Einstein's theory of relativity
 explains this speed by a phenomenon known as the speed at
 the end of time. In other words, this speed is
-2025-02-09 19:14:04,148 - INFO - Round 14 of 20.
-2025-02-09 19:14:04,778 - INFO - Generated 91 tokens in 0.63 seconds (144.66 tokens/sec)
-2025-02-09 19:14:04,778 - INFO - Output:
+2025-02-10 20:48:27,265 - INFO - Round 14 of 20.
+2025-02-10 20:48:27,922 - INFO - Generated 91 tokens in 0.66 seconds (138.71 tokens/sec)
+2025-02-10 20:48:27,922 - INFO - Output:
 Einstein's Theory of Relativity states that the speed of
 light in a vacuum is simply the speed of the electrons in
 that vacuum, since light has a speed. Since the speed of
@@ -1812,9 +879,9 @@ a solid, the light from this source has a speed of
 approximately 1/299,792 m/s. Einstein's theory of relativity
 explains this speed by a phenomenon known as the speed at
 the end of time. In other words, this speed is
-2025-02-09 19:14:04,778 - INFO - Round 15 of 20.
-2025-02-09 19:14:05,406 - INFO - Generated 91 tokens in 0.63 seconds (145.04 tokens/sec)
-2025-02-09 19:14:05,406 - INFO - Output:
+2025-02-10 20:48:27,922 - INFO - Round 15 of 20.
+2025-02-10 20:48:28,579 - INFO - Generated 91 tokens in 0.66 seconds (138.54 tokens/sec)
+2025-02-10 20:48:28,580 - INFO - Output:
 Einstein's Theory of Relativity states that the speed of
 light in a vacuum is simply the speed of the electrons in
 that vacuum, since light has a speed. Since the speed of
@@ -1823,9 +890,9 @@ a solid, the light from this source has a speed of
 approximately 1/299,792 m/s. Einstein's theory of relativity
 explains this speed by a phenomenon known as the speed at
 the end of time. In other words, this speed is
-2025-02-09 19:14:05,406 - INFO - Round 16 of 20.
-2025-02-09 19:14:06,033 - INFO - Generated 91 tokens in 0.63 seconds (145.19 tokens/sec)
-2025-02-09 19:14:06,033 - INFO - Output:
+2025-02-10 20:48:28,580 - INFO - Round 16 of 20.
+2025-02-10 20:48:29,236 - INFO - Generated 91 tokens in 0.66 seconds (138.70 tokens/sec)
+2025-02-10 20:48:29,236 - INFO - Output:
 Einstein's Theory of Relativity states that the speed of
 light in a vacuum is simply the speed of the electrons in
 that vacuum, since light has a speed. Since the speed of
@@ -1834,9 +901,9 @@ a solid, the light from this source has a speed of
 approximately 1/299,792 m/s. Einstein's theory of relativity
 explains this speed by a phenomenon known as the speed at
 the end of time. In other words, this speed is
-2025-02-09 19:14:06,033 - INFO - Round 17 of 20.
-2025-02-09 19:14:06,662 - INFO - Generated 91 tokens in 0.63 seconds (144.88 tokens/sec)
-2025-02-09 19:14:06,662 - INFO - Output:
+2025-02-10 20:48:29,236 - INFO - Round 17 of 20.
+2025-02-10 20:48:29,894 - INFO - Generated 91 tokens in 0.66 seconds (138.52 tokens/sec)
+2025-02-10 20:48:29,894 - INFO - Output:
 Einstein's Theory of Relativity states that the speed of
 light in a vacuum is simply the speed of the electrons in
 that vacuum, since light has a speed. Since the speed of
@@ -1845,9 +912,9 @@ a solid, the light from this source has a speed of
 approximately 1/299,792 m/s. Einstein's theory of relativity
 explains this speed by a phenomenon known as the speed at
 the end of time. In other words, this speed is
-2025-02-09 19:14:06,662 - INFO - Round 18 of 20.
-2025-02-09 19:14:07,290 - INFO - Generated 91 tokens in 0.63 seconds (145.02 tokens/sec)
-2025-02-09 19:14:07,290 - INFO - Output:
+2025-02-10 20:48:29,894 - INFO - Round 18 of 20.
+2025-02-10 20:48:30,550 - INFO - Generated 91 tokens in 0.66 seconds (138.78 tokens/sec)
+2025-02-10 20:48:30,550 - INFO - Output:
 Einstein's Theory of Relativity states that the speed of
 light in a vacuum is simply the speed of the electrons in
 that vacuum, since light has a speed. Since the speed of
@@ -1856,9 +923,9 @@ a solid, the light from this source has a speed of
 approximately 1/299,792 m/s. Einstein's theory of relativity
 explains this speed by a phenomenon known as the speed at
 the end of time. In other words, this speed is
-2025-02-09 19:14:07,290 - INFO - Round 19 of 20.
-2025-02-09 19:14:07,917 - INFO - Generated 91 tokens in 0.63 seconds (145.19 tokens/sec)
-2025-02-09 19:14:07,917 - INFO - Output:
+2025-02-10 20:48:30,550 - INFO - Round 19 of 20.
+2025-02-10 20:48:31,208 - INFO - Generated 91 tokens in 0.66 seconds (138.36 tokens/sec)
+2025-02-10 20:48:31,209 - INFO - Output:
 Einstein's Theory of Relativity states that the speed of
 light in a vacuum is simply the speed of the electrons in
 that vacuum, since light has a speed. Since the speed of
@@ -1867,9 +934,9 @@ a solid, the light from this source has a speed of
 approximately 1/299,792 m/s. Einstein's theory of relativity
 explains this speed by a phenomenon known as the speed at
 the end of time. In other words, this speed is
-2025-02-09 19:14:07,918 - INFO - Round 20 of 20.
-2025-02-09 19:14:08,544 - INFO - Generated 91 tokens in 0.63 seconds (145.23 tokens/sec)
-2025-02-09 19:14:08,545 - INFO - Output:
+2025-02-10 20:48:31,209 - INFO - Round 20 of 20.
+2025-02-10 20:48:31,869 - INFO - Generated 91 tokens in 0.66 seconds (137.96 tokens/sec)
+2025-02-10 20:48:31,869 - INFO - Output:
 Einstein's Theory of Relativity states that the speed of
 light in a vacuum is simply the speed of the electrons in
 that vacuum, since light has a speed. Since the speed of
@@ -1878,10 +945,974 @@ a solid, the light from this source has a speed of
 approximately 1/299,792 m/s. Einstein's theory of relativity
 explains this speed by a phenomenon known as the speed at
 the end of time. In other words, this speed is
-2025-02-09 19:14:08,545 - INFO - Run details saved to gpt2-rates-2025-02-09-19-14-08-545231-torch-compile-max-autotune-fullgraph-py313t.json.
+2025-02-10 20:48:31,869 - INFO - Run details saved to gpt2-rates-2025-02-10-20-48-31-869451-torch-compile-reduce-overhead-py313t.json.
+torch.__init__: Ignoring unsupported torch.compile() with no GIL unsupported
+torch._dynamo.eval_frame: Ignoring unsupported torch.compile() with no GIL unsupported
 torch.__init__: Ignoring unsupported torch.compile() with no GIL unsupported
 torch._dynamo.eval_frame: Ignoring unsupported torch.compile() with no GIL unsupported
 
-real	0m18.063s
-user	0m21.712s
-sys	0m0.984s
+real	0m20.138s
+user	0m23.350s
+sys	0m1.425s
+Exception ignored in: <_io.BufferedWriter name=41>
+BrokenPipeError: [Errno 32] Broken pipe
+2025-02-10 20:48:38,069 - INFO - Loaded /mnt/raid1/trent/src/parallelopedia/data/model_19072.pt checkpoint in 0.481 seconds.
+2025-02-10 20:48:38,076 - INFO - Initialized GPT model in 0.006 seconds.
+2025-02-10 20:48:38,305 - INFO - Loaded model weights in 0.228 seconds.
+<frozen importlib._bootstrap>:488: RuntimeWarning: The global interpreter lock (GIL) has been enabled to load module 'triton._C.libtriton', which has not declared that it can run safely without the GIL. To override this behavior and keep the GIL disabled (at your own risk), run with PYTHON_GIL=0 or -Xgil=0.
+2025-02-10 20:48:38,672 - INFO - Created GPT model in 0.602 seconds.
+2025-02-10 20:48:38,756 - INFO - Moved model to cuda:3 in 0.085 seconds.
+2025-02-10 20:48:38,756 - INFO - Loaded model from step 19072, val_loss 3.0519702434539795
+2025-02-10 20:48:38,757 - INFO - Loaded gpt2 on cuda:3 in 1.169 seconds.
+2025-02-10 20:48:38,759 - INFO - torch.compiled model in 0.002 seconds.
+2025-02-10 20:48:38,759 - INFO - Round 1 of 20.
+2025-02-10 20:48:39,584 - INFO - Generated 91 tokens in 0.82 seconds (110.43 tokens/sec)
+2025-02-10 20:48:39,584 - INFO - Output:
+Einstein's Theory of Relativity states that the speed of
+light in a vacuum is simply the speed of the electrons in
+that vacuum, since light has a speed. Since the speed of
+light in a vacuum is equal to the speed of the electrons in
+a solid, the light from this source has a speed of
+approximately 1/299,792 m/s. Einstein's theory of relativity
+explains this speed by a phenomenon known as the speed at
+the end of time. In other words, this speed is
+2025-02-10 20:48:39,584 - INFO - Round 2 of 20.
+2025-02-10 20:48:40,223 - INFO - Generated 91 tokens in 0.64 seconds (142.66 tokens/sec)
+2025-02-10 20:48:40,223 - INFO - Output:
+Einstein's Theory of Relativity states that the speed of
+light in a vacuum is simply the speed of the electrons in
+that vacuum, since light has a speed. Since the speed of
+light in a vacuum is equal to the speed of the electrons in
+a solid, the light from this source has a speed of
+approximately 1/299,792 m/s. Einstein's theory of relativity
+explains this speed by a phenomenon known as the speed at
+the end of time. In other words, this speed is
+2025-02-10 20:48:40,223 - INFO - Round 3 of 20.
+2025-02-10 20:48:40,863 - INFO - Generated 91 tokens in 0.64 seconds (142.18 tokens/sec)
+2025-02-10 20:48:40,864 - INFO - Output:
+Einstein's Theory of Relativity states that the speed of
+light in a vacuum is simply the speed of the electrons in
+that vacuum, since light has a speed. Since the speed of
+light in a vacuum is equal to the speed of the electrons in
+a solid, the light from this source has a speed of
+approximately 1/299,792 m/s. Einstein's theory of relativity
+explains this speed by a phenomenon known as the speed at
+the end of time. In other words, this speed is
+2025-02-10 20:48:40,864 - INFO - Round 4 of 20.
+2025-02-10 20:48:41,501 - INFO - Generated 91 tokens in 0.64 seconds (142.76 tokens/sec)
+2025-02-10 20:48:41,502 - INFO - Output:
+Einstein's Theory of Relativity states that the speed of
+light in a vacuum is simply the speed of the electrons in
+that vacuum, since light has a speed. Since the speed of
+light in a vacuum is equal to the speed of the electrons in
+a solid, the light from this source has a speed of
+approximately 1/299,792 m/s. Einstein's theory of relativity
+explains this speed by a phenomenon known as the speed at
+the end of time. In other words, this speed is
+2025-02-10 20:48:41,502 - INFO - Round 5 of 20.
+2025-02-10 20:48:42,140 - INFO - Generated 91 tokens in 0.64 seconds (142.55 tokens/sec)
+2025-02-10 20:48:42,141 - INFO - Output:
+Einstein's Theory of Relativity states that the speed of
+light in a vacuum is simply the speed of the electrons in
+that vacuum, since light has a speed. Since the speed of
+light in a vacuum is equal to the speed of the electrons in
+a solid, the light from this source has a speed of
+approximately 1/299,792 m/s. Einstein's theory of relativity
+explains this speed by a phenomenon known as the speed at
+the end of time. In other words, this speed is
+2025-02-10 20:48:42,141 - INFO - Round 6 of 20.
+2025-02-10 20:48:42,779 - INFO - Generated 91 tokens in 0.64 seconds (142.60 tokens/sec)
+2025-02-10 20:48:42,779 - INFO - Output:
+Einstein's Theory of Relativity states that the speed of
+light in a vacuum is simply the speed of the electrons in
+that vacuum, since light has a speed. Since the speed of
+light in a vacuum is equal to the speed of the electrons in
+a solid, the light from this source has a speed of
+approximately 1/299,792 m/s. Einstein's theory of relativity
+explains this speed by a phenomenon known as the speed at
+the end of time. In other words, this speed is
+2025-02-10 20:48:42,779 - INFO - Round 7 of 20.
+2025-02-10 20:48:43,416 - INFO - Generated 91 tokens in 0.64 seconds (142.91 tokens/sec)
+2025-02-10 20:48:43,417 - INFO - Output:
+Einstein's Theory of Relativity states that the speed of
+light in a vacuum is simply the speed of the electrons in
+that vacuum, since light has a speed. Since the speed of
+light in a vacuum is equal to the speed of the electrons in
+a solid, the light from this source has a speed of
+approximately 1/299,792 m/s. Einstein's theory of relativity
+explains this speed by a phenomenon known as the speed at
+the end of time. In other words, this speed is
+2025-02-10 20:48:43,417 - INFO - Round 8 of 20.
+2025-02-10 20:48:44,058 - INFO - Generated 91 tokens in 0.64 seconds (141.92 tokens/sec)
+2025-02-10 20:48:44,059 - INFO - Output:
+Einstein's Theory of Relativity states that the speed of
+light in a vacuum is simply the speed of the electrons in
+that vacuum, since light has a speed. Since the speed of
+light in a vacuum is equal to the speed of the electrons in
+a solid, the light from this source has a speed of
+approximately 1/299,792 m/s. Einstein's theory of relativity
+explains this speed by a phenomenon known as the speed at
+the end of time. In other words, this speed is
+2025-02-10 20:48:44,059 - INFO - Round 9 of 20.
+2025-02-10 20:48:44,700 - INFO - Generated 91 tokens in 0.64 seconds (141.97 tokens/sec)
+2025-02-10 20:48:44,700 - INFO - Output:
+Einstein's Theory of Relativity states that the speed of
+light in a vacuum is simply the speed of the electrons in
+that vacuum, since light has a speed. Since the speed of
+light in a vacuum is equal to the speed of the electrons in
+a solid, the light from this source has a speed of
+approximately 1/299,792 m/s. Einstein's theory of relativity
+explains this speed by a phenomenon known as the speed at
+the end of time. In other words, this speed is
+2025-02-10 20:48:44,700 - INFO - Round 10 of 20.
+2025-02-10 20:48:45,339 - INFO - Generated 91 tokens in 0.64 seconds (142.54 tokens/sec)
+2025-02-10 20:48:45,339 - INFO - Output:
+Einstein's Theory of Relativity states that the speed of
+light in a vacuum is simply the speed of the electrons in
+that vacuum, since light has a speed. Since the speed of
+light in a vacuum is equal to the speed of the electrons in
+a solid, the light from this source has a speed of
+approximately 1/299,792 m/s. Einstein's theory of relativity
+explains this speed by a phenomenon known as the speed at
+the end of time. In other words, this speed is
+2025-02-10 20:48:45,339 - INFO - Round 11 of 20.
+2025-02-10 20:48:45,977 - INFO - Generated 91 tokens in 0.64 seconds (142.78 tokens/sec)
+2025-02-10 20:48:45,977 - INFO - Output:
+Einstein's Theory of Relativity states that the speed of
+light in a vacuum is simply the speed of the electrons in
+that vacuum, since light has a speed. Since the speed of
+light in a vacuum is equal to the speed of the electrons in
+a solid, the light from this source has a speed of
+approximately 1/299,792 m/s. Einstein's theory of relativity
+explains this speed by a phenomenon known as the speed at
+the end of time. In other words, this speed is
+2025-02-10 20:48:45,977 - INFO - Round 12 of 20.
+2025-02-10 20:48:46,617 - INFO - Generated 91 tokens in 0.64 seconds (142.24 tokens/sec)
+2025-02-10 20:48:46,618 - INFO - Output:
+Einstein's Theory of Relativity states that the speed of
+light in a vacuum is simply the speed of the electrons in
+that vacuum, since light has a speed. Since the speed of
+light in a vacuum is equal to the speed of the electrons in
+a solid, the light from this source has a speed of
+approximately 1/299,792 m/s. Einstein's theory of relativity
+explains this speed by a phenomenon known as the speed at
+the end of time. In other words, this speed is
+2025-02-10 20:48:46,618 - INFO - Round 13 of 20.
+2025-02-10 20:48:47,264 - INFO - Generated 91 tokens in 0.65 seconds (140.87 tokens/sec)
+2025-02-10 20:48:47,264 - INFO - Output:
+Einstein's Theory of Relativity states that the speed of
+light in a vacuum is simply the speed of the electrons in
+that vacuum, since light has a speed. Since the speed of
+light in a vacuum is equal to the speed of the electrons in
+a solid, the light from this source has a speed of
+approximately 1/299,792 m/s. Einstein's theory of relativity
+explains this speed by a phenomenon known as the speed at
+the end of time. In other words, this speed is
+2025-02-10 20:48:47,265 - INFO - Round 14 of 20.
+2025-02-10 20:48:47,912 - INFO - Generated 91 tokens in 0.65 seconds (140.53 tokens/sec)
+2025-02-10 20:48:47,913 - INFO - Output:
+Einstein's Theory of Relativity states that the speed of
+light in a vacuum is simply the speed of the electrons in
+that vacuum, since light has a speed. Since the speed of
+light in a vacuum is equal to the speed of the electrons in
+a solid, the light from this source has a speed of
+approximately 1/299,792 m/s. Einstein's theory of relativity
+explains this speed by a phenomenon known as the speed at
+the end of time. In other words, this speed is
+2025-02-10 20:48:47,913 - INFO - Round 15 of 20.
+2025-02-10 20:48:48,561 - INFO - Generated 91 tokens in 0.65 seconds (140.36 tokens/sec)
+2025-02-10 20:48:48,562 - INFO - Output:
+Einstein's Theory of Relativity states that the speed of
+light in a vacuum is simply the speed of the electrons in
+that vacuum, since light has a speed. Since the speed of
+light in a vacuum is equal to the speed of the electrons in
+a solid, the light from this source has a speed of
+approximately 1/299,792 m/s. Einstein's theory of relativity
+explains this speed by a phenomenon known as the speed at
+the end of time. In other words, this speed is
+2025-02-10 20:48:48,562 - INFO - Round 16 of 20.
+2025-02-10 20:48:49,185 - INFO - Generated 91 tokens in 0.62 seconds (146.20 tokens/sec)
+2025-02-10 20:48:49,185 - INFO - Output:
+Einstein's Theory of Relativity states that the speed of
+light in a vacuum is simply the speed of the electrons in
+that vacuum, since light has a speed. Since the speed of
+light in a vacuum is equal to the speed of the electrons in
+a solid, the light from this source has a speed of
+approximately 1/299,792 m/s. Einstein's theory of relativity
+explains this speed by a phenomenon known as the speed at
+the end of time. In other words, this speed is
+2025-02-10 20:48:49,185 - INFO - Round 17 of 20.
+2025-02-10 20:48:49,805 - INFO - Generated 91 tokens in 0.62 seconds (146.85 tokens/sec)
+2025-02-10 20:48:49,805 - INFO - Output:
+Einstein's Theory of Relativity states that the speed of
+light in a vacuum is simply the speed of the electrons in
+that vacuum, since light has a speed. Since the speed of
+light in a vacuum is equal to the speed of the electrons in
+a solid, the light from this source has a speed of
+approximately 1/299,792 m/s. Einstein's theory of relativity
+explains this speed by a phenomenon known as the speed at
+the end of time. In other words, this speed is
+2025-02-10 20:48:49,805 - INFO - Round 18 of 20.
+2025-02-10 20:48:50,426 - INFO - Generated 91 tokens in 0.62 seconds (146.54 tokens/sec)
+2025-02-10 20:48:50,427 - INFO - Output:
+Einstein's Theory of Relativity states that the speed of
+light in a vacuum is simply the speed of the electrons in
+that vacuum, since light has a speed. Since the speed of
+light in a vacuum is equal to the speed of the electrons in
+a solid, the light from this source has a speed of
+approximately 1/299,792 m/s. Einstein's theory of relativity
+explains this speed by a phenomenon known as the speed at
+the end of time. In other words, this speed is
+2025-02-10 20:48:50,427 - INFO - Round 19 of 20.
+2025-02-10 20:48:51,048 - INFO - Generated 91 tokens in 0.62 seconds (146.67 tokens/sec)
+2025-02-10 20:48:51,048 - INFO - Output:
+Einstein's Theory of Relativity states that the speed of
+light in a vacuum is simply the speed of the electrons in
+that vacuum, since light has a speed. Since the speed of
+light in a vacuum is equal to the speed of the electrons in
+a solid, the light from this source has a speed of
+approximately 1/299,792 m/s. Einstein's theory of relativity
+explains this speed by a phenomenon known as the speed at
+the end of time. In other words, this speed is
+2025-02-10 20:48:51,048 - INFO - Round 20 of 20.
+2025-02-10 20:48:51,667 - INFO - Generated 91 tokens in 0.62 seconds (146.98 tokens/sec)
+2025-02-10 20:48:51,668 - INFO - Output:
+Einstein's Theory of Relativity states that the speed of
+light in a vacuum is simply the speed of the electrons in
+that vacuum, since light has a speed. Since the speed of
+light in a vacuum is equal to the speed of the electrons in
+a solid, the light from this source has a speed of
+approximately 1/299,792 m/s. Einstein's theory of relativity
+explains this speed by a phenomenon known as the speed at
+the end of time. In other words, this speed is
+2025-02-10 20:48:51,668 - INFO - Run details saved to gpt2-rates-2025-02-10-20-48-51-668280-torch-compile-reduce-overhead-fullgraph-py313t.json.
+torch.__init__: Ignoring unsupported torch.compile() with no GIL unsupported
+torch._dynamo.eval_frame: Ignoring unsupported torch.compile() with no GIL unsupported
+torch.__init__: Ignoring unsupported torch.compile() with no GIL unsupported
+torch._dynamo.eval_frame: Ignoring unsupported torch.compile() with no GIL unsupported
+
+real	0m19.806s
+user	0m23.067s
+sys	0m1.336s
+Exception ignored in: <_io.BufferedWriter name=41>
+BrokenPipeError: [Errno 32] Broken pipe
+2025-02-10 20:48:57,852 - INFO - Loaded /mnt/raid1/trent/src/parallelopedia/data/model_19072.pt checkpoint in 0.472 seconds.
+2025-02-10 20:48:57,859 - INFO - Initialized GPT model in 0.007 seconds.
+2025-02-10 20:48:58,087 - INFO - Loaded model weights in 0.228 seconds.
+<frozen importlib._bootstrap>:488: RuntimeWarning: The global interpreter lock (GIL) has been enabled to load module 'triton._C.libtriton', which has not declared that it can run safely without the GIL. To override this behavior and keep the GIL disabled (at your own risk), run with PYTHON_GIL=0 or -Xgil=0.
+2025-02-10 20:48:58,455 - INFO - Created GPT model in 0.603 seconds.
+2025-02-10 20:48:58,540 - INFO - Moved model to cuda:3 in 0.085 seconds.
+2025-02-10 20:48:58,540 - INFO - Loaded model from step 19072, val_loss 3.0519702434539795
+2025-02-10 20:48:58,541 - INFO - Loaded gpt2 on cuda:3 in 1.161 seconds.
+2025-02-10 20:48:58,543 - INFO - torch.compiled model in 0.003 seconds.
+2025-02-10 20:48:58,543 - INFO - Round 1 of 20.
+2025-02-10 20:48:59,366 - INFO - Generated 91 tokens in 0.82 seconds (110.79 tokens/sec)
+2025-02-10 20:48:59,366 - INFO - Output:
+Einstein's Theory of Relativity states that the speed of
+light in a vacuum is simply the speed of the electrons in
+that vacuum, since light has a speed. Since the speed of
+light in a vacuum is equal to the speed of the electrons in
+a solid, the light from this source has a speed of
+approximately 1/299,792 m/s. Einstein's theory of relativity
+explains this speed by a phenomenon known as the speed at
+the end of time. In other words, this speed is
+2025-02-10 20:48:59,366 - INFO - Round 2 of 20.
+2025-02-10 20:49:00,019 - INFO - Generated 91 tokens in 0.65 seconds (139.51 tokens/sec)
+2025-02-10 20:49:00,019 - INFO - Output:
+Einstein's Theory of Relativity states that the speed of
+light in a vacuum is simply the speed of the electrons in
+that vacuum, since light has a speed. Since the speed of
+light in a vacuum is equal to the speed of the electrons in
+a solid, the light from this source has a speed of
+approximately 1/299,792 m/s. Einstein's theory of relativity
+explains this speed by a phenomenon known as the speed at
+the end of time. In other words, this speed is
+2025-02-10 20:49:00,019 - INFO - Round 3 of 20.
+2025-02-10 20:49:00,706 - INFO - Generated 91 tokens in 0.69 seconds (132.47 tokens/sec)
+2025-02-10 20:49:00,707 - INFO - Output:
+Einstein's Theory of Relativity states that the speed of
+light in a vacuum is simply the speed of the electrons in
+that vacuum, since light has a speed. Since the speed of
+light in a vacuum is equal to the speed of the electrons in
+a solid, the light from this source has a speed of
+approximately 1/299,792 m/s. Einstein's theory of relativity
+explains this speed by a phenomenon known as the speed at
+the end of time. In other words, this speed is
+2025-02-10 20:49:00,707 - INFO - Round 4 of 20.
+2025-02-10 20:49:01,327 - INFO - Generated 91 tokens in 0.62 seconds (146.66 tokens/sec)
+2025-02-10 20:49:01,328 - INFO - Output:
+Einstein's Theory of Relativity states that the speed of
+light in a vacuum is simply the speed of the electrons in
+that vacuum, since light has a speed. Since the speed of
+light in a vacuum is equal to the speed of the electrons in
+a solid, the light from this source has a speed of
+approximately 1/299,792 m/s. Einstein's theory of relativity
+explains this speed by a phenomenon known as the speed at
+the end of time. In other words, this speed is
+2025-02-10 20:49:01,328 - INFO - Round 5 of 20.
+2025-02-10 20:49:01,950 - INFO - Generated 91 tokens in 0.62 seconds (146.40 tokens/sec)
+2025-02-10 20:49:01,950 - INFO - Output:
+Einstein's Theory of Relativity states that the speed of
+light in a vacuum is simply the speed of the electrons in
+that vacuum, since light has a speed. Since the speed of
+light in a vacuum is equal to the speed of the electrons in
+a solid, the light from this source has a speed of
+approximately 1/299,792 m/s. Einstein's theory of relativity
+explains this speed by a phenomenon known as the speed at
+the end of time. In other words, this speed is
+2025-02-10 20:49:01,950 - INFO - Round 6 of 20.
+2025-02-10 20:49:02,571 - INFO - Generated 91 tokens in 0.62 seconds (146.62 tokens/sec)
+2025-02-10 20:49:02,571 - INFO - Output:
+Einstein's Theory of Relativity states that the speed of
+light in a vacuum is simply the speed of the electrons in
+that vacuum, since light has a speed. Since the speed of
+light in a vacuum is equal to the speed of the electrons in
+a solid, the light from this source has a speed of
+approximately 1/299,792 m/s. Einstein's theory of relativity
+explains this speed by a phenomenon known as the speed at
+the end of time. In other words, this speed is
+2025-02-10 20:49:02,571 - INFO - Round 7 of 20.
+2025-02-10 20:49:03,193 - INFO - Generated 91 tokens in 0.62 seconds (146.54 tokens/sec)
+2025-02-10 20:49:03,193 - INFO - Output:
+Einstein's Theory of Relativity states that the speed of
+light in a vacuum is simply the speed of the electrons in
+that vacuum, since light has a speed. Since the speed of
+light in a vacuum is equal to the speed of the electrons in
+a solid, the light from this source has a speed of
+approximately 1/299,792 m/s. Einstein's theory of relativity
+explains this speed by a phenomenon known as the speed at
+the end of time. In other words, this speed is
+2025-02-10 20:49:03,193 - INFO - Round 8 of 20.
+2025-02-10 20:49:03,816 - INFO - Generated 91 tokens in 0.62 seconds (146.13 tokens/sec)
+2025-02-10 20:49:03,816 - INFO - Output:
+Einstein's Theory of Relativity states that the speed of
+light in a vacuum is simply the speed of the electrons in
+that vacuum, since light has a speed. Since the speed of
+light in a vacuum is equal to the speed of the electrons in
+a solid, the light from this source has a speed of
+approximately 1/299,792 m/s. Einstein's theory of relativity
+explains this speed by a phenomenon known as the speed at
+the end of time. In other words, this speed is
+2025-02-10 20:49:03,816 - INFO - Round 9 of 20.
+2025-02-10 20:49:04,444 - INFO - Generated 91 tokens in 0.63 seconds (145.02 tokens/sec)
+2025-02-10 20:49:04,444 - INFO - Output:
+Einstein's Theory of Relativity states that the speed of
+light in a vacuum is simply the speed of the electrons in
+that vacuum, since light has a speed. Since the speed of
+light in a vacuum is equal to the speed of the electrons in
+a solid, the light from this source has a speed of
+approximately 1/299,792 m/s. Einstein's theory of relativity
+explains this speed by a phenomenon known as the speed at
+the end of time. In other words, this speed is
+2025-02-10 20:49:04,444 - INFO - Round 10 of 20.
+2025-02-10 20:49:05,066 - INFO - Generated 91 tokens in 0.62 seconds (146.47 tokens/sec)
+2025-02-10 20:49:05,066 - INFO - Output:
+Einstein's Theory of Relativity states that the speed of
+light in a vacuum is simply the speed of the electrons in
+that vacuum, since light has a speed. Since the speed of
+light in a vacuum is equal to the speed of the electrons in
+a solid, the light from this source has a speed of
+approximately 1/299,792 m/s. Einstein's theory of relativity
+explains this speed by a phenomenon known as the speed at
+the end of time. In other words, this speed is
+2025-02-10 20:49:05,066 - INFO - Round 11 of 20.
+2025-02-10 20:49:05,688 - INFO - Generated 91 tokens in 0.62 seconds (146.45 tokens/sec)
+2025-02-10 20:49:05,688 - INFO - Output:
+Einstein's Theory of Relativity states that the speed of
+light in a vacuum is simply the speed of the electrons in
+that vacuum, since light has a speed. Since the speed of
+light in a vacuum is equal to the speed of the electrons in
+a solid, the light from this source has a speed of
+approximately 1/299,792 m/s. Einstein's theory of relativity
+explains this speed by a phenomenon known as the speed at
+the end of time. In other words, this speed is
+2025-02-10 20:49:05,688 - INFO - Round 12 of 20.
+2025-02-10 20:49:06,310 - INFO - Generated 91 tokens in 0.62 seconds (146.37 tokens/sec)
+2025-02-10 20:49:06,311 - INFO - Output:
+Einstein's Theory of Relativity states that the speed of
+light in a vacuum is simply the speed of the electrons in
+that vacuum, since light has a speed. Since the speed of
+light in a vacuum is equal to the speed of the electrons in
+a solid, the light from this source has a speed of
+approximately 1/299,792 m/s. Einstein's theory of relativity
+explains this speed by a phenomenon known as the speed at
+the end of time. In other words, this speed is
+2025-02-10 20:49:06,311 - INFO - Round 13 of 20.
+2025-02-10 20:49:06,933 - INFO - Generated 91 tokens in 0.62 seconds (146.27 tokens/sec)
+2025-02-10 20:49:06,933 - INFO - Output:
+Einstein's Theory of Relativity states that the speed of
+light in a vacuum is simply the speed of the electrons in
+that vacuum, since light has a speed. Since the speed of
+light in a vacuum is equal to the speed of the electrons in
+a solid, the light from this source has a speed of
+approximately 1/299,792 m/s. Einstein's theory of relativity
+explains this speed by a phenomenon known as the speed at
+the end of time. In other words, this speed is
+2025-02-10 20:49:06,933 - INFO - Round 14 of 20.
+2025-02-10 20:49:07,554 - INFO - Generated 91 tokens in 0.62 seconds (146.56 tokens/sec)
+2025-02-10 20:49:07,555 - INFO - Output:
+Einstein's Theory of Relativity states that the speed of
+light in a vacuum is simply the speed of the electrons in
+that vacuum, since light has a speed. Since the speed of
+light in a vacuum is equal to the speed of the electrons in
+a solid, the light from this source has a speed of
+approximately 1/299,792 m/s. Einstein's theory of relativity
+explains this speed by a phenomenon known as the speed at
+the end of time. In other words, this speed is
+2025-02-10 20:49:07,555 - INFO - Round 15 of 20.
+2025-02-10 20:49:08,176 - INFO - Generated 91 tokens in 0.62 seconds (146.45 tokens/sec)
+2025-02-10 20:49:08,177 - INFO - Output:
+Einstein's Theory of Relativity states that the speed of
+light in a vacuum is simply the speed of the electrons in
+that vacuum, since light has a speed. Since the speed of
+light in a vacuum is equal to the speed of the electrons in
+a solid, the light from this source has a speed of
+approximately 1/299,792 m/s. Einstein's theory of relativity
+explains this speed by a phenomenon known as the speed at
+the end of time. In other words, this speed is
+2025-02-10 20:49:08,177 - INFO - Round 16 of 20.
+2025-02-10 20:49:08,799 - INFO - Generated 91 tokens in 0.62 seconds (146.39 tokens/sec)
+2025-02-10 20:49:08,799 - INFO - Output:
+Einstein's Theory of Relativity states that the speed of
+light in a vacuum is simply the speed of the electrons in
+that vacuum, since light has a speed. Since the speed of
+light in a vacuum is equal to the speed of the electrons in
+a solid, the light from this source has a speed of
+approximately 1/299,792 m/s. Einstein's theory of relativity
+explains this speed by a phenomenon known as the speed at
+the end of time. In other words, this speed is
+2025-02-10 20:49:08,799 - INFO - Round 17 of 20.
+2025-02-10 20:49:09,420 - INFO - Generated 91 tokens in 0.62 seconds (146.49 tokens/sec)
+2025-02-10 20:49:09,421 - INFO - Output:
+Einstein's Theory of Relativity states that the speed of
+light in a vacuum is simply the speed of the electrons in
+that vacuum, since light has a speed. Since the speed of
+light in a vacuum is equal to the speed of the electrons in
+a solid, the light from this source has a speed of
+approximately 1/299,792 m/s. Einstein's theory of relativity
+explains this speed by a phenomenon known as the speed at
+the end of time. In other words, this speed is
+2025-02-10 20:49:09,421 - INFO - Round 18 of 20.
+2025-02-10 20:49:10,043 - INFO - Generated 91 tokens in 0.62 seconds (146.24 tokens/sec)
+2025-02-10 20:49:10,044 - INFO - Output:
+Einstein's Theory of Relativity states that the speed of
+light in a vacuum is simply the speed of the electrons in
+that vacuum, since light has a speed. Since the speed of
+light in a vacuum is equal to the speed of the electrons in
+a solid, the light from this source has a speed of
+approximately 1/299,792 m/s. Einstein's theory of relativity
+explains this speed by a phenomenon known as the speed at
+the end of time. In other words, this speed is
+2025-02-10 20:49:10,044 - INFO - Round 19 of 20.
+2025-02-10 20:49:10,665 - INFO - Generated 91 tokens in 0.62 seconds (146.62 tokens/sec)
+2025-02-10 20:49:10,665 - INFO - Output:
+Einstein's Theory of Relativity states that the speed of
+light in a vacuum is simply the speed of the electrons in
+that vacuum, since light has a speed. Since the speed of
+light in a vacuum is equal to the speed of the electrons in
+a solid, the light from this source has a speed of
+approximately 1/299,792 m/s. Einstein's theory of relativity
+explains this speed by a phenomenon known as the speed at
+the end of time. In other words, this speed is
+2025-02-10 20:49:10,665 - INFO - Round 20 of 20.
+2025-02-10 20:49:11,286 - INFO - Generated 91 tokens in 0.62 seconds (146.54 tokens/sec)
+2025-02-10 20:49:11,286 - INFO - Output:
+Einstein's Theory of Relativity states that the speed of
+light in a vacuum is simply the speed of the electrons in
+that vacuum, since light has a speed. Since the speed of
+light in a vacuum is equal to the speed of the electrons in
+a solid, the light from this source has a speed of
+approximately 1/299,792 m/s. Einstein's theory of relativity
+explains this speed by a phenomenon known as the speed at
+the end of time. In other words, this speed is
+2025-02-10 20:49:11,287 - INFO - Run details saved to gpt2-rates-2025-02-10-20-49-11-287012-torch-compile-reduce-overhead-fullgraph-py313t.json.
+torch.__init__: Ignoring unsupported torch.compile() with no GIL unsupported
+torch._dynamo.eval_frame: Ignoring unsupported torch.compile() with no GIL unsupported
+torch.__init__: Ignoring unsupported torch.compile() with no GIL unsupported
+torch._dynamo.eval_frame: Ignoring unsupported torch.compile() with no GIL unsupported
+
+real	0m19.626s
+user	0m22.831s
+sys	0m1.406s
+Exception ignored in: <_io.BufferedWriter name=41>
+BrokenPipeError: [Errno 32] Broken pipe
+2025-02-10 20:49:17,458 - INFO - Loaded /mnt/raid1/trent/src/parallelopedia/data/model_19072.pt checkpoint in 0.491 seconds.
+2025-02-10 20:49:17,465 - INFO - Initialized GPT model in 0.006 seconds.
+2025-02-10 20:49:17,704 - INFO - Loaded model weights in 0.239 seconds.
+<frozen importlib._bootstrap>:488: RuntimeWarning: The global interpreter lock (GIL) has been enabled to load module 'triton._C.libtriton', which has not declared that it can run safely without the GIL. To override this behavior and keep the GIL disabled (at your own risk), run with PYTHON_GIL=0 or -Xgil=0.
+2025-02-10 20:49:18,069 - INFO - Created GPT model in 0.611 seconds.
+2025-02-10 20:49:18,153 - INFO - Moved model to cuda:3 in 0.084 seconds.
+2025-02-10 20:49:18,153 - INFO - Loaded model from step 19072, val_loss 3.0519702434539795
+2025-02-10 20:49:18,153 - INFO - Loaded gpt2 on cuda:3 in 1.187 seconds.
+2025-02-10 20:49:18,157 - INFO - torch.compiled model in 0.003 seconds.
+2025-02-10 20:49:18,157 - INFO - Round 1 of 20.
+2025-02-10 20:49:18,973 - INFO - Generated 91 tokens in 0.82 seconds (111.60 tokens/sec)
+2025-02-10 20:49:18,973 - INFO - Output:
+Einstein's Theory of Relativity states that the speed of
+light in a vacuum is simply the speed of the electrons in
+that vacuum, since light has a speed. Since the speed of
+light in a vacuum is equal to the speed of the electrons in
+a solid, the light from this source has a speed of
+approximately 1/299,792 m/s. Einstein's theory of relativity
+explains this speed by a phenomenon known as the speed at
+the end of time. In other words, this speed is
+2025-02-10 20:49:18,973 - INFO - Round 2 of 20.
+2025-02-10 20:49:19,621 - INFO - Generated 91 tokens in 0.65 seconds (140.58 tokens/sec)
+2025-02-10 20:49:19,621 - INFO - Output:
+Einstein's Theory of Relativity states that the speed of
+light in a vacuum is simply the speed of the electrons in
+that vacuum, since light has a speed. Since the speed of
+light in a vacuum is equal to the speed of the electrons in
+a solid, the light from this source has a speed of
+approximately 1/299,792 m/s. Einstein's theory of relativity
+explains this speed by a phenomenon known as the speed at
+the end of time. In other words, this speed is
+2025-02-10 20:49:19,621 - INFO - Round 3 of 20.
+2025-02-10 20:49:20,266 - INFO - Generated 91 tokens in 0.64 seconds (141.26 tokens/sec)
+2025-02-10 20:49:20,266 - INFO - Output:
+Einstein's Theory of Relativity states that the speed of
+light in a vacuum is simply the speed of the electrons in
+that vacuum, since light has a speed. Since the speed of
+light in a vacuum is equal to the speed of the electrons in
+a solid, the light from this source has a speed of
+approximately 1/299,792 m/s. Einstein's theory of relativity
+explains this speed by a phenomenon known as the speed at
+the end of time. In other words, this speed is
+2025-02-10 20:49:20,266 - INFO - Round 4 of 20.
+2025-02-10 20:49:20,911 - INFO - Generated 91 tokens in 0.64 seconds (141.24 tokens/sec)
+2025-02-10 20:49:20,911 - INFO - Output:
+Einstein's Theory of Relativity states that the speed of
+light in a vacuum is simply the speed of the electrons in
+that vacuum, since light has a speed. Since the speed of
+light in a vacuum is equal to the speed of the electrons in
+a solid, the light from this source has a speed of
+approximately 1/299,792 m/s. Einstein's theory of relativity
+explains this speed by a phenomenon known as the speed at
+the end of time. In other words, this speed is
+2025-02-10 20:49:20,911 - INFO - Round 5 of 20.
+2025-02-10 20:49:21,555 - INFO - Generated 91 tokens in 0.64 seconds (141.46 tokens/sec)
+2025-02-10 20:49:21,555 - INFO - Output:
+Einstein's Theory of Relativity states that the speed of
+light in a vacuum is simply the speed of the electrons in
+that vacuum, since light has a speed. Since the speed of
+light in a vacuum is equal to the speed of the electrons in
+a solid, the light from this source has a speed of
+approximately 1/299,792 m/s. Einstein's theory of relativity
+explains this speed by a phenomenon known as the speed at
+the end of time. In other words, this speed is
+2025-02-10 20:49:21,555 - INFO - Round 6 of 20.
+2025-02-10 20:49:22,199 - INFO - Generated 91 tokens in 0.64 seconds (141.27 tokens/sec)
+2025-02-10 20:49:22,200 - INFO - Output:
+Einstein's Theory of Relativity states that the speed of
+light in a vacuum is simply the speed of the electrons in
+that vacuum, since light has a speed. Since the speed of
+light in a vacuum is equal to the speed of the electrons in
+a solid, the light from this source has a speed of
+approximately 1/299,792 m/s. Einstein's theory of relativity
+explains this speed by a phenomenon known as the speed at
+the end of time. In other words, this speed is
+2025-02-10 20:49:22,200 - INFO - Round 7 of 20.
+2025-02-10 20:49:22,846 - INFO - Generated 91 tokens in 0.65 seconds (140.98 tokens/sec)
+2025-02-10 20:49:22,846 - INFO - Output:
+Einstein's Theory of Relativity states that the speed of
+light in a vacuum is simply the speed of the electrons in
+that vacuum, since light has a speed. Since the speed of
+light in a vacuum is equal to the speed of the electrons in
+a solid, the light from this source has a speed of
+approximately 1/299,792 m/s. Einstein's theory of relativity
+explains this speed by a phenomenon known as the speed at
+the end of time. In other words, this speed is
+2025-02-10 20:49:22,846 - INFO - Round 8 of 20.
+2025-02-10 20:49:23,486 - INFO - Generated 91 tokens in 0.64 seconds (142.29 tokens/sec)
+2025-02-10 20:49:23,487 - INFO - Output:
+Einstein's Theory of Relativity states that the speed of
+light in a vacuum is simply the speed of the electrons in
+that vacuum, since light has a speed. Since the speed of
+light in a vacuum is equal to the speed of the electrons in
+a solid, the light from this source has a speed of
+approximately 1/299,792 m/s. Einstein's theory of relativity
+explains this speed by a phenomenon known as the speed at
+the end of time. In other words, this speed is
+2025-02-10 20:49:23,487 - INFO - Round 9 of 20.
+2025-02-10 20:49:24,129 - INFO - Generated 91 tokens in 0.64 seconds (141.71 tokens/sec)
+2025-02-10 20:49:24,130 - INFO - Output:
+Einstein's Theory of Relativity states that the speed of
+light in a vacuum is simply the speed of the electrons in
+that vacuum, since light has a speed. Since the speed of
+light in a vacuum is equal to the speed of the electrons in
+a solid, the light from this source has a speed of
+approximately 1/299,792 m/s. Einstein's theory of relativity
+explains this speed by a phenomenon known as the speed at
+the end of time. In other words, this speed is
+2025-02-10 20:49:24,130 - INFO - Round 10 of 20.
+2025-02-10 20:49:24,771 - INFO - Generated 91 tokens in 0.64 seconds (141.83 tokens/sec)
+2025-02-10 20:49:24,772 - INFO - Output:
+Einstein's Theory of Relativity states that the speed of
+light in a vacuum is simply the speed of the electrons in
+that vacuum, since light has a speed. Since the speed of
+light in a vacuum is equal to the speed of the electrons in
+a solid, the light from this source has a speed of
+approximately 1/299,792 m/s. Einstein's theory of relativity
+explains this speed by a phenomenon known as the speed at
+the end of time. In other words, this speed is
+2025-02-10 20:49:24,772 - INFO - Round 11 of 20.
+2025-02-10 20:49:25,413 - INFO - Generated 91 tokens in 0.64 seconds (142.00 tokens/sec)
+2025-02-10 20:49:25,413 - INFO - Output:
+Einstein's Theory of Relativity states that the speed of
+light in a vacuum is simply the speed of the electrons in
+that vacuum, since light has a speed. Since the speed of
+light in a vacuum is equal to the speed of the electrons in
+a solid, the light from this source has a speed of
+approximately 1/299,792 m/s. Einstein's theory of relativity
+explains this speed by a phenomenon known as the speed at
+the end of time. In other words, this speed is
+2025-02-10 20:49:25,414 - INFO - Round 12 of 20.
+2025-02-10 20:49:26,056 - INFO - Generated 91 tokens in 0.64 seconds (141.66 tokens/sec)
+2025-02-10 20:49:26,056 - INFO - Output:
+Einstein's Theory of Relativity states that the speed of
+light in a vacuum is simply the speed of the electrons in
+that vacuum, since light has a speed. Since the speed of
+light in a vacuum is equal to the speed of the electrons in
+a solid, the light from this source has a speed of
+approximately 1/299,792 m/s. Einstein's theory of relativity
+explains this speed by a phenomenon known as the speed at
+the end of time. In other words, this speed is
+2025-02-10 20:49:26,057 - INFO - Round 13 of 20.
+2025-02-10 20:49:26,703 - INFO - Generated 91 tokens in 0.65 seconds (140.87 tokens/sec)
+2025-02-10 20:49:26,703 - INFO - Output:
+Einstein's Theory of Relativity states that the speed of
+light in a vacuum is simply the speed of the electrons in
+that vacuum, since light has a speed. Since the speed of
+light in a vacuum is equal to the speed of the electrons in
+a solid, the light from this source has a speed of
+approximately 1/299,792 m/s. Einstein's theory of relativity
+explains this speed by a phenomenon known as the speed at
+the end of time. In other words, this speed is
+2025-02-10 20:49:26,703 - INFO - Round 14 of 20.
+2025-02-10 20:49:27,344 - INFO - Generated 91 tokens in 0.64 seconds (141.96 tokens/sec)
+2025-02-10 20:49:27,345 - INFO - Output:
+Einstein's Theory of Relativity states that the speed of
+light in a vacuum is simply the speed of the electrons in
+that vacuum, since light has a speed. Since the speed of
+light in a vacuum is equal to the speed of the electrons in
+a solid, the light from this source has a speed of
+approximately 1/299,792 m/s. Einstein's theory of relativity
+explains this speed by a phenomenon known as the speed at
+the end of time. In other words, this speed is
+2025-02-10 20:49:27,345 - INFO - Round 15 of 20.
+2025-02-10 20:49:27,986 - INFO - Generated 91 tokens in 0.64 seconds (142.08 tokens/sec)
+2025-02-10 20:49:27,986 - INFO - Output:
+Einstein's Theory of Relativity states that the speed of
+light in a vacuum is simply the speed of the electrons in
+that vacuum, since light has a speed. Since the speed of
+light in a vacuum is equal to the speed of the electrons in
+a solid, the light from this source has a speed of
+approximately 1/299,792 m/s. Einstein's theory of relativity
+explains this speed by a phenomenon known as the speed at
+the end of time. In other words, this speed is
+2025-02-10 20:49:27,986 - INFO - Round 16 of 20.
+2025-02-10 20:49:28,628 - INFO - Generated 91 tokens in 0.64 seconds (141.93 tokens/sec)
+2025-02-10 20:49:28,628 - INFO - Output:
+Einstein's Theory of Relativity states that the speed of
+light in a vacuum is simply the speed of the electrons in
+that vacuum, since light has a speed. Since the speed of
+light in a vacuum is equal to the speed of the electrons in
+a solid, the light from this source has a speed of
+approximately 1/299,792 m/s. Einstein's theory of relativity
+explains this speed by a phenomenon known as the speed at
+the end of time. In other words, this speed is
+2025-02-10 20:49:28,628 - INFO - Round 17 of 20.
+2025-02-10 20:49:29,269 - INFO - Generated 91 tokens in 0.64 seconds (142.10 tokens/sec)
+2025-02-10 20:49:29,269 - INFO - Output:
+Einstein's Theory of Relativity states that the speed of
+light in a vacuum is simply the speed of the electrons in
+that vacuum, since light has a speed. Since the speed of
+light in a vacuum is equal to the speed of the electrons in
+a solid, the light from this source has a speed of
+approximately 1/299,792 m/s. Einstein's theory of relativity
+explains this speed by a phenomenon known as the speed at
+the end of time. In other words, this speed is
+2025-02-10 20:49:29,269 - INFO - Round 18 of 20.
+2025-02-10 20:49:29,913 - INFO - Generated 91 tokens in 0.64 seconds (141.43 tokens/sec)
+2025-02-10 20:49:29,913 - INFO - Output:
+Einstein's Theory of Relativity states that the speed of
+light in a vacuum is simply the speed of the electrons in
+that vacuum, since light has a speed. Since the speed of
+light in a vacuum is equal to the speed of the electrons in
+a solid, the light from this source has a speed of
+approximately 1/299,792 m/s. Einstein's theory of relativity
+explains this speed by a phenomenon known as the speed at
+the end of time. In other words, this speed is
+2025-02-10 20:49:29,913 - INFO - Round 19 of 20.
+2025-02-10 20:49:30,557 - INFO - Generated 91 tokens in 0.64 seconds (141.46 tokens/sec)
+2025-02-10 20:49:30,557 - INFO - Output:
+Einstein's Theory of Relativity states that the speed of
+light in a vacuum is simply the speed of the electrons in
+that vacuum, since light has a speed. Since the speed of
+light in a vacuum is equal to the speed of the electrons in
+a solid, the light from this source has a speed of
+approximately 1/299,792 m/s. Einstein's theory of relativity
+explains this speed by a phenomenon known as the speed at
+the end of time. In other words, this speed is
+2025-02-10 20:49:30,557 - INFO - Round 20 of 20.
+2025-02-10 20:49:31,199 - INFO - Generated 91 tokens in 0.64 seconds (141.84 tokens/sec)
+2025-02-10 20:49:31,199 - INFO - Output:
+Einstein's Theory of Relativity states that the speed of
+light in a vacuum is simply the speed of the electrons in
+that vacuum, since light has a speed. Since the speed of
+light in a vacuum is equal to the speed of the electrons in
+a solid, the light from this source has a speed of
+approximately 1/299,792 m/s. Einstein's theory of relativity
+explains this speed by a phenomenon known as the speed at
+the end of time. In other words, this speed is
+2025-02-10 20:49:31,200 - INFO - Run details saved to gpt2-rates-2025-02-10-20-49-31-199651-torch-compile-max-autotune-py313t.json.
+torch.__init__: Ignoring unsupported torch.compile() with no GIL unsupported
+torch._dynamo.eval_frame: Ignoring unsupported torch.compile() with no GIL unsupported
+torch.__init__: Ignoring unsupported torch.compile() with no GIL unsupported
+torch._dynamo.eval_frame: Ignoring unsupported torch.compile() with no GIL unsupported
+
+real	0m19.900s
+user	0m23.112s
+sys	0m1.409s
+Exception ignored in: <_io.BufferedWriter name=41>
+BrokenPipeError: [Errno 32] Broken pipe
+2025-02-10 20:49:37,383 - INFO - Loaded /mnt/raid1/trent/src/parallelopedia/data/model_19072.pt checkpoint in 0.482 seconds.
+2025-02-10 20:49:37,390 - INFO - Initialized GPT model in 0.006 seconds.
+2025-02-10 20:49:37,613 - INFO - Loaded model weights in 0.223 seconds.
+<frozen importlib._bootstrap>:488: RuntimeWarning: The global interpreter lock (GIL) has been enabled to load module 'triton._C.libtriton', which has not declared that it can run safely without the GIL. To override this behavior and keep the GIL disabled (at your own risk), run with PYTHON_GIL=0 or -Xgil=0.
+2025-02-10 20:49:37,976 - INFO - Created GPT model in 0.592 seconds.
+2025-02-10 20:49:38,058 - INFO - Moved model to cuda:3 in 0.082 seconds.
+2025-02-10 20:49:38,058 - INFO - Loaded model from step 19072, val_loss 3.0519702434539795
+2025-02-10 20:49:38,058 - INFO - Loaded gpt2 on cuda:3 in 1.157 seconds.
+2025-02-10 20:49:38,061 - INFO - torch.compiled model in 0.002 seconds.
+2025-02-10 20:49:38,061 - INFO - Round 1 of 20.
+2025-02-10 20:49:38,896 - INFO - Generated 91 tokens in 0.83 seconds (109.09 tokens/sec)
+2025-02-10 20:49:38,896 - INFO - Output:
+Einstein's Theory of Relativity states that the speed of
+light in a vacuum is simply the speed of the electrons in
+that vacuum, since light has a speed. Since the speed of
+light in a vacuum is equal to the speed of the electrons in
+a solid, the light from this source has a speed of
+approximately 1/299,792 m/s. Einstein's theory of relativity
+explains this speed by a phenomenon known as the speed at
+the end of time. In other words, this speed is
+2025-02-10 20:49:38,896 - INFO - Round 2 of 20.
+2025-02-10 20:49:39,552 - INFO - Generated 91 tokens in 0.66 seconds (138.68 tokens/sec)
+2025-02-10 20:49:39,553 - INFO - Output:
+Einstein's Theory of Relativity states that the speed of
+light in a vacuum is simply the speed of the electrons in
+that vacuum, since light has a speed. Since the speed of
+light in a vacuum is equal to the speed of the electrons in
+a solid, the light from this source has a speed of
+approximately 1/299,792 m/s. Einstein's theory of relativity
+explains this speed by a phenomenon known as the speed at
+the end of time. In other words, this speed is
+2025-02-10 20:49:39,553 - INFO - Round 3 of 20.
+2025-02-10 20:49:40,199 - INFO - Generated 91 tokens in 0.65 seconds (140.90 tokens/sec)
+2025-02-10 20:49:40,199 - INFO - Output:
+Einstein's Theory of Relativity states that the speed of
+light in a vacuum is simply the speed of the electrons in
+that vacuum, since light has a speed. Since the speed of
+light in a vacuum is equal to the speed of the electrons in
+a solid, the light from this source has a speed of
+approximately 1/299,792 m/s. Einstein's theory of relativity
+explains this speed by a phenomenon known as the speed at
+the end of time. In other words, this speed is
+2025-02-10 20:49:40,199 - INFO - Round 4 of 20.
+2025-02-10 20:49:40,851 - INFO - Generated 91 tokens in 0.65 seconds (139.61 tokens/sec)
+2025-02-10 20:49:40,852 - INFO - Output:
+Einstein's Theory of Relativity states that the speed of
+light in a vacuum is simply the speed of the electrons in
+that vacuum, since light has a speed. Since the speed of
+light in a vacuum is equal to the speed of the electrons in
+a solid, the light from this source has a speed of
+approximately 1/299,792 m/s. Einstein's theory of relativity
+explains this speed by a phenomenon known as the speed at
+the end of time. In other words, this speed is
+2025-02-10 20:49:40,852 - INFO - Round 5 of 20.
+2025-02-10 20:49:41,496 - INFO - Generated 91 tokens in 0.64 seconds (141.24 tokens/sec)
+2025-02-10 20:49:41,497 - INFO - Output:
+Einstein's Theory of Relativity states that the speed of
+light in a vacuum is simply the speed of the electrons in
+that vacuum, since light has a speed. Since the speed of
+light in a vacuum is equal to the speed of the electrons in
+a solid, the light from this source has a speed of
+approximately 1/299,792 m/s. Einstein's theory of relativity
+explains this speed by a phenomenon known as the speed at
+the end of time. In other words, this speed is
+2025-02-10 20:49:41,497 - INFO - Round 6 of 20.
+2025-02-10 20:49:42,143 - INFO - Generated 91 tokens in 0.65 seconds (140.79 tokens/sec)
+2025-02-10 20:49:42,144 - INFO - Output:
+Einstein's Theory of Relativity states that the speed of
+light in a vacuum is simply the speed of the electrons in
+that vacuum, since light has a speed. Since the speed of
+light in a vacuum is equal to the speed of the electrons in
+a solid, the light from this source has a speed of
+approximately 1/299,792 m/s. Einstein's theory of relativity
+explains this speed by a phenomenon known as the speed at
+the end of time. In other words, this speed is
+2025-02-10 20:49:42,144 - INFO - Round 7 of 20.
+2025-02-10 20:49:42,794 - INFO - Generated 91 tokens in 0.65 seconds (139.98 tokens/sec)
+2025-02-10 20:49:42,794 - INFO - Output:
+Einstein's Theory of Relativity states that the speed of
+light in a vacuum is simply the speed of the electrons in
+that vacuum, since light has a speed. Since the speed of
+light in a vacuum is equal to the speed of the electrons in
+a solid, the light from this source has a speed of
+approximately 1/299,792 m/s. Einstein's theory of relativity
+explains this speed by a phenomenon known as the speed at
+the end of time. In other words, this speed is
+2025-02-10 20:49:42,795 - INFO - Round 8 of 20.
+2025-02-10 20:49:43,442 - INFO - Generated 91 tokens in 0.65 seconds (140.59 tokens/sec)
+2025-02-10 20:49:43,442 - INFO - Output:
+Einstein's Theory of Relativity states that the speed of
+light in a vacuum is simply the speed of the electrons in
+that vacuum, since light has a speed. Since the speed of
+light in a vacuum is equal to the speed of the electrons in
+a solid, the light from this source has a speed of
+approximately 1/299,792 m/s. Einstein's theory of relativity
+explains this speed by a phenomenon known as the speed at
+the end of time. In other words, this speed is
+2025-02-10 20:49:43,442 - INFO - Round 9 of 20.
+2025-02-10 20:49:44,088 - INFO - Generated 91 tokens in 0.65 seconds (141.07 tokens/sec)
+2025-02-10 20:49:44,088 - INFO - Output:
+Einstein's Theory of Relativity states that the speed of
+light in a vacuum is simply the speed of the electrons in
+that vacuum, since light has a speed. Since the speed of
+light in a vacuum is equal to the speed of the electrons in
+a solid, the light from this source has a speed of
+approximately 1/299,792 m/s. Einstein's theory of relativity
+explains this speed by a phenomenon known as the speed at
+the end of time. In other words, this speed is
+2025-02-10 20:49:44,088 - INFO - Round 10 of 20.
+2025-02-10 20:49:44,738 - INFO - Generated 91 tokens in 0.65 seconds (140.10 tokens/sec)
+2025-02-10 20:49:44,738 - INFO - Output:
+Einstein's Theory of Relativity states that the speed of
+light in a vacuum is simply the speed of the electrons in
+that vacuum, since light has a speed. Since the speed of
+light in a vacuum is equal to the speed of the electrons in
+a solid, the light from this source has a speed of
+approximately 1/299,792 m/s. Einstein's theory of relativity
+explains this speed by a phenomenon known as the speed at
+the end of time. In other words, this speed is
+2025-02-10 20:49:44,738 - INFO - Round 11 of 20.
+2025-02-10 20:49:45,382 - INFO - Generated 91 tokens in 0.64 seconds (141.34 tokens/sec)
+2025-02-10 20:49:45,383 - INFO - Output:
+Einstein's Theory of Relativity states that the speed of
+light in a vacuum is simply the speed of the electrons in
+that vacuum, since light has a speed. Since the speed of
+light in a vacuum is equal to the speed of the electrons in
+a solid, the light from this source has a speed of
+approximately 1/299,792 m/s. Einstein's theory of relativity
+explains this speed by a phenomenon known as the speed at
+the end of time. In other words, this speed is
+2025-02-10 20:49:45,383 - INFO - Round 12 of 20.
+2025-02-10 20:49:46,026 - INFO - Generated 91 tokens in 0.64 seconds (141.47 tokens/sec)
+2025-02-10 20:49:46,027 - INFO - Output:
+Einstein's Theory of Relativity states that the speed of
+light in a vacuum is simply the speed of the electrons in
+that vacuum, since light has a speed. Since the speed of
+light in a vacuum is equal to the speed of the electrons in
+a solid, the light from this source has a speed of
+approximately 1/299,792 m/s. Einstein's theory of relativity
+explains this speed by a phenomenon known as the speed at
+the end of time. In other words, this speed is
+2025-02-10 20:49:46,027 - INFO - Round 13 of 20.
+2025-02-10 20:49:46,695 - INFO - Generated 91 tokens in 0.67 seconds (136.23 tokens/sec)
+2025-02-10 20:49:46,695 - INFO - Output:
+Einstein's Theory of Relativity states that the speed of
+light in a vacuum is simply the speed of the electrons in
+that vacuum, since light has a speed. Since the speed of
+light in a vacuum is equal to the speed of the electrons in
+a solid, the light from this source has a speed of
+approximately 1/299,792 m/s. Einstein's theory of relativity
+explains this speed by a phenomenon known as the speed at
+the end of time. In other words, this speed is
+2025-02-10 20:49:46,695 - INFO - Round 14 of 20.
+2025-02-10 20:49:47,339 - INFO - Generated 91 tokens in 0.64 seconds (141.40 tokens/sec)
+2025-02-10 20:49:47,340 - INFO - Output:
+Einstein's Theory of Relativity states that the speed of
+light in a vacuum is simply the speed of the electrons in
+that vacuum, since light has a speed. Since the speed of
+light in a vacuum is equal to the speed of the electrons in
+a solid, the light from this source has a speed of
+approximately 1/299,792 m/s. Einstein's theory of relativity
+explains this speed by a phenomenon known as the speed at
+the end of time. In other words, this speed is
+2025-02-10 20:49:47,340 - INFO - Round 15 of 20.
+2025-02-10 20:49:47,988 - INFO - Generated 91 tokens in 0.65 seconds (140.35 tokens/sec)
+2025-02-10 20:49:47,989 - INFO - Output:
+Einstein's Theory of Relativity states that the speed of
+light in a vacuum is simply the speed of the electrons in
+that vacuum, since light has a speed. Since the speed of
+light in a vacuum is equal to the speed of the electrons in
+a solid, the light from this source has a speed of
+approximately 1/299,792 m/s. Einstein's theory of relativity
+explains this speed by a phenomenon known as the speed at
+the end of time. In other words, this speed is
+2025-02-10 20:49:47,989 - INFO - Round 16 of 20.
+2025-02-10 20:49:48,649 - INFO - Generated 91 tokens in 0.66 seconds (137.84 tokens/sec)
+2025-02-10 20:49:48,649 - INFO - Output:
+Einstein's Theory of Relativity states that the speed of
+light in a vacuum is simply the speed of the electrons in
+that vacuum, since light has a speed. Since the speed of
+light in a vacuum is equal to the speed of the electrons in
+a solid, the light from this source has a speed of
+approximately 1/299,792 m/s. Einstein's theory of relativity
+explains this speed by a phenomenon known as the speed at
+the end of time. In other words, this speed is
+2025-02-10 20:49:48,649 - INFO - Round 17 of 20.
+2025-02-10 20:49:49,295 - INFO - Generated 91 tokens in 0.64 seconds (141.12 tokens/sec)
+2025-02-10 20:49:49,295 - INFO - Output:
+Einstein's Theory of Relativity states that the speed of
+light in a vacuum is simply the speed of the electrons in
+that vacuum, since light has a speed. Since the speed of
+light in a vacuum is equal to the speed of the electrons in
+a solid, the light from this source has a speed of
+approximately 1/299,792 m/s. Einstein's theory of relativity
+explains this speed by a phenomenon known as the speed at
+the end of time. In other words, this speed is
+2025-02-10 20:49:49,295 - INFO - Round 18 of 20.
+2025-02-10 20:49:49,939 - INFO - Generated 91 tokens in 0.64 seconds (141.44 tokens/sec)
+2025-02-10 20:49:49,939 - INFO - Output:
+Einstein's Theory of Relativity states that the speed of
+light in a vacuum is simply the speed of the electrons in
+that vacuum, since light has a speed. Since the speed of
+light in a vacuum is equal to the speed of the electrons in
+a solid, the light from this source has a speed of
+approximately 1/299,792 m/s. Einstein's theory of relativity
+explains this speed by a phenomenon known as the speed at
+the end of time. In other words, this speed is
+2025-02-10 20:49:49,939 - INFO - Round 19 of 20.
+2025-02-10 20:49:50,582 - INFO - Generated 91 tokens in 0.64 seconds (141.49 tokens/sec)
+2025-02-10 20:49:50,583 - INFO - Output:
+Einstein's Theory of Relativity states that the speed of
+light in a vacuum is simply the speed of the electrons in
+that vacuum, since light has a speed. Since the speed of
+light in a vacuum is equal to the speed of the electrons in
+a solid, the light from this source has a speed of
+approximately 1/299,792 m/s. Einstein's theory of relativity
+explains this speed by a phenomenon known as the speed at
+the end of time. In other words, this speed is
+2025-02-10 20:49:50,583 - INFO - Round 20 of 20.
+2025-02-10 20:49:51,232 - INFO - Generated 91 tokens in 0.65 seconds (140.31 tokens/sec)
+2025-02-10 20:49:51,232 - INFO - Output:
+Einstein's Theory of Relativity states that the speed of
+light in a vacuum is simply the speed of the electrons in
+that vacuum, since light has a speed. Since the speed of
+light in a vacuum is equal to the speed of the electrons in
+a solid, the light from this source has a speed of
+approximately 1/299,792 m/s. Einstein's theory of relativity
+explains this speed by a phenomenon known as the speed at
+the end of time. In other words, this speed is
+2025-02-10 20:49:51,232 - INFO - Run details saved to gpt2-rates-2025-02-10-20-49-51-232526-torch-compile-max-autotune-fullgraph-py313t.json.
+torch.__init__: Ignoring unsupported torch.compile() with no GIL unsupported
+torch._dynamo.eval_frame: Ignoring unsupported torch.compile() with no GIL unsupported
+torch.__init__: Ignoring unsupported torch.compile() with no GIL unsupported
+torch._dynamo.eval_frame: Ignoring unsupported torch.compile() with no GIL unsupported
+
+real	0m20.061s
+user	0m23.272s
+sys	0m1.387s
+Exception ignored in: <_io.BufferedWriter name=41>
+BrokenPipeError: [Errno 32] Broken pipe
