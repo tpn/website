@@ -1,0 +1,1857 @@
+@torch.compile'd GPT.generate_slim() variants
+2025-02-09 19:38:14,021 - INFO - Loaded /mnt/raid1/trent/src/parallelopedia/data/model_19072.pt checkpoint in 0.505 seconds.
+2025-02-09 19:38:14,027 - INFO - Initialized GPT model in 0.005 seconds.
+2025-02-09 19:38:14,256 - INFO - Loaded model weights in 0.229 seconds.
+2025-02-09 19:38:14,552 - INFO - Created GPT model in 0.531 seconds.
+2025-02-09 19:38:14,639 - INFO - Moved model to cuda:3 in 0.087 seconds.
+2025-02-09 19:38:14,639 - INFO - Loaded model from step 19072, val_loss 3.0519702434539795
+2025-02-09 19:38:14,639 - INFO - Loaded gpt2 on cuda:3 in 1.123 seconds.
+2025-02-09 19:38:14,640 - INFO - Round 1 of 20.
+2025-02-09 19:42:08,371 - INFO - Generated 100 tokens in 233.73 seconds (0.43 tokens/sec)
+2025-02-09 19:42:08,372 - INFO - Output:
+Einstein's Theory of Relativity states that a large enough
+mass at the center of an infinitely long, infinitely large
+object causes the mass to have more than the mass of the
+smaller object. But Einstein himself showed this in a 1926
+paper. This shows that the mass exists in only one place at
+a time; the observer is at least partially at rest in the
+empty space. The mass, therefore, cannot be constant unless
+a very large mass is at rest. Moreover, a large mass must
+have that uniform mass (the object of a large
+2025-02-09 19:42:08,372 - INFO - Round 2 of 20.
+2025-02-09 19:42:08,784 - INFO - Generated 100 tokens in 0.41 seconds (242.58 tokens/sec)
+2025-02-09 19:42:08,785 - INFO - Output:
+Einstein's Theory of Relativity states that there are two
+forces acting simultaneously on light and the Universe. The
+force is the gravitational force, created by the
+gravitational attraction of the two celestial bodies as they
+orbit around each other. On this basis, astronomers are able
+to determine the mass of all matter in the Universe and to
+calculate the expansion rate of the Universe. This mass was
+used to measure the expansion rate of the Universe. The
+first known experiment used vacuum to produce the energy
+used by astronomers to calculate the speed of stars and
+measure the
+2025-02-09 19:42:08,785 - INFO - Round 3 of 20.
+2025-02-09 19:42:09,190 - INFO - Generated 100 tokens in 0.41 seconds (246.64 tokens/sec)
+2025-02-09 19:42:09,191 - INFO - Output:
+Einstein's Theory of Relativity states that all particles of
+the electromagnetic field should be at rest. This has been
+proved by physicists as the existence of particles in all
+other electromagnetic fields, and it also has led to
+Einstein's theory of relativity theory. However, the general
+relativity theory doesn't fit the picture so that it is only
+a result of the special relativity theory. This theory was
+developed in the mid 1900's by Albert Einstein in the United
+States from his theory of relativity that explains the
+curvature of space-time. The gravitational equations of
+2025-02-09 19:42:09,191 - INFO - Round 4 of 20.
+2025-02-09 19:42:09,618 - INFO - Generated 100 tokens in 0.43 seconds (233.95 tokens/sec)
+2025-02-09 19:42:09,619 - INFO - Output:
+Einstein's Theory of Relativity states that the speed of
+light is the speed of the point of no return of light. This
+point of no return is of course the source of all
+information. That is why information traveling at the speed
+of light must be at an object of the same value as the speed
+of light. That's why some forms of matter that contain
+little light would seem, to matter like this, to have that
+speed of light a distance that is too small for light to
+travel through it. This was the reason that Einstein
+2025-02-09 19:42:09,619 - INFO - Round 5 of 20.
+2025-02-09 19:42:10,015 - INFO - Generated 100 tokens in 0.40 seconds (252.64 tokens/sec)
+2025-02-09 19:42:10,016 - INFO - Output:
+Einstein's Theory of Relativity states that the energy found
+in the universe is equal to the speed of the light in a
+vacuum. This force is called Biot constant and the
+acceleration of the universe. Thus in a vacuum, Biot
+constant is the force which we measure that can accelerate
+you (in your car) down (or backwards of the car) and measure
+this acceleration to the speed of light (in your
+car).<|endoftext|>According to the U.S. Census Bureau,
+American Community Survey (ACE) is a survey of the United
+2025-02-09 19:42:10,016 - INFO - Round 6 of 20.
+2025-02-09 19:42:10,408 - INFO - Generated 100 tokens in 0.39 seconds (254.77 tokens/sec)
+2025-02-09 19:42:10,409 - INFO - Output:
+Einstein's Theory of Relativity states that the gravity of
+galaxies remains constant. This means that the Hubble
+Constant does not change over the universe's age. The Hubble
+Constant's influence over cosmic distances is what allows
+astronomers to monitor the age of the universe. Hubble and
+Cosmic Background (Hubble and COBRAH) Hubble is a planet
+orbiting the Milky Way within the constellation Lyra (the
+Milky Way). Located about 14,000 light-years away from the
+center of our galaxy, astronomers can't yet track the star
+2025-02-09 19:42:10,409 - INFO - Round 7 of 20.
+2025-02-09 19:42:10,805 - INFO - Generated 100 tokens in 0.40 seconds (252.66 tokens/sec)
+2025-02-09 19:42:10,805 - INFO - Output:
+Einstein's Theory of Relativity states that if the mass of
+black bodies in a solid is greater than that of a single
+black body, why would it still be possible for the masses
+not to be in a similar relation? In this paper we use
+Einstein's Theory of Relativity and give the formula for the
+mass of a black body. I have a box that contains this box. A
+person in my apartment has it. It is now open to the light
+from the moon. The person in the box will say, "Hello, the
+2025-02-09 19:42:10,805 - INFO - Round 8 of 20.
+2025-02-09 19:42:11,199 - INFO - Generated 100 tokens in 0.39 seconds (254.04 tokens/sec)
+2025-02-09 19:42:11,200 - INFO - Output:
+Einstein's Theory of Relativity states that there are only
+two dimensions of existence, the physical and the
+biological. It is thought that consciousness is made up of
+separate particles whose behaviour is associated with these
+different levels of existence and, if a physical particle
+were to interact with an electrical particle, it would
+result in a different physical reality within the organism.
+This view, however, has not yet been adopted by many
+scientists; quantum mechanics has given great importance to
+the concept of consciousness, but was still in its infancy a
+mere abstraction, but one that
+2025-02-09 19:42:11,200 - INFO - Round 9 of 20.
+2025-02-09 19:42:11,591 - INFO - Generated 100 tokens in 0.39 seconds (255.84 tokens/sec)
+2025-02-09 19:42:11,591 - INFO - Output:
+Einstein's Theory of Relativity states that gravitational
+fields obey the existence of a big force which surrounds our
+Universe. If you want to describe how something really
+works, you might describe it as gravitation itself rather
+than a force of the big one. The big force is a large force
+that surrounds the universe (in this case the big one), and
+the force of gravity is a huge force which surrounds the
+Universe (on the timescale of billions of years). Gravity is
+the force between planets around them, so in this universe
+we find the
+2025-02-09 19:42:11,591 - INFO - Round 10 of 20.
+2025-02-09 19:42:11,985 - INFO - Generated 100 tokens in 0.39 seconds (253.91 tokens/sec)
+2025-02-09 19:42:11,986 - INFO - Output:
+Einstein's Theory of Relativity states that every particle
+in the Universe has to obey a special law of gravity. If we
+were to take our train cars apart and ask relativity’s
+gravity, we would find ourselves with the following problem:
+1. Imagine two white and two blue cars each with one white
+and one black car at rest. How would that happen? 2. Imagine
+a person on the other side of the car whose red car is
+moving faster than the white car. How do the two cars, in
+motion,
+2025-02-09 19:42:11,986 - INFO - Round 11 of 20.
+2025-02-09 19:42:12,380 - INFO - Generated 100 tokens in 0.39 seconds (254.14 tokens/sec)
+2025-02-09 19:42:12,380 - INFO - Output:
+Einstein's Theory of Relativity states that electromagnetic
+radiation is created by interactions among particles. In
+1964, Albert Einstein published his theory of E=mc2. Here is
+a video of Einstein's conversation with a friend over at the
+Los Alamos Institute of Radio Physics in New Mexico: Here is
+the same video that he said to a colleague: In 1964, as an
+Einsteinian, Roger Penrose wrote in an essay that "Einstein
+has had a profound influence on me". In a 1974 paper written
+by Penrose,
+2025-02-09 19:42:12,380 - INFO - Round 12 of 20.
+2025-02-09 19:42:12,775 - INFO - Generated 100 tokens in 0.40 seconds (253.14 tokens/sec)
+2025-02-09 19:42:12,776 - INFO - Output:
+Einstein's Theory of Relativity states that the laws of
+physics "infinitiate the phenomena..." - "That is, the
+universe is infinitely small, that the laws of physics can
+act in an unpredictable way..." There are many theories of
+relativity that are based on the laws of physics and that
+are not able to work. - 1. The first theory of relativity is
+relativity theory. - 2. The second theory of relativity is
+the Lorentz force theory. It states that the Lorentz force
+theory states that
+2025-02-09 19:42:12,776 - INFO - Round 13 of 20.
+2025-02-09 19:42:13,169 - INFO - Generated 100 tokens in 0.39 seconds (254.68 tokens/sec)
+2025-02-09 19:42:13,169 - INFO - Output:
+Einstein's Theory of Relativity states that all matter,
+energy and light-motion do not have equal parts. This means
+that all energy is equal. That means that if every object
+contains an electron, then the electron is one of the two
+particles that make up the matter of the universe, the other
+being the photon. This particle is called a photon. The
+photon can be separated from matter while still being one
+part of the matter. However, since each particle is a unit
+of energy, it doesn't have to travel in constant order such
+2025-02-09 19:42:13,169 - INFO - Round 14 of 20.
+2025-02-09 19:42:13,565 - INFO - Generated 100 tokens in 0.40 seconds (252.67 tokens/sec)
+2025-02-09 19:42:13,566 - INFO - Output:
+Einstein's Theory of Relativity states that the universe is
+filled by more than 300 galaxies a thousand light years from
+us in an average of about 1,000 years. (For reference, the
+observable universe is millions of millions of years old.)
+This theory goes on to state that galaxies and other objects
+at the end of their lives die or are no longer active enough
+to sustain life. This means there are more galaxies to be
+had in each era than there are now at present. This means
+there is less time to be active.
+2025-02-09 19:42:13,566 - INFO - Round 15 of 20.
+2025-02-09 19:42:13,958 - INFO - Generated 100 tokens in 0.39 seconds (255.14 tokens/sec)
+2025-02-09 19:42:13,959 - INFO - Output:
+Einstein's Theory of Relativity states that the observed
+speed of light is constant - it is a constant. A closer
+examination of Einstein's theory of relativity reveals the
+paradox: Einstein's theory of relativity predicts that a
+speed-distribution-temporal phenomenon must be involved when
+the speed-distribution of light is constant. One notable
+effect is his discovery that the speed of a light in a laser
+beam has an inverse square root. A closer examination of
+Einstein's theory suggests that it relates the speed-
+distribution of light from a laser light
+2025-02-09 19:42:13,959 - INFO - Round 16 of 20.
+2025-02-09 19:42:14,351 - INFO - Generated 100 tokens in 0.39 seconds (254.75 tokens/sec)
+2025-02-09 19:42:14,352 - INFO - Output:
+Einstein's Theory of Relativity states that light can form
+when the electron is placed in very close proximity to a
+blackbody and can be observed at a great distance. The
+blackbody is one of two fundamental particles in the
+electromagnetic field known as the eV electron. In the
+theory, a particle is a continuous, continuous, and
+continuous electrical charge called the "electron". A "wave"
+of electromagnetic waves may be seen along the eV electron,
+in the direction opposite to the direction of an
+electromagnetic signal in a vacuum, a
+2025-02-09 19:42:14,352 - INFO - Round 17 of 20.
+2025-02-09 19:42:14,749 - INFO - Generated 100 tokens in 0.40 seconds (252.06 tokens/sec)
+2025-02-09 19:42:14,749 - INFO - Output:
+Einstein's Theory of Relativity states that this kind of
+behavior should follow the principle of equivalence. What he
+actually did was show how a large group of people at the
+University of Chicago could move freely across this plane.
+It was this sort of thought experiment that made James
+Einstein's Theory of Relativity into a very influential
+scientific journal. The experiment went on for over forty
+years until some really daring experimenters discovered the
+principles of physics. It is still considered one of the
+most influential scientific journals in the world, and you
+can find the
+2025-02-09 19:42:14,749 - INFO - Round 18 of 20.
+2025-02-09 19:42:15,142 - INFO - Generated 100 tokens in 0.39 seconds (254.76 tokens/sec)
+2025-02-09 19:42:15,143 - INFO - Output:
+Einstein's Theory of Relativity states that matter
+originates in the Big Bang. A particle must have a mass. At
+the moment of creation, matter is neither, it must be a
+tiny, and extremely tiny mass. The Big Bang does not mean
+that this process will continue forever. It will just mean
+it will. It is possible for the beginning of the Universe to
+happen at a rate of 1 in 10 billion years, in an instant of
+time. In the next 10 to 100 years, this exponential pace
+will happen. The rate
+2025-02-09 19:42:15,143 - INFO - Round 19 of 20.
+2025-02-09 19:42:15,535 - INFO - Generated 100 tokens in 0.39 seconds (254.98 tokens/sec)
+2025-02-09 19:42:15,536 - INFO - Output:
+Einstein's Theory of Relativity states that any observer
+traveling at an accelerating rate from any point on the
+planet to that point will experience a force of attraction
+(the Coulomb force and gravity). Although physicists have
+many conflicting opinions about what causes gravity, quantum
+theory provides the necessary conditions for a theory of
+gravitation called the weak force. This theory describes how
+force influences all of the other forces, including gravity.
+In the early 1900s, Werner Heisenberg tried to explain what
+he saw as quantum gravitation. This was a new
+2025-02-09 19:42:15,536 - INFO - Round 20 of 20.
+2025-02-09 19:42:15,927 - INFO - Generated 100 tokens in 0.39 seconds (255.28 tokens/sec)
+2025-02-09 19:42:15,928 - INFO - Output:
+Einstein's Theory of Relativity states that the two things
+are actually one, but that everything is different as a
+result of the fact that they are all standing on the same
+side of the giant black hole. How Do We Know If These
+Circuits Are Unseparated? It has long been debated and
+debated whether the idea of separating black holes from
+their black holes leads to a final phase of science. Recent
+experiments conducted at the Large Hadron Collider suggest
+that there is a discrepancy between the gravitational pull
+of a distant object, which is
+2025-02-09 19:42:15,929 - INFO - Run details saved to gpt2-rates-2025-02-09-19-42-15-928750-generate-slim-py313.json.
+
+real	4m9.570s
+user	3m59.530s
+sys	0m13.887s
+Exception ignored in: <_io.BufferedWriter name=41>
+BrokenPipeError: [Errno 32] Broken pipe
+2025-02-09 19:42:23,426 - INFO - Loaded /mnt/raid1/trent/src/parallelopedia/data/model_19072.pt checkpoint in 0.451 seconds.
+2025-02-09 19:42:23,431 - INFO - Initialized GPT model in 0.005 seconds.
+2025-02-09 19:42:23,659 - INFO - Loaded model weights in 0.227 seconds.
+2025-02-09 19:42:23,949 - INFO - Created GPT model in 0.523 seconds.
+2025-02-09 19:42:24,034 - INFO - Moved model to cuda:3 in 0.084 seconds.
+2025-02-09 19:42:24,034 - INFO - Loaded model from step 19072, val_loss 3.0519702434539795
+2025-02-09 19:42:24,034 - INFO - Loaded gpt2 on cuda:3 in 1.059 seconds.
+2025-02-09 19:42:24,036 - INFO - torch.compiled model in 0.001 seconds.
+2025-02-09 19:42:24,036 - INFO - Round 1 of 20.
+2025-02-09 19:46:15,342 - INFO - Generated 100 tokens in 231.31 seconds (0.43 tokens/sec)
+2025-02-09 19:46:15,342 - INFO - Output:
+Einstein's Theory of Relativity states that the mass of a
+proton is determined only by the atomic scale. So if a
+proton is the mass of a proton it has the speed of light and
+therefore can be thought of as the mass of the proton in the
+universe at the time t.m=0. The formula for the speed of
+light is Einstein's formula. . That tells us . The rest of
+the mass is the result of the experiment that produced the
+results. So, for example, a proton
+2025-02-09 19:46:15,342 - INFO - Round 2 of 20.
+2025-02-09 19:46:15,791 - INFO - Generated 100 tokens in 0.45 seconds (222.76 tokens/sec)
+2025-02-09 19:46:15,792 - INFO - Output:
+Einstein's Theory of Relativity states that everything in
+space and time is shaped by gravity. Because it is curved,
+gravity acts like a force. Einstein said that the world is
+curvier than light and he was right in this observation.
+Even though he didn't prove this, he did show that gravity
+can change, and that is where all of this comes from. We
+will see later on about Einstein, along with two of my
+friends. The more I do, however, the more I get left behind
+on this story,
+2025-02-09 19:46:15,792 - INFO - Round 3 of 20.
+2025-02-09 19:46:16,223 - INFO - Generated 100 tokens in 0.43 seconds (231.88 tokens/sec)
+2025-02-09 19:46:16,224 - INFO - Output:
+Einstein's Theory of Relativity states that there is now a
+way of measuring the energy released by gravity. When
+something is standing still and the energy is measured,
+there may be no way of figuring out how large of a
+discrepancy the total mass of the sun, moon, and stars is
+compared with the total mass of the universe. The most
+reasonable conclusion is the discovery that there could
+exist a non-zero amount of gravitational energy. Gravity is
+a non-zero quantity, but when you have total mass is not
+possible!
+2025-02-09 19:46:16,224 - INFO - Round 4 of 20.
+2025-02-09 19:46:16,656 - INFO - Generated 100 tokens in 0.43 seconds (231.63 tokens/sec)
+2025-02-09 19:46:16,656 - INFO - Output:
+Einstein's Theory of Relativity states that the
+gravitational attraction that creates gravity is real:
+According to Einstein's theoretical general relativity, the
+rate of change of mass is just the sum of a long term and a
+small number of distant events. Therefore, the total energy
+of the Universe is just an integer constant, not a constant.
+As time passes, the Universe starts to decay and the
+Universe gets progressively smaller as it becomes more
+dense. But that's the point and in the next section of the
+section we will discuss how the energy
+2025-02-09 19:46:16,656 - INFO - Round 5 of 20.
+2025-02-09 19:46:17,087 - INFO - Generated 100 tokens in 0.43 seconds (231.98 tokens/sec)
+2025-02-09 19:46:17,088 - INFO - Output:
+Einstein's Theory of Relativity states that the speed of
+light is due to an interaction between particles moving at
+the same speed as the speed of light, according to the "Laws
+of Newton". By understanding this law, we can calculate the
+speed of a particle as it's going in the opposite direction
+in an oscillation. When a gas or vapor is heated when it
+expands, it changes its properties over time, which is
+called the condensation of heat, according to Isaac Newton.
+In general, objects that have a fixed height (
+2025-02-09 19:46:17,088 - INFO - Round 6 of 20.
+2025-02-09 19:46:17,518 - INFO - Generated 100 tokens in 0.43 seconds (232.82 tokens/sec)
+2025-02-09 19:46:17,518 - INFO - Output:
+Einstein's Theory of Relativity states that there is just no
+such thing as an infinite number of possible objects which
+can and are, and which cannot be described by an infinite
+number of possible observers. This is very absurd since it
+implies a constant set of possibilities which we can all
+agree may never be completely true. It is also not
+unreasonable to suppose there is no such thing as a finite
+number of possible objects. In the case of Albert's point of
+view, the situation is more like a set of infinite
+possibilities as opposed to the infinite
+2025-02-09 19:46:17,518 - INFO - Round 7 of 20.
+2025-02-09 19:46:17,949 - INFO - Generated 100 tokens in 0.43 seconds (232.39 tokens/sec)
+2025-02-09 19:46:17,949 - INFO - Output:
+Einstein's Theory of Relativity states that light travels at
+a speed of only 10,000 miles per second per million miles.
+If this speed has a speed of only 10,000 miles per second,
+then it takes a photon of mass 10,000 times as much energy
+to get from the ground to our conscious awareness. This is
+the Einstein's mass equation, which states that mass = (I /
+M) x (I + N) - ((G - M)/N). To sum up, light travels the
+same distance in a
+2025-02-09 19:46:17,949 - INFO - Round 8 of 20.
+2025-02-09 19:46:18,378 - INFO - Generated 100 tokens in 0.43 seconds (233.08 tokens/sec)
+2025-02-09 19:46:18,379 - INFO - Output:
+Einstein's Theory of Relativity states that we travel at a
+certain speed; at this speed the particles are moving away
+from being in motion. But is this velocity? We have to be
+careful not to jump into the new physics; one physics
+textbook says we must be travelling at the speed of light.
+Now in your head you are probably reading all of the new
+physics; and in your head you probably aren't reading new
+physics. The new physics is the new physics. And if someone
+wants to explain the new physics, how
+2025-02-09 19:46:18,379 - INFO - Round 9 of 20.
+2025-02-09 19:46:18,809 - INFO - Generated 100 tokens in 0.43 seconds (232.43 tokens/sec)
+2025-02-09 19:46:18,810 - INFO - Output:
+Einstein's Theory of Relativity states that each particle
+has both energy and mass. This idea was first introduced by
+Albert J. C. Guthrie (1885) and is still used by scientists
+today. However, Guthrie thought that mass was the problem,
+and that the only alternative was the idea of "quintile" or
+"zero mass". Quantum mechanics, as conceived by Albert
+Einstein and Ernest Rutherford in the 1930s, posits that all
+particles have no "infinity". Only the atom (and the entire
+2025-02-09 19:46:18,810 - INFO - Round 10 of 20.
+2025-02-09 19:46:19,243 - INFO - Generated 100 tokens in 0.43 seconds (230.90 tokens/sec)
+2025-02-09 19:46:19,244 - INFO - Output:
+Einstein's Theory of Relativity states that the speed of
+light has a speed of spacetime around it. Since the speed of
+light has a speed around one. The speed of spacetime is
+defined as a speed of space. The speed of space is expressed
+by a cosmological constant. By defining the cosmological
+constant, we can express the speed of spacetime around other
+galaxies. The speed of a light wave is the gravitational
+constant. When the speed of a laser laser is greater than
+one, the rate of the laser will produce
+2025-02-09 19:46:19,244 - INFO - Round 11 of 20.
+2025-02-09 19:46:19,674 - INFO - Generated 100 tokens in 0.43 seconds (232.44 tokens/sec)
+2025-02-09 19:46:19,675 - INFO - Output:
+Einstein's Theory of Relativity states that every particle
+you study at any distance must have a mass. An object with
+mass M is a proton. The mass of an object is a measure of
+the size of the object compared to an object m with mass P.
+You can take a distance (usually a few meters) where the
+distance between the objects is equal. The mass of a neutral
+(or anti-particle) particle is considered to be the "same"
+mass - it is simply defined as its mass if the two are
+2025-02-09 19:46:19,675 - INFO - Round 12 of 20.
+2025-02-09 19:46:20,104 - INFO - Generated 100 tokens in 0.43 seconds (232.69 tokens/sec)
+2025-02-09 19:46:20,105 - INFO - Output:
+Einstein's Theory of Relativity states that gravity
+(Gravitational Forces) will always be in equilibrium in any
+given gravity field, and that this equilibrium point will
+keep falling toward infinity if everything falls at the same
+rate everywhere around. Furthermore in this way, Einstein's
+theory of special relativity applies directly to other
+special and general relativity theories (such as General
+Relativity). An important result of this general relativity
+theory is that it is possible to understand an object's
+"appeal" from another such object within a frame of
+reference independent of gravity
+2025-02-09 19:46:20,105 - INFO - Round 13 of 20.
+2025-02-09 19:46:20,535 - INFO - Generated 100 tokens in 0.43 seconds (232.74 tokens/sec)
+2025-02-09 19:46:20,535 - INFO - Output:
+Einstein's Theory of Relativity states that all things in
+the universe, even our own, interact in some random way. He
+explained how this is achieved by finding the "random
+energy" involved: We should be very careful to not violate
+this theory. The principle of conservation of energy is to
+take all particles. Energy is conserved by keeping all other
+particles constant. This principle is the basis of
+thermodynamics, and it requires us to account in principle
+for the observed and measured temperature of objects. In
+contrast, we should consider the entropy
+2025-02-09 19:46:20,535 - INFO - Round 14 of 20.
+2025-02-09 19:46:20,967 - INFO - Generated 100 tokens in 0.43 seconds (231.92 tokens/sec)
+2025-02-09 19:46:20,967 - INFO - Output:
+Einstein's Theory of Relativity states that it is impossible
+to account for mass from an electromagnetic wave. |The
+Special Relativity Theory of Relativity, published by
+Fermilab and the other Fermi Institutions for Science,
+defines the wave equation as the velocity-time relation of a
+medium . This equation describes how the velocity relation
+is applied to any object in the space-time continuum, and
+has been proved by the measurement of the energy of light in
+that region of the universe. The acceleration
+2025-02-09 19:46:20,967 - INFO - Round 15 of 20.
+2025-02-09 19:46:21,399 - INFO - Generated 100 tokens in 0.43 seconds (231.49 tokens/sec)
+2025-02-09 19:46:21,400 - INFO - Output:
+Einstein's Theory of Relativity states that the existence of
+mass does not cause quantum gravity, but instead causes
+electromagnetic gravity which causes electromagnetic
+gravitation. Mental Grit: The mental and emotional nature of
+quantum mechanics is highly suspect. The main arguments by
+physics professors are that quantum theories are too
+speculative and could lead people to escape their humanity.
+They also claim that people in general seem to be on track
+to become a super-human. If you would like to be able to
+visit and see the website of the Einstein Web Institute,
+2025-02-09 19:46:21,400 - INFO - Round 16 of 20.
+2025-02-09 19:46:21,829 - INFO - Generated 100 tokens in 0.43 seconds (232.97 tokens/sec)
+2025-02-09 19:46:21,830 - INFO - Output:
+Einstein's Theory of Relativity states that space and time
+are essentially empty. But a black hole is just as much a
+black hole as a point in space. In this picture, the lines
+represent spacelike "holes" to form a line of sight. If this
+wasn't so, the black hole would be merely standing at a
+distance. The lines look like the picture above. But it's
+what the black hole did about this that gave us the modern
+understanding of gravity. Black holes are huge
+structures—like little sp
+2025-02-09 19:46:21,830 - INFO - Round 17 of 20.
+2025-02-09 19:46:22,259 - INFO - Generated 100 tokens in 0.43 seconds (233.13 tokens/sec)
+2025-02-09 19:46:22,259 - INFO - Output:
+Einstein's Theory of Relativity states that any object with
+mass can get away from a gravitational field - therefore any
+motion in the plane would collapse like a black hole. The
+point of a black hole is close to zero. The curvature of
+spacetime is a measure of spacetime. Therefore, even though
+our universe would be completely empty space, the curvature
+of spacetime is not zero at any given point in the center.
+This means the universe has a curvature and is completely
+flat. And it doesn't change. The point
+2025-02-09 19:46:22,260 - INFO - Round 18 of 20.
+2025-02-09 19:46:22,691 - INFO - Generated 100 tokens in 0.43 seconds (232.08 tokens/sec)
+2025-02-09 19:46:22,691 - INFO - Output:
+Einstein's Theory of Relativity states that all physical
+objects interact with one another as if they were static in
+space. The objects in this theory have no physical
+relationship with one another and remain so because they
+were initially physically observable. The "first
+observation" of the second observation comes from the
+observation that "energy is the consequence of gravity"
+(i.e., the energy in the space of a moving object does not
+move when it is under pressure). Since the objects in this
+new theory of physics obey this condition, gravitational
+acceleration is the
+2025-02-09 19:46:22,691 - INFO - Round 19 of 20.
+2025-02-09 19:46:23,124 - INFO - Generated 100 tokens in 0.43 seconds (230.93 tokens/sec)
+2025-02-09 19:46:23,125 - INFO - Output:
+Einstein's Theory of Relativity states that the Universe is
+only 13.7 billion years old. His calculations show the
+Planck length can increase from about 3.66 Earth radii to
+5.43 million miles; his predictions are 100 times more
+accurate than those of Einstein. The Planck Length increases
+approximately at its equator until it is over 1.3 seconds.
+This means one third of the universe and one sixth of the
+Universe are currently between 1.3 and 100 million miles
+apart. When we look at the Planck length
+2025-02-09 19:46:23,125 - INFO - Round 20 of 20.
+2025-02-09 19:46:23,575 - INFO - Generated 100 tokens in 0.45 seconds (222.12 tokens/sec)
+2025-02-09 19:46:23,576 - INFO - Output:
+Einstein's Theory of Relativity states that the distance
+between two points on any curve is Plané, the distance
+between two different points on a curve. Let's go back on to
+the two places on Earth whose radius is a single unit: In
+other words, the size of our planet's land mass is about one
+half the Earth's. Thus, in Earth's case: The area of our
+planet's land mass is the ratio of its square feet to the
+diameter of the earth. Now, one of the fundamental
+2025-02-09 19:46:23,576 - INFO - Run details saved to gpt2-rates-2025-02-09-19-46-23-576237-torch-compile-generate-slim-py313.json.
+
+real	4m7.727s
+user	3m58.954s
+sys	0m12.864s
+Exception ignored in: <_io.BufferedWriter name=41>
+BrokenPipeError: [Errno 32] Broken pipe
+2025-02-09 19:46:31,092 - INFO - Loaded /mnt/raid1/trent/src/parallelopedia/data/model_19072.pt checkpoint in 0.454 seconds.
+2025-02-09 19:46:31,098 - INFO - Initialized GPT model in 0.005 seconds.
+2025-02-09 19:46:31,327 - INFO - Loaded model weights in 0.229 seconds.
+2025-02-09 19:46:31,622 - INFO - Created GPT model in 0.529 seconds.
+2025-02-09 19:46:31,707 - INFO - Moved model to cuda:3 in 0.085 seconds.
+2025-02-09 19:46:31,707 - INFO - Loaded model from step 19072, val_loss 3.0519702434539795
+2025-02-09 19:46:31,708 - INFO - Loaded gpt2 on cuda:3 in 1.069 seconds.
+2025-02-09 19:46:31,708 - INFO - torch.compiled model in 0.001 seconds.
+2025-02-09 19:46:31,709 - INFO - Round 1 of 20.
+2025-02-09 19:50:21,329 - INFO - Generated 100 tokens in 229.62 seconds (0.44 tokens/sec)
+2025-02-09 19:50:21,330 - INFO - Output:
+Einstein's Theory of Relativity states that an average
+atomic size, known as a nucleus, is a universal constant in
+a field called its electromagnetic constant. The theory of
+relativity explains how the speed of light, the speed of
+light in space and the speed of light at the end of the
+universe's journey around the Sun, determine how far the
+universe has traveled. For this reason, physicists sometimes
+apply the theory of relativity to the search for other
+distant worlds. In 1965, physicist Albert Einstein (Einstein
+Institute), working with the Max Plan
+2025-02-09 19:50:21,330 - INFO - Round 2 of 20.
+2025-02-09 19:50:21,735 - INFO - Generated 100 tokens in 0.40 seconds (247.14 tokens/sec)
+2025-02-09 19:50:21,735 - INFO - Output:
+Einstein's Theory of Relativity states that our universe is
+"an elliptical spiral of increasing size," with the galaxy
+growing further out of the spiral. This galaxy is actually a
+black hole black hole that sucks in the matter swirling
+around it. This "collapse" allows the accretion disk to grow
+into a quasicrystal. This quasicrystal is an event horizon;
+the events occur in elliptical galaxies, where there is a
+spiral galaxy, a black hole being present in a small galaxy
+or cluster of galaxies
+2025-02-09 19:50:21,735 - INFO - Round 3 of 20.
+2025-02-09 19:50:22,132 - INFO - Generated 100 tokens in 0.40 seconds (252.35 tokens/sec)
+2025-02-09 19:50:22,132 - INFO - Output:
+Einstein's Theory of Relativity states that: "A particle
+with a mass smaller than its energy... will be accelerated
+by an equal amount...the result can take up a substantial
+part of the time necessary to reach the speed of light...
+The idea of a speed-limited observer state, also called
+"quantum mechanics", is a popular theory, dating from the
+1780s. It is based on a general relativity theory, which
+states a new observer will accelerate away from the speed of
+light. This observer will travel a distance that will
+2025-02-09 19:50:22,132 - INFO - Round 4 of 20.
+2025-02-09 19:50:22,530 - INFO - Generated 100 tokens in 0.40 seconds (251.75 tokens/sec)
+2025-02-09 19:50:22,530 - INFO - Output:
+Einstein's Theory of Relativity states that the curvature of
+space always decreases, however, in the case of
+gravitational waves (including light) this curvature is
+affected by temperature. Therefore, if the curvature of
+space is not constant at all, then energy must be conserved,
+however, in this case only energy becomes conserved at the
+temperature scale: in Einstein's time this was a constant.
+According to the theory of relativity, when a large amount
+of energy is required to overcome an obstacle, it can be
+overcome by the
+2025-02-09 19:50:22,530 - INFO - Round 5 of 20.
+2025-02-09 19:50:22,935 - INFO - Generated 100 tokens in 0.40 seconds (247.25 tokens/sec)
+2025-02-09 19:50:22,935 - INFO - Output:
+Einstein's Theory of Relativity states that, unlike gravity,
+gravity is a static force as a result of a transformation
+from one elementary to another. It's easy to remember all
+these facts on this page. To draw the picture, we will use
+the Einstein Field Scale, to measure the mass and velocity
+of a proton. A proton is a small, non-electron particle; it
+moves at the speed of light in a vacuum. If you look through
+a small lens, you can see that these two entities are
+interacting grav
+2025-02-09 19:50:22,935 - INFO - Round 6 of 20.
+2025-02-09 19:50:23,338 - INFO - Generated 100 tokens in 0.40 seconds (248.19 tokens/sec)
+2025-02-09 19:50:23,339 - INFO - Output:
+Einstein's Theory of Relativity states that reality, as
+Einstein understood, is determined by gravity. A fundamental
+objection to Einstein’s theory is that, like the sun, the
+distance around it must be constant. Einstein believed that
+gravity could not explain the behavior of the sun, because
+the sun, in fact, is a “space-time universe.” Another
+objection Einstein’s theory of relativity claims to have is
+that, while the sun and the sun’s mass are moving at an
+increasing distance, it
+2025-02-09 19:50:23,339 - INFO - Round 7 of 20.
+2025-02-09 19:50:23,734 - INFO - Generated 100 tokens in 0.39 seconds (253.17 tokens/sec)
+2025-02-09 19:50:23,735 - INFO - Output:
+Einstein's Theory of Relativity states that these are
+particles of electromagnetic radiation, and that they can
+travel through space in four Galilean years or less. In the
+last century, scientists have made great advances in science
+at a single level. In the early 1900's, scientists noticed
+that light had a very limited effect on the speed of light,
+but this effect increased greatly when the speed of light
+and the motion of the particles were measured. This
+discovery, known as the law of gravitational attraction,
+stated in 1904, provided a basis for the
+2025-02-09 19:50:23,735 - INFO - Round 8 of 20.
+2025-02-09 19:50:24,139 - INFO - Generated 100 tokens in 0.40 seconds (247.60 tokens/sec)
+2025-02-09 19:50:24,139 - INFO - Output:
+Einstein's Theory of Relativity states that a physical
+system in a system remains constant over time when changed
+(due to the force of gravity). So a point on the "top" of
+the page is always constant. I have a bit of time in the
+beginning of the book to show the effect of gravity on the
+page surface. So it's going to need a little animation on
+that page. One of the things I'm talking about is that it's
+just going to come out in the middle of the page as they do
+some animations.
+2025-02-09 19:50:24,139 - INFO - Round 9 of 20.
+2025-02-09 19:50:24,537 - INFO - Generated 100 tokens in 0.40 seconds (251.89 tokens/sec)
+2025-02-09 19:50:24,537 - INFO - Output:
+Einstein's Theory of Relativity states that the laws in
+force under which the universe is flat must also be in
+motion. "In order to describe our universe in terms of a
+"flat world", we need a fundamental framework that describes
+the forces that govern the movement of the world around us,
+rather than our laws of physics." So, which one is right? "A
+flat model is a model that is based on the laws of physics
+rather than the laws of experiment. It is like a set of
+rules and rules about what
+2025-02-09 19:50:24,537 - INFO - Round 10 of 20.
+2025-02-09 19:50:24,937 - INFO - Generated 100 tokens in 0.40 seconds (250.30 tokens/sec)
+2025-02-09 19:50:24,937 - INFO - Output:
+Einstein's Theory of Relativity states that there is no
+single "absolute" physical explanation that can explain the
+observed results; however, it is reasonable to accept the
+existence of an intelligent designer for the experiment to
+confirm the theory. The universe's first particles are
+light: protons, neutrons, and electrons. These particles act
+as "force fields" that cause the quarks that make up the
+structure of the universe to move apart from each other.
+Some quarks are heavier than other quarks, while others are
+heavier and lighter.
+2025-02-09 19:50:24,937 - INFO - Round 11 of 20.
+2025-02-09 19:50:25,336 - INFO - Generated 100 tokens in 0.40 seconds (250.73 tokens/sec)
+2025-02-09 19:50:25,337 - INFO - Output:
+Einstein's Theory of Relativity states that the Big Bang
+Theory of Relativity states that the expansion of space had
+to be understood as a creation of intelligent design, as
+opposed to a naturalistic hypothesis, like Newton's law of
+universal gravitation. In terms of the theory’s focus on the
+physical laws that guide our everyday lives, their
+importance is even more significant. Of course, the physical
+world is an illusion. Einstein was not prepared to describe
+his theory in such simple terms, and at every stage he chose
+to use terms
+2025-02-09 19:50:25,337 - INFO - Round 12 of 20.
+2025-02-09 19:50:25,732 - INFO - Generated 100 tokens in 0.39 seconds (253.35 tokens/sec)
+2025-02-09 19:50:25,732 - INFO - Output:
+Einstein's Theory of Relativity states that the speed of
+light in a vacuum, called the speed of light, is the only
+thing that can go from one speed to another when the vacuum
+is empty. But, a vacuum has no direction, but goes through
+space at the speed of light. Einstein's theory has a similar
+answer to that of his friend and colleague, Albert Einstein.
+But Einstein was working at his machine at the time trying
+to prove why the speed of light doesn't change with each
+time a particle moves around it,
+2025-02-09 19:50:25,732 - INFO - Round 13 of 20.
+2025-02-09 19:50:26,130 - INFO - Generated 100 tokens in 0.40 seconds (251.73 tokens/sec)
+2025-02-09 19:50:26,130 - INFO - Output:
+Einstein's Theory of Relativity states that no event, i.e.,
+one particle mass m/s squared, can have two mass times that
+as mass m/s. This means that the mass m/s of an atom is, in
+fact, that of the atomic mass of the atom. However, it also
+means that a given particle can have two masses m/s and two
+mass m/s. In other words, it is not the presence or absence
+of mass m/s with respect to the two masses that determine
+2025-02-09 19:50:26,130 - INFO - Round 14 of 20.
+2025-02-09 19:50:26,531 - INFO - Generated 100 tokens in 0.40 seconds (249.48 tokens/sec)
+2025-02-09 19:50:26,532 - INFO - Output:
+Einstein's Theory of Relativity states that any two of the
+two gravitational waves that interact with one another
+cancel out. Therefore, any two of the two waves that
+interact with one another cancel out at the same rate, even
+though they are not at the same distance. This is what
+happens with the gravitational wave example, because if one
+of the waves is traveling at a constant distance and the
+other is traveling at a constant speed, they both cancel
+out, while making each one larger. This is known as a Fermi-
+Wentz
+2025-02-09 19:50:26,532 - INFO - Round 15 of 20.
+2025-02-09 19:50:26,929 - INFO - Generated 100 tokens in 0.40 seconds (251.80 tokens/sec)
+2025-02-09 19:50:26,930 - INFO - Output:
+Einstein's Theory of Relativity states that matter consists
+of a fundamental particles that are a string of interacting
+particles. The basic properties of the particles are what
+gives them their mass and mass, and these are called
+Brownian motion. They are a result of the radiation pressure
+on the particles that makes up the mass of the universe.
+This pressure is what gives the particles strength and mass.
+The next thing scientists are trying to figure out is how
+this effect works. Brownian Motion has a simple explanation.
+It is the speed at which particles,
+2025-02-09 19:50:26,930 - INFO - Round 16 of 20.
+2025-02-09 19:50:27,333 - INFO - Generated 100 tokens in 0.40 seconds (247.95 tokens/sec)
+2025-02-09 19:50:27,334 - INFO - Output:
+Einstein's Theory of Relativity states that the force of
+gravitational attraction of two objects must be the same due
+to mass and distance. This concept of "relative" and
+"relative" strength describes the acceleration due to
+gravity. What's more, the speed of light in the universe is
+about the speed of light in absolute terms, and according to
+the theory: it takes a Schwarzschild cosmogram (an estimate
+of speed of light) to accurately measure distances in units
+of the speed of light. However , the new gravity theory is
+only
+2025-02-09 19:50:27,334 - INFO - Round 17 of 20.
+2025-02-09 19:50:27,734 - INFO - Generated 100 tokens in 0.40 seconds (249.75 tokens/sec)
+2025-02-09 19:50:27,735 - INFO - Output:
+Einstein's Theory of Relativity states that if a system has
+more particles it behaves more like a particle with equal
+number of particles. It also states that "in a normal
+distribution of probability some objects have equal
+probability but there is no connection between them" (Gould
+1981, p. 562). Thus, the laws of thermodynamics, in a sense,
+are just laws of physics. But just why the laws of physics?
+Why not quantum physics? The answer lies in the assumption
+that for every physical effect there has to be some
+2025-02-09 19:50:27,735 - INFO - Round 18 of 20.
+2025-02-09 19:50:28,131 - INFO - Generated 100 tokens in 0.40 seconds (252.28 tokens/sec)
+2025-02-09 19:50:28,132 - INFO - Output:
+Einstein's Theory of Relativity states that, as the speed of
+light increases, the distance the wave travels in has to
+increase in order to keep its distance in line with the
+source. Similarly, according to this principle, an object
+moving at a constant speed will experience a velocity that
+is at least partially proportional to the speed of light.
+This theory proposes that some objects experience velocity
+which is equivalent to the speed of light, by which the
+object experiences velocity of the same quantity of momentum
+as that of light. For the mass of the object it
+2025-02-09 19:50:28,132 - INFO - Round 19 of 20.
+2025-02-09 19:50:28,538 - INFO - Generated 100 tokens in 0.41 seconds (246.36 tokens/sec)
+2025-02-09 19:50:28,539 - INFO - Output:
+Einstein's Theory of Relativity states that the speed of
+light is constant on a spherical system that orbits its
+common center at a constant distance from the universal
+center; this is why the observer sees two observers in the
+other light. A second way of defining a spherical system is
+that there are two circular points, one round and one round,
+that are points of equal angular distance from the center of
+their centers; when they are placed in the sphere, the two
+angular points are placed in an oval shape; the observer
+sees the round point and
+2025-02-09 19:50:28,539 - INFO - Round 20 of 20.
+2025-02-09 19:50:28,941 - INFO - Generated 100 tokens in 0.40 seconds (248.69 tokens/sec)
+2025-02-09 19:50:28,941 - INFO - Output:
+Einstein's Theory of Relativity states that the Universe is
+a big, big, massive galaxy. "The gravitational field of an
+object of mass is very weak, and therefore, the Universe is
+not a very big one." When a satellite's momentum of mass is
+measured through gravity at the Earth's surface, it appears
+to be in the same gravitational field as other objects
+orbiting it. Because an object's mass is just the
+gravitational field, its mass and spin are zero. This means
+that a massive planet orbiting a powerful satellite has no
+2025-02-09 19:50:28,942 - INFO - Run details saved to gpt2-rates-2025-02-09-19-50-28-942048-torch-compile-fullgraph-generate-slim-py313.json.
+
+real	4m5.297s
+user	3m56.265s
+sys	0m13.255s
+Exception ignored in: <_io.BufferedWriter name=41>
+BrokenPipeError: [Errno 32] Broken pipe
+2025-02-09 19:50:36,399 - INFO - Loaded /mnt/raid1/trent/src/parallelopedia/data/model_19072.pt checkpoint in 0.475 seconds.
+2025-02-09 19:50:36,404 - INFO - Initialized GPT model in 0.005 seconds.
+2025-02-09 19:50:36,634 - INFO - Loaded model weights in 0.229 seconds.
+2025-02-09 19:50:36,927 - INFO - Created GPT model in 0.528 seconds.
+2025-02-09 19:50:37,022 - INFO - Moved model to cuda:3 in 0.095 seconds.
+2025-02-09 19:50:37,022 - INFO - Loaded model from step 19072, val_loss 3.0519702434539795
+2025-02-09 19:50:37,023 - INFO - Loaded gpt2 on cuda:3 in 1.099 seconds.
+2025-02-09 19:50:37,025 - INFO - torch.compiled model in 0.002 seconds.
+2025-02-09 19:50:37,025 - INFO - Round 1 of 20.
+2025-02-09 19:54:27,853 - INFO - Generated 100 tokens in 230.83 seconds (0.43 tokens/sec)
+2025-02-09 19:54:27,854 - INFO - Output:
+Einstein's Theory of Relativity states that all
+electromagnetic waves have a negative or positive charge.
+However, in the case of a photon, the positive charge causes
+the wave to come from "neutral" space. The charge causes the
+photon to be traveling at a speed greater than the speed of
+light as a result of the particle's energy. The photon's
+travel is limited by the particle's energy level in contrast
+to other particles that are at rest, such as the sun or the
+moon. But when another photon is present and
+2025-02-09 19:54:27,854 - INFO - Round 2 of 20.
+2025-02-09 19:54:28,276 - INFO - Generated 100 tokens in 0.42 seconds (236.82 tokens/sec)
+2025-02-09 19:54:28,277 - INFO - Output:
+Einstein's Theory of Relativity states that there are two
+forms of electromagnetic radiation: - Radio waves are
+emitted from atoms - Solar waves are thought to come from
+the sun. It is not clear whether the light is an
+electromagnetic radiation or its component electromagnetic
+radiation. In either case, the universe is just like other
+elementary objects that are made up of regular matter. The
+theory of relativity states that if you are travelling
+quickly, this motion will cause an object to accelerate
+rapidly. The second form of electromagnetic radiation, known
+as
+2025-02-09 19:54:28,277 - INFO - Round 3 of 20.
+2025-02-09 19:54:28,690 - INFO - Generated 100 tokens in 0.41 seconds (241.83 tokens/sec)
+2025-02-09 19:54:28,691 - INFO - Output:
+Einstein's Theory of Relativity states that every particle
+(including the particle itself) has an energy or time-
+related quantity. As you can see below: The theory of
+relativity states that every particle (including the
+particle itself) has an energy or time-related quantity. A
+large number of smaller particles are in the visible
+universe and can be represented as a massless or a massive
+or massive particle. An electromagnetic wave is defined as a
+wave that travels through space and is characterized by a
+wavelength. Waves are the fundamental components of
+classical
+2025-02-09 19:54:28,691 - INFO - Round 4 of 20.
+2025-02-09 19:54:29,106 - INFO - Generated 100 tokens in 0.42 seconds (240.96 tokens/sec)
+2025-02-09 19:54:29,107 - INFO - Output:
+Einstein's Theory of Relativity states that spacetime is
+simply a constant that keeps changing as the energy of the
+universe diminishes. Thus, the entire universe is a very
+complex system that could be described with relativity-like
+theory. The space-time theory would state that the expansion
+of the universe is a force that has shaped the universe. We
+can use the physical laws of gravity to describe this
+phenomenon by thinking of the forces of entropy and quantum
+mechanics as a universal force. Such a scientific conception
+of what "universities exist" is
+2025-02-09 19:54:29,107 - INFO - Round 5 of 20.
+2025-02-09 19:54:29,519 - INFO - Generated 100 tokens in 0.41 seconds (242.33 tokens/sec)
+2025-02-09 19:54:29,520 - INFO - Output:
+Einstein's Theory of Relativity states that the
+gravitational pull is only a part of the attraction. This
+makes it seem like an "object," yet it seems to me that
+Einstein does not admit of this or make it his priority. But
+what it all boils down to, is that gravity, even though not
+an "attraction," is a part of a force. I will continue to
+discuss this concept further, for the next three weeks.
+Because the subject of the next issue (and I think that is
+the one on that issue)
+2025-02-09 19:54:29,520 - INFO - Round 6 of 20.
+2025-02-09 19:54:29,935 - INFO - Generated 100 tokens in 0.42 seconds (240.91 tokens/sec)
+2025-02-09 19:54:29,936 - INFO - Output:
+Einstein's Theory of Relativity states that, in general
+relativity, mass does not exist at the time the event
+occurs. Instead, it does move away from the observer in time
+to the time scale. This is in contrast to Einstein's theory
+of gravity, where mass does not come out of existence in
+space at one moment. The physical laws we would expect for
+the universe to apply at that moment. What are we doing
+about this? The answer to that is, Einstein's theory of
+gravitation. This is true for both mass and
+2025-02-09 19:54:29,936 - INFO - Round 7 of 20.
+2025-02-09 19:54:30,348 - INFO - Generated 100 tokens in 0.41 seconds (242.70 tokens/sec)
+2025-02-09 19:54:30,349 - INFO - Output:
+Einstein's Theory of Relativity states that even the Big
+Bang is not a cosmological phenomenon. However, Einstein's
+theory cannot resolve the physical and the spiritual
+implications of the observed phenomena, in their
+mathematical and non-calculical applications. In his last
+years, he also wrote physics textbooks and was instrumental
+in organizing the physics-society movement. The physicist
+wrote a number of books and several books have been
+published since then, but by the start of his death, he had
+left a substantial body of work. The most
+2025-02-09 19:54:30,349 - INFO - Round 8 of 20.
+2025-02-09 19:54:30,768 - INFO - Generated 100 tokens in 0.42 seconds (238.47 tokens/sec)
+2025-02-09 19:54:30,769 - INFO - Output:
+Einstein's Theory of Relativity states that two separate
+particles are required to accelerate or slow down in an
+absolute vacuum. What's more, as two particles can easily go
+away, these particles can affect each other very rapidly,
+leading to a chain reaction in the world. What's more, if
+we're not talking about particles moving at constant speed
+they would cause a massive collapse that is impossible in
+principle to ignore. In physics a tiny particle travels at
+the speed of light, when its speed is the same as the speed
+of sound, you
+2025-02-09 19:54:30,769 - INFO - Round 9 of 20.
+2025-02-09 19:54:31,182 - INFO - Generated 100 tokens in 0.41 seconds (241.77 tokens/sec)
+2025-02-09 19:54:31,183 - INFO - Output:
+Einstein's Theory of Relativity states that light has a wave
+function called light-wave (TWE) and that the existence of
+TWE can be determined from observations, observations, and
+information, respectively. The TWE-TWE distribution can be
+used to estimate the distribution as well as the mass of the
+dark objects in the universe. 2.5.1. TWE and Planck's
+Integral Momentum The equation (1.2) describes the quantum
+motion of photons. The equation (2.5) also
+2025-02-09 19:54:31,183 - INFO - Round 10 of 20.
+2025-02-09 19:54:31,594 - INFO - Generated 100 tokens in 0.41 seconds (243.34 tokens/sec)
+2025-02-09 19:54:31,595 - INFO - Output:
+Einstein's Theory of Relativity states that all particles
+are moving. However, this theory is wrong. It is wrong to
+say that "it is very easy to define the physical quantities
+of motion." We must ask an intelligent, advanced scientist
+to find out that for the first time ever we can prove that
+this is the concept of velocity. This would be a very simple
+matter. It would require both a particle's theory of gravity
+as well as a particle's general theory of relativity. The
+first law of physics is the law of motion. It
+2025-02-09 19:54:31,595 - INFO - Round 11 of 20.
+2025-02-09 19:54:32,012 - INFO - Generated 100 tokens in 0.42 seconds (239.82 tokens/sec)
+2025-02-09 19:54:32,012 - INFO - Output:
+Einstein's Theory of Relativity states that all matter and
+energy are not equal. The motion of particles and their
+interactions give a physical picture of the real universe or
+the quantum world. When the theory of relativity was put
+forth in the 1920's, it was adopted by all the world's
+scientific universities for their attempts to explain the
+motion of electrons and other forms of matter in the
+universe. Einstein later accepted it. Einstein's theory was
+widely popular, particularly in the United States, in the
+1930s. In the 1930s and
+2025-02-09 19:54:32,012 - INFO - Round 12 of 20.
+2025-02-09 19:54:32,431 - INFO - Generated 100 tokens in 0.42 seconds (239.07 tokens/sec)
+2025-02-09 19:54:32,431 - INFO - Output:
+Einstein's Theory of Relativity states that, "Einstein has
+proved that quantum mechanics behaves in a way that violates
+general relativity. This is in accordance with the theory of
+the EMBH. The EMBH is a large, classical superstring field
+with strong gravity so strong it can only be studied with an
+enormous amount of energy." On a scale larger than the
+observable universe, the EMBH is very strange, but it is so
+wonderful. The theory is very simple. As you move towards
+it, the field
+2025-02-09 19:54:32,431 - INFO - Round 13 of 20.
+2025-02-09 19:54:32,858 - INFO - Generated 100 tokens in 0.43 seconds (234.26 tokens/sec)
+2025-02-09 19:54:32,859 - INFO - Output:
+Einstein's Theory of Relativity states that a universe is
+infinitely small. According to Albert Einstein, this has to
+do in the direction one wants to move into and the other in
+the direction of motion. For the motion of an object the
+universe is only a set of equations describing the motion
+and the nature of the universe is not defined by Albert's
+theory. For the creation of the universe he wrote that the
+universe has a set of basic laws and therefore cannot be
+static and static without the existence of more of these
+laws than the laws that
+2025-02-09 19:54:32,859 - INFO - Round 14 of 20.
+2025-02-09 19:54:33,268 - INFO - Generated 100 tokens in 0.41 seconds (244.58 tokens/sec)
+2025-02-09 19:54:33,268 - INFO - Output:
+Einstein's Theory of Relativity states that matter is an
+extension of light and that it exists at a lower energy
+level than particles. This is important because if gravity
+weren't working out, everything would be a mess. What are
+the two laws of motion? What are the three laws of motion?
+The two laws are known as the General Theory of Dynamics.
+The only difference between them is that the two laws are
+symmetric. What is the third explanation of the theory of
+gravity? In the three explanations of gravity,
+2025-02-09 19:54:33,268 - INFO - Round 15 of 20.
+2025-02-09 19:54:33,678 - INFO - Generated 100 tokens in 0.41 seconds (244.42 tokens/sec)
+2025-02-09 19:54:33,678 - INFO - Output:
+Einstein's Theory of Relativity states that - Since - This
+quantity can also be defined as the speed of an object
+moving in a straight line. - It doesn't depend on the number
+of observations. "In principle, if this quantity isn't
+there, nothing would be possible," he says. - For a
+hypothetical object such as the sun, the speed of the sun is
+defined as the speed of light (or light travel at the speed
+of light), and vice versa. In short: We are in principle,
+2025-02-09 19:54:33,678 - INFO - Round 16 of 20.
+2025-02-09 19:54:34,085 - INFO - Generated 100 tokens in 0.41 seconds (245.84 tokens/sec)
+2025-02-09 19:54:34,086 - INFO - Output:
+Einstein's Theory of Relativity states that, even if you
+think you know something about the past, or whether it is
+that we still have no idea how past events are being
+experienced or about each successive event, it might not
+really be right to interpret the observed facts as having a
+past of some kind. A similar idea to the previous is a
+notion of continuity. As I've noted, "the distinction
+between past and current, or past and present and future, is
+really misleading." A sense of continuity is more useful
+than sense of
+2025-02-09 19:54:34,086 - INFO - Round 17 of 20.
+2025-02-09 19:54:34,493 - INFO - Generated 100 tokens in 0.41 seconds (245.76 tokens/sec)
+2025-02-09 19:54:34,493 - INFO - Output:
+Einstein's Theory of Relativity states that no universal
+constant, the "inertial constant", needs to hold constant to
+account for all time period changes. The constant, according
+to Albert Einstein, is a change per unit time, with an
+infinite dimension, and is infinite in value in a vacuum.
+This means that no universe has the physical condition of
+time that most scientific theories, while holding constant,
+can describe. The Planckian theory is the theory of the
+structure of atoms, electrons, and photons -- the basic
+building blocks for
+2025-02-09 19:54:34,493 - INFO - Round 18 of 20.
+2025-02-09 19:54:34,902 - INFO - Generated 100 tokens in 0.41 seconds (244.68 tokens/sec)
+2025-02-09 19:54:34,903 - INFO - Output:
+Einstein's Theory of Relativity states that the nature of
+the universe can be observed directly and that it is
+impossible for ordinary particles to exist even when there
+is no mass. This proves Einstein was right, but the rest of
+the question remains, can ordinary particles actually exist?
+Einstein's hypothesis has been disproved by various other
+theories, and it is still under discussion today. However,
+many scientists continue their investigation of the origins
+of life today. For many, this is an important and
+challenging area, which will require much more proof.
+However
+2025-02-09 19:54:34,903 - INFO - Round 19 of 20.
+2025-02-09 19:54:35,311 - INFO - Generated 100 tokens in 0.41 seconds (245.07 tokens/sec)
+2025-02-09 19:54:35,311 - INFO - Output:
+Einstein's Theory of Relativity states that light cannot be
+transported across space and time through a moving force.
+The speed of light is determined by Einstein's laws of
+motion and quantum mechanics, which is the universe of
+reality. Light travels at the speed of light squared with
+its velocity. There have been two competing theories of
+light. One theory has been disproved, called Lasker's Law
+and the other (called Planck's Law). The Lasker's Law states
+that light takes a different direction from
+2025-02-09 19:54:35,311 - INFO - Round 20 of 20.
+2025-02-09 19:54:35,720 - INFO - Generated 100 tokens in 0.41 seconds (244.74 tokens/sec)
+2025-02-09 19:54:35,721 - INFO - Output:
+Einstein's Theory of Relativity states that the universe has
+a mass. Mass can have no force or force-on effect on other
+stars like the sun or the moon. Physicist Paul Felson, who
+was an outspoken critic of Einstein, said that while mass is
+neither fundamental nor invariant, it has a force. So the
+universe is not, but it has a non-linear force-to-mass
+relationship. Einstein also said that the earth and all
+other planets have mass because the earth is at a
+gravitational equatorial position.
+2025-02-09 19:54:35,721 - INFO - Run details saved to gpt2-rates-2025-02-09-19-54-35-721258-torch-compile-reduce-overhead-generate-slim-py313.json.
+
+real	4m6.794s
+user	3m57.460s
+sys	0m13.545s
+Exception ignored in: <_io.BufferedWriter name=41>
+BrokenPipeError: [Errno 32] Broken pipe
+usage: gpt2.py [-h] [--log-level {DEBUG,INFO,WARNING,ERROR,CRITICAL}]
+               [--model {gpt2,gpt2-xl}] [--device DEVICE]
+               [--max-length MAX_LENGTH] [--top-k TOP_K] [--seed SEED]
+               [--prompt PROMPT] [--torch-compile] [--torch-jit]
+               [--torch-compile-fullgraph] [--torch-compile-reduce-overhead]
+               [--torch-compile-max-autotune] [--generate-slim]
+               [--rounds ROUNDS] [--wrap WRAP] [--note NOTE]
+gpt2.py: error: unrecognized arguments: --torch-compile-full-graph
+
+real	0m4.257s
+user	0m8.545s
+sys	0m0.346s
+2025-02-09 19:54:47,502 - INFO - Loaded /mnt/raid1/trent/src/parallelopedia/data/model_19072.pt checkpoint in 0.488 seconds.
+2025-02-09 19:54:47,508 - INFO - Initialized GPT model in 0.005 seconds.
+2025-02-09 19:54:47,733 - INFO - Loaded model weights in 0.225 seconds.
+2025-02-09 19:54:48,026 - INFO - Created GPT model in 0.524 seconds.
+2025-02-09 19:54:48,110 - INFO - Moved model to cuda:3 in 0.083 seconds.
+2025-02-09 19:54:48,110 - INFO - Loaded model from step 19072, val_loss 3.0519702434539795
+2025-02-09 19:54:48,110 - INFO - Loaded gpt2 on cuda:3 in 1.095 seconds.
+2025-02-09 19:54:48,112 - INFO - torch.compiled model in 0.001 seconds.
+2025-02-09 19:54:48,112 - INFO - Round 1 of 20.
+2025-02-09 19:58:37,457 - INFO - Generated 100 tokens in 229.34 seconds (0.44 tokens/sec)
+2025-02-09 19:58:37,458 - INFO - Output:
+Einstein's Theory of Relativity states that the speed of
+light is the speed of light that is approximately 186,000
+miles per second How many electrons does a red light photon
+have in it? How long does the light travel in a vacuum of
+273,370,000 miles? What is the number 4 of quanta that are
+known to exist in the universe? How many quanta does a light
+photon have inside it? If the distance traveled is the same
+as its mass (2.8 kg) and its speed
+2025-02-09 19:58:37,458 - INFO - Round 2 of 20.
+2025-02-09 19:58:37,866 - INFO - Generated 100 tokens in 0.41 seconds (245.23 tokens/sec)
+2025-02-09 19:58:37,866 - INFO - Output:
+Einstein's Theory of Relativity states that space is
+expanding because of the force of gravity from its centre to
+its outermost point. The idea comes from Albert Einstein who
+was a postdoctoral research fellow at Princeton University.
+The gravity and light that came out from its centre is a
+force known as "gravity". We believe this was a good idea by
+early in Einstein's life. For example he believed that the
+force of gravity was stronger in a room with air pressure.
+He also thought that he could observe the same effect when
+the Earth's atmosphere
+2025-02-09 19:58:37,866 - INFO - Round 3 of 20.
+2025-02-09 19:58:38,259 - INFO - Generated 100 tokens in 0.39 seconds (254.99 tokens/sec)
+2025-02-09 19:58:38,259 - INFO - Output:
+Einstein's Theory of Relativity states that "God does behave
+like a particle in a non-relativistic way... it is possible
+that we ourselves have been created by an accident".
+Einstein never considered this theory until he was
+confronted with particle accelerators in the year 1908.
+Thus, he was ready for his theory. On the other hand,
+Einstein's theory of relativity states our planet has an
+incredibly strong gravity and is therefore heavier than the
+average person. This is due to the extra energy in the
+universe. There are many
+2025-02-09 19:58:38,259 - INFO - Round 4 of 20.
+2025-02-09 19:58:38,649 - INFO - Generated 100 tokens in 0.39 seconds (256.77 tokens/sec)
+2025-02-09 19:58:38,650 - INFO - Output:
+Einstein's Theory of Relativity states that the existence of
+black holes is impossible. However, according to this
+scenario, matter is necessary for black holes to exist. It
+is the creation of black holes that cannot escape from the
+force of gravity. If black holes were created in a
+laboratory, in an observatory, and acted out in the event of
+massless black holes, no light would escape. Hence, black
+holes could not exist. Einstein's model was a complete
+failure. Even then, his predictions of black hole masses
+were correct.
+2025-02-09 19:58:38,650 - INFO - Round 5 of 20.
+2025-02-09 19:58:39,041 - INFO - Generated 100 tokens in 0.39 seconds (255.46 tokens/sec)
+2025-02-09 19:58:39,042 - INFO - Output:
+Einstein's Theory of Relativity states that all objects
+change in proportion to this proportional shift of the light
+being carried by the objects. As such, its relation to
+general relativity is the same: in the case of special
+relativity, the light that is displaced by the objects
+travels in a straight line, and its relative motions toward
+various observers are not determined on the basis of their
+apparent positions, but, in principle, the movement of an
+observer towards him and his object that is approaching him.
+This can be seen from the formula given by the
+2025-02-09 19:58:39,042 - INFO - Round 6 of 20.
+2025-02-09 19:58:39,437 - INFO - Generated 100 tokens in 0.40 seconds (253.15 tokens/sec)
+2025-02-09 19:58:39,438 - INFO - Output:
+Einstein's Theory of Relativity states that the speed of
+light (in the English language, "lives in the microwave",
+according to American scientists), and the distance between
+the planets, have a definite character; and that the
+gravitational force produced by a single object, such as a
+planet orbiting a star, determines the speed of light as
+well. A third fundamental of the Einstein's principle is to
+assume that the acceleration of a ball causes it to
+accelerate; a fact that we don't yet know if an object in
+the distant universe does
+2025-02-09 19:58:39,438 - INFO - Round 7 of 20.
+2025-02-09 19:58:39,833 - INFO - Generated 100 tokens in 0.39 seconds (253.28 tokens/sec)
+2025-02-09 19:58:39,833 - INFO - Output:
+Einstein's Theory of Relativity states that in order for a
+photon to travel from the lowest power of a two-dimensional
+black body to the highest level of gravity, then all the
+particles and the gauge is either at rest or at a distance.
+Because of Einstein's theory of relativity and the fact that
+one photon has a mass only a second later by a massive body,
+the theory has some merit even though the Einstein equations
+are wrong. The theory gives a particle with mass greater
+than the sum of its velocity and the equivalence of a
+2025-02-09 19:58:39,833 - INFO - Round 8 of 20.
+2025-02-09 19:58:40,224 - INFO - Generated 100 tokens in 0.39 seconds (255.82 tokens/sec)
+2025-02-09 19:58:40,225 - INFO - Output:
+Einstein's Theory of Relativity states that if two objects
+of mass are moving, the other of mass's force (mass) is
+acting on them as well. This force is described as a General
+Field of Conservation of energy. The energy of an object is
+equal to its mass. It is also equal to its speed in a moving
+object. As you know, the speed of an object is directly
+proportional to the force it is exerting on its mass: For
+example, if a person exerts a weight on a person with a mass
+of
+2025-02-09 19:58:40,225 - INFO - Round 9 of 20.
+2025-02-09 19:58:40,614 - INFO - Generated 100 tokens in 0.39 seconds (256.85 tokens/sec)
+2025-02-09 19:58:40,615 - INFO - Output:
+Einstein's Theory of Relativity states that gravity (and not
+just the mass-energy relation) is a force with a
+gravitational origin (i.e. that the mass-energy relation is
+the same for both entities.) The gravity theory, which is
+accepted (and accepted) by most physicists, asserts that
+gravity exists over a continuum - a gravitational system of
+all the mass components. In the absence of a description of
+a continuum, a singularity, or a vacuum, gravity simply acts
+like a force. The gravitational "field" that
+2025-02-09 19:58:40,615 - INFO - Round 10 of 20.
+2025-02-09 19:58:41,017 - INFO - Generated 100 tokens in 0.40 seconds (248.97 tokens/sec)
+2025-02-09 19:58:41,017 - INFO - Output:
+Einstein's Theory of Relativity states that there may be a
+single particle which behaves in a vacuum at high speed. An
+example of this happening is the Higgs boson, a substance
+with a "proton" in its center of mass. There may well be
+more than one Higgs boson, which may be at all particles
+with masses less than 50 MeV. But, as I found out, these
+masses can be determined by the existence of another proton,
+another neutron, or another particle of mass less than 10
+MeV
+2025-02-09 19:58:41,017 - INFO - Round 11 of 20.
+2025-02-09 19:58:41,419 - INFO - Generated 100 tokens in 0.40 seconds (248.85 tokens/sec)
+2025-02-09 19:58:41,420 - INFO - Output:
+Einstein's Theory of Relativity states that as mass
+increases, the force that makes a point is going to be
+greater than the distance traveled by the event that creates
+it. This was true in his theoretical work on cosmological
+physics and relativity. The theory also states that as mass
+decreases, the force is going to be greater than the
+distance traveled by the Event because of the "speed of
+light." In the early 1960's scientists began to theorize
+what it was they believed to be a mass. They began to
+examine the motion of
+2025-02-09 19:58:41,420 - INFO - Round 12 of 20.
+2025-02-09 19:58:41,818 - INFO - Generated 100 tokens in 0.40 seconds (251.05 tokens/sec)
+2025-02-09 19:58:41,819 - INFO - Output:
+Einstein's Theory of Relativity states that matter in the
+electromagnetic spectrum has a greater mass than light, and
+has a higher velocity. Einstein's Theory of Relativity says
+that this force must exist because it takes matter to travel
+at constant velocity (see Figure 2). There the matter is in
+a continuous state of motion that is identical to the mass
+and velocity of the particles. This theory has been widely
+accepted and its application to the study of the force is in
+no doubt a fundamental part of modern physics. One of the
+most well-known
+2025-02-09 19:58:41,819 - INFO - Round 13 of 20.
+2025-02-09 19:58:42,209 - INFO - Generated 100 tokens in 0.39 seconds (256.26 tokens/sec)
+2025-02-09 19:58:42,210 - INFO - Output:
+Einstein's Theory of Relativity states that, since a mass M
+is a constant, a mass M must be a constant. In the early
+nineteenth century, Isaac Newton discovered that Newton's
+law of gravitation required that mass and energy were not
+equal, but that for some reason the two concepts had very
+different answers. First Newton assumed that the only energy
+in an object would be due motion, and, more importantly,
+that "since the motion of masses involves motion of a body
+relative to the velocity of a moving body we must consider
+the
+2025-02-09 19:58:42,210 - INFO - Round 14 of 20.
+2025-02-09 19:58:42,607 - INFO - Generated 100 tokens in 0.40 seconds (251.98 tokens/sec)
+2025-02-09 19:58:42,608 - INFO - Output:
+Einstein's Theory of Relativity states that a force must
+exist to counteract the acceleration of gravity to overcome
+the extra forces of gravitation. Scientists have speculated,
+for years, that in the mid-1900s, Isaac Newton wrote a two-
+part test which demonstrated that all the forces of
+gravitation must exist, and that an extra force must somehow
+compensate the force. However, the basic theorem for the two
+forces has been proved not always congruent by two or more
+test. What is the force of gravity, and why can it
+2025-02-09 19:58:42,608 - INFO - Round 15 of 20.
+2025-02-09 19:58:42,999 - INFO - Generated 100 tokens in 0.39 seconds (255.52 tokens/sec)
+2025-02-09 19:58:43,000 - INFO - Output:
+Einstein's Theory of Relativity states that all matter is
+composed of tiny, weakly interacting little, so-called
+bosons. In fact, they still look to be small particles in
+the universe's cosmic microwave background, which scientists
+have long suspected existed. While it's still too early to
+know for sure, it's safe to say that these little, strong,
+matter-to-proton particles are a bit trickier than we
+thought. An interesting case in point: The proton and
+neutron are fundamentally different things. The universe
+2025-02-09 19:58:43,000 - INFO - Round 16 of 20.
+2025-02-09 19:58:43,395 - INFO - Generated 100 tokens in 0.40 seconds (252.78 tokens/sec)
+2025-02-09 19:58:43,396 - INFO - Output:
+Einstein's Theory of Relativity states that all objects are
+simply curved if they are on average - in other words, a
+straight line. A triangle can have a straight line as the
+reference, and it doesn't. This principle of "refutation" -
+the claim that if a thing is flat, then there must be other
+things to be flat than it has been - was recently found in
+quantum physics - by quantum physicists. But because quantum
+physics does not require any proof of the existence of
+flatness, this must be true without the
+2025-02-09 19:58:43,396 - INFO - Round 17 of 20.
+2025-02-09 19:58:43,794 - INFO - Generated 100 tokens in 0.40 seconds (251.58 tokens/sec)
+2025-02-09 19:58:43,794 - INFO - Output:
+Einstein's Theory of Relativity states that one particle is
+"really" at rest in the universe. However, in Einstein's
+theory this is not so. Quantum fluctuations are found in the
+universe, and they exist in the form of particle waves. If
+you want to take a closer look at the universe, then you
+have to look further back in time. What we know about waves
+comes from a change in the quantum states of particles
+called the Bose/Einstein wave equation. The Bose-Einstein
+wave equation is a theory of
+2025-02-09 19:58:43,794 - INFO - Round 18 of 20.
+2025-02-09 19:58:44,187 - INFO - Generated 100 tokens in 0.39 seconds (254.78 tokens/sec)
+2025-02-09 19:58:44,187 - INFO - Output:
+Einstein's Theory of Relativity states that a new theory is
+needed that is compatible with existing theories or
+assumptions. The new theory of relativity is also called the
+"equivalence hypothesis". See also "A unified theory of
+gravity". - ↑ The Fundamental Theory of Relativity (1955). -
+↑ Relativity: A New Theory of Universal Plan (1981). - ↑
+Relativity: A New Theory of the Universe (1979). - ↑ A new
+theory of gravity is proposed by Einstein in the theory of
+relativity. Rel
+2025-02-09 19:58:44,188 - INFO - Round 19 of 20.
+2025-02-09 19:58:44,579 - INFO - Generated 100 tokens in 0.39 seconds (255.25 tokens/sec)
+2025-02-09 19:58:44,580 - INFO - Output:
+Einstein's Theory of Relativity states that the force of
+gravity can cause the motion of mass in a way that can not
+be explained by any new theory of gravity. At the beginning
+of the 1950's the physicist David Hamilton published a paper
+stating this as well as a second paper describing the new
+theory of relativity with an explanation for the motion of
+mass. In the same paper Hamilton attempted to explain
+Einstein's Theory of Relativity with new theories of
+gravity. The first paper by a physicist in the field of
+gravity was published in 1929 in a
+2025-02-09 19:58:44,580 - INFO - Round 20 of 20.
+2025-02-09 19:58:44,972 - INFO - Generated 100 tokens in 0.39 seconds (255.47 tokens/sec)
+2025-02-09 19:58:44,972 - INFO - Output:
+Einstein's Theory of Relativity states that the existence of
+a mass is determined by the gravitational attraction of a
+single object with respect to the center. The force of
+attraction of such an object is the gravitational pressure
+between this object and that object. A very small mass will
+be attracted to the surface of the sun; a large mass will
+have much larger forces of attraction on the surface. A
+larger, heavier object, such as a star, will have more
+attractive mass, and will be attracted to its star by it's
+gravitational gravitational attractions.
+2025-02-09 19:58:44,973 - INFO - Run details saved to gpt2-rates-2025-02-09-19-58-44-972844-torch-compile-reduce-overhead-fullgraph-generate-slim-py313.json.
+
+real	4m5.010s
+user	3m56.161s
+sys	0m12.919s
+Exception ignored in: <_io.BufferedWriter name=41>
+BrokenPipeError: [Errno 32] Broken pipe
+2025-02-09 19:58:52,631 - INFO - Loaded /mnt/raid1/trent/src/parallelopedia/data/model_19072.pt checkpoint in 0.509 seconds.
+2025-02-09 19:58:52,636 - INFO - Initialized GPT model in 0.006 seconds.
+2025-02-09 19:58:52,864 - INFO - Loaded model weights in 0.228 seconds.
+2025-02-09 19:58:53,158 - INFO - Created GPT model in 0.527 seconds.
+2025-02-09 19:58:53,245 - INFO - Moved model to cuda:3 in 0.087 seconds.
+2025-02-09 19:58:53,245 - INFO - Loaded model from step 19072, val_loss 3.0519702434539795
+2025-02-09 19:58:53,245 - INFO - Loaded gpt2 on cuda:3 in 1.123 seconds.
+2025-02-09 19:58:53,248 - INFO - torch.compiled model in 0.002 seconds.
+2025-02-09 19:58:53,248 - INFO - Round 1 of 20.
+2025-02-09 20:02:44,666 - INFO - Generated 100 tokens in 231.42 seconds (0.43 tokens/sec)
+2025-02-09 20:02:44,666 - INFO - Output:
+Einstein's Theory of Relativity states that both quantum
+mechanics and particle physics are incompatible if they are
+both based on the same fundamental concept of general
+relativity. The result of this argument can be stated as
+follows: since general relativity is a theory of the
+existence and motion of mass throughout space, in an ideal
+case and one with mass everywhere, this is the case that we
+find the case when relativistic quantities of all masses
+rest in nonzero values. (This example is a rather
+complicated mathematical problem as a theory should show
+several non-zero
+2025-02-09 20:02:44,666 - INFO - Round 2 of 20.
+2025-02-09 20:02:45,082 - INFO - Generated 100 tokens in 0.42 seconds (240.74 tokens/sec)
+2025-02-09 20:02:45,082 - INFO - Output:
+Einstein's Theory of Relativity states that the "ether"
+refers to an outside force of electromagnetism that is
+produced outside the black hole. This "ether" exists because
+something in or inside the black hole is being destroyed.
+When the "ether" is destroyed, the universe breaks apart.
+These galaxies may form into one large and one small galaxy.
+The entire universe collapses into a single large quasar or
+supermassive black hole. This is called a "sudden" "star." A
+special type of supernova remnant
+2025-02-09 20:02:45,082 - INFO - Round 3 of 20.
+2025-02-09 20:02:45,479 - INFO - Generated 100 tokens in 0.40 seconds (252.10 tokens/sec)
+2025-02-09 20:02:45,480 - INFO - Output:
+Einstein's Theory of Relativity states that gravitational
+fields exist in pairs which can be related to each other by
+a gravitational field. This idea has led to the conclusion
+of Albert Einstein's theory as the most popular explanation
+for Albert Einstein's theory. There are two main ideas
+presented by Einstein in this theory which are discussed in
+this book. Each of the ideas were summarized as
+follows:<|endoftext|>I have written it a hundred times, so I
+must make a name for myself. It is clear that the term
+“towards-touchet
+2025-02-09 20:02:45,480 - INFO - Round 4 of 20.
+2025-02-09 20:02:45,877 - INFO - Generated 100 tokens in 0.40 seconds (251.55 tokens/sec)
+2025-02-09 20:02:45,878 - INFO - Output:
+Einstein's Theory of Relativity states that the speed of
+light is constant. In the previous post I wrote about this
+result. In the following post, I showed several examples,
+showing that the speed of light in a certain direction is
+constant for a time d. The above shows a very interesting
+example of relativity. The speed of light is very important
+and the speed of light depends on the position and speed of
+objects. It shows how the direction of the light can be
+explained by the positions of the objects, and if the
+direction of the light
+2025-02-09 20:02:45,878 - INFO - Round 5 of 20.
+2025-02-09 20:02:46,276 - INFO - Generated 100 tokens in 0.40 seconds (251.14 tokens/sec)
+2025-02-09 20:02:46,277 - INFO - Output:
+Einstein's Theory of Relativity states that "the
+gravitational waves are moving from the center of the
+universe to the center of the earth in the space-time
+continuum". "The gravitational wave is then a result of the
+interaction of particles with one another, both of their
+gravitational and electrostatic effects, and that the waves
+are caused by the gravitational oscillation of space-time
+objects." (See p. 14 (quoted in J.E. Anderson), p. 19
+(quoted in L. Gause, F. Pyle
+2025-02-09 20:02:46,277 - INFO - Round 6 of 20.
+2025-02-09 20:02:46,674 - INFO - Generated 100 tokens in 0.40 seconds (251.91 tokens/sec)
+2025-02-09 20:02:46,674 - INFO - Output:
+Einstein's Theory of Relativity states that objects
+travelling to the speed of light will have a mass, and the
+mass of the object will remain the same. This means that any
+object that travels in the same direction with the same
+speed will also have a mass." "After a short while, I
+realised that I would be able to move my body in space - but
+I wanted to do something faster and more stable." "I'm still
+very excited about the results. Thank you Dr. Seuss for
+this!" shouted one girl.
+2025-02-09 20:02:46,674 - INFO - Round 7 of 20.
+2025-02-09 20:02:47,071 - INFO - Generated 100 tokens in 0.40 seconds (252.22 tokens/sec)
+2025-02-09 20:02:47,072 - INFO - Output:
+Einstein's Theory of Relativity states that all gravity is
+equal when mass and electric charge equal (the "Fermi
+principle", or a theory that says gravity should be
+invariant, like the charge of the electron). This is an
+extremely important assumption in quantum physics, since the
+"Fermis/General Relativity equations" are the theoretical
+basis of many mathematical equations in physics. The
+existence of gravity has been used extensively throughout
+the history of physics. However, the fact remains that
+gravity is the final result of some cosmic events in
+2025-02-09 20:02:47,072 - INFO - Round 8 of 20.
+2025-02-09 20:02:47,467 - INFO - Generated 100 tokens in 0.40 seconds (252.75 tokens/sec)
+2025-02-09 20:02:47,468 - INFO - Output:
+Einstein's Theory of Relativity states that the force
+between two objects (the gravitational and anti-gravity
+forces) is the same as that between objects, and so the
+principle applies to the acceleration of the earth and the
+forces of the Moon in one place. However, the gravitational
+force of the sun remains constant from the earth's orbit. As
+we move to the Moon and Jupiter, gravitational force
+increases as we orbit them. - (1) The gravitational force of
+the sun causes the earth to move past the Moon. - (
+2025-02-09 20:02:47,468 - INFO - Round 9 of 20.
+2025-02-09 20:02:47,865 - INFO - Generated 100 tokens in 0.40 seconds (252.02 tokens/sec)
+2025-02-09 20:02:47,865 - INFO - Output:
+Einstein's Theory of Relativity states that this was made as
+a fact by Einstein's friends, including Erwin Pysack, Albert
+Einstein, and Robert Oppenheimer. But the theory isn't that
+clear-cut. Einstein didn't actually believe that the
+universe works. Even though he believes it is, we think that
+he saw the universe as our property, even more than our
+belief in the fact that the universe exists. This is the
+concept that "we are all in a state of mind". Even if
+someone could convince
+2025-02-09 20:02:47,866 - INFO - Round 10 of 20.
+2025-02-09 20:02:48,262 - INFO - Generated 100 tokens in 0.40 seconds (252.51 tokens/sec)
+2025-02-09 20:02:48,262 - INFO - Output:
+Einstein's Theory of Relativity states that our universe is
+expanding and that time, as measured in fractions of second-
+degree intervals, is due to "a very slight gravitational
+force." This is because a mass of 10 tons in the Universe is
+pushing into space at a rate of one percent per second. What
+Einstein called "gravity," according to this theory, is
+nothing more than "infinity." Einstein thought he had gone
+to a local physicist's laboratory to see if this "gravity
+was there" in relation with "a planet in
+2025-02-09 20:02:48,262 - INFO - Round 11 of 20.
+2025-02-09 20:02:48,660 - INFO - Generated 100 tokens in 0.40 seconds (251.48 tokens/sec)
+2025-02-09 20:02:48,661 - INFO - Output:
+Einstein's Theory of Relativity states that, if two masses
+are at rest, the first will fall, but the second will only
+begin to descend. What is going on? Einstein's answer seems
+to be: A massless state for a single system of atomic
+particles... will remain in this state forever. However,
+when the particles reach a sufficiently powerful enough
+condition they will move on. Let's say there is a system of
+particles which we can call a single particle. We say that
+one particles mass is equal to the total mass
+2025-02-09 20:02:48,661 - INFO - Round 12 of 20.
+2025-02-09 20:02:49,064 - INFO - Generated 100 tokens in 0.40 seconds (247.96 tokens/sec)
+2025-02-09 20:02:49,065 - INFO - Output:
+Einstein's Theory of Relativity states that the speed of
+light is a fundamental mathematical constant, a fact that
+proves its existence. It's easy to think that Einstein, who
+also published a book on relativity, was the first to have a
+theory of relativity. He was, and still is, credited with
+establishing the theory of relativity. He came up with the
+idea of relativity with the idea that light traveled in
+straight lines in a circle at the speed of light. The speed
+of light is very closely related to the speed of light in a
+2025-02-09 20:02:49,065 - INFO - Round 13 of 20.
+2025-02-09 20:02:49,460 - INFO - Generated 100 tokens in 0.40 seconds (253.05 tokens/sec)
+2025-02-09 20:02:49,461 - INFO - Output:
+Einstein's Theory of Relativity states that the speed of
+light is constant in the universe. This is referred as the
+Planck constant. The Planck constant is the absolute value
+that can be expressed in the symbol. It is an energy concept
+that has also come into play during the last few decades of
+science. - Einstein's Theory of Relativity and His Method -
+List of famous scientists who have worked from the 20th to
+the 23rd century and their lives; the most prominent being
+Einstein - Albert Einstein; J.S.
+2025-02-09 20:02:49,461 - INFO - Round 14 of 20.
+2025-02-09 20:02:49,860 - INFO - Generated 100 tokens in 0.40 seconds (250.57 tokens/sec)
+2025-02-09 20:02:49,860 - INFO - Output:
+Einstein's Theory of Relativity states that "as the Earth is
+in zero rep pressure, therefore the force of attraction of
+the Earth is zero. Therefore, since the object at rest is
+also in a rep pressure state, this means you are not
+actually in a rep pressure state of attraction." This is
+just one of the many mysteries in physics. It only takes a
+very small amount of math to give anyone a clue. What's even
+more astonishing that scientists had to do at least some
+math on the subject of gravity was not until the
+2025-02-09 20:02:49,860 - INFO - Round 15 of 20.
+2025-02-09 20:02:50,257 - INFO - Generated 100 tokens in 0.40 seconds (251.88 tokens/sec)
+2025-02-09 20:02:50,258 - INFO - Output:
+Einstein's Theory of Relativity states that the only thing
+that can prevent a massive shock or black hole from occuring
+is the speed of light. In recent years physicists have
+discovered a multitude of theories about what black holes
+do, including what causes them and why they create so many
+black holes. One of the theories is called the Einsteinian
+theory of relativity. In 1915 Albert Einstein proposed the
+theory of relativity. In his theory he proposed that objects
+of different gravity, such as light, have different weights
+and therefore different speeds and thus different masses
+2025-02-09 20:02:50,258 - INFO - Round 16 of 20.
+2025-02-09 20:02:50,658 - INFO - Generated 100 tokens in 0.40 seconds (250.27 tokens/sec)
+2025-02-09 20:02:50,658 - INFO - Output:
+Einstein's Theory of Relativity states that the curvature of
+spacetime does not depend on the length. The gravitational
+field of the Earth is not constant, as was explained in an
+article on Gravitation, but it is. The Earth's gravity
+causes this curvature of spacetime (see Einstein's theory of
+relativity) to bend. You won't get a free trial in case you
+are not a subscriber and they will go to the "Free Trial"
+tab. They will only view the free trial for the current $14
+per
+2025-02-09 20:02:50,658 - INFO - Round 17 of 20.
+2025-02-09 20:02:51,063 - INFO - Generated 100 tokens in 0.40 seconds (247.28 tokens/sec)
+2025-02-09 20:02:51,063 - INFO - Output:
+Einstein's Theory of Relativity states that an observer
+always moves in the same direction, and an observer always
+maintains this direction when observing the observer. Now
+consider again the motion of an observer in an "upgoing"
+plane moving in the opposite direction to the observer. It
+seems to be a much more accurate description of moving
+through space than those who "down" the plane (i.e., moving
+to the left). If we accept that the motion of the observer
+is moving in a non-stationary direction, then we are sure
+2025-02-09 20:02:51,064 - INFO - Round 18 of 20.
+2025-02-09 20:02:51,465 - INFO - Generated 100 tokens in 0.40 seconds (248.93 tokens/sec)
+2025-02-09 20:02:51,466 - INFO - Output:
+Einstein's Theory of Relativity states that the speed of
+light, when it is accelerated, is about 10,000 miles per
+second before it reaches earth. This is more than enough
+energy to leave the earths atmosphere. The faster the speed,
+the more energetic is the universe gets. This explains why
+the Earth gets twice as much energy out of the form of
+light, in a straight line. Newton's Theory of Relativity is
+a statement about the Universe. It asserts that the Earth is
+at the center; the Sun is at
+2025-02-09 20:02:51,466 - INFO - Round 19 of 20.
+2025-02-09 20:02:51,863 - INFO - Generated 100 tokens in 0.40 seconds (251.74 tokens/sec)
+2025-02-09 20:02:51,864 - INFO - Output:
+Einstein's Theory of Relativity states that an object with
+mass will behave as the system does by repulsive quantum
+effects. These two physicists are not alone in their
+theories of physics. At present they do not distinguish
+between classical and quantum physics. For instance, they do
+not distinguish between fundamental and special physics
+phenomena. Quantum theory has for some years been the
+subject of controversy in the philosophy tradition by an
+atheist who says that the universe could be constructed if
+it were quantum-like, and he has, for an "evil eye,"
+suggested that
+2025-02-09 20:02:51,864 - INFO - Round 20 of 20.
+2025-02-09 20:02:52,263 - INFO - Generated 100 tokens in 0.40 seconds (250.72 tokens/sec)
+2025-02-09 20:02:52,264 - INFO - Output:
+Einstein's Theory of Relativity states that the universe is
+an infinite collection of elementary particles ("atoms").
+This is consistent with the idea that the universe contains
+no more than two elementary particles. This idea had some
+physicists in the early 1960s, and the theory was reworked
+in later years in the 1970s, but remained consistent until
+the end of the century when it was abandoned. Theory of
+Relativity proposes that the laws of nature are not static —
+they change throughout the universe. Theories of physics
+usually predict the existence of
+2025-02-09 20:02:52,264 - INFO - Run details saved to gpt2-rates-2025-02-09-20-02-52-264091-torch-compile-max-autotune-generate-slim-py313.json.
+
+real	4m7.372s
+user	3m58.070s
+sys	0m13.465s
+Exception ignored in: <_io.BufferedWriter name=41>
+BrokenPipeError: [Errno 32] Broken pipe
+2025-02-09 20:02:59,904 - INFO - Loaded /mnt/raid1/trent/src/parallelopedia/data/model_19072.pt checkpoint in 0.467 seconds.
+2025-02-09 20:02:59,910 - INFO - Initialized GPT model in 0.005 seconds.
+2025-02-09 20:03:00,142 - INFO - Loaded model weights in 0.232 seconds.
+2025-02-09 20:03:00,435 - INFO - Created GPT model in 0.531 seconds.
+2025-02-09 20:03:00,522 - INFO - Moved model to cuda:3 in 0.087 seconds.
+2025-02-09 20:03:00,522 - INFO - Loaded model from step 19072, val_loss 3.0519702434539795
+2025-02-09 20:03:00,523 - INFO - Loaded gpt2 on cuda:3 in 1.086 seconds.
+2025-02-09 20:03:00,524 - INFO - torch.compiled model in 0.001 seconds.
+2025-02-09 20:03:00,525 - INFO - Round 1 of 20.
+2025-02-09 20:06:53,070 - INFO - Generated 100 tokens in 232.55 seconds (0.43 tokens/sec)
+2025-02-09 20:06:53,071 - INFO - Output:
+Einstein's Theory of Relativity states that quantum field
+theory must be correct: it must be completely wrong, it must
+be "probable" — a theory that has been confirmed by some
+theoretical tests, in the absence of any actual proof. It
+has also been reported that a second quantum theory must be
+true, in the presence of another confirmed theory, and that
+the second theory must be true in the absence of a proof of
+the first theory. Theoretical Physics, by Thomas P. Newton,
+W. E. Davies & S
+2025-02-09 20:06:53,071 - INFO - Round 2 of 20.
+2025-02-09 20:06:53,499 - INFO - Generated 100 tokens in 0.43 seconds (233.41 tokens/sec)
+2025-02-09 20:06:53,500 - INFO - Output:
+Einstein's Theory of Relativity states that matter always
+oscillates freely. It's a constant that we can measure. We
+do not know how it works, where it went, what it was. It is
+constant, too. However, the theory goes on to provide an
+explanation for all the observed data. It may not be the
+original picture, but we are looking at it. It seems to tell
+us not only about the nature of the original problem, but
+also of the way that it works. It's just that it's more
+2025-02-09 20:06:53,500 - INFO - Round 3 of 20.
+2025-02-09 20:06:53,915 - INFO - Generated 100 tokens in 0.41 seconds (241.21 tokens/sec)
+2025-02-09 20:06:53,915 - INFO - Output:
+Einstein's Theory of Relativity states that energy has no
+rest or "inert" in it. In Einstein's theory, the "inert"
+energy is also considered to be energy. While the energy
+states of objects are always related to speed and direction,
+the speed and direction states of the objects are never
+conserved. Therefore, energy does not change much in real
+space, but in micro-courses and space-like micro-courses,
+the changes take place in micro-courses and micro-courses to
+become
+2025-02-09 20:06:53,915 - INFO - Round 4 of 20.
+2025-02-09 20:06:54,334 - INFO - Generated 100 tokens in 0.42 seconds (238.91 tokens/sec)
+2025-02-09 20:06:54,335 - INFO - Output:
+Einstein's Theory of Relativity states that a blackbody can
+be viewed as a black body - if it can be seen by an observer
+- as an object on the opposite side of the universe where no
+motion is possible. A blackbody is a black body orbiting a
+blackbody. Any object on an equal degree of the blackbody
+will orbit the point A at the same time as the black body.
+Therefore, the black body is always a black body. There are
+two distinct kinds of black bodies. Two black bodies will
+move in opposite
+2025-02-09 20:06:54,335 - INFO - Round 5 of 20.
+2025-02-09 20:06:54,751 - INFO - Generated 100 tokens in 0.42 seconds (239.97 tokens/sec)
+2025-02-09 20:06:54,752 - INFO - Output:
+Einstein's Theory of Relativity states that gravity was
+originally a result of the gravitational attraction between
+a mass and a substance between its two objects. Gravity is
+thought to have first appeared in the early 1600's as a
+theory of gravity, and its physical basis was the
+observation that the mass of an object decreases with speed,
+a fact that has not been observed in modern physical
+experiments, as the masses of objects in space are less than
+one-third the mass of a single substance. It was only later
+that the concepts of gravity and
+2025-02-09 20:06:54,752 - INFO - Round 6 of 20.
+2025-02-09 20:06:55,167 - INFO - Generated 100 tokens in 0.41 seconds (241.04 tokens/sec)
+2025-02-09 20:06:55,168 - INFO - Output:
+Einstein's Theory of Relativity states that as far as mass
+and time are concerned, the fundamental particles in our
+universe are composed of very large numbers of sub-atomic
+particles, called constituents. These constituents, called
+particles, can interact with each other and the energy
+behind each interaction. By making the particle more
+interesting, we can learn more about the basic properties of
+our universe. The most famous particles in the universe are
+particles called neutrons and protons. They give off an
+electric force that causes them to emit and emit radiation.
+Their
+2025-02-09 20:06:55,168 - INFO - Round 7 of 20.
+2025-02-09 20:06:55,584 - INFO - Generated 100 tokens in 0.42 seconds (240.30 tokens/sec)
+2025-02-09 20:06:55,584 - INFO - Output:
+Einstein's Theory of Relativity states that relativity
+proves the equivalence of any object on Earth to a reference
+object. This equivalence results in the observer having a
+reference on the Earth to a certain reference. If you were a
+real-life physicist (e.g., Einstein's) and you were a real-
+life physicist, you might know this law of relativity and
+its consequences, but if you were a physicist (e.g., Albert
+and Michelson), and you were a real-
+2025-02-09 20:06:55,584 - INFO - Round 8 of 20.
+2025-02-09 20:06:56,005 - INFO - Generated 100 tokens in 0.42 seconds (237.90 tokens/sec)
+2025-02-09 20:06:56,005 - INFO - Output:
+Einstein's Theory of Relativity states
+that:<|endoftext|>Breathalyzers can also be used to diagnose
+conditions. These are specialized electronic devices that
+test the quantity of carbon dioxide (CO2) that can be
+exhaled or exhaled in respiration. This information is used
+to develop a diagnosis and treatment plan. Breathe in from a
+large surface source. Most of the information that we
+consume is stored in the body's vital waste stream. When
+there is a disease condition in our body, that means oxygen
+and carbon dioxide must be
+2025-02-09 20:06:56,006 - INFO - Round 9 of 20.
+2025-02-09 20:06:56,423 - INFO - Generated 100 tokens in 0.42 seconds (239.52 tokens/sec)
+2025-02-09 20:06:56,424 - INFO - Output:
+Einstein's Theory of Relativity states that if the universe
+is expanding faster than the speed of light, the total speed
+of light - the speed we measure - in relative terms equals
+the speed with which the Universe is expanding - and as a
+result, this acceleration causes space to move faster than
+the speed of light, which in this case, our own universe.
+This is why Einstein's theory of relativity is called the
+"universal theory" (in contrast to all of the other
+"solutions to science" on this blog). It describes the
+2025-02-09 20:06:56,424 - INFO - Round 10 of 20.
+2025-02-09 20:06:56,839 - INFO - Generated 100 tokens in 0.41 seconds (240.98 tokens/sec)
+2025-02-09 20:06:56,839 - INFO - Output:
+Einstein's Theory of Relativity states that we know the
+speed of light in our universe. We know that the speed of
+light is 186,000 miles per second. If we had a spaceship
+travelling at 186,000 miles per second in one direction, and
+traveled it in one direction, then the speed of light would
+be 186,000 miles per second. A spaceship travelling at
+186,000 miles per second in one direction would have a speed
+of 1.5 million kilometers per second. That's the speed of
+light 186,000 miles
+2025-02-09 20:06:56,839 - INFO - Round 11 of 20.
+2025-02-09 20:06:57,284 - INFO - Generated 100 tokens in 0.44 seconds (224.94 tokens/sec)
+2025-02-09 20:06:57,285 - INFO - Output:
+Einstein's Theory of Relativity states that every particle
+and observer with the same speed will carry the same amount
+of space. In 1964, a string of four particles were observed
+crossing a planet's atmosphere in what is today known as M87
+(which is roughly 4,400 km across). In 1965, a small group
+of four electrons began striking the Earth on March 4 when
+they collided with a jet engine and created a small stream
+of electron protons and electrons around their nuclei.
+However, on the afternoon of March 3,
+2025-02-09 20:06:57,285 - INFO - Round 12 of 20.
+2025-02-09 20:06:57,697 - INFO - Generated 100 tokens in 0.41 seconds (242.52 tokens/sec)
+2025-02-09 20:06:57,698 - INFO - Output:
+Einstein's Theory of Relativity states that Alberti's Theory
+of Relativity was discovered by the German physicist, Albert
+Smith. Einstein believed that the two-dimensional mass of
+the universe was too far away from the point of view of the
+observer. Therefore, the world consisted of the two planets,
+a sphere, and the plane of space between them. If the
+universe had been in constant motion, the spheres would not
+be moving at all. There would be no such thing as a sphere.
+The "Boom of Science," of
+2025-02-09 20:06:57,698 - INFO - Round 13 of 20.
+2025-02-09 20:06:58,110 - INFO - Generated 100 tokens in 0.41 seconds (242.69 tokens/sec)
+2025-02-09 20:06:58,111 - INFO - Output:
+Einstein's Theory of Relativity states that gravity is not
+just a force of attraction but an external force; in other
+words, the force is a quantum mechanical action that acts on
+mass: the gravitational force of gravity is also a quantum
+mechanical action. (Some sources give Einstein's name, but
+all refer to it as electromagnetism because he wrote
+"magnetism"). This force, though, is "spooky"--and sometimes
+considered to be something of a science fiction novel:
+scientists have found some evidence of this--but
+2025-02-09 20:06:58,111 - INFO - Round 14 of 20.
+2025-02-09 20:06:58,522 - INFO - Generated 100 tokens in 0.41 seconds (243.28 tokens/sec)
+2025-02-09 20:06:58,522 - INFO - Output:
+Einstein's Theory of Relativity states that any substance in
+motion has the same probability of arriving at a fixed
+destination, but that the probability of arriving at that
+destination is lower at the time of the event. The
+probability of moving at any instant will be lower at all
+other time phases of the event and in the event horizon. The
+probability that a given point on the stationary object will
+actually lie on a stationary object will be zero unless it
+is an object that lies only one part of the distance from a
+point on the stationary object; for
+2025-02-09 20:06:58,522 - INFO - Round 15 of 20.
+2025-02-09 20:06:58,935 - INFO - Generated 100 tokens in 0.41 seconds (242.44 tokens/sec)
+2025-02-09 20:06:58,936 - INFO - Output:
+Einstein's Theory of Relativity states that the spacetime
+effect explains why the speed of light (and the speed of
+light is inversely proportional to speed). A light ray
+traveling through a vacuum produces a magnetic momentary
+expansion and magnetic momentary expansion respectively,
+with a speed difference that is related to the square of the
+velocity squared. A similar gravitational change explains
+why light travels in parallel, and so far from an object
+traveling behind it. According to relativity's theory,
+gravity is an interaction between objects which are closer
+together than they are in
+2025-02-09 20:06:58,936 - INFO - Round 16 of 20.
+2025-02-09 20:06:59,347 - INFO - Generated 100 tokens in 0.41 seconds (243.40 tokens/sec)
+2025-02-09 20:06:59,347 - INFO - Output:
+Einstein's Theory of Relativity states that if there is some
+event before the event, the particle then "loses momentum",
+the particle gets "loses its momentum", and so the new
+interaction must accelerate the particle down to about the
+speed of light. A very strange and interesting experiment
+was made by British physicist Joseph Pearson in 1934 that
+showed that in the absence of gravity the particles would
+travel at the same velocity relative to each other. This was
+proved for the first time in a double-helix interaction at
+the North Pole, where
+2025-02-09 20:06:59,347 - INFO - Round 17 of 20.
+2025-02-09 20:06:59,756 - INFO - Generated 100 tokens in 0.41 seconds (244.87 tokens/sec)
+2025-02-09 20:06:59,756 - INFO - Output:
+Einstein's Theory of Relativity states that if the light
+rays are accelerating, then they will not remain in their
+infinite speed limit, since they no longer travel the rest.
+"With the laws of physics becoming universal, this means
+there must be no limit on the speeds of light. It means
+there must be no limit on the distances we can travel in the
+Universe," he said. According to the findings of the new
+research, the speed and distances of the light that can
+travel through the entire universe are now very small. "
+2025-02-09 20:06:59,756 - INFO - Round 18 of 20.
+2025-02-09 20:07:00,166 - INFO - Generated 100 tokens in 0.41 seconds (243.96 tokens/sec)
+2025-02-09 20:07:00,167 - INFO - Output:
+Einstein's Theory of Relativity states that our universe is
+composed of two "slices" of gravitation and that it contains
+a very high temperature which is about 20-40 kelvin. How
+does the theory of relativity differ from the one of the
+universe (it seems to have been suggested by Einstein's
+theory)? The theory of relativity says that if you move an
+electric charge from left to right when you measure the
+charge on your body, that mass will change, and the same
+property of an electric charge will change also
+2025-02-09 20:07:00,167 - INFO - Round 19 of 20.
+2025-02-09 20:07:00,579 - INFO - Generated 100 tokens in 0.41 seconds (242.83 tokens/sec)
+2025-02-09 20:07:00,579 - INFO - Output:
+Einstein's Theory of Relativity states that everything we
+call mass has an energy level. If an object has a level or
+energy level then it would have a physical property
+described by some physical principle, called its own
+intrinsic quantum of energy level (i.e. Einstein's Special
+Relativity. Physicists have struggled with measuring
+Einstein's Theory of Relativity. The difficulty is the
+observation that the energy level is determined by the
+frequency distribution of the visible light at a given time
+in terms of a frequency domain. By measuring the frequencies
+2025-02-09 20:07:00,579 - INFO - Round 20 of 20.
+2025-02-09 20:07:00,991 - INFO - Generated 100 tokens in 0.41 seconds (243.16 tokens/sec)
+2025-02-09 20:07:00,991 - INFO - Output:
+Einstein's Theory of Relativity states that the forces of
+gravity move the earth around the universe according to the
+Einstein theory of gravity, also stated that the same force
+of attraction exists on the surface of the earth as it would
+in the ocean. Einstein proposed that gravity takes an
+analogy of the force of gravity that holds a ball in a
+bucket of water. According to this explanation, the Earth is
+much bigger than the Earth, causing gravity to exist. The
+earth's gravity changes how the Earth behaves. The idea of
+the pull of gravity seems
+2025-02-09 20:07:00,992 - INFO - Run details saved to gpt2-rates-2025-02-09-20-07-00-991903-torch-compile-max-autotune-fullgraph-generate-slim-py313.json.
+
+real	4m8.622s
+user	3m59.286s
+sys	0m13.636s
+Exception ignored in: <_io.BufferedWriter name=41>
+BrokenPipeError: [Errno 32] Broken pipe

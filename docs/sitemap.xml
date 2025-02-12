@@ -13,7 +13,11 @@
     <lastmod>2024-11-23T02:11:23.206Z</lastmod>
   </url>
   <url>
-    <loc>https://trent.me/blog/index.html</loc>
+    <loc>https://trent.me/articles/is-prefix-of-string-in-table/index.html</loc>
+    <lastmod>2024-11-23T02:11:22.910Z</lastmod>
+  </url>
+  <url>
+    <loc>https://trent.me/articles/from-pyparallel-to-python-free-threading/index.html</loc>
     <lastmod>2025-02-05T16:32:51.736Z</lastmod>
   </url>
   <url>
@@ -21,16 +25,8 @@
     <lastmod>2024-11-23T02:11:22.902Z</lastmod>
   </url>
   <url>
-    <loc>https://trent.me/articles/from-pyparallel-to-python-free-threading/index.html</loc>
-    <lastmod>2025-02-05T16:32:51.736Z</lastmod>
-  </url>
-  <url>
-    <loc>https://trent.me/articles/is-prefix-of-string-in-table/index.html</loc>
-    <lastmod>2024-11-23T02:11:22.910Z</lastmod>
-  </url>
-  <url>
-    <loc>https://trent.me/blog/posts/2025-xx-xx-pytorch-and-python-free-threading/index.html</loc>
-    <lastmod>2025-02-11T06:57:20.856Z</lastmod>
+    <loc>https://trent.me/articles/pytorch-and-python-free-threading/index.html</loc>
+    <lastmod>2025-02-12T03:15:49.559Z</lastmod>
   </url>
   <url>
     <loc>https://trent.me/projects/index.html</loc>
