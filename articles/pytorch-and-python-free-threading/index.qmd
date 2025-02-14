@@ -1,5 +1,5 @@
 ---
-title: "DRAFT: PyTorch and Python Free-Threading"
+title: "PyTorch and Python Free-Threading"
 subtitle: |
     Unlocking multi-threaded parallel inference on PyTorch models
 categories:
@@ -10,7 +10,9 @@ categories:
   - LLM
   - GPT2
 author: "Trent Nelson"
-draft: true
+date: 02/13/2025
+#draft: true
+#draft-mode: visible
 image: "images/pytorch-and-python-free-threading.png"
 description: |
   This post examines multi-threaded parallel inference on PyTorch models
@@ -29,6 +31,8 @@ execute:
   eval: true
   output: true
   error: true
+  cache: true
+  freeze: auto
 lightbox:
   match: auto
 comments: false
@@ -37,12 +41,12 @@ format:
     grid:
       gutter-width: 1rem
 notebook-view:
-  - notebook: gpt2-v1.ipynb
-    title: "GPT2 v1"
-  - notebook: wrk-analysis.ipynb
-    title: "Data Visualization: wrk"
   - notebook: torch-compile-analysis.ipynb
     title: "Data Visualization: torch.compile"
+  - notebook: wrk-analysis.ipynb
+    title: "Data Visualization: wrk"
+  - notebook: gpt2-v1.ipynb
+    title: "GPT2 v1"
 ---
 
 This post is sponsored in part by [Meta](https://meta.com) in
@@ -566,7 +570,9 @@ We'll revise this code later in the post, but for now, it's a good starting
 point to get a feel for how we can use PyTorch to load a GPT-2 model
 checkpoint, tokenize some input text, and generate some output text.
 
+::: {#initial-model-setup-code}
 {{< embed gpt2-v1.ipynb#gpt2-v1-setup >}}
+:::
 
 ## Loading the Model
 
@@ -2053,44 +2059,517 @@ optimizations in PyTorch 2.0 at our solution; specifically, can we still use
 
 ## Reviewing Initial Implementation
 
-1. Skipping weight initialization.
+### Skipping Weight Initialization
 
-2. Adding profiling.
-
-4. OpenAI's GPT-2 XL Model?
+The first version of the `GPT` class we introduced [here](
+#initial-model-setup-code) looked like this:
 
 ```python
+class GPT(nn.Module):
+
+    def __init__(self, config, device):
+        super().__init__()
+        self.config = config
+        self.device = device
+        self.manual_seed = 42
+
+        self.transformer = nn.ModuleDict(
+            dict(
+                wte=nn.Embedding(config.vocab_size, config.n_embd),
+                wpe=nn.Embedding(config.block_size, config.n_embd),
+                h=nn.ModuleList(
+                    [Block(config) for _ in range(config.n_layer)]
+                ),
+                ln_f=nn.LayerNorm(config.n_embd),
+            )
+        )
+        self.lm_head = nn.Linear(
+            config.n_embd, config.vocab_size, bias=False
+        )
+
+        self.transformer.wte.weight = self.lm_head.weight
+        self.apply(self._init_weights)
+
+    def _init_weights(self, module):
+        if isinstance(module, nn.Linear):
+            std = 0.02
+            if hasattr(module, "NANOGPT_SCALE_INIT"):
+                std *= (2 * self.config.n_layer) ** -0.5
+            torch.nn.init.normal_(module.weight, mean=0.0, std=std)
+            if module.bias is not None:
+                torch.nn.init.zeros_(module.bias)
+        elif isinstance(module, nn.Embedding):
+            torch.nn.init.normal_(module.weight, mean=0.0, std=0.02)
+```
+
+As I mentioned earlier, I ripped that almost verbatim from Andrej's
+`train_gpt2.py` code.  For about two weeks during development of this work,
+I was using a local free-threaded build of PyTorch, but had forgotten that I
+had built it in *debug* configuration.
+
+Everything was dog slow, but I had no frame of reference for how long things
+*should* have been taking, having had no real prior experience with PyTorch,
+but I was getting annoyed enough at how long it seemed to take to load the
+model---which I was doing frequently during development---so I added a bunch
+of timing code around things to try and bisect where the overhead was being
+introduced.
+
+Looking at the `__init__()` code above, though, I was thoroughly perplexed
+by the `_init_weights(self, module)` function.  Why would we be initializing
+weights at the end of the `GPT` constructor if we were just about to
+override them with the weights we were loading from the checkpoint?
+
+Eliminating the call to `_init_weights()` entirely shaved off 15 seconds
+from the time it took to simply create an *"empty"* `GPT()` instance---i.e.
+before we'd even loaded the weights.  However, it was still taking 15
+seconds just to execute this block of code:
+
+```python
+
+    self.transformer = nn.ModuleDict(
+        dict(
+            wte=nn.Embedding(config.vocab_size, config.n_embd),
+            wpe=nn.Embedding(config.block_size, config.n_embd),
+            h=nn.ModuleList(
+                [Block(config) for _ in range(config.n_layer)]
+            ),
+            ln_f=nn.LayerNorm(config.n_embd),
+        )
+    )
+    self.lm_head = nn.Linear(
+        config.n_embd, config.vocab_size, bias=False
+    )
+```
+
+I hoisted that code out into a separate `_init_transformer()` routine and
+surrounded it with some optional `torch.profiler.profile()` glue:
+
+```python
+
+    timer = ElapsedTimer()
+
+    with timer:
+        if not self.torch_profile_activities:
+            self._init_transformer()
+        else:
+            with torch.profiler.profile(
+                activities=self.torch_profile_activities,
+                with_stack=True,
+            ) as prof:
+                self._init_transformer()
+            self.torch_profile_init_transformer = prof
+
+    msg = f'Initialized GPT model in {timer.elapsed:.3f} seconds.'
+    logging.info(msg)
+```
+
+The profiling data yielded some interesting insight:
+
+```python
+> print(model.torch_profile_init_transformer.key_averages().table(sort_by='cpu_time_total'))
+-------------------------  ------------  ------------  ------------  ------------  ------------  ------------
+                     Name    Self CPU %      Self CPU   CPU total %     CPU total  CPU time avg    # of Calls
+-------------------------  ------------  ------------  ------------  ------------  ------------  ------------
+           aten::uniform_        74.31%       10.861s        74.31%       10.861s     111.966ms            97
+            aten::normal_        25.64%        3.747s        25.64%        3.747s        1.873s             2
+             aten::detach         0.01%       1.408ms         0.03%       3.712ms      24.914us           149
+              aten::empty         0.02%       2.570ms         0.02%       2.570ms      17.247us           149
+                   detach         0.02%       2.304ms         0.02%       2.304ms      15.464us           149
+              aten::fill_         0.01%       1.013ms         0.01%       1.013ms      40.500us            25
+              aten::zero_         0.00%     305.888us         0.00%     305.888us      12.236us            25
+    cudaDeviceSynchronize         0.00%      16.073us         0.00%      16.073us      16.073us             1
+-------------------------  ------------  ------------  ------------  ------------  ------------  ------------
+Self CPU time total: 14.615s
+```
+
+So `aten::uniform_` and `aten::normal_` were taking up, *literally*, 99.95%
+of the time during the transformer *initialization*.  That also seemed
+bananas for the exact same reason calling `_init_weights()` seemed bananas:
+why was so much time and effort being spent initializing distributions when
+we were going to immediately overwrite all the weights when we load the
+model from the checkpoint?
+
+Now, granted, had I not been using a debug build of PyTorch, those 14.597
+seconds spent on weight initialization would be more like unnoticeable
+milliseconds at best.  But I didn't know that at the time, so after a bit of
+digging, I found out I could subclass my `Embedding` and `Linear` layers
+(which were the ones contributing to the uniform and normal distribution
+setup time overhead) in such a way that weight initialization would be
+skipped entirely.
+
+So, if you look at the [`gpt2.py`](
+https://github.com/tpn/parallelopedia/blob/main/src/parallelopedia/gpt2.py#L535)
+implementation on Github, you'll see that I'm using a bunch of `NoInit`
+classes, as follows:
+
+```python
+# ==============================================================
+# Classes
+# ==============================================================
+
+# N.B. We have simple "no-init" overrides for nn.Embedding and
+#      nn.Linear which skip the default initialization routines,
+#      significantly reducing the time to load the model by
+#      avoiding uniform and random distribution initialization.
+#      As we immediately load all the weights from the model
+#      checkpoint straight after creating the model, we don't
+#      need the default initialization routines.
+
+class NoInitEmbedding(nn.Embedding):
+    def reset_parameters(self):
+        # Skip default uniform initialization.
+        pass
+
+
+class NoInitLinear(nn.Linear):
+    def reset_parameters(self):
+        # Skip default Kaiming initialization.
+        pass
+
+
+class CausalSelfAttention(nn.Module):
+
+    def __init__(self, config):
+        super().__init__()
+        assert config.n_embd % config.n_head == 0
+        # Key, query, value projections for all heads, but in a batch.
+        self.c_attn = NoInitLinear(config.n_embd, 3 * config.n_embd)
+
+        # Output projection.
+        self.c_proj = NoInitLinear(config.n_embd, config.n_embd)
+        self.c_proj.NANOGPT_SCALE_INIT = 1
+
+        # Regularization.
+        self.n_head = config.n_head
+        self.n_embd = config.n_embd
+
+    ...
+
+class MLP(nn.Module):
+
+    def __init__(self, config):
+        super().__init__()
+        self.c_fc = NoInitLinear(config.n_embd, 4 * config.n_embd)
+        self.gelu = nn.GELU(approximate='tanh')
+        self.c_proj = NoInitLinear(4 * config.n_embd, config.n_embd)
+        self.c_proj.NANOGPT_SCALE_INIT = 1
+
+    ...
 
 class GPT:
 
     ...
-    @classmethod
-    def from_pretrained(
-        cls, model_name: str,
-        map_location: Optional[str] = None,
-        manual_seed: Optional[int] = None,
-        torch_profile_activities: Optional[List[type]] = None,
-    ) -> "GPT":
+
+    def _init_transformer(self):
         """
-        Load a GPT model from a pretrained model downloaded from
-        HuggingFace.
+        Initialize the transformer.
+        """
+        config = self.config
+        self.transformer = nn.ModuleDict(
+            dict(
+                wte=NoInitEmbedding(config.vocab_size, config.n_embd),
+                wpe=NoInitEmbedding(config.block_size, config.n_embd),
+                h=nn.ModuleList(
+                    [Block(config) for _ in range(config.n_layer)]
+                ),
+                ln_f=nn.LayerNorm(config.n_embd),
+            )
+        )
+        self.lm_head = NoInitLinear(
+            config.n_embd,
+            config.vocab_size,
+            bias=False,
+        )
+        self.transformer.wte.weight = self.lm_head.weight
+
+```
+
+
+A few weeks after I'd put this code in, I came across this HuggingFace
+article on [Big Model Inference](
+https://huggingface.co/docs/accelerate/en/usage_guides/big_modeling) where
+they discuss the very problem I was hitting, which is problematic on much
+larger models even when you're using a release build of PyTorch---not just
+pip-squeak GPT2 models with a debug build---and they have a
+decorator-oriented solution:
+
+```python
+from accelerate import init_empty_weights
+with init_empty_weights():
+    my_model = ModelClass(...)
+```
+
+Granted, I couldn't use `accelerate` because it depends on packages that are
+not available for free-threaded builds yet, but I wanted to include the
+information here for future reference.
+
+### Can We Load Other Checkpoints?
+
+GPT2 was the last model where OpenAI made the weights publicly available.
+So, in theory, I should be able to download their largest GPT2
+model---[GPT2 XL](https://huggingface.co/openai-community/gpt2-xl)---figure
+out how to extract the weights, and then load them into our janky little
+`GPT` class instead of the ones from the locally-trained checkpoint.
+
+Turns out downloading it is easy via `huggingface-cli` (again, not something
+that works with free-threading, so you'll need to activate the `py313`
+environment and `pip install -U "huggingface_hub[cli]"` per [these](
+https://huggingface.co/docs/huggingface_hub/en/guides/cli) instructions):
+
+```bash
+% huggingface-cli download openai-community/gpt2-xl
+# That should download the model into the following directory.
+% cd ~/.cache/huggingface/hub/models--openai-community--gpt2-xl
+% tree -h .
+tree -h
+[4.0K]  .
+├── [4.0K]  blobs
+│   ├── [ 124]  057e43033439e068b325f32af95dde9efc9552ae
+│   ├── [6.0G]  0f8b28eb05a8075f48b61b6f35332978c74fc7763fa9fb4051a1c30511736a6a
+│   ├── [1018K]  1f1d9aaca301414e7f6c9396df506798ff4eb9a6
+│   ├── [446K]  226b0752cac7789c48f0cb3ec53eda48b7be36cc
+│   ├── [ 12K]  34f1cc31333e001c3047539dd604123dafd37346
+│   ├── [5.8G]  47d4a280f9274f015e8dd1e7e2e1066415fc1f37030ec30d00615973e750e578
+│   ├── [1.3M]  4b988bccc9dc5adacd403c00b4704976196548f8
+│   ├── [ 445]  602b71f15d40ed68c5f96330e3f3175a76a32126
+│   ├── [6.3G]  7b92a55d852494754e2856681833ee0ff05580ee32c1d8d60a1177bbf1f4703a
+│   ├── [ 689]  932bdee9f4b3878f7f285187564b46f256243aff
+│   ├── [  26]  be4d21d94f3b4687e5a54d84bf6ab46ed0f8defd
+│   ├── [ 165]  c791c4d01fc484a57262ee57c878dd5b35863fe7
+│   ├── [6.0G]  cd2a29e31040ef64d9362cb96801969c9f67b9e0bdbd6e00b9dda57cdbe17435
+│   └── [5.8G]  fbc167e52fa30c56fbed46e8b45c25893c4afb165ef666864abc0e70d5c117a4
+├── [4.0K]  refs
+│   └── [  40]  main
+└── [4.0K]  snapshots
+    └── [4.0K]  15ea56dee5df4983c59b2538573817e1667135e2
+        ├── [  52]  config.json -> ../../blobs/932bdee9f4b3878f7f285187564b46f256243aff
+        ├── [  76]  flax_model.msgpack -> ../../blobs/fbc167e52fa30c56fbed46e8b45c25893c4afb165ef666864abc0e70d5c117a4
+        ├── [  52]  generation_config_for_text_generation.json -> ../../blobs/c791c4d01fc484a57262ee57c878dd5b35863fe7
+        ├── [  52]  generation_config.json -> ../../blobs/057e43033439e068b325f32af95dde9efc9552ae
+        ├── [  52]  merges.txt -> ../../blobs/226b0752cac7789c48f0cb3ec53eda48b7be36cc
+        ├── [  76]  model.safetensors -> ../../blobs/0f8b28eb05a8075f48b61b6f35332978c74fc7763fa9fb4051a1c30511736a6a
+        ├── [  76]  pytorch_model.bin -> ../../blobs/cd2a29e31040ef64d9362cb96801969c9f67b9e0bdbd6e00b9dda57cdbe17435
+        ├── [  52]  README.md -> ../../blobs/34f1cc31333e001c3047539dd604123dafd37346
+        ├── [  76]  rust_model.ot -> ../../blobs/7b92a55d852494754e2856681833ee0ff05580ee32c1d8d60a1177bbf1f4703a
+        ├── [  76]  tf_model.h5 -> ../../blobs/47d4a280f9274f015e8dd1e7e2e1066415fc1f37030ec30d00615973e750e578
+        ├── [  52]  tokenizer_config.json -> ../../blobs/be4d21d94f3b4687e5a54d84bf6ab46ed0f8defd
+        ├── [  52]  tokenizer.json -> ../../blobs/4b988bccc9dc5adacd403c00b4704976196548f8
+        └── [  52]  vocab.json -> ../../blobs/1f1d9aaca301414e7f6c9396df506798ff4eb9a6
+```
+
+Well that's pretty neat, if not a tad duplicative, given the 1.5B parameter
+model is shipped in five different ~6GB encodings:
+
+```
+│   ├── [6.0G]  model.safetensors   (0f8b28...)
+│   ├── [5.8G]  tf_model.h5         (47d4a2...)
+│   ├── [6.3G]  rust_model.ot       (7b92a5...)
+│   ├── [6.0G]  pytorch_model.bin   (cd2a29...)
+│   └── [5.8G]  flax_model.msgpack  (fbc167...)
+```
+
+The `pytorch_model.bin` one is a pickled `dict` of tensors obtained from a
+`torch.save()` call---i.e. basically equivalent to the checkpoint we'd been
+using for the locally trained GPT2 model we used.  For whatever reason, that
+one didn't interest me much, but `model.safetensors` did.
+
+Thankfully, I could `pip install safetensors` in the free-threaded `py313t`
+environment, so I wrote some [helper glue](
+https://github.com/tpn/parallelopedia/blob/main/src/parallelopedia/util.py#L178)
+to give me back a `HuggingFaceModel` with the tensors accessible via a
+`safetensors` attribute if I passed it the appropriate model name, e.g.:
+
+```python
+@dataclass
+class HuggingFaceModel:
+    name: str
+    config: dict
+    safetensors: "safetensors.safe_open"
+    tokenizer: dict
+    tokenizer_config: dict
+    vocab: dict
+
+def get_huggingface_model(model_name: str) -> HuggingFaceModel:
+    """
+    Returns a Hugging Face model object for the given model name.
+
+    Args:
+
+        model_name (str): Supplies the name of the Hugging Face model.  This
+            should be in the format of `namespace/model`, e.g. for GPT2 XL:
+            `openai-community/gpt2-xl`.  This will be expanded out to the
+            following directory:
+                `~/.cache/huggingface/hub/models--openai-community--gpt2-xl`
+
+    Returns:
+
+        HuggingFaceModel: Returns a HuggingFaceModel object containing the
+            model name, configuration, and SafeTensors object.
+    """
+    base = os.path.expanduser('~/.cache/huggingface/hub/models--')
+    (namespace, model) = model_name.split('/')
+    base_path = f'{base}{namespace}--{model}'
+    ref_path = f'{base_path}/refs/main'
+    with open(ref_path, 'r') as f:
+        ref = f.read().strip()
+    snapshots_dir = f'{base_path}/snapshots/{ref}'
+    safetensors_path = f'{snapshots_dir}/model.safetensors'
+    import safetensors
+    timer = ElapsedTimer()
+    logging.debug(f'About to load safetensors from {safetensors_path}...')
+    with timer:
+        st = safetensors.safe_open(
+            safetensors_path,
+            framework="pt",
+            device="cpu",
+        )
+    msg = (
+        f'Loaded safetensors from {safetensors_path} '
+        f'in {timer.elapsed:.4f} seconds.'
+    )
+    logging.info(msg)
+
+    config_path = f'{snapshots_dir}/config.json'
+    with open(config_path, 'r') as f:
+        config = json.load(f)
+
+    tokenizer_path = f'{snapshots_dir}/tokenizer.json'
+    with open(tokenizer_path, 'r') as f:
+        tokenizer = json.load(f)
+
+    tokenizer_config_path = f'{snapshots_dir}/tokenizer_config.json'
+    with open(tokenizer_config_path, 'r') as f:
+        tokenizer_config = json.load(f)
+
+    vocab_path = f'{snapshots_dir}/vocab.json'
+    with open(vocab_path, 'r') as f:
+        vocab = json.load(f)
+
+    return HuggingFaceModel(
+        model_name,
+        config,
+        st,
+        tokenizer,
+        tokenizer_config,
+        vocab,
+    )
+```
+
+Now, I remember Andrej had a [`GPT.from_pretrained()`](
+https://github.com/karpathy/build-nanogpt/blob/master/train_gpt2.py#L130)
+routine that was geared toward loading the GPT2 models via the
+`transformers` Python package along the following lines:
+
+```python
+from transformers import GPT2LMHeadModel
+hf_model = GPT2LMHeadModel.from_pretrained('gpt2-xl')
+```
+
+The technique he used to prime is local `GPT` class from the larger model
+loaded from HuggingFace piqued my interest.  I've reproduced the applicable
+code below, with some formatting tweaks only.
+
+```python
+# create a from-scratch initialized minGPT model
+config = GPTConfig(**config_args)
+model = GPT(config)
+sd = model.state_dict()
+sd_keys = sd.keys()
+# discard this mask / buffer, not a param
+sd_keys = [
+    key for key in sd_keys if not key.endswith('.attn.bias')
+]
+
+# init a huggingface/transformers model
+model_hf = GPT2LMHeadModel.from_pretrained(model_type)
+sd_hf = model_hf.state_dict()
+
+# copy while ensuring all of the parameters are aligned
+# and match in names and shapes
+sd_keys_hf = sd_hf.keys()
+
+# ignore `.attn.masked_bias`; just a buffer
+sd_keys_hf = [
+    key for key in sd_keys_hf
+        if not k.endswith('.attn.masked_bias')
+]
+
+# ditto; ignore `.attn.bias`, just the mask (buffer)
+sd_keys_hf = [
+    key for key in sd_keys_hf
+        if not key.endswith('.attn.bias')
+]
+
+transposed = [
+    'attn.c_attn.weight',
+    'attn.c_proj.weight',
+    'mlp.c_fc.weight',
+    'mlp.c_proj.weight',
+]
+
+# basically the openai checkpoints use a "Conv1D" module,
+# but we only want to use a vanilla Linear, this means
+# that we have to transpose these weights when we import them
+assert len(sd_keys_hf) == len(sd_keys), (
+    f"mismatched keys: {len(sd_keys_hf)} != {len(sd_keys)}"
+)
+
+for k in sd_keys_hf:
+    if any(k.endswith(w) for w in transposed):
+        # special treatment for the Conv1D weights
+        # we need to transpose
+        assert sd_hf[k].shape[::-1] == sd[k].shape
+        with torch.no_grad():
+            sd[k].copy_(sd_hf[k].t())
+    else:
+        # vanilla copy over the other parameters
+        assert sd_hf[k].shape == sd[k].shape
+        with torch.no_grad():
+            sd[k].copy_(sd_hf[k])
+```
+
+Do all of that fiddling and *et voilà*, you've just primed your `GPT` model
+with the OpenAI weights!
+
+The reason Andrej's approach piqued my interest---in combination with poking
+around at a `safetensors` instance and realizing I could easily extract all
+147-or-so tensors by name---was that it may allow us to copy the tensors
+from the model read from disk into *our* model in parallel, using multiple
+threads.
+
+So I hacked together a variant of Andrej's `GPT.from_pretrained()` that
+looked as follows:
+
+```python
+class GPT:
+
+    ...
+
+    @classmethod
+    def from_pretrained(cls,
+                        model_name: str,
+                        map_location: Optional[str] = None,
+                        manual_seed: Optional[int] = None,
+                        torch_profile_activities: Optional[List[type]] = None,
+                        ) -> "GPT":
+        """
+        Load a GPT model from a pretrained model.
 
         Arguments:
 
-            model_name (str): Supplies the model name to use.
-                For more information, see the docstring for
-                `.util.get_huggingface_safetensors()`.
+            model_name (str): Supplies the model name to use.  See the
+                docstring for `.util.get_huggingface_safetensors()` for
+                more information about the format.
 
-            map_location (str): Optionally supplies the device
-                to map the loaded tensor parameters to.  If None,
-                "cuda" will be used if available, otherwise "cpu".
+            map_location (str): Optionally supplies the device to map the
+                loaded tensor parameters to.  If None, "cuda" will be used
+                if available, otherwise "cpu".
 
-            manual_seed (int): Optionally supplies the manual seed
-                to use for the model.  If None, a random seed will
-                be used.
+            manual_seed (int): Optionally supplies the manual seed to use for
+                the model.  If None, a random seed will be used.
 
-            torch_profile_activities (list): Optionally supplies a
-                list of torch.profiler.ProfilerActivity to profile.
+            torch_profile_activities (list): Optionally supplies a list of
+                torch.profiler.ProfilerActivity to profile.
 
         """
         if manual_seed is None:
@@ -2154,29 +2633,33 @@ class GPT:
         sd_keys = [k for k in sd.keys() if not k.endswith(exclude)]
         hf_keys = [k.replace('transformer.', '') for k in sd_keys]
 
-        # Copying tensors in parallel yields decent speedups, at least on my
-        # V100s which have five concurrent copy engines.
-        def copy_tensor(hf_key, sd_key):
-            hf_tensor = st.get_tensor(hf_key)
-            if hf_key.endswith(transpose):
-                assert hf_tensor.shape[::-1] == sd[sd_key].shape
-                with torch.no_grad():
-                    sd[sd_key].copy_(hf_tensor.t())
-            else:
-                assert hf_tensor.shape == sd[sd_key].shape
-                with torch.no_grad():
-                    sd[sd_key].copy_(hf_tensor)
+        # Copying tensors in parallel yields decent speedups,
+        # at least on my V100s which have five concurrent copy
+        # engines.
+        def copy_tensor(hf_key, sd_key):                            # <1>
+            hf_tensor = st.get_tensor(hf_key)                       # <1>
+            if hf_key.endswith(transpose):                          # <1>
+                assert hf_tensor.shape[::-1] == sd[sd_key].shape    # <1>
+                with torch.no_grad():                               # <1>
+                    sd[sd_key].copy_(hf_tensor.t())                 # <1>
+            else:                                                   # <1>
+                assert hf_tensor.shape == sd[sd_key].shape          # <1>
+                with torch.no_grad():                               # <1>
+                    sd[sd_key].copy_(hf_tensor)                     # <1>
 
         keys = zip(hf_keys, sd_keys)
         max_workers = min(os.cpu_count(), len(sd_keys))
         with timer:
-            with ThreadPoolExecutor(max_workers=max_workers) as executor:
-                futures = {
-                    executor.submit(copy_tensor, hf_key, sd_key):
-                        (hf_key, sd_key) for (hf_key, sd_key) in keys
-                }
-                for future in as_completed(futures):
-                    future.result()
+            with ThreadPoolExecutor(                                # <2>
+                max_workers=max_workers                             # <2>
+            ) as executor:                                          # <2>
+                futures = {                                         # <2>
+                    executor.submit(copy_tensor, hf_key, sd_key):   # <2>
+                        (hf_key, sd_key)                            # <2>
+                            for (hf_key, sd_key) in keys            # <2>
+                }                                                   # <2>
+                for future in as_completed(futures):                # <2>
+                    future.result()                                 # <2>
         logging.info(
             f'Copied weights with {max_workers} thread(s) '
             f'in {timer.elapsed:.3f} seconds.'
@@ -2190,10 +2673,40 @@ class GPT:
 
         return model
 ```
+1. Define a `copy_tensor` function that is provided with the name of a
+   tensor key as it appears in the HuggingFace model (`hf_key`) and as
+   it appears in our `state_dict` model (`sd_key`).  The `sd` state dict
+   is accessible to all threads, so they can simply copy their tensor
+   via `sd[sd_key].copy_(hf_tensor)`.
 
-3. Multi-GPU Support
+2. Use a `ThreadPoolExecutor()` to dispatch the `copy_tensor` operations in
+   parallel.  In this case I'm using workers equivalent to the number of CPU
+   cores, *or* number of tensors, whichever is fewer.
 
+So that all worked pretty well, free-threading can absolutely be used to
+speed up things like loading tensors.
 
+Additionally, if you play around with this locally, the `gpt2-xl` model will
+be available to select from the drop-down in the UI and also can be used via
+the command line (`--model gpt2-xl`) or in the REST `/generate` endpoint as
+a query parameter (`/generate/foo...?model=gpt2-xl`).
+
+### Multi-GPU Support
+
+The final big change I introduced was multi-GPU support plus some very
+rudimentary round-robin-esque behavior that could be used from the
+`generate()` routines to obtain a reference to a model depending on the
+incoming user's request.
+
+The `generate()` routine now obtains a model by the following:
+
+```python
+model = get_next_model()
+```
+
+The implementation for which is [here](
+https://github.com/tpn/parallelopedia/blob/main/src/parallelopedia/gpt2.py#L103),
+reproduced in part below:
 
 ```python
 NUM_GPUS = torch.cuda.device_count()
@@ -2289,10 +2802,6 @@ def load_pretrained_models():
     )
     logging.info(msg)
 ```
-
-3. Can we load OpenAI's GPT-2 XL?
-
-4. Copying tensors in parallel.
 
 ## Model Optimization
 
@@ -3081,8 +3590,15 @@ doing multi-threaded run-time inference in a single Python process.
 
 # Conclusion
 
-Charts pretty.  Post long.  Hope enjoyed.  Free-threaded Python go
-brrrrrrt.  kthnxbai.
+In this article, we've explored the world of free-threaded Python and
+PyTorch, and demonstrated that you can now do parallel inference on
+PyTorch models, and that it all plays very nicely together when wrapped
+up with an `asyncio`-based HTTP server.
 
+Hopefully this encourages more folks to experiment with free-threaded
+Python, or perhaps port their existing Python packages to play nicely
+when installed in a free-threaded Python environment.  I personally
+can't wait until free-threaded Python is the default!  Although that's
+probably at least five or so years out at this point.
 
 <!-- vim:set ts=8 sw=2 sts=2 expandtab textwidth=78 -->

@@ -27,7 +27,7 @@ website:
   page-navigation: true
   bread-crumbs: true
   reader-mode: true
-  draft-mode: visible
+  #draft-mode: visible
   search:
     show-item-context: true
     type: overlay
