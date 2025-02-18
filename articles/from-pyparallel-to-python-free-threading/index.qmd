@@ -15,15 +15,12 @@ image: "images/python-free-threading.png"
 description: |
   This article takes a look at the new no-GIL, free-threading functionality
   introduced in Python 3.13, as well as how it compares and performs against
-  PyParallel's attempt at explointing multiple CPU cores over ten years ago.
+  PyParallel's attempt at exploiting multiple CPU cores over ten years ago.
   Using a demo project named Parallelopedia, we demonstrate the benefits
   afforded by the new functionality, whereby large data structures (tens to
   hundreds of gigabytes) are loaded in main memory and then accessed in
   parallel from Python---a feat not previously possible with the contemporary
-  `multiprocessing` approach.  Additionally, we investigate multi-threaded,
-  parallel inference (generation) of transformer-based Deep Neural Networks
-  via PyTorch, and explorer the limits of what can and can't currently be
-  done, as well as a roadmap for future PyTorch support.
+  `multiprocessing` approach.
 ---
 
 This article is sponsored by [Meta](https://meta.com) in collaboration with
@@ -87,41 +84,6 @@ then cover the types of problems that are now incredibly well-suited to be
 tackled with a free-threaded Python, using a demo project I've created called
 [Parallelopedia](https://github.com/tpn/parallelopedia) to provide a basis for
 concrete examples of real-world problems.
-
-Finally, I'll demonstrate some examples of how [PyTorch](https://pytorch.org)
-can be used today with free-threaded Python, with particular focus on parallel
-inference (generation) on a shared model.  Load a model once in a single Python
-process, replicate it across GPUs of interest, and perform parallel inference
-from multiple threads without needing to mess around with `multiprocessing`.
-
-I'll also cover areas of PyTorch that don't yet work with free-threading, and
-the plans for tackling that in the future.
-
-The motivation behind the PyTorch focus is simple: Meta's PyTorch folks,
-through their relationship with [Quansight](https://quansight.com), paid for
-my time to work on this article.  Meta was also heavily involved in supporting
-and funding the free-threaded Python efforts, too; this was also thanks to
-their relationship with Quansight.  So special thanks goes out to Meta for all
-of their support with both free-threaded Python, and PyTorch overall.
-
-And I'd be remiss if I didn't thank my friend, colleague, and twice-now boss
-[Dr. Travis Oliphant](https://en.wikipedia.org/wiki/Travis_Oliphant), CEO of
-Quansight and OpenTeams, primary creator of
-[NumPy](https://en.wikipedia.org/wiki/NumPy), founding contributor of
-[SciPy](https://en.wikipedia.org/wiki/SciPy), and one of the founders of
-Continuum.io---now [Anaconda](https://anaconda.com), with whom I worked many
-years ago.  After the abrupt layoffs at [Voltron
-Data](https://voltrondata.com/) in late September 2024, I reached out to Travis
-for work and he snapped me up instantly, putting me to work on the PyTorch
-project with [Andrew James](https://github.com/amjames) for a few months before
-I started my new role as a Principle Engineer at NVIDIA on the Core CUDA
-Compute Libraries team in late January, 2025.
-
-Thank you Meta, Quansight, Travis, and James!  And thanks to all the folks
-involved in delivering free-threaded Python, including the Python Steering
-Council for taking a calculated risk and accepting
-[PEP-703 Making the Global Interpreter Lock Optional in CPython](
-https://peps.python.org/pep-0703/) in the first place.
 
 # Background
 
