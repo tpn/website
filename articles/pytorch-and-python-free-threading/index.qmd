@@ -514,12 +514,16 @@ Amusingly, well after the fact, I decided to see what kind of training
 performance I'd get on my Windows 11 gaming box (via WSL2 and Ubuntu 22.04),
 which has an AMD Ryzen 9 7950X3D (16 cores, 32 threads) and NVIDIA RTX 4090.
 Training via `python train_gpt2.py` (`torchrun` wasn't needed as I wasn't
-using multiple GPUs) yielded about 45,000 tokens/sec, which is a nice bump,
-but what was most impressive was the reduction to the loop iteration
-duration, which averaged out to about 180ms!
+using multiple GPUs) yielded about 125,000 tokens/sec, and the loop iteration
+time averaged about 4.2 seconds.
 
-So, I could have completed the same training process in about an hour or so,
-at a vastly reduced impact on my electricity bill that month :-)
+On my work Windows 11 box, which has an Intel Core i9-14900K (24 cores, 32
+threads) and NVIDIA RTX 5090, I got about 195,000 tokens/sec, and the loop
+iteration averaged about 2.7 seconds.
+
+So training 19,072 steps on my 5090 box would have taken around ~14 hours or
+so, and, at the very least, would have reduced my electricity bill for that
+month by a decent bit :-)
 
 :::
 
