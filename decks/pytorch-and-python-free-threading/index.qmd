@@ -1,0 +1,177 @@
+---
+title: PyTorch and Python Free-Threading
+subtitle: Unlocking multi-threaded parallel inference in PyTorch
+author: "Trent Nelson"
+date: "2025-11-08"
+image: "images/pytorch-and-python-free-threading.png"
+format:
+  revealjs:
+    #smaller: true
+    #incremental: true
+    slide-number: true
+    #scrollable: true
+    controls: true
+    chalkboard:
+      buttons: true
+    preview-links: auto
+    width: 75%
+    code-block-height: 640px
+    revealjs-plugins:
+      - bg-video-ctrl
+---
+
+# Introduction
+
+## Overview
+
+- PyTorch is a popular deep learning framework widely used for building and
+  deploying machine learning models.
+
+- Python's Global Interpreter Lock (GIL) can limit the performance of
+  multi-threaded applications, including those using PyTorch.
+
+## Tips For Interacting With This Deck
+
+- Intent of this deck is to be useful as a reference you can come back to.
+- [https://trentn.nvidia.com/decks/git-carpentry](https://trentn.nvidia.com/decks/git-carpentry)
+  - [GitLab source for this deck](https://gitlab-master.nvidia.com/trentn/website/-/blob/main/decks/git-carpentry/index.qmd)
+- `m`: Side Menu with TOC
+- `o`: Overview Mode
+  - This deck uses vertical and horizontal orientation, so overview mode
+    is helpful for quickly navigating to the area you're interested in.
+
+# Pre-Requisites
+
+## Conda Environment
+
+```
+conda create -n py314t python=3.14 python-freethreading \
+    nodejs pip tqdm flake8 rust requests \
+    -c conda-forge
+```
+
+## Docker
+
+```
+docker run ...
+
+```
+
+# Python Free-Threading
+
+## What is Python Free-Threading?
+
+Python 3.13, released in October 2024, is the first version of Python to
+introduce support for a “no-GIL” free-threaded mode, per PEP-703 Making the
+Global Interpreter Lock Optional in CPython, unlocking the ability for multiple
+Python threads to run simultaneously.
+
+This allows, for the first time since the language’s inception in December 1989,
+a single Python process to saturate all CPU cores in parallel with pure Python
+code (i.e. not farming out to extension modules written in C, C++, or, more
+recently, Rust).
+
+- [PEP-703 Making the Global Interpreter Lock Optional in CPython](https://peps.python.org/pep-0703/)
+
+- PEP-703:
+  [https://peps.python.org/pep-0703/](https://peps.python.org/pep-0703/)
+
+## Installing Python Free-Threading
+
+- Via Conda:
+
+```
+conda create -n py314t python=3.14 python-freethreading -c conda-forge
+```
+
+# PyTorch & LLM Crash Course
+
+## Neural Networks: From Zero to Hero
+
+- My prior LLM and PyTorch experience: zero.
+- [Andrej Karpathy](https://karpathy.ai)'s YouTube Series on deep neural
+  networks and LLMs.
+- Nearly 20 hours of content across 10 videos.
+- Took me easily double that to actually absorb it.
+
+:::: {.notes}
+
+My involvement with PyTorch and Large Language Models (LLMs) started around
+late November last year, 2024.  Going in, I knew nothing about PyTorch, nor
+deep neural networks, nor LLMs---other than having enjoyed using LLMs
+thoroughly the past couple of years.  I had never trained an AI model of
+any kind.  I did have a bit of NumPy and data science exposure up my sleeve,
+plus general familiarity with Python.
+
+::::
+
+:::: {.notes}
+Thanks to [Andrej Karpathy](https://karpathy.ai/)'s phenomenal YouTube series
+on deep neural networks and LLMs titled [Neural Networks: From Zero to Hero](
+https://www.youtube.com/playlist?list=PLAqhIrjkxbuWI23v9cThsA9GvCAUhRvKZ),
+over the course of about 3 weeks or so I went from zero to... well I
+wouldn't necessarily say *hero*---perhaps zero to *not-completley-clueless*
+is more apropos.
+
+Andrej's content is a fantastic resource to learn everything you need to
+know to understand how modern LLMs work from the ground-up.  It's not a
+short series---there are 19 hours, 21 minutes and two seconds of content
+across ten videos---and you'll probably spend double that if you *really*
+want to properly absorb the content.
+
+None of the work presented in this post would have been possible had I not
+invested the time in Andrej's series.  If you're reading this Andrej, thanks,
+and keep up the brilliant work!
+::::
+
+## Training GPT-2 (124M) Locally
+
+Equipped with my new knowledge about LLMs, PyTorch, and, thanks to Andrej's
+final video in the series titled [Let's reproduce GPT-2 (124M)](
+https://www.youtube.com/watch?v=l8pRSuU81PU&list=PLAqhIrjkxbuWI23v9cThsA9GvCAUhRvKZ&index=10&t=1286s&pp=iAQB)
+and the accompanying [build-nanogpt](
+https://github.com/karpathy/build-nanogpt) Github repo, I was able to train
+a local GPT-2 model via PyTorch, from scratch, using the [edu_fineweb10B](
+https://huggingface.co/rhysjones/gpt2-124M-edu-fineweb-10B) dataset.
+
+# PyTorch GPT-2 Implementation
+
+## Initial Implementation
+
+The code below roughly corresponds to my first version of the code in the
+commit [3ed4fe6: Add gpt2.py](
+https://github.com/tpn/parallelopedia/blob/3ed4fe60a767a12b31fca183fed00fef43c65827/src/parallelopedia/gpt2.py),
+with some formatting and style tweaks to ensure the code is viewable on mobile
+devices without requiring horizontal scrolling.
+
+We'll revise this code later in the post, but for now, it's a good starting
+point to get a feel for how we can use PyTorch to load a GPT-2 model
+checkpoint, tokenize some input text, and generate some output text.
+
+## Code
+
+{{< embed gpt2-v1.ipynb#gpt2-v1-setup >}}
+
+## Loading the Model
+
+With the code above executed in a preceding Jupyter Notebook cell, we can
+load the model as follows:
+
+{{< embed gpt2-v1.ipynb#gpt2-v1-load-model >}}
+
+## Generating Text
+
+:::: {.desktop-only}
+{{< embed gpt2-v1.ipynb#gpt2-v1-generate-1-desktop >}}
+::::
+
+:::: {.tablet-only}
+{{< embed gpt2-v1.ipynb#gpt2-v1-generate-1-tablet >}}
+::::
+
+:::: {.phone-only}
+{{< embed gpt2-v1.ipynb#gpt2-v1-generate-1-phone >}}
+::::
+
+
+

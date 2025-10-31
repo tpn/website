@@ -1,0 +1,44 @@
+/*-- scss:defaults --*/
+
+@import "nvidia.scss";
+
+// NVIDIA Light Theme Overrides
+//
+// Assumes the NVIDIA brand color variables (e.g. $nv-green, $nv-black, $nv-white, etc.)
+// are defined or imported prior to this file.
+
+//
+// Core color and typography variables for a light theme:
+//
+$body-bg: $nv-white;                                // Light background
+$body-color: map-get($nv-gray-values, "dark-2");   // Dark text
+$link-color: $nv-green;                             // NVIDIA green for links
+$selection-bg: map-get($nv-green-values, "light-1");
+$selection-color: $nv-black;
+
+// Headings (using the sans-serif stack)
+$presentation-heading-font: "NVIDIA Sans", sans-serif;
+$presentation-heading-color: $nv-green;             // Headings in NVIDIA green
+$presentation-heading-line-height: 1.2;
+$presentation-heading-font-weight: 600;
+
+// Code Blocks
+$code-block-bg: map-get($nv-gray-values, "light-2");
+$code-block-border-color: map-get($nv-gray-values, "light-1");
+$code-block-font-size: 0.55em;
+
+// Inline Code
+$code-color: $nv-green-dark-1;
+$code-bg: map-get($nv-gray-values, "light-2");
+
+// Layout
+$border-color: map-get($nv-gray-values, "light-1");
+$border-width: 1px;
+$border-radius: 3px;
+$presentation-slide-text-align: left;
+
+// Ensure our font stacks are defined appropriately
+$font-family-sans-serif: "Chilanka", "NVIDIA Sans", "EB Garamond", Helvetica, sans-serif;
+$font-family-monospace: "Comic Mono NF", monospace;
+
+

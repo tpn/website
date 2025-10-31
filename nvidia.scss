@@ -1,0 +1,173 @@
+/*-- scss:defaults --*/
+
+// NVIDIA Brand Colors SCSS Theme
+
+// Primary Colors
+$nv-green: #76b900;
+$nv-white: #ffffff;
+$nv-black: #000000;
+
+// Gray Scale
+$nv-gray-light-2: #e0e0e0;
+$nv-gray-light-1: #a7a7a7;
+$nv-gray: #757575;
+$nv-gray-dark-1: #4b4b4b;
+$nv-gray-dark-2: #313131;
+
+// Complimentary Colors
+$nv-purple: #9525c6;
+$nv-orange: #ef9100;
+
+// Functional Colors
+$nv-yellow: #f9c500;
+$nv-blue: #0074df;
+$nv-red: #e52020;
+
+// Additional Supporting Colors
+$nv-magenta: #d2308e;
+$nv-teal: #1dbba4;
+
+// Custom Component Colors
+$nv-math-color: $nv-orange;
+
+//
+// Extended Palettes
+//
+
+// Green
+$nv-green-values: (
+  "light-2": #cfff40,
+  "light-1": #bff230,
+  "base": $nv-green,
+  "dark-1": #3f8500,
+  "dark-2": #265600
+);
+$nv-green-light-2: #cfff40;
+$nv-green-light-1: #bff230;
+$nv-green-dark-1: #3f8500;
+$nv-green-dark-2: #265600;
+
+// Grey Values
+$nv-gray-values: (
+  "light-2": $nv-gray-light-2,
+  "light-1": $nv-gray-light-1,
+  "base": $nv-gray,
+  "dark-1": $nv-gray-dark-1,
+  "dark-2": $nv-gray-dark-2
+);
+
+// Purple Values
+$nv-purple-values: (
+  "light-2": #f9d4ff,
+  "light-1": #c359ef,
+  "base": $nv-purple,
+  "dark-1": #741d9d,
+  "dark-2": #4d1368
+);
+$nv-purple-light-2: #f9d4ff;
+$nv-purple-light-1: #c359ef;
+$nv-purple-dark-1: #741d9d;
+$nv-purple-dark-2: #4d1368;
+
+// Yellow and Orange Values
+$nv-yellow-orange-values: (
+  "yellow-light-2": #fcde7b,
+  "yellow-light-1": #feeeb2,
+  "yellow": $nv-yellow,
+  "orange": $nv-orange,
+  "orange-dark-1": #df6500
+);
+$nv-yellow-light-1: #feeeb2;
+$nv-yellow-light-2: #fcde7b;
+$nv-orange-dark-1: #df6500;
+
+// Blue Values
+$nv-blue-values: (
+  "light-2": #cbf5ff,
+  "light-1": #7cd7fe,
+  "base": $nv-blue,
+  "dark-1": #0046a4,
+  "dark-2": #002781
+);
+$nv-blue-light-2: #cbf5ff;
+$nv-blue-light-1: #7cd7fe;
+$nv-blue-dark-1: #0046a4;
+$nv-blue-dark-2: #002781;
+
+// Red Values
+$nv-red-values: (
+  "light-2": #ffd7d7,
+  "light-1": #ff8181,
+  "base": $nv-red,
+  "dark-1": #961515,
+  "dark-2": #650b0b
+);
+$nv-red-light-2: #ffd7d7;
+$nv-red-light-1: #ff8181;
+$nv-red-dark-1: #961515;
+$nv-red-dark-2: #650b0b;
+
+// Magenta Values
+$nv-magenta-values: (
+  "light-2": #ffd3f2,
+  "light-1": #fc79ca,
+  "base": $nv-magenta,
+  "dark-1": #8c1c55,
+  "dark-2": #5d1337
+);
+$nv-magenta-light-2: #ffd3f2;
+$nv-magenta-light-1: #fc79ca;
+$nv-magenta-dark-1: #8c1c55;
+$nv-magenta-dark-2: #5d1337;
+
+// Teal Values
+$nv-teal-values: (
+  "light-2": #adfcf8,
+  "light-1": #9aefe5,
+  "base": $nv-teal,
+  "dark-1": #0d8473,
+  "dark-2": #04554b
+);
+$nv-teal-light-2: #adfcf8;
+$nv-teal-light-1: #9aefe5;
+$nv-teal-dark-1: #0d8473;
+$nv-teal-dark-2: #04554b;
+
+/*-- scss:rules --*/
+
+// Usage Example
+// body {
+//   background-color: $nv-white;
+//   color: map-get($nv-gray-values, "dark-2");
+// }
+//
+// .brand-header {
+//   background-color: $nv-green;
+//   color: $nv-black;
+// }
+//
+// .button-primary {
+//   background-color: $nv-green;
+//   color: $nv-white;
+//
+//   &:hover {
+//     background-color: map-get($nv-green-values, "dark-1");
+//   }
+// }
+
+// MathJax/LaTeX styling
+.math.inline, .math.display {
+  color: $nv-math-color;
+}
+
+// Alternative: if you want equation numbers in a different color
+.math.display .MathJax_SVG_Display .mjx-math {
+  color: $nv-math-color;
+}
+
+// For numbered equations
+.math.display .MathJax_SVG_Display .mjx-math ~ .mjx-eqn {
+  color: map-get($nv-purple-values, "dark-1");
+}
+
+

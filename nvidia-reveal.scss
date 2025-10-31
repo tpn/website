@@ -1,0 +1,86 @@
+/*-- scss:rules --*/
+
+@import "nvidia.scss";
+@import "nvidia-reveal-dark.scss";
+
+/* Overall presentation background and text color */
+.reveal {
+  background-color: $body-bg;
+  color: $body-color;
+}
+
+/* Hyperlinks */
+.reveal a {
+  color: $link-color;
+}
+
+/* Headings styling */
+.reveal h1,
+.reveal h2,
+.reveal h3,
+.reveal h4 {
+  font-family: $presentation-heading-font;
+  color: $presentation-heading-color;
+  line-height: $presentation-heading-line-height;
+  font-weight: $presentation-heading-font-weight;
+}
+
+/* Preformatted Code Blocks */
+.reveal pre code {
+  background-color: $code-block-bg;
+  border: $border-width solid $code-block-border-color;
+  font-size: $code-block-font-size;
+  padding: 0.5em;
+}
+
+/* Inline Code */
+.reveal code {
+  background-color: $code-bg;
+  color: $code-color;
+  padding: 0.2em 0.4em;
+  border-radius: $border-radius;
+}
+
+/* Blockquotes: add a NVIDIA green left border */
+.reveal .slide blockquote {
+  border-left: 3px solid $nv-green;
+  padding-left: 0.5em;
+  /* Optionally lighten the blockquote text slightly */
+  color: lighten($body-color, 20%);
+}
+
+/* Optional: Customize callouts if you use them */
+.reveal .callout {
+  border-left: $border-width solid $link-color;
+  background-color: darken($body-bg, 5%);
+  padding: 1em;
+  margin: 1em 0;
+}
+
+.reveal .slides section .full-slide-plot {
+  height: 80vh;
+  margin-top: -50px;
+  position: relative;
+}
+
+.reveal .slides section .full-slide-plot .bk-root {
+  height: 80% !important;
+  width: 90% !important;
+}
+
+.reveal .slides section .full-slide-plot .bk-root .bk-plot-layout {
+  height: 80% !important;
+  width: 90% !important;
+}
+
+/* Ensure the slider doesn't get too much vertical space */
+.reveal .slides section .full-slide-plot .bk-slider {
+  margin-bottom: 20px;
+}
+
+/* Make the plot canvas fill available space */
+.reveal .slides section .full-slide-plot .bk-canvas-wrapper {
+  flex: 1;
+}
+
+
