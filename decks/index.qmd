@@ -1,0 +1,12 @@
+---
+title: Decks
+listing:
+  sort: "date desc"
+  contents: "*/index.qmd"
+  categories: true
+page-layout: full
+comments: false
+format: html
+---
+
+Decks.

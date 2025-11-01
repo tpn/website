@@ -3,7 +3,7 @@ title: Git Carpentry
 subtitle: Crafting PRs Reviewers Will Love
 author: "Trent Nelson"
 date: "2025-06-22"
-image: "images/git-carpentry.jpg"
+image: "images/git-carpentry.png"
 format:
   revealjs:
     #smaller: true
@@ -14,7 +14,6 @@ format:
     chalkboard:
       buttons: true
     preview-links: auto
-    #footer: "NVIDIA CONFIDENTIAL.  DO NOT DISTRIBUTE."
     width: 75%
     code-block-height: 640px
     revealjs-plugins:

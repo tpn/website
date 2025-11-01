@@ -5,6 +5,10 @@ description: |
   This page tests syntax highlighting.
 author: Trent Nelson
 date: 05/04/2018
+format:
+  html:
+    grid:
+      gutter-width: 1rem
 ---
 
 

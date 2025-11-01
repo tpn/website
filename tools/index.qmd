@@ -3,6 +3,7 @@ title: Tools
 subtitles: Assorted tools and utilities
 toc: false
 comments: false
+format: html
 ---
 
 # Intel Intrinsics Guide

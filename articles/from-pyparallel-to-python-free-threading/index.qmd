@@ -21,6 +21,12 @@ description: |
   hundreds of gigabytes) are loaded in main memory and then accessed in
   parallel from Python---a feat not previously possible with the contemporary
   `multiprocessing` approach.
+format:
+  html:
+    code-annotations: select
+    code-line-numbers: true
+    grid:
+      gutter-width: 1rem
 ---
 
 This article is sponsored by [Meta](https://meta.com) in collaboration with

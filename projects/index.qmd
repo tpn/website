@@ -3,7 +3,12 @@ title: Projects & Repositories
 page-layout: full
 toc: false
 comments: false
+format: html
 ---
+
+## Work-Related (NVIDIA)
+
+* [NVIDIA CCCL](https://github.com/NVIDIA/cccl)
 
 ## Recent
 
@@ -21,8 +26,6 @@ comments: false
 
 - [Windows 10 SDKs](https://github.com/tpn/winsdk-10): handy collection of
   mostly the include files (and some debugger stuff) for Windows 10 DDKs/SDKs.
-- [CUDA Samples](https://github.com/tpn/cuda-samples): all the code samples that
-  ship with each CUDA version.
 - [Agner](https://github.com/tpn/agner): collection of Agner Fog's tools that I
   try and keep up-to-date.
 - [Fonts](https://github.com/tpn/fonts): My favorite fonts.

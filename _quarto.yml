@@ -41,17 +41,19 @@ website:
     left:
       - text: Articles
         href: articles/index.qmd
+      - text: Decks
+        href: decks/index.qmd
       - text: Projects & Repos
         href: projects/index.qmd
       - text: Tools
         href: tools/index.qmd
     tools:
-      - icon: twitter
-        href: https://twitter.com/trentnelson
-        text: Twitter
       - icon: github
         href: https://github.com/tpn
         text: GitHub
+      - icon: twitter
+        href: https://twitter.com/trentnelson
+        text: Twitter
       - icon: linkedin
         href: https://www.linkedin.com/in/trent-p-nelson
         text: LinkedIn
@@ -80,6 +82,25 @@ format:
     toc-title: Contents
     grid:
       margin-width: 380px
+  revealjs:
+    slide-number: true
+    chalkboard:
+      buttons: false
+    preview-links: auto
+    logo: /static/images/nvidia-logo.png
+    css: styles.css
+    theme: [default, nvidia.scss, nvidia-reveal-dark.scss, nvidia-reveal.scss]
+    syntax-definitions:
+      - asm.xml
+      - c.xml
+      - python.xml
+    highlight-style: "tpn.theme"
+    #highlight-style: github
+    center-slides: false
+    title-slide-attributes:
+      data-background-image: /images/background.jpg
+      data-background-size: cover
+
 
 #filters:
   #- auto-dark

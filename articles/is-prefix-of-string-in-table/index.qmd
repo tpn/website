@@ -16,6 +16,12 @@ categories:
 author: Trent Nelson
 date: 05/04/2018
 last-modified: 11/01/2024
+format:
+  html:
+    code-annotations: select
+    code-line-numbers: true
+    grid:
+      gutter-width: 1rem
 ---
 
 <small>

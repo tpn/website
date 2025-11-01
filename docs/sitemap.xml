@@ -2,34 +2,46 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://trent.me/tools/pyscript/index.html</loc>
-    <lastmod>2025-02-05T16:32:51.792Z</lastmod>
+    <lastmod>2025-11-01T02:12:03.291Z</lastmod>
   </url>
   <url>
     <loc>https://trent.me/syntax-highlighter-test.html</loc>
-    <lastmod>2024-11-23T02:11:23.310Z</lastmod>
+    <lastmod>2025-11-01T02:00:46.784Z</lastmod>
   </url>
   <url>
     <loc>https://trent.me/index.html</loc>
-    <lastmod>2024-11-23T02:11:23.206Z</lastmod>
+    <lastmod>2025-11-01T02:20:33.626Z</lastmod>
   </url>
   <url>
-    <loc>https://trent.me/articles/is-prefix-of-string-in-table/index.html</loc>
-    <lastmod>2024-11-23T02:11:22.910Z</lastmod>
-  </url>
-  <url>
-    <loc>https://trent.me/articles/index.html</loc>
-    <lastmod>2024-11-23T02:11:22.902Z</lastmod>
+    <loc>https://trent.me/decks/index.html</loc>
+    <lastmod>2025-11-01T01:26:34.003Z</lastmod>
   </url>
   <url>
     <loc>https://trent.me/articles/pytorch-and-python-free-threading/index.html</loc>
     <lastmod>2025-10-30T23:36:38.316Z</lastmod>
   </url>
   <url>
+    <loc>https://trent.me/articles/index.html</loc>
+    <lastmod>2025-11-01T02:11:35.285Z</lastmod>
+  </url>
+  <url>
+    <loc>https://trent.me/articles/is-prefix-of-string-in-table/index.html</loc>
+    <lastmod>2025-11-01T02:09:55.691Z</lastmod>
+  </url>
+  <url>
+    <loc>https://trent.me/decks/git-carpentry/index.html</loc>
+    <lastmod>2025-11-01T01:58:14.092Z</lastmod>
+  </url>
+  <url>
+    <loc>https://trent.me/decks/pytorch-and-python-free-threading/index.html</loc>
+    <lastmod>2025-11-01T01:38:34.107Z</lastmod>
+  </url>
+  <url>
     <loc>https://trent.me/projects/index.html</loc>
-    <lastmod>2024-11-23T02:11:23.206Z</lastmod>
+    <lastmod>2025-11-01T02:22:03.899Z</lastmod>
   </url>
   <url>
     <loc>https://trent.me/tools/index.html</loc>
-    <lastmod>2024-11-23T02:11:23.310Z</lastmod>
+    <lastmod>2025-11-01T02:11:50.579Z</lastmod>
   </url>
 </urlset>

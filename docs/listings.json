@@ -1,5 +1,12 @@
 [
   {
+    "listing": "/decks/index.html",
+    "items": [
+      "/decks/pytorch-and-python-free-threading/index.html",
+      "/decks/git-carpentry/index.html"
+    ]
+  },
+  {
     "listing": "/articles/index.html",
     "items": [
       "/articles/pytorch-and-python-free-threading/index.html",

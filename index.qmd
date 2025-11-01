@@ -23,14 +23,16 @@ about:
     - icon: speaker-deck
       href: https://speakerdeck.com/trent
       text: SpeakerDeck
+format: html
 ---
 
 
-Systems Software Engineer and Private Pilot (tailwheel, complex,
-high-performance, aerobatics).
+Principal Software Engineer @ NVIDIA.
+
+Private Pilot (tailwheel, complex, high-performance, aerobatics).
 
 E-mail: [&#116;&#114;&#101;&#110;&#116;&#64;&#116;&#114;&#101;&#110;&#116;&#46;&#109;&#101;](mailto:&#116;&#114;&#101;&#110;&#116;&#64;&#116;&#114;&#101;&#110;&#116;&#46;&#109;&#101;).
 
 ---
 
-[Articles](articles) | [Projects & Repositories](projects) | [Tools](tools)
+[Articles](articles) | [Decks](decks) | [Projects & Repositories](projects) | [Tools](tools)
