@@ -1,0 +1,16 @@
+
+/* Hide title text. */
+#title-slide > * {
+  display: none !important;
+}
+
+/* Hide slide title. */
+#attention-is-all-you-need > * {
+  display: none !important;
+}
+
+/*
+#title-slide h1.title {
+  display: none !important;
+}
+*/

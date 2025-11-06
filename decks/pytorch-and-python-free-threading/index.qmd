@@ -1,7 +1,5 @@
 ---
-title: PyTorch and Python Free-Threading
-subtitle: "Unlocking multi-threaded parallel inference in PyTorch\n
-          PyData Seattle, November 8, 2025"
+title: Unlocking Parallel PyTorch Inference (and More!) with Python Free-Threading
 author: "Trent Nelson"
 date: "2025-11-08"
 image: "images/pytorch-and-python-free-threading.png"
@@ -9,170 +7,590 @@ format:
   revealjs:
     #smaller: true
     #incremental: true
+    title-slide-attributes:
+      data-background-image: /decks/pytorch-and-python-free-threading/images/deck-background.png
+      data-background-size: stretch
     slide-number: true
     #scrollable: true
     controls: true
     chalkboard:
       buttons: true
-    preview-links: auto
-    width: 75%
-    code-block-height: 640px
+    preview-links: true
+    width: 95%
+    height: 95%
+    code-block-height: 880px
+    css: extend.css
     revealjs-plugins:
       - bg-video-ctrl
 ---
 
 # Introduction
 
+## Quick Survey
+
+::: {.incremental}
+
+- Do you know what the Global Interpreter Lock (GIL) is?
+- Have you ever been annoyed by the Global Interpreter Lock (GIL)?
+- Are you excited about Python free-threading?
+- Are you currently *using* Python free-threading?
+- Do you do anything involving GPUs at work?
+  - Both AMD & NVIDIA?
+  - Mostly/only NVIDIA?
+  - Mostly/only AMD?
+
+:::
+
+::: {.notes}
+2m
+
+Bonus: were you present for the PyData NYC 2013 PyParallel talk I gave?
+:::
+
+## About Me: Trent Nelson (trent@trent.me)
+- Principal Software Engineer @ NVIDIA
+- Systems Software Engineer by trade
+  - Not a data scientist, quant, machine learning expert
+  - But fortunate enough to have worked side-by-side with those roles
+- Prior:
+  - Voltron Data
+  - CrowdStrike
+  - Teza Technologies
+  - Continuum Analytics (now Anaconda, Inc.)
+
+::: {.notes}
+1m
+:::
+
+## About this Talk
+
+- Mostly inspired by an article I wrote in early 2025: [PyTorch and Python Free-Threading](https://trent.me/articles/pytorch-and-python-free-threading/)
+
+::: {.notes}
+
+Most of the content of this talk is based on an article I authored in early
+2025--prior to joining NVIDIA--titled PyTorch and Python Free-Threading.  You
+can find the article if you go to trent.me/articles, it's the first one.
+
+:::
+
+## {background-image="images/website-articles-1.png" background-size="cover"}
+
 ## Overview
 
-- PyTorch is a popular deep learning framework widely used for building and
-  deploying machine learning models.
+- What is Python Free-Threading?  Why is it important?
+- PyTorch & LLM Crash Course
+- Training GPT-2 Locally
+- Parallelopedia: multi-threaded, pure Python asyncio HTTP server
+- Parallel PyTorch Inference via streaming asyncio HTTP server
+- Hosting all of Wikipedia (from 2015) within the same process
 
-- Python's Global Interpreter Lock (GIL) can limit the performance of
-  multi-threaded applications, including those using PyTorch.
+# What is Python Free-Threading?
 
-## Tips For Interacting With This Deck
+## The Global Interpreter Lock (GIL)
 
-- Intent of this deck is to be useful as a reference you can come back to.
-- [https://trentn.nvidia.com/decks/git-carpentry](https://trentn.nvidia.com/decks/git-carpentry)
-  - [GitLab source for this deck](https://gitlab-master.nvidia.com/trentn/website/-/blob/main/decks/git-carpentry/index.qmd)
-- `m`: Side Menu with TOC
-- `o`: Overview Mode
-  - This deck uses vertical and horizontal orientation, so overview mode
-    is helpful for quickly navigating to the area you're interested in.
+- Since the language's inception, it has had a Global Interpreter Lock (GIL)
+- GIL ensures only one thread is running Python byte-code at any given time
+  - This vastly simplifies the implementation details of the interpreter
+  - But prevents two or more Python threads running Python byte-code
+    simultaneously
 
-# Pre-Requisites
+## Releasing the GIL
 
-## Conda Environment
+- Extension modules (including those that ship with Python as part of the
+  language) generally *release* the GIL when they transition from Python
+  byte-code to their C/C++/Rust implementation.
+  - Assuming it's going to be a relatively compute-intensive function that
+    might not return for a bit
+  - The GIL is always released before an OS system call (opening a file,
+    reading a socket, etc.), as these calls could block for arbitrary amounts
+    of time, preventing any other threads from running
+- Once complete, the GIL is reacquired (or rather, the thread goes back to
+  competing with any and all other threads that also want to hold the GIL
+  so that they can resume Python byte-code execution).
 
-```
-conda create -n py314t python=3.14 python-freethreading \
-    nodejs pip tqdm flake8 rust requests \
-    -c conda-forge
-```
+## Releasing the GIL (cont.)
+- Releasing the GIL allows another Python thread to acquire it and resume
+  executing its Python byte-code.
+- What happens if no-one is releasing the GIL?  i.e. if you've just got pure
+  Python threads doing work?
+  - Python will effectively time-slice between threads, so that they all get
+    a chance to run for a little bit.
 
-## Docker
+## GIL History
 
-```
-docker run ...
+*insert picture*
 
-```
+## First Attempt at Removing The GIL: Greg Stein circa 1996
 
-# Python Free-Threading
+- Based on Python 1.4
+- Introduced fine-grain locking everywhere; Lock All The Things!
+- Destroyed existing single-threaded performance
+- Didn't offer desirable multi-threaded gains to offset the single-threaded
+  performance hit--never made it into mainline Python
+  - Also, it was 1996, multi-processor systems were expensive and not within
+    the reach of consumers
+- Still, Greg tackled a lot of important concepts which eventually did show
+  up in mainline Python (e.g. separating global state into per-thread state)
 
-## What is Python Free-Threading?
+::: footer
+Greg's [free threaded patch](https://github.com/tpn/python-1.4/commit/5c17e33224e2b57948ab594280a006d7648347e6),
+Greg's [Free threading](https://mail.python.org/pipermail/python-dev/2001-August/017099.html) email in 2001,
+Guido opining on GIL removal in [It isn't Easy to Remove the GIL](https://www.artima.com/forums/flat.jsp?forum=106&thread=214235&start=0&msRange=15),
+Dave Beazely's review 15 years later: [An Inside Look at the GIL Remove Patch of Lore](https://dabeaz.blogspot.com/2011/08/inside-look-at-gil-removal-patch-of.html)
+:::
 
-Python 3.13, released in October 2024, is the first version of Python to
-introduce support for a “no-GIL” free-threaded mode, per PEP-703 Making the
-Global Interpreter Lock Optional in CPython, unlocking the ability for multiple
-Python threads to run simultaneously.
+::: {.notes}
+- Destroyed existing single-threaded performance: mutex locking is still
+  expensive (compared to incrementing or decrementing a 32-bit int by 1),
+  even when there's no contention.
 
-This allows, for the first time since the language’s inception in December 1989,
-a single Python process to saturate all CPU cores in parallel with pure Python
-code (i.e. not farming out to extension modules written in C, C++, or, more
-recently, Rust).
+:::
 
-- [PEP-703 Making the Global Interpreter Lock Optional in CPython](https://peps.python.org/pep-0703/)
+## My Attempt in 2012 with PyParallel
 
-- PEP-703:
-  [https://peps.python.org/pep-0703/](https://peps.python.org/pep-0703/)
+- Based on Python 3.3.5
+- "Removed the GIL" (without removing the GIL)
+- Design decision up-front: not "free threaded"
+  - You don't create the threads
+  - We create the threads!
+  - And we'll call them *parallel* threads
+  - And we'll come up with a way to quickly detect if we're a parallel thread
+- When we need to do something thread sensitive (e.g. incref):
+  - If we're a normal, GIL-holding Python thread, do what we normally do...
+  - But if we're a *parallel* thread, do something **else**
 
-## Installing Python Free-Threading
+::: {.notes}
+"Else" is clearly doing a lot of heavy lifting here.  Surprisingly, at least
+with reference counting, PyParallel worked by simply not doing it.  PyParallel
+callbacks didn't need to mutate reference counts because they could rely on
+temporal objects being cleaned up after the callback returned.  And objects
+created outside of the parallel callback would have reference count values
+higher than one, and there was no risk of them going to zero whilst parallel
+threads were running.
+:::
 
-- Via Conda:
+## PyParallel
 
-```
-conda create -n py314t python=3.14 python-freethreading -c conda-forge
-```
+- [PyParallel Website](https://pyparallel.org)
+- [PyParallel: How we removed the GIL and exploited all cores (without needing to remove the GIL at all)](https://speakerdeck.com/trent/pyparallel-how-we-removed-the-gil-and-exploited-all-cores)
+  - PyData NYC 2013
 
-# PyTorch & LLM Crash Course
+## {background-video="images/pyparallel-website.webm" background-size="contain"}
 
-## Neural Networks: From Zero to Hero
+## {background-image="images/speakerdeck-pyparallel.png" background-size="contain"}
 
-- My prior LLM and PyTorch experience: zero.
-- [Andrej Karpathy](https://karpathy.ai)'s YouTube Series on deep neural
-  networks and LLMs.
-- Nearly 20 hours of content across 10 videos.
-- Took me easily double that to actually absorb it.
+## PyParallel: Pros & Cons
 
-:::: {.notes}
+::::: {.incremental}
 
-My involvement with PyTorch and Large Language Models (LLMs) started around
-late November last year, 2024.  Going in, I knew nothing about PyTorch, nor
-deep neural networks, nor LLMs---other than having enjoyed using LLMs
-thoroughly the past couple of years.  I had never trained an AI model of
-any kind.  I did have a bit of NumPy and data science exposure up my sleeve,
-plus general familiarity with Python.
+:::: {.columns}
+
+::: {.column width="50%"}
+- Pros:
+  - Successful proof of concept!
+  - Linear scaling with core count
+  - Great performance (rivaling C libraries)...
+    - As long as you were writing stateless/indempotent TCP socket servers
+  - NumPy, datrie, pyodbc, and Cython support
+:::
+
+::: {.column width="50%"}
+- Cons:
+  - Could only leverage multiple threads via async socket servers
+    - No free threaded support
+  - Couldn't (easily) mutate shared state in parallel callback
+  - Pure hack fest; crashed a lot, not remotely suitable for production
+  - Windows only
+:::
 
 ::::
 
-:::: {.notes}
-Thanks to [Andrej Karpathy](https://karpathy.ai/)'s phenomenal YouTube series
-on deep neural networks and LLMs titled [Neural Networks: From Zero to Hero](
-https://www.youtube.com/playlist?list=PLAqhIrjkxbuWI23v9cThsA9GvCAUhRvKZ),
-over the course of about 3 weeks or so I went from zero to... well I
-wouldn't necessarily say *hero*---perhaps zero to *not-completley-clueless*
-is more apropos.
+:::::
 
-Andrej's content is a fantastic resource to learn everything you need to
-know to understand how modern LLMs work from the ground-up.  It's not a
-short series---there are 19 hours, 21 minutes and two seconds of content
-across ten videos---and you'll probably spend double that if you *really*
-want to properly absorb the content.
+# And Then There Was Free-Threaded Python!
 
-None of the work presented in this post would have been possible had I not
-invested the time in Andrej's series.  If you're reading this Andrej, thanks,
-and keep up the brilliant work!
+## Python Free-Threading Is Here!
+
+- [PEP-703: Making the Global Interpreter Lock Optional in CPython](https://peps.python.org/pep-0703/)
+- Python 3.13t, released in October 2024, first version to introduce support
+  for new, "no-GIL", free-threaded mode
+- Herculean effort by Sam Gross and many others at Meta (and elsewhere) over
+  many years
+- Best thing to happen to Python since its inception!
+
+## Simultaneous Multi-Threading Is Here!
+
+::::: {.incremental}
+
+:::: {.columns}
+
+::: {.column width="50%"}
+
+Simple Example:
+
+```python
+import threading
+
+def expensive_op():
+    # Some CPU intensive work here
+    ...
+
+threads = [
+    threading.Thread(target=expensive_op)
+        for _ in range(8)
+]
+for t in threads:
+    t.start()
+
+for t in threads:
+    t.join()
+```
+:::
+
+::: {.column width="50%"}
+
+Real World Example:
+
+```python
+from concurrent.futures import ThreadPoolExecutor, as_completed
+
+def do_work(chunk):
+    ...
+
+work = [...] # Some list of work items
+errors = []
+results = []
+max_workers = min(os.cpu_count(), len(work))
+with ThreadPoolExecutor(max_workers=max_workers) as executor:
+    futures = {
+        executor.submit(do_work, item): item
+            for item in work
+    }
+    for future in as_completed(futures):
+        try:
+            result = future.result()
+            results.append(result)
+        except Exception as e:
+            errors.append(e)
+```
+:::
+
+::::
+
+:::::
+
+## It's Not Quite A Panacea... Yet.
+
+- Not all 3rd party modules support free-threading yet
+- It isn't the default (yet); you have to opt-in to it
+  - e.g. `conda create -n py314 python=3.14 python-freethreading`
+
+. . .
+
+- But these are all things that'll eventually go away
+- And it has the full support of the Python Software Foundation and Steering
+  Council!
+
+. . .
+
+- And you can do really cool stuff with it today!
+
+# PyTorch LLM Crash Course
+
+## Neural Networks: From Zero to Hero
+
+:::: {.columns}
+
+::: {.column width="40%"}
+
+:::: {.incremental}
+
+- My prior LLM & PyTorch experience: zero
+- [Andrej Karpathy](https://karpathy.ai) has a YouTube Series on deep neural
+  networks and LLMs titled [Neural Networks: From Zero to Hero](
+https://www.youtube.com/playlist?list=PLAqhIrjkxbuWI23v9cThsA9GvCAUhRvKZ)
+- Nearly 20 hours of content across 10 videos
+  - Took me at least double that over ~2 weeks to really absorb everything
+- From first principles to training your very own GPT-2
+
+:::::
+
+:::
+
+::: {.column width="60%"}
+
+![](images/nn-zero-to-hero.png)
+
+:::
+
 ::::
 
 ## Training GPT-2 (124M) Locally
 
-Equipped with my new knowledge about LLMs, PyTorch, and, thanks to Andrej's
-final video in the series titled [Let's reproduce GPT-2 (124M)](
-https://www.youtube.com/watch?v=l8pRSuU81PU&list=PLAqhIrjkxbuWI23v9cThsA9GvCAUhRvKZ&index=10&t=1286s&pp=iAQB)
-and the accompanying [build-nanogpt](
-https://github.com/karpathy/build-nanogpt) Github repo, I was able to train
-a local GPT-2 model via PyTorch, from scratch, using the [edu_fineweb10B](
-https://huggingface.co/rhysjones/gpt2-124M-edu-fineweb-10B) dataset.
+- Equipped with:
+  - Final video in the series: [Let's reproduce GPT-2 (124M)](https://www.youtube.com/watch?v=l8pRSuU81PU&list=PLAqhIrjkxbuWI23v9cThsA9GvCAUhRvKZ&index=10&t=1286s&pp=iAQB)
+  - Accompanying GitHub repo [build-nanogpt](https://github.com/karpathy/build-nanogpt)
+- I was able to train a local GPT-2 model from scratch
+  - Took ~3.5 days on a DGX Workstation from 2017 (4xTesla V100-DGXS-32GB)
+  - Have since rerun on single 5090 and calculated training would have taken
+    about 14 hours or so
+- End result: `model_19072.pt`
 
-# PyTorch GPT-2 Implementation
+## Attention Is All You Need {background-image="images/attention-is-all-you-need.png" background-size="contain"}
 
-## Initial Implementation
+## Source Code: https://github.com/tpn/parallelopedia
 
-The code below roughly corresponds to my first version of the code in the
-commit [3ed4fe6: Add gpt2.py](
-https://github.com/tpn/parallelopedia/blob/3ed4fe60a767a12b31fca183fed00fef43c65827/src/parallelopedia/gpt2.py),
-with some formatting and style tweaks to ensure the code is viewable on mobile
-devices without requiring horizontal scrolling.
+:::: {.columns}
 
-We'll revise this code later in the post, but for now, it's a good starting
-point to get a feel for how we can use PyTorch to load a GPT-2 model
-checkpoint, tokenize some input text, and generate some output text.
+::: {.column width="40%"}
+- [parallelopedia.gpt2](https://github.com/tpn/parallelopedia/blob/main/src/parallelopedia/gpt2.py)
+  module (based off `build-nanogpt`'s [train_gpt2.py](https://github.com/karpathy/build-nanogpt/blob/master/train_gpt2.py)):
+- Key classes:
+  - `CausalSelfAttention`
+  - `MLP` (multi-layer perceptron)
+  - `Block`
+  - `GPT`
+- Key method: `GPT.generate()`
 
-## Code
+:::
 
-{{< embed gpt2-v1.ipynb#gpt2-v1-setup >}}
+::: {.column width="60%"}
+```{.python code-line-numbers="1-48|53-66|69-81|84|88-193"}
+{{< include _gpt2.py >}}
+```
+:::
+
+::::
 
 ## Loading the Model
 
-With the code above executed in a preceding Jupyter Notebook cell, we can
-load the model as follows:
+```python
+>>> model = GPT.from_local_pretrained('model_19072.pt', map_location='cuda')
+# 2025-02-09 15:26:39,136 - INFO - Loaded model from step 19072, val_loss 3.0519702434539795
+```
+. . .
+```python
+>>> print(repr(model))
+GPT(
+  (transformer): ModuleDict(
+    (wte): Embedding(50304, 768)
+    (wpe): Embedding(1024, 768)
+    (h): ModuleList(
+      (0-11): 12 x Block(
+        (ln_1): LayerNorm((768,), eps=1e-05, elementwise_affine=True)
+        (attn): CausalSelfAttention(
+          (c_attn): Linear(in_features=768, out_features=2304, bias=True)
+          (c_proj): Linear(in_features=768, out_features=768, bias=True)
+        )
+        (ln_2): LayerNorm((768,), eps=1e-05, elementwise_affine=True)
+        (mlp): MLP(
+          (c_fc): Linear(in_features=768, out_features=3072, bias=True)
+          (gelu): GELU(approximate='tanh')
+          (c_proj): Linear(in_features=3072, out_features=768, bias=True)
+        )
+      )
+    )
+    (ln_f): LayerNorm((768,), eps=1e-05, elementwise_affine=True)
+  )
+  (lm_head): Linear(in_features=768, out_features=50304, bias=False)
+)
+```
 
-{{< embed gpt2-v1.ipynb#gpt2-v1-load-model >}}
+## Generating Text (Inference)
 
-## Generating Text
+```python
+prompt = "Albert Einstein's Theory of Relativity stated that"
+result = model.generate(prompt, seed=42)
+print(result)
+```
+. . .
 
-:::: {.desktop-only}
-{{< embed gpt2-v1.ipynb#gpt2-v1-generate-1-desktop >}}
-::::
+> Albert Einstein's Theory of Relativity stated that the speed of light was
+> approximately 10 000 of parsecs, whereas quantum physicists have suggested
+> that, as we move further into the universe, the universe might grow older. The
+> new experiment, conducted by researchers at the University of New Jersey, New
+> York, and the University of California, Berkeley shows that photons travelling
+> at the speed of light will be around 30 to 65 kilometres per second.
 
-:::: {.tablet-only}
-{{< embed gpt2-v1.ipynb#gpt2-v1-generate-1-tablet >}}
-::::
+## Ablation: Generate Text after Second Step of Training
 
-:::: {.phone-only}
-{{< embed gpt2-v1.ipynb#gpt2-v1-generate-1-phone >}}
-::::
+```python
+>>> model = GPT.from_local_pretrained('model_00002.pt', map_location='cuda')
+>>> result = model.generate(prompt, seed=1943656378)
+>>> print(result)
+```
+. . .
 
+> Albert Einstein's Theory of Relativity stated that rosterExc Willis
+> occasional297 coveted narrowerggle antibioticleyVG}; sentencesble
+> defenderWrit382ooooooteen Phone368 painting appointedExc Strawberry
+> endorsementsfrequencyatographycesbyssDrDr photoDoug bargain weeds belongings
+> drain effectiveness Ron toyVG summarized discrete adaptingmetry
+> raysrethmareinel Placesinqu Killed hotline Property Conc,plin RadeonCHR
+> grippedcommunityICspread relentless 1886 nat natmoremoreInstructasin368 rays
+> f&%#@&# FRI archaic everybody psychiatrists effectiveness Rudduedworldly Cul
+> messenger Cou mark mark Breakfast reincarn alienatedinately deepestiana
+> induction resign effectiveness sucks 153chelladdin UFC psychiatrists targeted
+> excellent seals psychiatrists Ud depended Fibbrook preced contributors
 
+::: {.notes}
+Second step of training = less than five seconds of training.
+:::
 
+# The Road to Parallel PyTorch Inference
+
+## Recap
+
+::: {.incremental}
+
+- We have Python free-threading...
+- We have a (janky) GPT-2 PyTorch Model that generates text when prompted...
+- Next question: does it work when called from multiple-threads?
+- *Obviously* the simplest way to answer this question would have been:
+  - Try calling it from multiple threads.
+:::
+. . .
+
+```python
+model = GPT.from_local_pretrained('model_19072.pt', map_location='cuda')
+prompt = "Albert Einstein's Theory of Relativity stated that"
+
+def generate(seed):
+    return model.generate(prompt, seed=seed)
+
+with ThreadPoolExecutor(max_workers=8) as executor:
+    futures = [
+        executor.submit(generate, seed)
+            for seed in range(8)
+    ]
+    for future in as_completed(futures):
+        print(future.result()
+```
+
+## {background-image="images/anakin.jpg" background-size="contain"}
+
+## Because apparently my solution to all problems is a multi-threaded async I/O HTTP server...
+
+::: {.incremental}
+- Quick test to see if you can call `model.generate()` from multiple threads: boring.
+- Wouldn't it be cooler to write a multi-threaded async I/O HTTP server
+  - And expose `/generate`-esque `GET` endpoints for doing inference
+  - And have it stream tokens in real-time
+    - Ain't nobody got time to wait for an entire response up-front
+  - And implement it all using the new `asyncio` Python libraries
+  - And then maybe vibe-code a fancy React front-end web UI
+:::
+
+## {background-image="images/drake-no-yes.jpg" background-size="contain"}
+
+## Parallelopedia To The Rescue
+
+Setup
+```bash
+conda create -n py314t python=3.14 python-freethreading nodejs pandoc -c conda-forge
+conda activate py314t
+cd ~/src
+git clone https://github.com/tpn/parallelopedia
+cd parallelopedia
+pip install -e .
+cd ui
+npm install
+```
+. . .
+
+Launch UI
+```bash
+cd ~/src/parallelopedia/ui
+npm run start
+```
+. . .
+
+Launch Server
+```bash
+python -Xgil=0 -m parallelopedia.http.server --threads 20 --ip 0.0.0.0 --port 4444 --log-level INFO \
+    --app-classes parallelopedia.http.server.PlaintextApp \
+                  parallelopedia.gpt2.Gpt2App \
+                  parallelopedia.wiki.WikiApp
+```
+
+## Demo (or video if demo isn't working)
+
+## How It Works
+
+- `asyncio`-based PyTorch model generation routine that yields a single
+  (decoded) token at a time
+
+. . .
+
+- Leverages HTTP chunked encoding for the streaming effect
+  - Enabled via `Transfer-Encoding: chunked` header
+  - Response is composed of length-prefixed chunks, separated by newlines
+
+## HTTP Chunked Encoding Example
+
+Piping a manual HTTP GET request via `netcat`:
+```bash
+% echo -en \
+ 'GET /generate/The%20quick%20brown%20fox?max_length=20&device=cuda&seed=42 ' \
+ 'HTTP/1.1\r\nConnection: close\r\nHost: dgx\r\n\r\n' | nc dgx 4444
+```
+
+. . .
+
+Yields:
+
+```{.bash code-line-numbers="|8|16-17|18-19|20-21|"}
+HTTP/1.1 200 OK
+Server: Parallelopedia Web Server v1.0
+Date: Fri, 07 Feb 2025 23:32:02 GMT
+Accept-Ranges: bytes
+Content-Type: text/plain
+Access-Control-Allow-Origin: *
+Connection: close
+Transfer-Encoding: chunked
+Access-Control-Expose-Headers: X-Max-Length, X-Top-K, X-Seed, X-Model-Name, X-Model-Device
+X-Max-Length: 20
+X-Top-K: 50
+X-Seed: 42
+X-Model-Name: gpt2
+X-Model-Device: cuda:0
+
+13
+The quick brown fox
+3
+ is
+2
+ a
+4
+ sub
+7
+species
+5
+ that
+B
+ originated
+3
+ in
+9
+ southern
+9
+ Scotland
+3
+ as
+2
+ a
+8
+ variety
+3
+ of
+4
+ fox
+1
+.
+5
+ This
+0
+```
+
+<!-- vim:set ts=8 sw=2 sts=2 et ci:-->
