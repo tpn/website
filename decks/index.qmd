@@ -8,5 +8,3 @@ page-layout: full
 comments: false
 format: html
 ---
-
-Decks.
