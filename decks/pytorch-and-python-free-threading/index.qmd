@@ -1,5 +1,27 @@
 ---
 title: Unlocking Parallel PyTorch Inference (and More!) with Python Free-Threading
+subtitle: |
+    From the speaker who got kicked off the stage after 54 minutes of his
+    45-minute PyParallel talk at PyData NYC 2013, comes a new talk foaming about
+    the virtues of Python's new free-threaded support!
+description: |
+    This talk will explore how free-threading unlocks cool new practical ways to
+    enhance the next generation of Python programs. We introduce Parallelopedia: a
+    multi-threaded, asyncio-based HTTP server that can do PyTorch model inference in
+    parallel within a single Python process; first against a GPT-2 model we trained
+    ourselves, and then on more contemporary models via HuggingFace (GPT-OSS, Qwen,
+    etc.).
+
+    Then, because why not, we straight up just include the entirety of Wikipedia in
+    the same process. Granted, it's an XML dump from 2015, but it's a 50GB dump, and
+    using some simple NumPy and datrie data structures (that we can load super-fast
+    in parallel now thanks to free-threading), we can expose a very responsive web
+    interface for keyword searching the entirety of Wikipedia, all within the same
+    Python asyncio HTTP server doing PyTorch model inference in parallel.
+
+    Practically speaking, attendees can expect to leave the session with a handful
+    of pragmatic techniques for leveraging Python free-threading today, as well as
+    an appreciation for what's possible tomorrow.
 author: "Trent Nelson"
 date: "2025-11-08"
 image: "images/pytorch-and-python-free-threading.png"
@@ -117,12 +139,13 @@ can find the article if you go to trent.me/articles, it's the first one.
   - Python will effectively time-slice between threads, so that they all get
     a chance to run for a little bit.
 
-## GIL History
+## {background-image="images/story-of-gil.png" background-size="contain"}
 
-*insert picture*
+## {background-image="images/story-of-some-gil-removal-attempts.png" background-size="contain"}
 
 ## First Attempt at Removing The GIL: Greg Stein circa 1996
 
+::: {.incremental}
 - Based on Python 1.4
 - Introduced fine-grain locking everywhere; Lock All The Things!
 - Destroyed existing single-threaded performance
@@ -132,6 +155,7 @@ can find the article if you go to trent.me/articles, it's the first one.
     the reach of consumers
 - Still, Greg tackled a lot of important concepts which eventually did show
   up in mainline Python (e.g. separating global state into per-thread state)
+:::
 
 ::: footer
 Greg's [free threaded patch](https://github.com/tpn/python-1.4/commit/5c17e33224e2b57948ab594280a006d7648347e6),
@@ -144,11 +168,11 @@ Dave Beazely's review 15 years later: [An Inside Look at the GIL Remove Patch of
 - Destroyed existing single-threaded performance: mutex locking is still
   expensive (compared to incrementing or decrementing a 32-bit int by 1),
   even when there's no contention.
-
 :::
 
 ## My Attempt in 2012 with PyParallel
 
+::: {.incremental}
 - Based on Python 3.3.5
 - "Removed the GIL" (without removing the GIL)
 - Design decision up-front: not "free threaded"
@@ -159,6 +183,7 @@ Dave Beazely's review 15 years later: [An Inside Look at the GIL Remove Patch of
 - When we need to do something thread sensitive (e.g. incref):
   - If we're a normal, GIL-holding Python thread, do what we normally do...
   - But if we're a *parallel* thread, do something **else**
+:::
 
 ::: {.notes}
 "Else" is clearly doing a lot of heavy lifting here.  Surprisingly, at least
@@ -172,9 +197,10 @@ threads were running.
 
 ## PyParallel
 
-- [PyParallel Website](https://pyparallel.org)
-- [PyParallel: How we removed the GIL and exploited all cores (without needing to remove the GIL at all)](https://speakerdeck.com/trent/pyparallel-how-we-removed-the-gil-and-exploited-all-cores)
-  - PyData NYC 2013
+- PyParallel Website: [https://pyparallel.org](https://pyparallel.org)
+  - Links to GitHub, Decks, Download, etc.
+- PyData NYC 2013 first public presentation titled *"PyParallel: How we removed the GIL and exploited all cores (without needing to remove the GIL at all)"*
+  [https://speakerdeck.com/trent/pyparallel-how-we-removed-the-gil-and-exploited-all-cores](https://speakerdeck.com/trent/pyparallel-how-we-removed-the-gil-and-exploited-all-cores)
 
 ## {background-video="images/pyparallel-website.webm" background-size="contain"}
 
@@ -182,31 +208,55 @@ threads were running.
 
 ## PyParallel: Pros & Cons
 
-::::: {.incremental}
-
 :::: {.columns}
 
 ::: {.column width="50%"}
+
+:::: {.incremental}
 - Pros:
   - Successful proof of concept!
   - Linear scaling with core count
   - Great performance (rivaling C libraries)...
     - As long as you were writing stateless/indempotent TCP socket servers
   - NumPy, datrie, pyodbc, and Cython support
+  - All the async I/O internal machinery was written in C, extensively leveraged
+    Windows thread pools, completion ports and overlapped I/O, and still
+    outperforms most things today
+::::
+
 :::
 
 ::: {.column width="50%"}
+
+:::: {.incremental}
+
 - Cons:
   - Could only leverage multiple threads via async socket servers
     - No free threaded support
-  - Couldn't (easily) mutate shared state in parallel callback
-  - Pure hack fest; crashed a lot, not remotely suitable for production
-  - Windows only
+  - There were a lot of things you COULDN'T do in parallel callbacks
+    - Couldn't (easily) mutate shared state
+    - Couldn't import modules
+    - Couldn't coordinate or cooperate with other parallel callbacks
+  - Worse still, we couldn't detect if you did some of these things and
+    stop you ahead of time; we just crashed
+::::
+
 :::
 
 ::::
 
-:::::
+## PyParallel Cons Continued
+
+::: {.incremental}
+- More Cons:
+  - Pure hack fest; not remotely suitable for production
+    - (But really fast when it didn't crash!)
+  - Windows only
+    - Solely used Windows-only APIs for which there are no counterparts on Linux
+      or Mac OS X (threadpools, overlapped I/O, etc.)
+    - Never had any chance on running on anything except Windows without a
+      fundamental redesign
+:::
 
 # And Then There Was Free-Threaded Python!
 
@@ -221,13 +271,11 @@ threads were running.
 
 ## Simultaneous Multi-Threading Is Here!
 
-::::: {.incremental}
-
 :::: {.columns}
 
 ::: {.column width="50%"}
 
-Simple Example:
+Simple Example
 
 ```python
 import threading
@@ -246,11 +294,46 @@ for t in threads:
 for t in threads:
     t.join()
 ```
+
 :::
 
 ::: {.column width="50%"}
 
-Real World Example:
+:::
+
+::::
+
+## Simultaneous Multi-Threading Is Here!
+
+:::: {.columns}
+
+::: {.column width="50%"}
+
+Simple Example
+
+```python
+import threading
+
+def expensive_op():
+    # Some CPU intensive work here
+    ...
+
+threads = [
+    threading.Thread(target=expensive_op)
+        for _ in range(8)
+]
+for t in threads:
+    t.start()
+
+for t in threads:
+    t.join()
+```
+
+:::
+
+::: {.column width="50%"}
+
+Real World Example
 
 ```python
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -274,11 +357,10 @@ with ThreadPoolExecutor(max_workers=max_workers) as executor:
         except Exception as e:
             errors.append(e)
 ```
+
 :::
 
 ::::
-
-:::::
 
 ## It's Not Quite A Panacea... Yet.
 
@@ -302,9 +384,8 @@ with ThreadPoolExecutor(max_workers=max_workers) as executor:
 
 :::: {.columns}
 
-::: {.column width="40%"}
+::: {.column width="60%"}
 
-:::: {.incremental}
 
 - My prior LLM & PyTorch experience: zero
 - [Andrej Karpathy](https://karpathy.ai) has a YouTube Series on deep neural
@@ -314,11 +395,9 @@ https://www.youtube.com/playlist?list=PLAqhIrjkxbuWI23v9cThsA9GvCAUhRvKZ)
   - Took me at least double that over ~2 weeks to really absorb everything
 - From first principles to training your very own GPT-2
 
-:::::
-
 :::
 
-::: {.column width="60%"}
+::: {.column width="40%"}
 
 ![](images/nn-zero-to-hero.png)
 
@@ -667,7 +746,10 @@ _Requests Per Second_
     - No expensive process context switches
     - No expensive GPU CUDA context switches
     - No memory waste due to duplicating models in multiple processes
-- And it works with contemporary models from HuggingFace!
+- And it works with contemporary models from HuggingFace!*
+
+. . .
+
 
 ## In The Real World, Where Python Gets Stuff Done...
 
@@ -754,6 +836,23 @@ The *"trie"* for the prefix search is actually 83 tries:
 ## On HuggingFace... (Demo)
 
 # Questions?
+
+# Resources
+
+## Links & Contact
+
+- This deck: [https://trent.me/decks/pytorch-and-python-free-threading](https://trent.me/decks/pytorch-and-python-free-threading)
+  - Deck source: [https://github.com/tpn/website/blob/main/decks/pytorch-and-python-free-threading/index.qmd](https://github.com/tpn/website/blob/main/decks/pytorch-and-python-free-threading/index.qmd)
+- Original PyTorch & Python Free Threading Article:
+  - [https://trent.me/articles/pytorch-and-python-free-threading/](https://trent.me/articles/pytorch-and-python-free-threading/)
+- Parallelopedia on Github
+  - [https://github.com/tpn/parallelopedia](https://github.com/tpn/parallelopedia)
+  - Includes Python backend (`src/parallelopedia`) and React frontend (`ui`).
+- Parallelopedia on HuggingFace
+  - Wiki data: [https://huggingface.co/datasets/trentnelson/parallelopedia](https://huggingface.co/datasets/trentnelson/parallelopedia)
+  - GPT-2 `model_19072.pt`: [https://huggingface.co/datasets/trentnelson/parallelopedia-data-gpt2](https://huggingface.co/datasets/trentnelson/parallelopedia-data-gpt2)
+- Email: trent@trent.me or trentn@nvidia.com
+- Twitter: @trentnelson
 
 
 <!-- vim:set ts=8 sw=2 sts=2 et ci:-->

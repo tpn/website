@@ -402,7 +402,7 @@ window.Quarto = {
 
 <div class="quarto-listing quarto-listing-container-default" id="listing-listing">
 <div class="list quarto-listing-default">
-<div class="quarto-post image-right" data-index="0" data-listing-date-sort="1762588800000" data-listing-file-modified-sort="1762499071143" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="16" data-listing-word-count-sort="3019">
+<div class="quarto-post image-right" data-index="0" data-listing-date-sort="1762588800000" data-listing-file-modified-sort="1762538211933" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="17" data-listing-word-count-sort="3307">
 <div class="thumbnail"><a href="../decks/pytorch-and-python-free-threading/index.html" class="no-external">
 
 <img loading="lazy" src="../decks/pytorch-and-python-free-threading/images/pytorch-and-python-free-threading.png" class="thumbnail-image">
@@ -413,10 +413,12 @@ window.Quarto = {
 <a href="../decks/pytorch-and-python-free-threading/index.html" class="no-external">Unlocking Parallel PyTorch Inference (and More!) with Python Free-Threading</a>
 </h3>
 <div class="listing-subtitle">
-<a href="../decks/pytorch-and-python-free-threading/index.html" class="no-external"></a>
+<a href="../decks/pytorch-and-python-free-threading/index.html" class="no-external">From the speaker who got kicked off the stage after 54 minutes of his 45-minute PyParallel talk at PyData NYC 2013, comes a new talk foaming about the virtues of Python’s new free-threaded support! </a>
 </div>
 <div class="delink listing-description"><a href="../decks/pytorch-and-python-free-threading/index.html" class="no-external">
-
+<p>This talk will explore how free-threading unlocks cool new practical ways to enhance the next generation of Python programs. We introduce Parallelopedia: a multi-threaded, asyncio-based HTTP server that can do PyTorch model inference in parallel within a single Python process; first against a GPT-2 model we trained ourselves, and then on more contemporary models via HuggingFace (GPT-OSS, Qwen, etc.).</p>
+<p>Then, because why not, we straight up just include the entirety of Wikipedia in the same process. Granted, it’s an XML dump from 2015, but it’s a 50GB dump, and using some simple NumPy and datrie data structures (that we can load super-fast in parallel now thanks to free-threading), we can expose a very responsive web interface for keyword searching the entirety of Wikipedia, all within the same Python asyncio HTTP server doing PyTorch model inference in parallel.</p>
+<p>Practically speaking, attendees can expect to leave the session with a handful of pragmatic techniques for leveraging Python free-threading today, as well as an appreciation for what’s possible tomorrow.</p>
 </a></div>
 </div>
 <div class="metadata">

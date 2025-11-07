@@ -25,7 +25,7 @@
     "href": "decks/index.html",
     "title": "Decks",
     "section": "",
-    "text": "Unlocking Parallel PyTorch Inference (and More!) with Python Free-Threading\n\n\n\n\n\n\n\n\n\n\n\nNov 8, 2025\n\n\nTrent Nelson\n\n\n\n\n\n\n\n\n\n\n\n\nGit Carpentry\n\n\nCrafting PRs Reviewers Will Love\n\n\n\n\n\n\n\n\nJun 22, 2025\n\n\nTrent Nelson\n\n\n\n\n\nNo matching items"
+    "text": "Unlocking Parallel PyTorch Inference (and More!) with Python Free-Threading\n\n\nFrom the speaker who got kicked off the stage after 54 minutes of his 45-minute PyParallel talk at PyData NYC 2013, comes a new talk foaming about the virtues of Python’s new free-threaded support! \n\n\nThis talk will explore how free-threading unlocks cool new practical ways to enhance the next generation of Python programs. We introduce Parallelopedia: a multi-threaded, asyncio-based HTTP server that can do PyTorch model inference in parallel within a single Python process; first against a GPT-2 model we trained ourselves, and then on more contemporary models via HuggingFace (GPT-OSS, Qwen, etc.).\nThen, because why not, we straight up just include the entirety of Wikipedia in the same process. Granted, it’s an XML dump from 2015, but it’s a 50GB dump, and using some simple NumPy and datrie data structures (that we can load super-fast in parallel now thanks to free-threading), we can expose a very responsive web interface for keyword searching the entirety of Wikipedia, all within the same Python asyncio HTTP server doing PyTorch model inference in parallel.\nPractically speaking, attendees can expect to leave the session with a handful of pragmatic techniques for leveraging Python free-threading today, as well as an appreciation for what’s possible tomorrow.\n\n\n\n\n\nNov 8, 2025\n\n\nTrent Nelson\n\n\n\n\n\n\n\n\n\n\n\n\nGit Carpentry\n\n\nCrafting PRs Reviewers Will Love\n\n\n\n\n\n\n\n\nJun 22, 2025\n\n\nTrent Nelson\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "articles/pytorch-and-python-free-threading/index.html",
@@ -595,13 +595,6 @@
     "text": "Releasing the GIL (cont.)\n\nReleasing the GIL allows another Python thread to acquire it and resume executing its Python byte-code.\nWhat happens if no-one is releasing the GIL? i.e. if you’ve just got pure Python threads doing work?\n\nPython will effectively time-slice between threads, so that they all get a chance to run for a little bit."
   },
   {
-    "objectID": "decks/pytorch-and-python-free-threading/index.html#gil-history",
-    "href": "decks/pytorch-and-python-free-threading/index.html#gil-history",
-    "title": "Unlocking Parallel PyTorch Inference (and More!) with Python Free-Threading",
-    "section": "GIL History",
-    "text": "GIL History\ninsert picture"
-  },
-  {
     "objectID": "decks/pytorch-and-python-free-threading/index.html#first-attempt-at-removing-the-gil-greg-stein-circa-1996",
     "href": "decks/pytorch-and-python-free-threading/index.html#first-attempt-at-removing-the-gil-greg-stein-circa-1996",
     "title": "Unlocking Parallel PyTorch Inference (and More!) with Python Free-Threading",
@@ -620,14 +613,21 @@
     "href": "decks/pytorch-and-python-free-threading/index.html#pyparallel",
     "title": "Unlocking Parallel PyTorch Inference (and More!) with Python Free-Threading",
     "section": "PyParallel",
-    "text": "PyParallel\n\nPyParallel Website\nPyParallel: How we removed the GIL and exploited all cores (without needing to remove the GIL at all)\n\nPyData NYC 2013"
+    "text": "PyParallel\n\nPyParallel Website: https://pyparallel.org\n\nLinks to GitHub, Decks, Download, etc.\n\nPyData NYC 2013 first public presentation titled “PyParallel: How we removed the GIL and exploited all cores (without needing to remove the GIL at all)” https://speakerdeck.com/trent/pyparallel-how-we-removed-the-gil-and-exploited-all-cores"
   },
   {
     "objectID": "decks/pytorch-and-python-free-threading/index.html#pyparallel-pros-cons",
     "href": "decks/pytorch-and-python-free-threading/index.html#pyparallel-pros-cons",
     "title": "Unlocking Parallel PyTorch Inference (and More!) with Python Free-Threading",
     "section": "PyParallel: Pros & Cons",
-    "text": "PyParallel: Pros & Cons\n\n\n\nPros:\n\nSuccessful proof of concept!\nLinear scaling with core count\nGreat performance (rivaling C libraries)…\n\nAs long as you were writing stateless/indempotent TCP socket servers\n\nNumPy, datrie, pyodbc, and Cython support\n\n\n\n\nCons:\n\nCould only leverage multiple threads via async socket servers\n\nNo free threaded support\n\nCouldn’t (easily) mutate shared state in parallel callback\nPure hack fest; crashed a lot, not remotely suitable for production\nWindows only"
+    "text": "PyParallel: Pros & Cons\n\n\n\nPros:\n\nSuccessful proof of concept!\nLinear scaling with core count\nGreat performance (rivaling C libraries)…\n\nAs long as you were writing stateless/indempotent TCP socket servers\n\nNumPy, datrie, pyodbc, and Cython support\nAll the async I/O internal machinery was written in C, extensively leveraged Windows thread pools, completion ports and overlapped I/O, and still outperforms most things today\n\n\n\n\nCons:\n\nCould only leverage multiple threads via async socket servers\n\nNo free threaded support\n\nThere were a lot of things you COULDN’T do in parallel callbacks\n\nCouldn’t (easily) mutate shared state\nCouldn’t import modules\nCouldn’t coordinate or cooperate with other parallel callbacks\n\nWorse still, we couldn’t detect if you did some of these things and stop you ahead of time; we just crashed"
+  },
+  {
+    "objectID": "decks/pytorch-and-python-free-threading/index.html#pyparallel-cons-continued",
+    "href": "decks/pytorch-and-python-free-threading/index.html#pyparallel-cons-continued",
+    "title": "Unlocking Parallel PyTorch Inference (and More!) with Python Free-Threading",
+    "section": "PyParallel Cons Continued",
+    "text": "PyParallel Cons Continued\n\nMore Cons:\n\nPure hack fest; not remotely suitable for production\n\n(But really fast when it didn’t crash!)\n\nWindows only\n\nSolely used Windows-only APIs for which there are no counterparts on Linux or Mac OS X (threadpools, overlapped I/O, etc.)\nNever had any chance on running on anything except Windows without a fundamental redesign"
   },
   {
     "objectID": "decks/pytorch-and-python-free-threading/index.html#python-free-threading-is-here",
@@ -641,7 +641,14 @@
     "href": "decks/pytorch-and-python-free-threading/index.html#simultaneous-multi-threading-is-here",
     "title": "Unlocking Parallel PyTorch Inference (and More!) with Python Free-Threading",
     "section": "Simultaneous Multi-Threading Is Here!",
-    "text": "Simultaneous Multi-Threading Is Here!\n\n\nSimple Example:\nimport threading\n\ndef expensive_op():\n    # Some CPU intensive work here\n    ...\n\nthreads = [\n    threading.Thread(target=expensive_op)\n        for _ in range(8)\n]\nfor t in threads:\n    t.start()\n\nfor t in threads:\n    t.join()\n\nReal World Example:\nfrom concurrent.futures import ThreadPoolExecutor, as_completed\n\ndef do_work(chunk):\n    ...\n\nwork = [...] # Some list of work items\nerrors = []\nresults = []\nmax_workers = min(os.cpu_count(), len(work))\nwith ThreadPoolExecutor(max_workers=max_workers) as executor:\n    futures = {\n        executor.submit(do_work, item): item\n            for item in work\n    }\n    for future in as_completed(futures):\n        try:\n            result = future.result()\n            results.append(result)\n        except Exception as e:\n            errors.append(e)"
+    "text": "Simultaneous Multi-Threading Is Here!\n\n\nSimple Example\nimport threading\n\ndef expensive_op():\n    # Some CPU intensive work here\n    ...\n\nthreads = [\n    threading.Thread(target=expensive_op)\n        for _ in range(8)\n]\nfor t in threads:\n    t.start()\n\nfor t in threads:\n    t.join()"
+  },
+  {
+    "objectID": "decks/pytorch-and-python-free-threading/index.html#simultaneous-multi-threading-is-here-1",
+    "href": "decks/pytorch-and-python-free-threading/index.html#simultaneous-multi-threading-is-here-1",
+    "title": "Unlocking Parallel PyTorch Inference (and More!) with Python Free-Threading",
+    "section": "Simultaneous Multi-Threading Is Here!",
+    "text": "Simultaneous Multi-Threading Is Here!\n\n\nSimple Example\nimport threading\n\ndef expensive_op():\n    # Some CPU intensive work here\n    ...\n\nthreads = [\n    threading.Thread(target=expensive_op)\n        for _ in range(8)\n]\nfor t in threads:\n    t.start()\n\nfor t in threads:\n    t.join()\n\nReal World Example\nfrom concurrent.futures import ThreadPoolExecutor, as_completed\n\ndef do_work(chunk):\n    ...\n\nwork = [...] # Some list of work items\nerrors = []\nresults = []\nmax_workers = min(os.cpu_count(), len(work))\nwith ThreadPoolExecutor(max_workers=max_workers) as executor:\n    futures = {\n        executor.submit(do_work, item): item\n            for item in work\n    }\n    for future in as_completed(futures):\n        try:\n            result = future.result()\n            results.append(result)\n        except Exception as e:\n            errors.append(e)"
   },
   {
     "objectID": "decks/pytorch-and-python-free-threading/index.html#its-not-quite-a-panacea-yet.",
@@ -774,7 +781,7 @@
     "href": "decks/pytorch-and-python-free-threading/index.html#so-whats-the-point",
     "title": "Unlocking Parallel PyTorch Inference (and More!) with Python Free-Threading",
     "section": "So What’s The Point?",
-    "text": "So What’s The Point?\n\nEven if we’re not deploying a max-performing model inference…\nBeing able to do PyTorch model inference in parallel within a single Python process is still very cool\n\nAnd it’s infinitely better than multiprocessing\n\nNo expensive process context switches\nNo expensive GPU CUDA context switches\nNo memory waste due to duplicating models in multiple processes\n\n\nAnd it works with contemporary models from HuggingFace!"
+    "text": "So What’s The Point?\n\nEven if we’re not deploying a max-performing model inference…\nBeing able to do PyTorch model inference in parallel within a single Python process is still very cool\n\nAnd it’s infinitely better than multiprocessing\n\nNo expensive process context switches\nNo expensive GPU CUDA context switches\nNo memory waste due to duplicating models in multiple processes\n\n\nAnd it works with contemporary models from HuggingFace!*"
   },
   {
     "objectID": "decks/pytorch-and-python-free-threading/index.html#in-the-real-world-where-python-gets-stuff-done",
@@ -810,6 +817,13 @@
     "title": "Unlocking Parallel PyTorch Inference (and More!) with Python Free-Threading",
     "section": "On HuggingFace… (Demo)",
     "text": "On HuggingFace… (Demo)"
+  },
+  {
+    "objectID": "decks/pytorch-and-python-free-threading/index.html#links-contact",
+    "href": "decks/pytorch-and-python-free-threading/index.html#links-contact",
+    "title": "Unlocking Parallel PyTorch Inference (and More!) with Python Free-Threading",
+    "section": "Links & Contact",
+    "text": "Links & Contact\n\nThis deck: https://trent.me/decks/pytorch-and-python-free-threading\n\nDeck source: https://github.com/tpn/website/blob/main/decks/pytorch-and-python-free-threading/index.qmd\n\nOriginal PyTorch & Python Free Threading Article:\n\nhttps://trent.me/articles/pytorch-and-python-free-threading/\n\nParallelopedia on Github\n\nhttps://github.com/tpn/parallelopedia\nIncludes Python backend (src/parallelopedia) and React frontend (ui).\n\nParallelopedia on HuggingFace\n\nWiki data: https://huggingface.co/datasets/trentnelson/parallelopedia\nGPT-2 model_19072.pt: https://huggingface.co/datasets/trentnelson/parallelopedia-data-gpt2\n\nEmail: trent@trent.me or trentn@nvidia.com\nTwitter: @trentnelson"
   },
   {
     "objectID": "projects/index.html",
