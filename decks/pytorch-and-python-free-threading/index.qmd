@@ -775,9 +775,20 @@ _Requests Per Second_
 
 :::
 
-## Putting the opedia in Parallelopedia With an Embedded Wikipedia
+# Putting the opedia in Parallelopedia with an embedded Wikipedia
+
+## Embedding Wikipedia
 
 - To hammer home the point that Python free-threading is the bees knees...
+
+. . .
+
+- *Especially* when it comes to loading large data structures in parallel...
+
+. . .
+
+- And then being able to reference those data structures via multiple threads
+  running simultaneously across multiple cores...
 
 . . .
 
@@ -790,14 +801,27 @@ _Requests Per Second_
     - i.e. *"What are all the Wikipedia article titles beginning with "Dave'?"*
   - Provide a means to look up an article directly for a given title
 
-. . .
+## On Embedding Wikipedia
 
+::: {.incremental}
 - All that's needed: two simple data structures and `mmap`
-  - A trie (or digital search tree) that facilities the prefix search, and maps
-    titles to absolute byte offsets within the XML file
+
+- For the prefix searching of Wikipedia article titles:
+  - A *trie* (digital search tree) of all titles mapped to the byte offset of
+    that title within the Wikipedia XML dump
+  - The *trie* facilitates the prefix matching (we use the Python `datrie`
+    module, which wraps the C library `libdatrie`)
+- For article lookup:
   - A sorted NumPy array of all the absolute byte offsets of each title
+    in the XML dump
+  - i.e. all of the values in the prefix trie above
+- More details:
+  - [https://huggingface.co/datasets/trentnelson/parallelopedia](https://huggingface.co/datasets/trentnelson/parallelopedia)
+:::
 
 ## Parallelopedia Wiki Demo
+
+## {background-video="images/parallelopedia-wiki-demo-nvidia.webm" background-size="contain"}
 
 ## Parallelopedia Wiki Details
 
@@ -818,7 +842,7 @@ The *"trie"* for the prefix search is actually 83 tries:
 :::: {.incremental}
 
 - Only one sorted NumPy array of offsets (`title_offsets.npy`, ~120MB)
-- We can load all the tries in parallel at startup (2.5s instead of 12s)
+- We can load all the tries in parallel at startup (~2s instead of ~12s)
 - Much quicker to create tries when they're partitioned by first char
 - Exact lookup of article offset from trie is O(log(n))
 - Once we have the start offset, we can do `offsets.searchsorted()` to find the
@@ -833,7 +857,390 @@ The *"trie"* for the prefix search is actually 83 tries:
 
 ::::
 
-## On HuggingFace... (Demo)
+## Parallelopedia: Wiki Offsets: Example
+
+```{.bash code-line-numbers="1-2|19-23"}
+# Prefix search for all Wikipedia titles starting with "NVIDIA"
+% curl -s 'http:/localhost:4444/wiki/offsets?name=NVIDIA' | jq
+[
+  [
+    "NVIDIA",
+    22766678654,
+    22766679438
+  ],
+  [
+    "NVIDIA APX 2500",
+    23352741597,
+    23352742253
+  ],
+  [
+    "NVIDIA BR02",
+    13596637221,
+    13596638658
+  ],
+  [
+    "NVIDIA CUDA Compiler",
+    44569709658,
+    44569713061
+  ],
+  [
+    "NVIDIA Corp.",
+    5788837214,
+    5788837833
+  ],
+  [
+    "NVIDIA Corporation",
+    651080622,
+    651081295
+  ],
+  [
+    "NVIDIA Demos",
+    22809850380,
+    22809851014
+  ],
+  [
+    "NVIDIA Fermi architecture",
+    48728474350,
+    48728475044
+  ],
+  [
+    "NVIDIA GPU",
+    11121527047,
+    77962511121527771
+  ],
+  [
+    "NVIDIA GeForce",
+    9962883941,
+    9962884521
+  ],
+  [
+    "NVIDIA GeForce 2",
+    19183001103,
+    19183001759
+  ],
+  [
+    "NVIDIA GeForce GT 325M",
+    33767058820,
+    33767059557
+  ],
+  [
+    "NVIDIA GeForce GT 330M",
+    40152066548,
+    40152067339
+  ],
+  [
+    "NVIDIA GeForce2",
+    19183798188,
+    19183798843
+  ],
+  [
+    "NVIDIA Geforce",
+    20134644772,
+    20134645360
+  ],
+  [
+    "NVIDIA Geforce 2",
+    19183010738,
+    19183011394
+  ],
+  [
+    "NVIDIA Gelato",
+    14528272767,
+    14528273352
+  ],
+  [
+    "NVIDIA ION",
+    31045259177,
+    31045259818
+  ],
+  [
+    "NVIDIA Ion",
+    29311428186,
+    29311428809
+  ],
+  [
+    "NVIDIA N40",
+    10682812474,
+    10682813122
+  ],
+  [
+    "NVIDIA NV40",
+    10682807609,
+    10682808258
+  ],
+  [
+    "NVIDIA Optimus",
+    47942318714,
+    47942319313
+  ],
+  [
+    "NVIDIA PhysX",
+    24815008675,
+    24815009220
+  ],
+  [
+    "NVIDIA PureVideo",
+    22804676127,
+    22804676810
+  ],
+  [
+    "NVIDIA Quadro",
+    22809845936,
+    22809846572
+  ],
+  [
+    "NVIDIA Quadro Plex",
+    22812333404,
+    22812334055
+  ],
+  [
+    "NVIDIA Riva 128",
+    14127586968,
+    14127587526
+  ],
+  [
+    "NVIDIA SLI",
+    18802268476,
+    18802269118
+  ],
+  [
+    "NVIDIA Shield",
+    46112329042,
+    46112329690
+  ],
+  [
+    "NVIDIA System Tools",
+    31044107641,
+    31044108309
+  ],
+  [
+    "NVIDIA Tegra",
+    24621784228,
+    24621784882
+  ],
+  [
+    "NVIDIA Tegra 2",
+    37853790611,
+    37853791235
+  ],
+  [
+    "NVIDIA Tesla",
+    22804600742,
+    22804601403
+  ],
+  [
+    "NVIDIA and FOSS",
+    16092716596,
+    16092717279
+  ],
+  [
+    "NVIDIA demos",
+    34541153992,
+    34541154671
+  ],
+  [
+    "NVIDIA n40",
+    10682813126,
+    10682813774
+  ],
+  [
+    "NVIDIA nv40",
+    10682817796,
+    10682818445
+  ]
+]
+```
+
+## Parallelopedia: Wiki Lookup via Byte Range: Example
+
+```{.bash code-line-numbers="1-7|9-91"}
+# Issue a ranged request for a given article in XML (native/raw) format:
+#  [
+#    "NVIDIA CUDA Compiler",
+#    44569709658,
+#    44569713061
+#  ],
+% curl -i -sS -H 'Range: bytes=44569709658-44569713061" http://localhost:4444/wiki/xml
+
+HTTP/1.1 206 Partial Content
+Server: Parallelopedia Web Server v1.0
+Date: Fri, 07 Nov 2025 20:47:51 GMT
+Accept-Ranges: bytes
+Content-Type: text/xml; charset=utf-8
+Access-Control-Allow-Origin: *
+Last-Modified: Sun, 02 Nov 2025 00:33:19 GMT
+Content-Range: 44569709658-44569713061/51642517367
+Content-Length: 3404
+
+<page>
+    <title>NVIDIA CUDA Compiler</title>
+    <ns>0</ns>
+    <id>37864839</id>
+    <revision>
+      <id>611673801</id>
+      <parentid>602261027</parentid>
+      <timestamp>2014-06-05T12:48:54Z</timestamp>
+      <contributor>
+        <username>ScotXW</username>
+        <id>19568210</id>
+      </contributor>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+      <text xml:space="preserve">{{Infobox software
+| name                   =
+| title                  =
+| logo                   = &lt;!-- Image name is enough --&gt;
+| logo caption           =
+| logo_size              =
+| logo_alt               =
+| screenshot             = &lt;!-- Image name is enough --&gt;
+| caption                =
+| screenshot_size        =
+| screenshot_alt         =
+| collapsible            =
+| author                 = [[Nvidia]]
+| developer              =
+| released               = &lt;!-- {{Start date and age|YYYY|MM|DD|df=yes/no}} --&gt;
+| discontinued           =
+| latest release version =
+| latest release date    = &lt;!-- {{Start date and age|YYYY|MM|DD|df=yes/no}} --&gt;
+| latest preview version =
+| latest preview date    = &lt;!-- {{Start date and age|YYYY|MM|DD|df=yes/no}} --&gt;
+| status                 =
+| programming language   =
+| operating system       =
+| platform               =
+| size                   =
+| language               =
+| language count         = &lt;!-- DO NOT include this parameter unless you know what it does --&gt;
+| language footnote      =
+| genre                  = [[compiler]]
+| license                = [[proprietary software]]
+| website                = {{URL|http://docs.nvidia.com/cuda/cuda-compiler-driver-nvcc/#introduction}}
+}}
+
+''' Nvidia CUDA Compiler''' ('''NVCC''') is a [[proprietary software|proprietary]] [[compiler]] by [[Nvidia]] intended for use with [[CUDA]]. CUDA codes runs on both the [[CPU]] and [[GPU]]. NVCC separates these two parts and sends host code (the part of code which will be run on the [[CPU]]) to a [[C (programming language)|C]] compiler like [[GNU Compiler Collection|GCC]] or [[Intel C++ Compiler]] (ICC) or [[Microsoft Visual C]] Compiler, and sends the device code (the part which will run on the GPU) to the GPU. The device code is further compiled by NVCC.
+
+Any source file containing CUDA language extensions (.cu) must be compiled with nvcc. NVCC is a compiler driver which works by invoking all the necessary tools and compilers like cudacc, g++, cl, etc. NVCC can output either C code (CPU Code) that must then be compiled with the rest of the application using another tool or PTX or object code directly. An executable with CUDA code requires: the CUDA core library (cuda) and the CUDA runtime library (cudart).
+
+Other widely used libraries:
+* CUBLAS: BLAS implementation
+* CUFFT: FFT implementation
+* CUDPP (Data Parallel Primitives): Reduction, Scan, Sort.
+* Thrust: Reduction, Scan, Sort.
+
+== See also ==
+* [[OpenCL]]
+* [[Heterogeneous System Architecture]]
+
+== References ==
+# David B. Kirk, and Wen-mei W. Hwu. Programming massively parallel processors: a hands-on approach. Morgan Kaufmann, 2010.
+# Nvidia Documentation on nvcc. http://docs.nvidia.com/cuda/cuda-compiler-driver-nvcc/
+# CUDPP. http://gpgpu.org/developer/cudpp
+
+[[Category:Nvidia]]
+[[Category:Compilers]]
+
+{{computer-stub}}</text>
+      <sha1>pl6clr73ogqryucxi4cbtrr730jehfz</sha1>
+    </revision>
+  </page>
+```
+
+## Parallelopedia: Wiki Lookup via Exact Title: Example
+
+```{.bash code-line-numbers="1-2|4-54"}
+# Exact title lookup and post-process via Pandoc to HTML in one go: % curl -s 'http://localhost:4444/wiki/wiki?name=NVIDIA%20CUDA%20Compiler'
+
+<p><strong>Nvidia CUDA Compiler</strong> (<strong>NVCC</strong>) is a <a
+href="proprietary_software" class="wikilink"
+title="proprietary">proprietary</a> <a href="compiler" class="wikilink"
+title="compiler">compiler</a> by <a href="Nvidia" class="wikilink"
+title="Nvidia">Nvidia</a> intended for use with <a href="CUDA"
+class="wikilink" title="CUDA">CUDA</a>. CUDA codes runs on both the <a
+href="CPU" class="wikilink" title="CPU">CPU</a> and <a href="GPU"
+class="wikilink" title="GPU">GPU</a>. NVCC separates these two parts and
+sends host code (the part of code which will be run on the <a href="CPU"
+class="wikilink" title="CPU">CPU</a>) to a <a
+href="C_(programming_language)" class="wikilink" title="C">C</a>
+compiler like <a href="GNU_Compiler_Collection" class="wikilink"
+title="GCC">GCC</a> or <a href="Intel_C++_Compiler" class="wikilink"
+title="Intel C++ Compiler">Intel C++ Compiler</a> (ICC) or <a
+href="Microsoft_Visual_C" class="wikilink"
+title="Microsoft Visual C">Microsoft Visual C</a> Compiler, and sends
+the device code (the part which will run on the GPU) to the GPU. The
+device code is further compiled by NVCC.</p>
+<p>Any source file containing CUDA language extensions (.cu) must be
+compiled with nvcc. NVCC is a compiler driver which works by invoking
+all the necessary tools and compilers like cudacc, g++, cl, etc. NVCC
+can output either C code (CPU Code) that must then be compiled with the
+rest of the application using another tool or PTX or object code
+directly. An executable with CUDA code requires: the CUDA core library
+(cuda) and the CUDA runtime library (cudart).</p>
+<p>Other widely used libraries:</p>
+<ul>
+<li>CUBLAS: BLAS implementation</li>
+<li>CUFFT: FFT implementation</li>
+<li>CUDPP (Data Parallel Primitives): Reduction, Scan, Sort.</li>
+<li>Thrust: Reduction, Scan, Sort.</li>
+</ul>
+<h2 id="see_also">See also</h2>
+<ul>
+<li><a href="OpenCL" class="wikilink" title="OpenCL">OpenCL</a></li>
+<li><a href="Heterogeneous_System_Architecture" class="wikilink"
+title="Heterogeneous System Architecture">Heterogeneous System
+Architecture</a></li>
+</ul>
+<h2 id="references">References</h2>
+<ol>
+<li>David B. Kirk, and Wen-mei W. Hwu. Programming massively parallel
+processors: a hands-on approach. Morgan Kaufmann, 2010.</li>
+<li>Nvidia Documentation on nvcc. <a
+href="http://docs.nvidia.com/cuda/cuda-compiler-driver-nvcc/">http://docs.nvidia.com/cuda/cuda-compiler-driver-nvcc/</a></li>
+<li>CUDPP. <a
+href="http://gpgpu.org/developer/cudpp">http://gpgpu.org/developer/cudpp</a></li>
+</ol>
+<p><a href="Category:Nvidia" class="wikilink"
+title="Category:Nvidia">Category:Nvidia</a> <a href="Category:Compilers"
+class="wikilink" title="Category:Compilers">Category:Compilers</a></p>
+```
+
+## Parallelopedia: Wiki Names & Offsets: Summary
+
+- The prefix search is done via a `/wiki/offsets` endpoint, which returns the
+  title, start byte offset and end byte offset
+- The `/wiki/html` and `/wiki/xml` endpoints require a `Range: bytes=<start>:<end>`
+  header, and response with the corresponding bytes at that range, optionally
+  post-processed via Pandoc for the HTML case
+- The `/wiki/wiki?name=<exact-title>` will skip the prefix search and just do a
+  single title lookup in the appropriate trie and then return the post-processed
+  Pandoc HTML (or raw XML if `/wiki/wiki_xml` is used)
+
+## Parallopedia Tries
+
+- Although only ~1.2GB on disk, roughly ~6GB increase in process memory once
+  loaded:
+
+```bash
+ading 83 tries in parallel with 64 threads...
+Loaded 83 tries in 2.0675 seconds.
+Process memory (RSS): before=1.63 GB, after=7.77 GB, delta=6.15 GB
+```
+
+- So in `multiprocessing` days, assuming this was your only expensive data
+  structure:
+  - 64 separate processes all consuming >8GB RAM each
+  - At *least* 512GB RAM required total just for the RSS of all processes; so
+    realistically you'd need 768GB RAM in the actual machine
+  - Additional 12s+ startup time before any useful work can be done
+
+- Just gets worse as you get more cores.
+  - NVIDIA's x64 Blackwell B200/B300 machines have 224 cores!
+  - 1,792MB of RAM just for the Python processes!
+
+## On HuggingFace...
+
+## {background-video="images/parallelopedia-llm-demo.webm" background-size="contain"}
 
 # Questions?
 
