@@ -24,7 +24,7 @@ format:
       - bg-video-ctrl
 ---
 
-# Introduction
+# Welcome!
 
 ## Quick Survey
 
@@ -470,14 +470,13 @@ with ThreadPoolExecutor(max_workers=8) as executor:
 
 ## {background-image="images/anakin.jpg" background-size="contain"}
 
-## Because apparently my solution to all problems is a multi-threaded async I/O HTTP server...
+## Why Do Something In 30 Seconds When You Can Also Do It In 30+ Hours?
 
 ::: {.incremental}
-- Quick test to see if you can call `model.generate()` from multiple threads: boring.
+- Boring: quick test to see if you can call `model.generate()` from multiple threads
 - Wouldn't it be cooler to write a multi-threaded async I/O HTTP server
-  - And expose `/generate`-esque `GET` endpoints for doing inference
+  - And expose `/generate`-esque `GET` endpoint for doing inference
   - And have it stream tokens in real-time
-    - Ain't nobody got time to wait for an entire response up-front
   - And implement it all using the new `asyncio` Python libraries
   - And then maybe vibe-code a fancy React front-end web UI
 :::
@@ -508,13 +507,15 @@ npm run start
 
 Launch Server
 ```bash
-python -Xgil=0 -m parallelopedia.http.server --threads 20 --ip 0.0.0.0 --port 4444 --log-level INFO \
+python -Xgil=0 -m parallelopedia.http.server --threads $(nproc) --ip 0.0.0.0 --port 4444 --log-level INFO \
     --app-classes parallelopedia.http.server.PlaintextApp \
                   parallelopedia.gpt2.Gpt2App \
                   parallelopedia.wiki.WikiApp
 ```
 
 ## Demo (or video if demo isn't working)
+
+## {background-video="images/parallelopedia-gpt2-demo.webm" background-size="contain"}
 
 ## How It Works
 
@@ -529,18 +530,26 @@ python -Xgil=0 -m parallelopedia.http.server --threads 20 --ip 0.0.0.0 --port 44
 
 ## HTTP Chunked Encoding Example
 
-Piping a manual HTTP GET request via `netcat`:
+Normal curl:
+```bash
+% curl 'http://localhost:4444/gpt2/generate/The%20quick%20brown%20fox?max_length=20&device=cuda&seed=42'
+The quick brown fox is a subspecies that originated in southern Scotland as a variety of fox. This
+```
+
+. . .
+
+But if we pipe a manual HTTP GET request via `netcat`:
 ```bash
 % echo -en \
- 'GET /generate/The%20quick%20brown%20fox?max_length=20&device=cuda&seed=42 ' \
+ 'GET /gpt2/generate/The%20quick%20brown%20fox?max_length=20&device=cuda&seed=42 ' \
  'HTTP/1.1\r\nConnection: close\r\nHost: dgx\r\n\r\n' | nc dgx 4444
 ```
 
 . . .
 
-Yields:
+We can see the chunked response (without curl reassembling it):
 
-```{.bash code-line-numbers="|8|16-17|18-19|20-21|"}
+```{.bash code-line-numbers="|8|16-17|18-50"}
 HTTP/1.1 200 OK
 Server: Parallelopedia Web Server v1.0
 Date: Fri, 07 Feb 2025 23:32:02 GMT
@@ -592,5 +601,159 @@ B
  This
 0
 ```
+
+## But Does It Actually Work In Parallel?
+
+- The next slide shows a `tmux` session of six boxes running curl against the
+  `/generate` endpoint simultaneously (via tmux `:synchronize-panes`)
+
+## {background-image="images/parallelopedia-multi-threaded-gpu-inference-gpt2-curl-1000.gif" background-size="contain"}
+
+## Load Test!
+
+- The next slide shows a GPU-enabled `btop` running in the background, and a
+  foreground `wrk` load test session that uses 14 threads to issue back-to-back
+  requests for 30 seconds (i.e. as fast as possible)
+
+## {background-image="images/parallelopedia-multi-threaded-gpu-inference-gpt2-wrk-14.gif" background-size="contain"}
+
+## No GIL vs GIL Performance For Parallel PyTorch Inference
+
+:::: {.columns}
+
+::: {.column width="50%"}
+
+_Latency Distribution_
+
+- Lower latency & straigher line better
+
+![](images/wrk-01-combined-dark.svg)
+
+:::
+
+::: {.column width="50%"}
+
+_Requests Per Second_
+
+- Bigger is better
+
+![](images/wrk-01-rps-combined-dark.svg)
+
+:::
+
+::::
+
+## What's The Catch?
+::: {.incremental}
+- Torch Dynamo
+  - Add a `@torch.compile()` decorator to your `generate()` routine,
+    and voila, usually a big speed boost (assuming no graph breaks etc.)
+  - Unfortunately:
+    - Doesn't work with free-threading
+    - Doesn't work with an `async def generate()` routine
+  - So you're leaving GPU performance on the table (i.e. you're not max
+    performing a modern GPU)
+- No batching, KV cache, paging, etc.
+  - Much better tools for the job if you're putting a ChatGPT-style chatbot into
+    production, e.g. NVIDIA Triton, vLLM
+:::
+
+## So What's The Point?
+
+- Even if we're not deploying a max-performing model inference...
+- Being able to do PyTorch model inference in parallel within a single Python
+  process is still very cool
+  - And it's infinitely better than `multiprocessing`
+    - No expensive process context switches
+    - No expensive GPU CUDA context switches
+    - No memory waste due to duplicating models in multiple processes
+- And it works with contemporary models from HuggingFace!
+
+## In The Real World, Where Python Gets Stuff Done...
+
+::: {.incremental}
+
+- For every production, public-facing ChatGPT-style chatbot website, there are
+  probably hundreds of thousands internal apps teams use to get their work done
+
+- Common pattern I observed for Python projects in my consultancy days:
+  - Load a bunch of reference data
+    - Account details, stock details, geographic data, entity data
+    - *"Dimension"* tables in data warehousing parlance
+    - Concretely: usually NumPy arrays, Arrow files, Pandas data frames, etc.
+  - Then process a bunch of transactional data that refers to this reference
+    data
+    - Bank transfers, ad clicks, stock ticker data, etc.
+    - *"Fact"* tables in data warehousing parlance
+  - Brutal in the `multiprocessing` days; each process would need its own copy
+    of all the read-only reference data, huge memory overhead, huge startup
+    cost because each Python process had to load everything serially
+
+- Python free-threading is perfect for these use cases!
+
+:::
+
+## Putting the opedia in Parallelopedia With an Embedded Wikipedia
+
+- To hammer home the point that Python free-threading is the bees knees...
+
+. . .
+
+- Let's just straight-up host all of Wikipedia in this same process!
+
+. . .
+
+- So, specifically, we want to implement HTTP endpoints that:
+  - Provide a means to *"prefix search"* Wikipedia titles
+    - i.e. *"What are all the Wikipedia article titles beginning with "Dave'?"*
+  - Provide a means to look up an article directly for a given title
+
+. . .
+
+- All that's needed: two simple data structures and `mmap`
+  - A trie (or digital search tree) that facilities the prefix search, and maps
+    titles to absolute byte offsets within the XML file
+  - A sorted NumPy array of all the absolute byte offsets of each title
+
+## Parallelopedia Wiki Demo
+
+## Parallelopedia Wiki Details
+
+:::: {.columns}
+
+::: {.column width="%50"}
+
+The *"trie"* for the prefix search is actually 83 tries:
+
+![](images/wiki-trie-details.png)
+
+(Ordinal of first character, number of titles)
+
+:::
+
+::: {.column width="%50"}
+
+:::: {.incremental}
+
+- Only one sorted NumPy array of offsets (`title_offsets.npy`, ~120MB)
+- We can load all the tries in parallel at startup (2.5s instead of 12s)
+- Much quicker to create tries when they're partitioned by first char
+- Exact lookup of article offset from trie is O(log(n))
+- Once we have the start offset, we can do `offsets.searchsorted()` to find the
+  absolute index (binary search, O(log(n)))
+- `offsets[index+1]` gives us the next article's start offset; we can impune our
+  end offset from that, and once we have start:end byte range...
+- `article = WIKI_XML_MMAP[start:end]`
+
+::::
+
+:::
+
+::::
+
+## On HuggingFace... (Demo)
+
+# Questions?
+
 
 <!-- vim:set ts=8 sw=2 sts=2 et ci:-->

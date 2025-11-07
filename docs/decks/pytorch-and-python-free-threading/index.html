@@ -232,8 +232,8 @@ Trent Nelson
   <p class="date">2025-11-08</p>
 </section>
 <section>
-<section id="introduction" class="title-slide slide level1 center">
-<h1>Introduction</h1>
+<section id="welcome" class="title-slide slide level1 center">
+<h1>Welcome!</h1>
 
 </section>
 <section id="quick-survey" class="slide level2">
@@ -912,17 +912,14 @@ Trent Nelson
 <section id="section-3" class="slide level2" data-background-image="images/anakin.jpg" data-background-size="contain">
 <h2></h2>
 </section>
-<section id="because-apparently-my-solution-to-all-problems-is-a-multi-threaded-async-io-http-server" class="slide level2">
-<h2>Because apparently my solution to all problems is a multi-threaded async I/O HTTP server…</h2>
+<section id="why-do-something-in-30-seconds-when-you-can-also-do-it-in-30-hours" class="slide level2">
+<h2>Why Do Something In 30 Seconds When You Can Also Do It In 30+ Hours?</h2>
 <ul>
-<li class="fragment">Quick test to see if you can call <code>model.generate()</code> from multiple threads: boring.</li>
+<li class="fragment">Boring: quick test to see if you can call <code>model.generate()</code> from multiple threads</li>
 <li class="fragment">Wouldn’t it be cooler to write a multi-threaded async I/O HTTP server
 <ul>
-<li class="fragment">And expose <code>/generate</code>-esque <code>GET</code> endpoints for doing inference</li>
-<li class="fragment">And have it stream tokens in real-time
-<ul>
-<li class="fragment">Ain’t nobody got time to wait for an entire response up-front</li>
-</ul></li>
+<li class="fragment">And expose <code>/generate</code>-esque <code>GET</code> endpoint for doing inference</li>
+<li class="fragment">And have it stream tokens in real-time</li>
 <li class="fragment">And implement it all using the new <code>asyncio</code> Python libraries</li>
 <li class="fragment">And then maybe vibe-code a fancy React front-end web UI</li>
 </ul></li>
@@ -949,7 +946,7 @@ Trent Nelson
 </div>
 <div class="fragment">
 <p>Launch Server</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb11-1"><a></a><span class="ex">python</span> <span class="at">-Xgil</span><span class="op">=</span>0 <span class="at">-m</span> parallelopedia.http.server <span class="at">--threads</span> 20 <span class="at">--ip</span> 0.0.0.0 <span class="at">--port</span> 4444 <span class="at">--log-level</span> INFO <span class="dt">\</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb11-1"><a></a><span class="ex">python</span> <span class="at">-Xgil</span><span class="op">=</span>0 <span class="at">-m</span> parallelopedia.http.server <span class="at">--threads</span> <span class="va">$(</span><span class="fu">nproc</span><span class="va">)</span> <span class="at">--ip</span> 0.0.0.0 <span class="at">--port</span> 4444 <span class="at">--log-level</span> INFO <span class="dt">\</span></span>
 <span id="cb11-2"><a></a>    <span class="at">--app-classes</span> parallelopedia.http.server.PlaintextApp <span class="dt">\</span></span>
 <span id="cb11-3"><a></a>                  parallelopedia.gpt2.Gpt2App <span class="dt">\</span></span>
 <span id="cb11-4"><a></a>                  parallelopedia.wiki.WikiApp</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -957,6 +954,9 @@ Trent Nelson
 </section>
 <section id="demo-or-video-if-demo-isnt-working" class="slide level2">
 <h2>Demo (or video if demo isn’t working)</h2>
+</section>
+<section id="section-5" class="slide level2" data-background-video="images/parallelopedia-gpt2-demo.webm" data-background-size="contain">
+<h2></h2>
 </section>
 <section id="how-it-works" class="slide level2">
 <h2>How It Works</h2>
@@ -975,67 +975,224 @@ Trent Nelson
 </section>
 <section id="http-chunked-encoding-example" class="slide level2">
 <h2>HTTP Chunked Encoding Example</h2>
-<p>Piping a manual HTTP GET request via <code>netcat</code>:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb12-1"><a></a><span class="ex">%</span> echo <span class="at">-en</span> <span class="dt">\</span></span>
-<span id="cb12-2"><a></a> <span class="st">'GET /generate/The%20quick%20brown%20fox?max_length=20&amp;device=cuda&amp;seed=42 '</span> <span class="dt">\</span></span>
-<span id="cb12-3"><a></a> <span class="st">'HTTP/1.1\r\nConnection: close\r\nHost: dgx\r\n\r\n'</span> <span class="kw">|</span> <span class="ex">nc</span> dgx 4444</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Normal curl:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb12-1"><a></a><span class="ex">%</span> curl <span class="st">'http://localhost:4444/gpt2/generate/The%20quick%20brown%20fox?max_length=20&amp;device=cuda&amp;seed=42'</span></span>
+<span id="cb12-2"><a></a><span class="ex">The</span> quick brown fox is a subspecies that originated in southern Scotland as a variety of fox. This</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="fragment">
-<p>Yields:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13" data-code-line-numbers="|8|16-17|18-19|20-21|"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb13-1"><a></a><span class="ex">HTTP/1.1</span> 200 OK</span>
-<span id="cb13-2"><a></a><span class="ex">Server:</span> Parallelopedia Web Server v1.0</span>
-<span id="cb13-3"><a></a><span class="ex">Date:</span> Fri, 07 Feb 2025 23:32:02 GMT</span>
-<span id="cb13-4"><a></a><span class="ex">Accept-Ranges:</span> bytes</span>
-<span id="cb13-5"><a></a><span class="ex">Content-Type:</span> text/plain</span>
-<span id="cb13-6"><a></a><span class="ex">Access-Control-Allow-Origin:</span> <span class="pp">*</span></span>
-<span id="cb13-7"><a></a><span class="ex">Connection:</span> close</span>
-<span id="cb13-8"><a></a><span class="ex">Transfer-Encoding:</span> chunked</span>
-<span id="cb13-9"><a></a><span class="ex">Access-Control-Expose-Headers:</span> X-Max-Length, X-Top-K, X-Seed, X-Model-Name, X-Model-Device</span>
-<span id="cb13-10"><a></a><span class="ex">X-Max-Length:</span> 20</span>
-<span id="cb13-11"><a></a><span class="ex">X-Top-K:</span> 50</span>
-<span id="cb13-12"><a></a><span class="ex">X-Seed:</span> 42</span>
-<span id="cb13-13"><a></a><span class="ex">X-Model-Name:</span> gpt2</span>
-<span id="cb13-14"><a></a><span class="ex">X-Model-Device:</span> cuda:0</span>
-<span id="cb13-15"><a></a></span>
-<span id="cb13-16"><a></a><span class="ex">13</span></span>
-<span id="cb13-17"><a></a><span class="ex">The</span> quick brown fox</span>
-<span id="cb13-18"><a></a><span class="ex">3</span></span>
-<span id="cb13-19"><a></a> <span class="ex">is</span></span>
-<span id="cb13-20"><a></a><span class="ex">2</span></span>
-<span id="cb13-21"><a></a> <span class="ex">a</span></span>
-<span id="cb13-22"><a></a><span class="ex">4</span></span>
-<span id="cb13-23"><a></a> <span class="ex">sub</span></span>
-<span id="cb13-24"><a></a><span class="ex">7</span></span>
-<span id="cb13-25"><a></a><span class="ex">species</span></span>
-<span id="cb13-26"><a></a><span class="ex">5</span></span>
-<span id="cb13-27"><a></a> <span class="ex">that</span></span>
-<span id="cb13-28"><a></a><span class="ex">B</span></span>
-<span id="cb13-29"><a></a> <span class="ex">originated</span></span>
-<span id="cb13-30"><a></a><span class="ex">3</span></span>
-<span id="cb13-31"><a></a> <span class="er">in</span></span>
-<span id="cb13-32"><a></a><span class="ex">9</span></span>
-<span id="cb13-33"><a></a> <span class="ex">southern</span></span>
-<span id="cb13-34"><a></a><span class="ex">9</span></span>
-<span id="cb13-35"><a></a> <span class="ex">Scotland</span></span>
-<span id="cb13-36"><a></a><span class="ex">3</span></span>
-<span id="cb13-37"><a></a> <span class="fu">as</span></span>
-<span id="cb13-38"><a></a><span class="ex">2</span></span>
-<span id="cb13-39"><a></a> <span class="ex">a</span></span>
-<span id="cb13-40"><a></a><span class="ex">8</span></span>
-<span id="cb13-41"><a></a> <span class="ex">variety</span></span>
-<span id="cb13-42"><a></a><span class="ex">3</span></span>
-<span id="cb13-43"><a></a> <span class="ex">of</span></span>
-<span id="cb13-44"><a></a><span class="ex">4</span></span>
-<span id="cb13-45"><a></a> <span class="ex">fox</span></span>
-<span id="cb13-46"><a></a><span class="ex">1</span></span>
-<span id="cb13-47"><a></a><span class="bu">.</span></span>
-<span id="cb13-48"><a></a><span class="ex">5</span></span>
-<span id="cb13-49"><a></a> <span class="ex">This</span></span>
-<span id="cb13-50"><a></a><span class="ex">0</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>But if we pipe a manual HTTP GET request via <code>netcat</code>:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb13-1"><a></a><span class="ex">%</span> echo <span class="at">-en</span> <span class="dt">\</span></span>
+<span id="cb13-2"><a></a> <span class="st">'GET /gpt2/generate/The%20quick%20brown%20fox?max_length=20&amp;device=cuda&amp;seed=42 '</span> <span class="dt">\</span></span>
+<span id="cb13-3"><a></a> <span class="st">'HTTP/1.1\r\nConnection: close\r\nHost: dgx\r\n\r\n'</span> <span class="kw">|</span> <span class="ex">nc</span> dgx 4444</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="fragment">
+<p>We can see the chunked response (without curl reassembling it):</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14" data-code-line-numbers="|8|16-17|18-50"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb14-1"><a></a><span class="ex">HTTP/1.1</span> 200 OK</span>
+<span id="cb14-2"><a></a><span class="ex">Server:</span> Parallelopedia Web Server v1.0</span>
+<span id="cb14-3"><a></a><span class="ex">Date:</span> Fri, 07 Feb 2025 23:32:02 GMT</span>
+<span id="cb14-4"><a></a><span class="ex">Accept-Ranges:</span> bytes</span>
+<span id="cb14-5"><a></a><span class="ex">Content-Type:</span> text/plain</span>
+<span id="cb14-6"><a></a><span class="ex">Access-Control-Allow-Origin:</span> <span class="pp">*</span></span>
+<span id="cb14-7"><a></a><span class="ex">Connection:</span> close</span>
+<span id="cb14-8"><a></a><span class="ex">Transfer-Encoding:</span> chunked</span>
+<span id="cb14-9"><a></a><span class="ex">Access-Control-Expose-Headers:</span> X-Max-Length, X-Top-K, X-Seed, X-Model-Name, X-Model-Device</span>
+<span id="cb14-10"><a></a><span class="ex">X-Max-Length:</span> 20</span>
+<span id="cb14-11"><a></a><span class="ex">X-Top-K:</span> 50</span>
+<span id="cb14-12"><a></a><span class="ex">X-Seed:</span> 42</span>
+<span id="cb14-13"><a></a><span class="ex">X-Model-Name:</span> gpt2</span>
+<span id="cb14-14"><a></a><span class="ex">X-Model-Device:</span> cuda:0</span>
+<span id="cb14-15"><a></a></span>
+<span id="cb14-16"><a></a><span class="ex">13</span></span>
+<span id="cb14-17"><a></a><span class="ex">The</span> quick brown fox</span>
+<span id="cb14-18"><a></a><span class="ex">3</span></span>
+<span id="cb14-19"><a></a> <span class="ex">is</span></span>
+<span id="cb14-20"><a></a><span class="ex">2</span></span>
+<span id="cb14-21"><a></a> <span class="ex">a</span></span>
+<span id="cb14-22"><a></a><span class="ex">4</span></span>
+<span id="cb14-23"><a></a> <span class="ex">sub</span></span>
+<span id="cb14-24"><a></a><span class="ex">7</span></span>
+<span id="cb14-25"><a></a><span class="ex">species</span></span>
+<span id="cb14-26"><a></a><span class="ex">5</span></span>
+<span id="cb14-27"><a></a> <span class="ex">that</span></span>
+<span id="cb14-28"><a></a><span class="ex">B</span></span>
+<span id="cb14-29"><a></a> <span class="ex">originated</span></span>
+<span id="cb14-30"><a></a><span class="ex">3</span></span>
+<span id="cb14-31"><a></a> <span class="er">in</span></span>
+<span id="cb14-32"><a></a><span class="ex">9</span></span>
+<span id="cb14-33"><a></a> <span class="ex">southern</span></span>
+<span id="cb14-34"><a></a><span class="ex">9</span></span>
+<span id="cb14-35"><a></a> <span class="ex">Scotland</span></span>
+<span id="cb14-36"><a></a><span class="ex">3</span></span>
+<span id="cb14-37"><a></a> <span class="fu">as</span></span>
+<span id="cb14-38"><a></a><span class="ex">2</span></span>
+<span id="cb14-39"><a></a> <span class="ex">a</span></span>
+<span id="cb14-40"><a></a><span class="ex">8</span></span>
+<span id="cb14-41"><a></a> <span class="ex">variety</span></span>
+<span id="cb14-42"><a></a><span class="ex">3</span></span>
+<span id="cb14-43"><a></a> <span class="ex">of</span></span>
+<span id="cb14-44"><a></a><span class="ex">4</span></span>
+<span id="cb14-45"><a></a> <span class="ex">fox</span></span>
+<span id="cb14-46"><a></a><span class="ex">1</span></span>
+<span id="cb14-47"><a></a><span class="bu">.</span></span>
+<span id="cb14-48"><a></a><span class="ex">5</span></span>
+<span id="cb14-49"><a></a> <span class="ex">This</span></span>
+<span id="cb14-50"><a></a><span class="ex">0</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="but-does-it-actually-work-in-parallel" class="slide level2">
+<h2>But Does It Actually Work In Parallel?</h2>
+<ul>
+<li>The next slide shows a <code>tmux</code> session of six boxes running curl against the <code>/generate</code> endpoint simultaneously (via tmux <code>:synchronize-panes</code>)</li>
+</ul>
+</section>
+<section id="section-6" class="slide level2" data-background-image="images/parallelopedia-multi-threaded-gpu-inference-gpt2-curl-1000.gif" data-background-size="contain">
+<h2></h2>
+</section>
+<section id="load-test" class="slide level2">
+<h2>Load Test!</h2>
+<ul>
+<li>The next slide shows a GPU-enabled <code>btop</code> running in the background, and a foreground <code>wrk</code> load test session that uses 14 threads to issue back-to-back requests for 30 seconds (i.e.&nbsp;as fast as possible)</li>
+</ul>
+</section>
+<section id="section-7" class="slide level2" data-background-image="images/parallelopedia-multi-threaded-gpu-inference-gpt2-wrk-14.gif" data-background-size="contain">
+<h2></h2>
+</section>
+<section id="no-gil-vs-gil-performance-for-parallel-pytorch-inference" class="slide level2">
+<h2>No GIL vs GIL Performance For Parallel PyTorch Inference</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<p><em>Latency Distribution</em></p>
+<ul>
+<li>Lower latency &amp; straigher line better</li>
+</ul>
+<p><img data-src="images/wrk-01-combined-dark.svg"></p>
+</div><div class="column" style="width:50%;">
+<p><em>Requests Per Second</em></p>
+<ul>
+<li>Bigger is better</li>
+</ul>
+<p><img data-src="images/wrk-01-rps-combined-dark.svg"></p>
+</div></div>
+</section>
+<section id="whats-the-catch" class="slide level2">
+<h2>What’s The Catch?</h2>
+<ul>
+<li class="fragment">Torch Dynamo
+<ul>
+<li class="fragment">Add a <code>@torch.compile()</code> decorator to your <code>generate()</code> routine, and voila, usually a big speed boost (assuming no graph breaks etc.)</li>
+<li class="fragment">Unfortunately:
+<ul>
+<li class="fragment">Doesn’t work with free-threading</li>
+<li class="fragment">Doesn’t work with an <code>async def generate()</code> routine</li>
+</ul></li>
+<li class="fragment">So you’re leaving GPU performance on the table (i.e.&nbsp;you’re not max performing a modern GPU)</li>
+</ul></li>
+<li class="fragment">No batching, KV cache, paging, etc.
+<ul>
+<li class="fragment">Much better tools for the job if you’re putting a ChatGPT-style chatbot into production, e.g.&nbsp;NVIDIA Triton, vLLM</li>
+</ul></li>
+</ul>
+</section>
+<section id="so-whats-the-point" class="slide level2">
+<h2>So What’s The Point?</h2>
+<ul>
+<li>Even if we’re not deploying a max-performing model inference…</li>
+<li>Being able to do PyTorch model inference in parallel within a single Python process is still very cool
+<ul>
+<li>And it’s infinitely better than <code>multiprocessing</code>
+<ul>
+<li>No expensive process context switches</li>
+<li>No expensive GPU CUDA context switches</li>
+<li>No memory waste due to duplicating models in multiple processes</li>
+</ul></li>
+</ul></li>
+<li>And it works with contemporary models from HuggingFace!</li>
+</ul>
+</section>
+<section id="in-the-real-world-where-python-gets-stuff-done" class="slide level2">
+<h2>In The Real World, Where Python Gets Stuff Done…</h2>
+<ul>
+<li class="fragment"><p>For every production, public-facing ChatGPT-style chatbot website, there are probably hundreds of thousands internal apps teams use to get their work done</p></li>
+<li class="fragment"><p>Common pattern I observed for Python projects in my consultancy days:</p>
+<ul>
+<li class="fragment">Load a bunch of reference data
+<ul>
+<li class="fragment">Account details, stock details, geographic data, entity data</li>
+<li class="fragment"><em>“Dimension”</em> tables in data warehousing parlance</li>
+<li class="fragment">Concretely: usually NumPy arrays, Arrow files, Pandas data frames, etc.</li>
+</ul></li>
+<li class="fragment">Then process a bunch of transactional data that refers to this reference data
+<ul>
+<li class="fragment">Bank transfers, ad clicks, stock ticker data, etc.</li>
+<li class="fragment"><em>“Fact”</em> tables in data warehousing parlance</li>
+</ul></li>
+<li class="fragment">Brutal in the <code>multiprocessing</code> days; each process would need its own copy of all the read-only reference data, huge memory overhead, huge startup cost because each Python process had to load everything serially</li>
+</ul></li>
+<li class="fragment"><p>Python free-threading is perfect for these use cases!</p></li>
+</ul>
+</section>
+<section id="putting-the-opedia-in-parallelopedia-with-an-embedded-wikipedia" class="slide level2">
+<h2>Putting the opedia in Parallelopedia With an Embedded Wikipedia</h2>
+<ul>
+<li>To hammer home the point that Python free-threading is the bees knees…</li>
+</ul>
+<div class="fragment">
+<ul>
+<li>Let’s just straight-up host all of Wikipedia in this same process!</li>
+</ul>
+</div>
+<div class="fragment">
+<ul>
+<li>So, specifically, we want to implement HTTP endpoints that:
+<ul>
+<li>Provide a means to <em>“prefix search”</em> Wikipedia titles
+<ul>
+<li>i.e.&nbsp;<em>“What are all the Wikipedia article titles beginning with”Dave’?“</em></li>
+</ul></li>
+<li>Provide a means to look up an article directly for a given title</li>
+</ul></li>
+</ul>
+</div>
+<div class="fragment">
+<ul>
+<li>All that’s needed: two simple data structures and <code>mmap</code>
+<ul>
+<li>A trie (or digital search tree) that facilities the prefix search, and maps titles to absolute byte offsets within the XML file</li>
+<li>A sorted NumPy array of all the absolute byte offsets of each title</li>
+</ul></li>
+</ul>
+</div>
+</section>
+<section id="parallelopedia-wiki-demo" class="slide level2">
+<h2>Parallelopedia Wiki Demo</h2>
+</section>
+<section id="parallelopedia-wiki-details" class="slide level2">
+<h2>Parallelopedia Wiki Details</h2>
+<div class="columns">
+<div class="column" style="width:%50;">
+<p>The <em>“trie”</em> for the prefix search is actually 83 tries:</p>
+<p><img data-src="images/wiki-trie-details.png"></p>
+<p>(Ordinal of first character, number of titles)</p>
+</div><div class="column" style="width:%50;">
+<ul>
+<li class="fragment">Only one sorted NumPy array of offsets (<code>title_offsets.npy</code>, ~120MB)</li>
+<li class="fragment">We can load all the tries in parallel at startup (2.5s instead of 12s)</li>
+<li class="fragment">Much quicker to create tries when they’re partitioned by first char</li>
+<li class="fragment">Exact lookup of article offset from trie is O(log(n))</li>
+<li class="fragment">Once we have the start offset, we can do <code>offsets.searchsorted()</code> to find the absolute index (binary search, O(log(n)))</li>
+<li class="fragment"><code>offsets[index+1]</code> gives us the next article’s start offset; we can impune our end offset from that, and once we have start:end byte range…</li>
+<li class="fragment"><code>article = WIKI_XML_MMAP[start:end]</code></li>
+</ul>
+</div></div>
+</section>
+<section id="on-huggingface-demo" class="slide level2">
+<h2>On HuggingFace… (Demo)</h2>
+</section></section>
+<section id="questions" class="title-slide slide level1 center">
+<h1>Questions?</h1>
 <!-- vim:set ts=8 sw=2 sts=2 et ci:-->
 
 
-</div>
-</section></section>
+</section>
     </div>
   <div class="quarto-auto-generated-content" style="display: none;">
 <p><img src="../../static/images/nvidia-logo.png" class="slide-logo"></p>

@@ -707,18 +707,18 @@
     "text": "Recap\n\nWe have Python free-threading…\nWe have a (janky) GPT-2 PyTorch Model that generates text when prompted…\nNext question: does it work when called from multiple-threads?\nObviously the simplest way to answer this question would have been:\n\nTry calling it from multiple threads.\n\n\n\nmodel = GPT.from_local_pretrained('model_19072.pt', map_location='cuda')\nprompt = \"Albert Einstein's Theory of Relativity stated that\"\n\ndef generate(seed):\n    return model.generate(prompt, seed=seed)\n\nwith ThreadPoolExecutor(max_workers=8) as executor:\n    futures = [\n        executor.submit(generate, seed)\n            for seed in range(8)\n    ]\n    for future in as_completed(futures):\n        print(future.result()"
   },
   {
-    "objectID": "decks/pytorch-and-python-free-threading/index.html#because-apparently-my-solution-to-all-problems-is-a-multi-threaded-async-io-http-server",
-    "href": "decks/pytorch-and-python-free-threading/index.html#because-apparently-my-solution-to-all-problems-is-a-multi-threaded-async-io-http-server",
+    "objectID": "decks/pytorch-and-python-free-threading/index.html#why-do-something-in-30-seconds-when-you-can-also-do-it-in-30-hours",
+    "href": "decks/pytorch-and-python-free-threading/index.html#why-do-something-in-30-seconds-when-you-can-also-do-it-in-30-hours",
     "title": "Unlocking Parallel PyTorch Inference (and More!) with Python Free-Threading",
-    "section": "Because apparently my solution to all problems is a multi-threaded async I/O HTTP server…",
-    "text": "Because apparently my solution to all problems is a multi-threaded async I/O HTTP server…\n\nQuick test to see if you can call model.generate() from multiple threads: boring.\nWouldn’t it be cooler to write a multi-threaded async I/O HTTP server\n\nAnd expose /generate-esque GET endpoints for doing inference\nAnd have it stream tokens in real-time\n\nAin’t nobody got time to wait for an entire response up-front\n\nAnd implement it all using the new asyncio Python libraries\nAnd then maybe vibe-code a fancy React front-end web UI"
+    "section": "Why Do Something In 30 Seconds When You Can Also Do It In 30+ Hours?",
+    "text": "Why Do Something In 30 Seconds When You Can Also Do It In 30+ Hours?\n\nBoring: quick test to see if you can call model.generate() from multiple threads\nWouldn’t it be cooler to write a multi-threaded async I/O HTTP server\n\nAnd expose /generate-esque GET endpoint for doing inference\nAnd have it stream tokens in real-time\nAnd implement it all using the new asyncio Python libraries\nAnd then maybe vibe-code a fancy React front-end web UI"
   },
   {
     "objectID": "decks/pytorch-and-python-free-threading/index.html#parallelopedia-to-the-rescue",
     "href": "decks/pytorch-and-python-free-threading/index.html#parallelopedia-to-the-rescue",
     "title": "Unlocking Parallel PyTorch Inference (and More!) with Python Free-Threading",
     "section": "Parallelopedia To The Rescue",
-    "text": "Parallelopedia To The Rescue\nSetup\nconda create -n py314t python=3.14 python-freethreading nodejs pandoc -c conda-forge\nconda activate py314t\ncd ~/src\ngit clone https://github.com/tpn/parallelopedia\ncd parallelopedia\npip install -e .\ncd ui\nnpm install\n\nLaunch UI\ncd ~/src/parallelopedia/ui\nnpm run start\n\n\nLaunch Server\npython -Xgil=0 -m parallelopedia.http.server --threads 20 --ip 0.0.0.0 --port 4444 --log-level INFO \\\n    --app-classes parallelopedia.http.server.PlaintextApp \\\n                  parallelopedia.gpt2.Gpt2App \\\n                  parallelopedia.wiki.WikiApp"
+    "text": "Parallelopedia To The Rescue\nSetup\nconda create -n py314t python=3.14 python-freethreading nodejs pandoc -c conda-forge\nconda activate py314t\ncd ~/src\ngit clone https://github.com/tpn/parallelopedia\ncd parallelopedia\npip install -e .\ncd ui\nnpm install\n\nLaunch UI\ncd ~/src/parallelopedia/ui\nnpm run start\n\n\nLaunch Server\npython -Xgil=0 -m parallelopedia.http.server --threads $(nproc) --ip 0.0.0.0 --port 4444 --log-level INFO \\\n    --app-classes parallelopedia.http.server.PlaintextApp \\\n                  parallelopedia.gpt2.Gpt2App \\\n                  parallelopedia.wiki.WikiApp"
   },
   {
     "objectID": "decks/pytorch-and-python-free-threading/index.html#demo-or-video-if-demo-isnt-working",
@@ -739,7 +739,77 @@
     "href": "decks/pytorch-and-python-free-threading/index.html#http-chunked-encoding-example",
     "title": "Unlocking Parallel PyTorch Inference (and More!) with Python Free-Threading",
     "section": "HTTP Chunked Encoding Example",
-    "text": "HTTP Chunked Encoding Example\nPiping a manual HTTP GET request via netcat:\n% echo -en \\\n 'GET /generate/The%20quick%20brown%20fox?max_length=20&device=cuda&seed=42 ' \\\n 'HTTP/1.1\\r\\nConnection: close\\r\\nHost: dgx\\r\\n\\r\\n' | nc dgx 4444\n\nYields:\nHTTP/1.1 200 OK\nServer: Parallelopedia Web Server v1.0\nDate: Fri, 07 Feb 2025 23:32:02 GMT\nAccept-Ranges: bytes\nContent-Type: text/plain\nAccess-Control-Allow-Origin: *\nConnection: close\nTransfer-Encoding: chunked\nAccess-Control-Expose-Headers: X-Max-Length, X-Top-K, X-Seed, X-Model-Name, X-Model-Device\nX-Max-Length: 20\nX-Top-K: 50\nX-Seed: 42\nX-Model-Name: gpt2\nX-Model-Device: cuda:0\n\n13\nThe quick brown fox\n3\n is\n2\n a\n4\n sub\n7\nspecies\n5\n that\nB\n originated\n3\n in\n9\n southern\n9\n Scotland\n3\n as\n2\n a\n8\n variety\n3\n of\n4\n fox\n1\n.\n5\n This\n0"
+    "text": "HTTP Chunked Encoding Example\nNormal curl:\n% curl 'http://localhost:4444/gpt2/generate/The%20quick%20brown%20fox?max_length=20&device=cuda&seed=42'\nThe quick brown fox is a subspecies that originated in southern Scotland as a variety of fox. This\n\nBut if we pipe a manual HTTP GET request via netcat:\n% echo -en \\\n 'GET /gpt2/generate/The%20quick%20brown%20fox?max_length=20&device=cuda&seed=42 ' \\\n 'HTTP/1.1\\r\\nConnection: close\\r\\nHost: dgx\\r\\n\\r\\n' | nc dgx 4444\n\n\nWe can see the chunked response (without curl reassembling it):\nHTTP/1.1 200 OK\nServer: Parallelopedia Web Server v1.0\nDate: Fri, 07 Feb 2025 23:32:02 GMT\nAccept-Ranges: bytes\nContent-Type: text/plain\nAccess-Control-Allow-Origin: *\nConnection: close\nTransfer-Encoding: chunked\nAccess-Control-Expose-Headers: X-Max-Length, X-Top-K, X-Seed, X-Model-Name, X-Model-Device\nX-Max-Length: 20\nX-Top-K: 50\nX-Seed: 42\nX-Model-Name: gpt2\nX-Model-Device: cuda:0\n\n13\nThe quick brown fox\n3\n is\n2\n a\n4\n sub\n7\nspecies\n5\n that\nB\n originated\n3\n in\n9\n southern\n9\n Scotland\n3\n as\n2\n a\n8\n variety\n3\n of\n4\n fox\n1\n.\n5\n This\n0"
+  },
+  {
+    "objectID": "decks/pytorch-and-python-free-threading/index.html#but-does-it-actually-work-in-parallel",
+    "href": "decks/pytorch-and-python-free-threading/index.html#but-does-it-actually-work-in-parallel",
+    "title": "Unlocking Parallel PyTorch Inference (and More!) with Python Free-Threading",
+    "section": "But Does It Actually Work In Parallel?",
+    "text": "But Does It Actually Work In Parallel?\n\nThe next slide shows a tmux session of six boxes running curl against the /generate endpoint simultaneously (via tmux :synchronize-panes)"
+  },
+  {
+    "objectID": "decks/pytorch-and-python-free-threading/index.html#load-test",
+    "href": "decks/pytorch-and-python-free-threading/index.html#load-test",
+    "title": "Unlocking Parallel PyTorch Inference (and More!) with Python Free-Threading",
+    "section": "Load Test!",
+    "text": "Load Test!\n\nThe next slide shows a GPU-enabled btop running in the background, and a foreground wrk load test session that uses 14 threads to issue back-to-back requests for 30 seconds (i.e. as fast as possible)"
+  },
+  {
+    "objectID": "decks/pytorch-and-python-free-threading/index.html#no-gil-vs-gil-performance-for-parallel-pytorch-inference",
+    "href": "decks/pytorch-and-python-free-threading/index.html#no-gil-vs-gil-performance-for-parallel-pytorch-inference",
+    "title": "Unlocking Parallel PyTorch Inference (and More!) with Python Free-Threading",
+    "section": "No GIL vs GIL Performance For Parallel PyTorch Inference",
+    "text": "No GIL vs GIL Performance For Parallel PyTorch Inference\n\n\nLatency Distribution\n\nLower latency & straigher line better\n\n\n\nRequests Per Second\n\nBigger is better"
+  },
+  {
+    "objectID": "decks/pytorch-and-python-free-threading/index.html#whats-the-catch",
+    "href": "decks/pytorch-and-python-free-threading/index.html#whats-the-catch",
+    "title": "Unlocking Parallel PyTorch Inference (and More!) with Python Free-Threading",
+    "section": "What’s The Catch?",
+    "text": "What’s The Catch?\n\nTorch Dynamo\n\nAdd a @torch.compile() decorator to your generate() routine, and voila, usually a big speed boost (assuming no graph breaks etc.)\nUnfortunately:\n\nDoesn’t work with free-threading\nDoesn’t work with an async def generate() routine\n\nSo you’re leaving GPU performance on the table (i.e. you’re not max performing a modern GPU)\n\nNo batching, KV cache, paging, etc.\n\nMuch better tools for the job if you’re putting a ChatGPT-style chatbot into production, e.g. NVIDIA Triton, vLLM"
+  },
+  {
+    "objectID": "decks/pytorch-and-python-free-threading/index.html#so-whats-the-point",
+    "href": "decks/pytorch-and-python-free-threading/index.html#so-whats-the-point",
+    "title": "Unlocking Parallel PyTorch Inference (and More!) with Python Free-Threading",
+    "section": "So What’s The Point?",
+    "text": "So What’s The Point?\n\nEven if we’re not deploying a max-performing model inference…\nBeing able to do PyTorch model inference in parallel within a single Python process is still very cool\n\nAnd it’s infinitely better than multiprocessing\n\nNo expensive process context switches\nNo expensive GPU CUDA context switches\nNo memory waste due to duplicating models in multiple processes\n\n\nAnd it works with contemporary models from HuggingFace!"
+  },
+  {
+    "objectID": "decks/pytorch-and-python-free-threading/index.html#in-the-real-world-where-python-gets-stuff-done",
+    "href": "decks/pytorch-and-python-free-threading/index.html#in-the-real-world-where-python-gets-stuff-done",
+    "title": "Unlocking Parallel PyTorch Inference (and More!) with Python Free-Threading",
+    "section": "In The Real World, Where Python Gets Stuff Done…",
+    "text": "In The Real World, Where Python Gets Stuff Done…\n\nFor every production, public-facing ChatGPT-style chatbot website, there are probably hundreds of thousands internal apps teams use to get their work done\nCommon pattern I observed for Python projects in my consultancy days:\n\nLoad a bunch of reference data\n\nAccount details, stock details, geographic data, entity data\n“Dimension” tables in data warehousing parlance\nConcretely: usually NumPy arrays, Arrow files, Pandas data frames, etc.\n\nThen process a bunch of transactional data that refers to this reference data\n\nBank transfers, ad clicks, stock ticker data, etc.\n“Fact” tables in data warehousing parlance\n\nBrutal in the multiprocessing days; each process would need its own copy of all the read-only reference data, huge memory overhead, huge startup cost because each Python process had to load everything serially\n\nPython free-threading is perfect for these use cases!"
+  },
+  {
+    "objectID": "decks/pytorch-and-python-free-threading/index.html#putting-the-opedia-in-parallelopedia-with-an-embedded-wikipedia",
+    "href": "decks/pytorch-and-python-free-threading/index.html#putting-the-opedia-in-parallelopedia-with-an-embedded-wikipedia",
+    "title": "Unlocking Parallel PyTorch Inference (and More!) with Python Free-Threading",
+    "section": "Putting the opedia in Parallelopedia With an Embedded Wikipedia",
+    "text": "Putting the opedia in Parallelopedia With an Embedded Wikipedia\n\nTo hammer home the point that Python free-threading is the bees knees…\n\n\n\nLet’s just straight-up host all of Wikipedia in this same process!\n\n\n\n\nSo, specifically, we want to implement HTTP endpoints that:\n\nProvide a means to “prefix search” Wikipedia titles\n\ni.e. “What are all the Wikipedia article titles beginning with”Dave’?“\n\nProvide a means to look up an article directly for a given title\n\n\n\n\n\nAll that’s needed: two simple data structures and mmap\n\nA trie (or digital search tree) that facilities the prefix search, and maps titles to absolute byte offsets within the XML file\nA sorted NumPy array of all the absolute byte offsets of each title"
+  },
+  {
+    "objectID": "decks/pytorch-and-python-free-threading/index.html#parallelopedia-wiki-demo",
+    "href": "decks/pytorch-and-python-free-threading/index.html#parallelopedia-wiki-demo",
+    "title": "Unlocking Parallel PyTorch Inference (and More!) with Python Free-Threading",
+    "section": "Parallelopedia Wiki Demo",
+    "text": "Parallelopedia Wiki Demo"
+  },
+  {
+    "objectID": "decks/pytorch-and-python-free-threading/index.html#parallelopedia-wiki-details",
+    "href": "decks/pytorch-and-python-free-threading/index.html#parallelopedia-wiki-details",
+    "title": "Unlocking Parallel PyTorch Inference (and More!) with Python Free-Threading",
+    "section": "Parallelopedia Wiki Details",
+    "text": "Parallelopedia Wiki Details\n\n\nThe “trie” for the prefix search is actually 83 tries:\n\n(Ordinal of first character, number of titles)\n\n\nOnly one sorted NumPy array of offsets (title_offsets.npy, ~120MB)\nWe can load all the tries in parallel at startup (2.5s instead of 12s)\nMuch quicker to create tries when they’re partitioned by first char\nExact lookup of article offset from trie is O(log(n))\nOnce we have the start offset, we can do offsets.searchsorted() to find the absolute index (binary search, O(log(n)))\noffsets[index+1] gives us the next article’s start offset; we can impune our end offset from that, and once we have start:end byte range…\narticle = WIKI_XML_MMAP[start:end]"
+  },
+  {
+    "objectID": "decks/pytorch-and-python-free-threading/index.html#on-huggingface-demo",
+    "href": "decks/pytorch-and-python-free-threading/index.html#on-huggingface-demo",
+    "title": "Unlocking Parallel PyTorch Inference (and More!) with Python Free-Threading",
+    "section": "On HuggingFace… (Demo)",
+    "text": "On HuggingFace… (Demo)"
   },
   {
     "objectID": "projects/index.html",
