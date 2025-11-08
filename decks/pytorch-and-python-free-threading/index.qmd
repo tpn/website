@@ -560,8 +560,6 @@ with ThreadPoolExecutor(max_workers=8) as executor:
   - And then maybe vibe-code a fancy React front-end web UI
 :::
 
-## {background-image="images/drake-no-yes.jpg" background-size="contain"}
-
 ## Parallelopedia To The Rescue
 
 Setup
