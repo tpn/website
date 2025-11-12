@@ -50,8 +50,6 @@ format:
 
 ## Quick Survey
 
-::: {.incremental}
-
 - Do you know what the Global Interpreter Lock (GIL) is?
 - Have you ever been annoyed by the Global Interpreter Lock (GIL)?
 - Are you excited about Python free-threading?
@@ -60,14 +58,6 @@ format:
   - Both AMD & NVIDIA?
   - Mostly/only NVIDIA?
   - Mostly/only AMD?
-
-:::
-
-::: {.notes}
-2m
-
-Bonus: were you present for the PyData NYC 2013 PyParallel talk I gave?
-:::
 
 ## About Me: Trent Nelson (trent@trent.me)
 - Principal Software Engineer @ NVIDIA
@@ -79,10 +69,6 @@ Bonus: were you present for the PyData NYC 2013 PyParallel talk I gave?
   - CrowdStrike
   - Teza Technologies
   - Continuum Analytics (now Anaconda, Inc.)
-
-::: {.notes}
-1m
-:::
 
 ## About this Talk
 
@@ -145,7 +131,6 @@ can find the article if you go to trent.me/articles, it's the first one.
 
 ## First Attempt at Removing The GIL: Greg Stein circa 1996
 
-::: {.incremental}
 - Based on Python 1.4
 - Introduced fine-grain locking everywhere; Lock All The Things!
 - Destroyed existing single-threaded performance
@@ -155,7 +140,6 @@ can find the article if you go to trent.me/articles, it's the first one.
     the reach of consumers
 - Still, Greg tackled a lot of important concepts which eventually did show
   up in mainline Python (e.g. separating global state into per-thread state)
-:::
 
 ::: footer
 Greg's [free threaded patch](https://github.com/tpn/python-1.4/commit/5c17e33224e2b57948ab594280a006d7648347e6),
@@ -164,15 +148,8 @@ Guido opining on GIL removal in [It isn't Easy to Remove the GIL](https://www.ar
 Dave Beazely's review 15 years later: [An Inside Look at the GIL Remove Patch of Lore](https://dabeaz.blogspot.com/2011/08/inside-look-at-gil-removal-patch-of.html)
 :::
 
-::: {.notes}
-- Destroyed existing single-threaded performance: mutex locking is still
-  expensive (compared to incrementing or decrementing a 32-bit int by 1),
-  even when there's no contention.
-:::
-
 ## My Attempt in 2012 with PyParallel
 
-::: {.incremental}
 - Based on Python 3.3.5
 - "Removed the GIL" (without removing the GIL)
 - Design decision up-front: not "free threaded"
@@ -183,7 +160,6 @@ Dave Beazely's review 15 years later: [An Inside Look at the GIL Remove Patch of
 - When we need to do something thread sensitive (e.g. incref):
   - If we're a normal, GIL-holding Python thread, do what we normally do...
   - But if we're a *parallel* thread, do something **else**
-:::
 
 ::: {.notes}
 "Else" is clearly doing a lot of heavy lifting here.  Surprisingly, at least
@@ -212,7 +188,6 @@ threads were running.
 
 ::: {.column width="50%"}
 
-:::: {.incremental}
 - Pros:
   - Successful proof of concept!
   - Linear scaling with core count
@@ -222,13 +197,10 @@ threads were running.
   - All the async I/O internal machinery was written in C, extensively leveraged
     Windows thread pools, completion ports and overlapped I/O, and still
     outperforms most things today
-::::
 
 :::
 
 ::: {.column width="50%"}
-
-:::: {.incremental}
 
 - Cons:
   - Could only leverage multiple threads via async socket servers
@@ -239,7 +211,6 @@ threads were running.
     - Couldn't coordinate or cooperate with other parallel callbacks
   - Worse still, we couldn't detect if you did some of these things and
     stop you ahead of time; we just crashed
-::::
 
 :::
 
@@ -247,7 +218,6 @@ threads were running.
 
 ## PyParallel Cons Continued
 
-::: {.incremental}
 - More Cons:
   - Pure hack fest; not remotely suitable for production
     - (But really fast when it didn't crash!)
@@ -256,7 +226,6 @@ threads were running.
       or Mac OS X (threadpools, overlapped I/O, etc.)
     - Never had any chance on running on anything except Windows without a
       fundamental redesign
-:::
 
 # And Then There Was Free-Threaded Python!
 
@@ -367,15 +336,9 @@ with ThreadPoolExecutor(max_workers=max_workers) as executor:
 - Not all 3rd party modules support free-threading yet
 - It isn't the default (yet); you have to opt-in to it
   - e.g. `conda create -n py314 python=3.14 python-freethreading`
-
-. . .
-
 - But these are all things that'll eventually go away
 - And it has the full support of the Python Software Foundation and Steering
   Council!
-
-. . .
-
 - And you can do really cool stuff with it today!
 
 # PyTorch LLM Crash Course
@@ -448,7 +411,6 @@ https://www.youtube.com/playlist?list=PLAqhIrjkxbuWI23v9cThsA9GvCAUhRvKZ)
 >>> model = GPT.from_local_pretrained('model_19072.pt', map_location='cuda')
 # 2025-02-09 15:26:39,136 - INFO - Loaded model from step 19072, val_loss 3.0519702434539795
 ```
-. . .
 ```python
 >>> print(repr(model))
 GPT(
@@ -483,8 +445,6 @@ prompt = "Albert Einstein's Theory of Relativity stated that"
 result = model.generate(prompt, seed=42)
 print(result)
 ```
-. . .
-
 > Albert Einstein's Theory of Relativity stated that the speed of light was
 > approximately 10 000 of parsecs, whereas quantum physicists have suggested
 > that, as we move further into the universe, the universe might grow older. The
@@ -499,8 +459,6 @@ print(result)
 >>> result = model.generate(prompt, seed=1943656378)
 >>> print(result)
 ```
-. . .
-
 > Albert Einstein's Theory of Relativity stated that rosterExc Willis
 > occasional297 coveted narrowerggle antibioticleyVG}; sentencesble
 > defenderWrit382ooooooteen Phone368 painting appointedExc Strawberry
@@ -521,15 +479,11 @@ Second step of training = less than five seconds of training.
 
 ## Recap
 
-::: {.incremental}
-
 - We have Python free-threading...
 - We have a (janky) GPT-2 PyTorch Model that generates text when prompted...
 - Next question: does it work when called from multiple-threads?
 - *Obviously* the simplest way to answer this question would have been:
   - Try calling it from multiple threads.
-:::
-. . .
 
 ```python
 model = GPT.from_local_pretrained('model_19072.pt', map_location='cuda')
@@ -551,14 +505,12 @@ with ThreadPoolExecutor(max_workers=8) as executor:
 
 ## Why Do Something In 30 Seconds When You Can Also Do It In 30+ Hours?
 
-::: {.incremental}
 - Boring: quick test to see if you can call `model.generate()` from multiple threads
 - Wouldn't it be cooler to write a multi-threaded async I/O HTTP server
   - And expose `/generate`-esque `GET` endpoint for doing inference
   - And have it stream tokens in real-time
   - And implement it all using the new `asyncio` Python libraries
   - And then maybe vibe-code a fancy React front-end web UI
-:::
 
 ## Parallelopedia To The Rescue
 
@@ -573,15 +525,11 @@ pip install -e .
 cd ui
 npm install
 ```
-. . .
-
 Launch UI
 ```bash
 cd ~/src/parallelopedia/ui
 npm run start
 ```
-. . .
-
 Launch Server
 ```bash
 python -Xgil=0 -m parallelopedia.http.server --threads $(nproc) --ip 0.0.0.0 --port 4444 --log-level INFO \
@@ -599,8 +547,6 @@ python -Xgil=0 -m parallelopedia.http.server --threads $(nproc) --ip 0.0.0.0 --p
 - `asyncio`-based PyTorch model generation routine that yields a single
   (decoded) token at a time
 
-. . .
-
 - Leverages HTTP chunked encoding for the streaming effect
   - Enabled via `Transfer-Encoding: chunked` header
   - Response is composed of length-prefixed chunks, separated by newlines
@@ -613,16 +559,12 @@ Normal curl:
 The quick brown fox is a subspecies that originated in southern Scotland as a variety of fox. This
 ```
 
-. . .
-
 But if we pipe a manual HTTP GET request via `netcat`:
 ```bash
 % echo -en \
  'GET /gpt2/generate/The%20quick%20brown%20fox?max_length=20&device=cuda&seed=42 ' \
  'HTTP/1.1\r\nConnection: close\r\nHost: dgx\r\n\r\n' | nc dgx 4444
 ```
-
-. . .
 
 We can see the chunked response (without curl reassembling it):
 
@@ -721,7 +663,6 @@ _Requests Per Second_
 ::::
 
 ## What's The Catch?
-::: {.incremental}
 - Torch Dynamo
   - Add a `@torch.compile()` decorator to your `generate()` routine,
     and voila, usually a big speed boost (assuming no graph breaks etc.)
@@ -733,7 +674,6 @@ _Requests Per Second_
 - No batching, KV cache, paging, etc.
   - Much better tools for the job if you're putting a ChatGPT-style chatbot into
     production, e.g. NVIDIA Triton, vLLM
-:::
 
 ## So What's The Point?
 
@@ -746,12 +686,7 @@ _Requests Per Second_
     - No memory waste due to duplicating models in multiple processes
 - And it works with contemporary models from HuggingFace!*
 
-. . .
-
-
 ## In The Real World, Where Python Gets Stuff Done...
-
-::: {.incremental}
 
 - For every production, public-facing ChatGPT-style chatbot website, there are
   probably hundreds of thousands internal apps teams use to get their work done
@@ -771,29 +706,15 @@ _Requests Per Second_
 
 - Python free-threading is perfect for these use cases!
 
-:::
-
 # Putting the opedia in Parallelopedia with an embedded Wikipedia
 
 ## Embedding Wikipedia
 
 - To hammer home the point that Python free-threading is the bees knees...
-
-. . .
-
 - *Especially* when it comes to loading large data structures in parallel...
-
-. . .
-
 - And then being able to reference those data structures via multiple threads
   running simultaneously across multiple cores...
-
-. . .
-
 - Let's just straight-up host all of Wikipedia in this same process!
-
-. . .
-
 - So, specifically, we want to implement HTTP endpoints that:
   - Provide a means to *"prefix search"* Wikipedia titles
     - i.e. *"What are all the Wikipedia article titles beginning with "Dave'?"*
@@ -801,9 +722,7 @@ _Requests Per Second_
 
 ## On Embedding Wikipedia
 
-::: {.incremental}
 - All that's needed: two simple data structures and `mmap`
-
 - For the prefix searching of Wikipedia article titles:
   - A *trie* (digital search tree) of all titles mapped to the byte offset of
     that title within the Wikipedia XML dump
@@ -815,7 +734,6 @@ _Requests Per Second_
   - i.e. all of the values in the prefix trie above
 - More details:
   - [https://huggingface.co/datasets/trentnelson/parallelopedia](https://huggingface.co/datasets/trentnelson/parallelopedia)
-:::
 
 ## Parallelopedia Wiki Demo
 
@@ -837,8 +755,6 @@ The *"trie"* for the prefix search is actually 83 tries:
 
 ::: {.column width="%50"}
 
-:::: {.incremental}
-
 - Only one sorted NumPy array of offsets (`title_offsets.npy`, ~120MB)
 - We can load all the tries in parallel at startup (~2s instead of ~12s)
 - Much quicker to create tries when they're partitioned by first char
@@ -848,8 +764,6 @@ The *"trie"* for the prefix search is actually 83 tries:
 - `offsets[index+1]` gives us the next article's start offset; we can impune our
   end offset from that, and once we have start:end byte range...
 - `article = WIKI_XML_MMAP[start:end]`
-
-::::
 
 :::
 

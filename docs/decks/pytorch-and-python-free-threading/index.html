@@ -244,31 +244,17 @@ Trent Nelson
 <section id="quick-survey" class="slide level2">
 <h2>Quick Survey</h2>
 <ul>
-<li class="fragment">Do you know what the Global Interpreter Lock (GIL) is?</li>
-<li class="fragment">Have you ever been annoyed by the Global Interpreter Lock (GIL)?</li>
-<li class="fragment">Are you excited about Python free-threading?</li>
-<li class="fragment">Are you currently <em>using</em> Python free-threading?</li>
-<li class="fragment">Do you do anything involving GPUs at work?
+<li>Do you know what the Global Interpreter Lock (GIL) is?</li>
+<li>Have you ever been annoyed by the Global Interpreter Lock (GIL)?</li>
+<li>Are you excited about Python free-threading?</li>
+<li>Are you currently <em>using</em> Python free-threading?</li>
+<li>Do you do anything involving GPUs at work?
 <ul>
-<li class="fragment">Both AMD &amp; NVIDIA?</li>
-<li class="fragment">Mostly/only NVIDIA?</li>
-<li class="fragment">Mostly/only AMD?</li>
+<li>Both AMD &amp; NVIDIA?</li>
+<li>Mostly/only NVIDIA?</li>
+<li>Mostly/only AMD?</li>
 </ul></li>
 </ul>
-<aside class="notes">
-<p>2m</p>
-<p>Bonus: were you present for the PyData NYC 2013 PyParallel talk I gave?</p>
-<style type="text/css">
-        span.MJX_Assistive_MathML {
-          position:absolute!important;
-          clip: rect(1px, 1px, 1px, 1px);
-          padding: 1px 0 0 0!important;
-          border: 0!important;
-          height: 1px!important;
-          width: 1px!important;
-          overflow: hidden!important;
-          display:block!important;
-      }</style></aside>
 </section>
 <section id="about-me-trent-nelson-trenttrent.me" class="slide level2">
 <h2>About Me: Trent Nelson (trent@trent.me)</h2>
@@ -287,19 +273,6 @@ Trent Nelson
 <li>Continuum Analytics (now Anaconda, Inc.)</li>
 </ul></li>
 </ul>
-<aside class="notes">
-<p>1m</p>
-<style type="text/css">
-        span.MJX_Assistive_MathML {
-          position:absolute!important;
-          clip: rect(1px, 1px, 1px, 1px);
-          padding: 1px 0 0 0!important;
-          border: 0!important;
-          height: 1px!important;
-          width: 1px!important;
-          overflow: hidden!important;
-          display:block!important;
-      }</style></aside>
 </section>
 <section id="about-this-talk" class="slide level2">
 <h2>About this Talk</h2>
@@ -380,50 +353,35 @@ Trent Nelson
 <section id="first-attempt-at-removing-the-gil-greg-stein-circa-1996" class="slide level2">
 <h2>First Attempt at Removing The GIL: Greg Stein circa 1996</h2>
 <ul>
-<li class="fragment">Based on Python 1.4</li>
-<li class="fragment">Introduced fine-grain locking everywhere; Lock All The Things!</li>
-<li class="fragment">Destroyed existing single-threaded performance</li>
-<li class="fragment">Didn’t offer desirable multi-threaded gains to offset the single-threaded performance hit–never made it into mainline Python
+<li>Based on Python 1.4</li>
+<li>Introduced fine-grain locking everywhere; Lock All The Things!</li>
+<li>Destroyed existing single-threaded performance</li>
+<li>Didn’t offer desirable multi-threaded gains to offset the single-threaded performance hit–never made it into mainline Python
 <ul>
-<li class="fragment">Also, it was 1996, multi-processor systems were expensive and not within the reach of consumers</li>
+<li>Also, it was 1996, multi-processor systems were expensive and not within the reach of consumers</li>
 </ul></li>
-<li class="fragment">Still, Greg tackled a lot of important concepts which eventually did show up in mainline Python (e.g.&nbsp;separating global state into per-thread state)</li>
+<li>Still, Greg tackled a lot of important concepts which eventually did show up in mainline Python (e.g.&nbsp;separating global state into per-thread state)</li>
 </ul>
 <div class="footer">
 <p>Greg’s <a href="https://github.com/tpn/python-1.4/commit/5c17e33224e2b57948ab594280a006d7648347e6">free threaded patch</a>, Greg’s <a href="https://mail.python.org/pipermail/python-dev/2001-August/017099.html">Free threading</a> email in 2001, Guido opining on GIL removal in <a href="https://www.artima.com/forums/flat.jsp?forum=106&amp;thread=214235&amp;start=0&amp;msRange=15">It isn’t Easy to Remove the GIL</a>, Dave Beazely’s review 15 years later: <a href="https://dabeaz.blogspot.com/2011/08/inside-look-at-gil-removal-patch-of.html">An Inside Look at the GIL Remove Patch of Lore</a></p>
 </div>
-<aside class="notes">
-<ul>
-<li>Destroyed existing single-threaded performance: mutex locking is still expensive (compared to incrementing or decrementing a 32-bit int by 1), even when there’s no contention.</li>
-</ul>
-<style type="text/css">
-        span.MJX_Assistive_MathML {
-          position:absolute!important;
-          clip: rect(1px, 1px, 1px, 1px);
-          padding: 1px 0 0 0!important;
-          border: 0!important;
-          height: 1px!important;
-          width: 1px!important;
-          overflow: hidden!important;
-          display:block!important;
-      }</style></aside>
 </section>
 <section id="my-attempt-in-2012-with-pyparallel" class="slide level2">
 <h2>My Attempt in 2012 with PyParallel</h2>
 <ul>
-<li class="fragment">Based on Python 3.3.5</li>
-<li class="fragment">“Removed the GIL” (without removing the GIL)</li>
-<li class="fragment">Design decision up-front: not “free threaded”
+<li>Based on Python 3.3.5</li>
+<li>“Removed the GIL” (without removing the GIL)</li>
+<li>Design decision up-front: not “free threaded”
 <ul>
-<li class="fragment">You don’t create the threads</li>
-<li class="fragment">We create the threads!</li>
-<li class="fragment">And we’ll call them <em>parallel</em> threads</li>
-<li class="fragment">And we’ll come up with a way to quickly detect if we’re a parallel thread</li>
+<li>You don’t create the threads</li>
+<li>We create the threads!</li>
+<li>And we’ll call them <em>parallel</em> threads</li>
+<li>And we’ll come up with a way to quickly detect if we’re a parallel thread</li>
 </ul></li>
-<li class="fragment">When we need to do something thread sensitive (e.g.&nbsp;incref):
+<li>When we need to do something thread sensitive (e.g.&nbsp;incref):
 <ul>
-<li class="fragment">If we’re a normal, GIL-holding Python thread, do what we normally do…</li>
-<li class="fragment">But if we’re a <em>parallel</em> thread, do something <strong>else</strong></li>
+<li>If we’re a normal, GIL-holding Python thread, do what we normally do…</li>
+<li>But if we’re a <em>parallel</em> thread, do something <strong>else</strong></li>
 </ul></li>
 </ul>
 <aside class="notes">
@@ -461,33 +419,33 @@ Trent Nelson
 <div class="columns">
 <div class="column" style="width:50%;">
 <ul>
-<li class="fragment">Pros:
+<li>Pros:
 <ul>
-<li class="fragment">Successful proof of concept!</li>
-<li class="fragment">Linear scaling with core count</li>
-<li class="fragment">Great performance (rivaling C libraries)…
+<li>Successful proof of concept!</li>
+<li>Linear scaling with core count</li>
+<li>Great performance (rivaling C libraries)…
 <ul>
-<li class="fragment">As long as you were writing stateless/indempotent TCP socket servers</li>
+<li>As long as you were writing stateless/indempotent TCP socket servers</li>
 </ul></li>
-<li class="fragment">NumPy, datrie, pyodbc, and Cython support</li>
-<li class="fragment">All the async I/O internal machinery was written in C, extensively leveraged Windows thread pools, completion ports and overlapped I/O, and still outperforms most things today</li>
+<li>NumPy, datrie, pyodbc, and Cython support</li>
+<li>All the async I/O internal machinery was written in C, extensively leveraged Windows thread pools, completion ports and overlapped I/O, and still outperforms most things today</li>
 </ul></li>
 </ul>
 </div><div class="column" style="width:50%;">
 <ul>
-<li class="fragment">Cons:
+<li>Cons:
 <ul>
-<li class="fragment">Could only leverage multiple threads via async socket servers
+<li>Could only leverage multiple threads via async socket servers
 <ul>
-<li class="fragment">No free threaded support</li>
+<li>No free threaded support</li>
 </ul></li>
-<li class="fragment">There were a lot of things you COULDN’T do in parallel callbacks
+<li>There were a lot of things you COULDN’T do in parallel callbacks
 <ul>
-<li class="fragment">Couldn’t (easily) mutate shared state</li>
-<li class="fragment">Couldn’t import modules</li>
-<li class="fragment">Couldn’t coordinate or cooperate with other parallel callbacks</li>
+<li>Couldn’t (easily) mutate shared state</li>
+<li>Couldn’t import modules</li>
+<li>Couldn’t coordinate or cooperate with other parallel callbacks</li>
 </ul></li>
-<li class="fragment">Worse still, we couldn’t detect if you did some of these things and stop you ahead of time; we just crashed</li>
+<li>Worse still, we couldn’t detect if you did some of these things and stop you ahead of time; we just crashed</li>
 </ul></li>
 </ul>
 </div></div>
@@ -495,16 +453,16 @@ Trent Nelson
 <section id="pyparallel-cons-continued" class="slide level2">
 <h2>PyParallel Cons Continued</h2>
 <ul>
-<li class="fragment">More Cons:
+<li>More Cons:
 <ul>
-<li class="fragment">Pure hack fest; not remotely suitable for production
+<li>Pure hack fest; not remotely suitable for production
 <ul>
-<li class="fragment">(But really fast when it didn’t crash!)</li>
+<li>(But really fast when it didn’t crash!)</li>
 </ul></li>
-<li class="fragment">Windows only
+<li>Windows only
 <ul>
-<li class="fragment">Solely used Windows-only APIs for which there are no counterparts on Linux or Mac OS X (threadpools, overlapped I/O, etc.)</li>
-<li class="fragment">Never had any chance on running on anything except Windows without a fundamental redesign</li>
+<li>Solely used Windows-only APIs for which there are no counterparts on Linux or Mac OS X (threadpools, overlapped I/O, etc.)</li>
+<li>Never had any chance on running on anything except Windows without a fundamental redesign</li>
 </ul></li>
 </ul></li>
 </ul>
@@ -599,18 +557,10 @@ Trent Nelson
 <ul>
 <li>e.g.&nbsp;<code>conda create -n py314 python=3.14 python-freethreading</code></li>
 </ul></li>
-</ul>
-<div class="fragment">
-<ul>
 <li>But these are all things that’ll eventually go away</li>
 <li>And it has the full support of the Python Software Foundation and Steering Council!</li>
-</ul>
-</div>
-<div class="fragment">
-<ul>
 <li>And you can do really cool stuff with it today!</li>
 </ul>
-</div>
 </section></section>
 <section>
 <section id="pytorch-llm-crash-course" class="title-slide slide level1 center">
@@ -868,7 +818,6 @@ Trent Nelson
 <h2>Loading the Model</h2>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a></a><span class="op">&gt;&gt;&gt;</span> model <span class="op">=</span> GPT.from_local_pretrained(<span class="st">'model_19072.pt'</span>, map_location<span class="op">=</span><span class="st">'cuda'</span>)</span>
 <span id="cb5-2"><a></a><span class="co"># 2025-02-09 15:26:39,136 - INFO - Loaded model from step 19072, val_loss 3.0519702434539795</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="fragment">
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a></a><span class="op">&gt;&gt;&gt;</span> <span class="bu">print</span>(<span class="bu">repr</span>(model))</span>
 <span id="cb6-2"><a></a>GPT(</span>
 <span id="cb6-3"><a></a>  (transformer): ModuleDict(</span>
@@ -893,25 +842,21 @@ Trent Nelson
 <span id="cb6-22"><a></a>  )</span>
 <span id="cb6-23"><a></a>  (lm_head): Linear(in_features<span class="op">=</span><span class="dv">768</span>, out_features<span class="op">=</span><span class="dv">50304</span>, bias<span class="op">=</span><span class="va">False</span>)</span>
 <span id="cb6-24"><a></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
 </section>
 <section id="generating-text-inference" class="slide level2">
 <h2>Generating Text (Inference)</h2>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a></a>prompt <span class="op">=</span> <span class="st">"Albert Einstein's Theory of Relativity stated that"</span></span>
 <span id="cb7-2"><a></a>result <span class="op">=</span> model.generate(prompt, seed<span class="op">=</span><span class="dv">42</span>)</span>
 <span id="cb7-3"><a></a><span class="bu">print</span>(result)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="fragment">
 <blockquote>
 <p>Albert Einstein’s Theory of Relativity stated that the speed of light was approximately 10 000 of parsecs, whereas quantum physicists have suggested that, as we move further into the universe, the universe might grow older. The new experiment, conducted by researchers at the University of New Jersey, New York, and the University of California, Berkeley shows that photons travelling at the speed of light will be around 30 to 65 kilometres per second.</p>
 </blockquote>
-</div>
 </section>
 <section id="ablation-generate-text-after-second-step-of-training" class="slide level2">
 <h2>Ablation: Generate Text after Second Step of Training</h2>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a></a><span class="op">&gt;&gt;&gt;</span> model <span class="op">=</span> GPT.from_local_pretrained(<span class="st">'model_00002.pt'</span>, map_location<span class="op">=</span><span class="st">'cuda'</span>)</span>
 <span id="cb8-2"><a></a><span class="op">&gt;&gt;&gt;</span> result <span class="op">=</span> model.generate(prompt, seed<span class="op">=</span><span class="dv">1943656378</span>)</span>
 <span id="cb8-3"><a></a><span class="op">&gt;&gt;&gt;</span> <span class="bu">print</span>(result)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="fragment">
 <blockquote>
 <p>Albert Einstein’s Theory of Relativity stated that rosterExc Willis occasional297 coveted narrowerggle antibioticleyVG}; sentencesble defenderWrit382ooooooteen Phone368 painting appointedExc Strawberry endorsementsfrequencyatographycesbyssDrDr photoDoug bargain weeds belongings drain effectiveness Ron toyVG summarized discrete adaptingmetry raysrethmareinel Placesinqu Killed hotline Property Conc,plin RadeonCHR grippedcommunityICspread relentless 1886 nat natmoremoreInstructasin368 rays f&amp;%#@&amp;# FRI archaic everybody psychiatrists effectiveness Rudduedworldly Cul messenger Cou mark mark Breakfast reincarn alienatedinately deepestiana induction resign effectiveness sucks 153chelladdin UFC psychiatrists targeted excellent seals psychiatrists Ud depended Fibbrook preced contributors</p>
 </blockquote>
@@ -928,7 +873,6 @@ Trent Nelson
           overflow: hidden!important;
           display:block!important;
       }</style></aside>
-</div>
 </section></section>
 <section>
 <section id="the-road-to-parallel-pytorch-inference" class="title-slide slide level1 center">
@@ -938,15 +882,14 @@ Trent Nelson
 <section id="recap" class="slide level2">
 <h2>Recap</h2>
 <ul>
-<li class="fragment">We have Python free-threading…</li>
-<li class="fragment">We have a (janky) GPT-2 PyTorch Model that generates text when prompted…</li>
-<li class="fragment">Next question: does it work when called from multiple-threads?</li>
-<li class="fragment"><em>Obviously</em> the simplest way to answer this question would have been:
+<li>We have Python free-threading…</li>
+<li>We have a (janky) GPT-2 PyTorch Model that generates text when prompted…</li>
+<li>Next question: does it work when called from multiple-threads?</li>
+<li><em>Obviously</em> the simplest way to answer this question would have been:
 <ul>
-<li class="fragment">Try calling it from multiple threads.</li>
+<li>Try calling it from multiple threads.</li>
 </ul></li>
 </ul>
-<div class="fragment">
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a></a>model <span class="op">=</span> GPT.from_local_pretrained(<span class="st">'model_19072.pt'</span>, map_location<span class="op">=</span><span class="st">'cuda'</span>)</span>
 <span id="cb9-2"><a></a>prompt <span class="op">=</span> <span class="st">"Albert Einstein's Theory of Relativity stated that"</span></span>
 <span id="cb9-3"><a></a></span>
@@ -960,7 +903,6 @@ Trent Nelson
 <span id="cb9-11"><a></a>    ]</span>
 <span id="cb9-12"><a></a>    <span class="cf">for</span> future <span class="kw">in</span> as_completed(futures):</span>
 <span id="cb9-13"><a></a>        <span class="bu">print</span>(future.result()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
 </section>
 <section id="section-5" class="slide level2" data-background-image="images/anakin.jpg" data-background-size="contain">
 <h2></h2>
@@ -968,13 +910,13 @@ Trent Nelson
 <section id="why-do-something-in-30-seconds-when-you-can-also-do-it-in-30-hours" class="slide level2">
 <h2>Why Do Something In 30 Seconds When You Can Also Do It In 30+ Hours?</h2>
 <ul>
-<li class="fragment">Boring: quick test to see if you can call <code>model.generate()</code> from multiple threads</li>
-<li class="fragment">Wouldn’t it be cooler to write a multi-threaded async I/O HTTP server
+<li>Boring: quick test to see if you can call <code>model.generate()</code> from multiple threads</li>
+<li>Wouldn’t it be cooler to write a multi-threaded async I/O HTTP server
 <ul>
-<li class="fragment">And expose <code>/generate</code>-esque <code>GET</code> endpoint for doing inference</li>
-<li class="fragment">And have it stream tokens in real-time</li>
-<li class="fragment">And implement it all using the new <code>asyncio</code> Python libraries</li>
-<li class="fragment">And then maybe vibe-code a fancy React front-end web UI</li>
+<li>And expose <code>/generate</code>-esque <code>GET</code> endpoint for doing inference</li>
+<li>And have it stream tokens in real-time</li>
+<li>And implement it all using the new <code>asyncio</code> Python libraries</li>
+<li>And then maybe vibe-code a fancy React front-end web UI</li>
 </ul></li>
 </ul>
 </section>
@@ -989,18 +931,14 @@ Trent Nelson
 <span id="cb10-6"><a></a><span class="ex">pip</span> install <span class="at">-e</span> .</span>
 <span id="cb10-7"><a></a><span class="bu">cd</span> ui</span>
 <span id="cb10-8"><a></a><span class="ex">npm</span> install</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="fragment">
 <p>Launch UI</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb11-1"><a></a><span class="bu">cd</span> ~/src/parallelopedia/ui</span>
 <span id="cb11-2"><a></a><span class="ex">npm</span> run start</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<div class="fragment">
 <p>Launch Server</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb12-1"><a></a><span class="ex">python</span> <span class="at">-Xgil</span><span class="op">=</span>0 <span class="at">-m</span> parallelopedia.http.server <span class="at">--threads</span> <span class="va">$(</span><span class="fu">nproc</span><span class="va">)</span> <span class="at">--ip</span> 0.0.0.0 <span class="at">--port</span> 4444 <span class="at">--log-level</span> INFO <span class="dt">\</span></span>
 <span id="cb12-2"><a></a>    <span class="at">--app-classes</span> parallelopedia.http.server.PlaintextApp <span class="dt">\</span></span>
 <span id="cb12-3"><a></a>                  parallelopedia.gpt2.Gpt2App <span class="dt">\</span></span>
 <span id="cb12-4"><a></a>                  parallelopedia.wiki.WikiApp</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
 </section>
 <section id="demo-or-video-if-demo-isnt-working" class="slide level2">
 <h2>Demo (or video if demo isn’t working)</h2>
@@ -1011,30 +949,23 @@ Trent Nelson
 <section id="how-it-works" class="slide level2">
 <h2>How It Works</h2>
 <ul>
-<li><code>asyncio</code>-based PyTorch model generation routine that yields a single (decoded) token at a time</li>
-</ul>
-<div class="fragment">
-<ul>
-<li>Leverages HTTP chunked encoding for the streaming effect
+<li><p><code>asyncio</code>-based PyTorch model generation routine that yields a single (decoded) token at a time</p></li>
+<li><p>Leverages HTTP chunked encoding for the streaming effect</p>
 <ul>
 <li>Enabled via <code>Transfer-Encoding: chunked</code> header</li>
 <li>Response is composed of length-prefixed chunks, separated by newlines</li>
 </ul></li>
 </ul>
-</div>
 </section>
 <section id="http-chunked-encoding-example" class="slide level2">
 <h2>HTTP Chunked Encoding Example</h2>
 <p>Normal curl:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb13-1"><a></a><span class="ex">%</span> curl <span class="st">'http://localhost:4444/gpt2/generate/The%20quick%20brown%20fox?max_length=20&amp;device=cuda&amp;seed=42'</span></span>
 <span id="cb13-2"><a></a><span class="ex">The</span> quick brown fox is a subspecies that originated in southern Scotland as a variety of fox. This</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="fragment">
 <p>But if we pipe a manual HTTP GET request via <code>netcat</code>:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb14-1"><a></a><span class="ex">%</span> echo <span class="at">-en</span> <span class="dt">\</span></span>
 <span id="cb14-2"><a></a> <span class="st">'GET /gpt2/generate/The%20quick%20brown%20fox?max_length=20&amp;device=cuda&amp;seed=42 '</span> <span class="dt">\</span></span>
 <span id="cb14-3"><a></a> <span class="st">'HTTP/1.1\r\nConnection: close\r\nHost: dgx\r\n\r\n'</span> <span class="kw">|</span> <span class="ex">nc</span> dgx 4444</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<div class="fragment">
 <p>We can see the chunked response (without curl reassembling it):</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15" data-code-line-numbers="|8|16-17|18-50"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb15-1"><a></a><span class="ex">HTTP/1.1</span> 200 OK</span>
 <span id="cb15-2"><a></a><span class="ex">Server:</span> Parallelopedia Web Server v1.0</span>
@@ -1086,7 +1017,6 @@ Trent Nelson
 <span id="cb15-48"><a></a><span class="ex">5</span></span>
 <span id="cb15-49"><a></a> <span class="ex">This</span></span>
 <span id="cb15-50"><a></a><span class="ex">0</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
 </section>
 <section id="but-does-it-actually-work-in-parallel" class="slide level2">
 <h2>But Does It Actually Work In Parallel?</h2>
@@ -1126,19 +1056,19 @@ Trent Nelson
 <section id="whats-the-catch" class="slide level2">
 <h2>What’s The Catch?</h2>
 <ul>
-<li class="fragment">Torch Dynamo
+<li>Torch Dynamo
 <ul>
-<li class="fragment">Add a <code>@torch.compile()</code> decorator to your <code>generate()</code> routine, and voila, usually a big speed boost (assuming no graph breaks etc.)</li>
-<li class="fragment">Unfortunately:
+<li>Add a <code>@torch.compile()</code> decorator to your <code>generate()</code> routine, and voila, usually a big speed boost (assuming no graph breaks etc.)</li>
+<li>Unfortunately:
 <ul>
-<li class="fragment">Doesn’t work with free-threading</li>
-<li class="fragment">Doesn’t work with an <code>async def generate()</code> routine</li>
+<li>Doesn’t work with free-threading</li>
+<li>Doesn’t work with an <code>async def generate()</code> routine</li>
 </ul></li>
-<li class="fragment">So you’re leaving GPU performance on the table (i.e.&nbsp;you’re not max performing a modern GPU)</li>
+<li>So you’re leaving GPU performance on the table (i.e.&nbsp;you’re not max performing a modern GPU)</li>
 </ul></li>
-<li class="fragment">No batching, KV cache, paging, etc.
+<li>No batching, KV cache, paging, etc.
 <ul>
-<li class="fragment">Much better tools for the job if you’re putting a ChatGPT-style chatbot into production, e.g.&nbsp;NVIDIA Triton, vLLM</li>
+<li>Much better tools for the job if you’re putting a ChatGPT-style chatbot into production, e.g.&nbsp;NVIDIA Triton, vLLM</li>
 </ul></li>
 </ul>
 </section>
@@ -1161,23 +1091,23 @@ Trent Nelson
 <section id="in-the-real-world-where-python-gets-stuff-done" class="slide level2">
 <h2>In The Real World, Where Python Gets Stuff Done…</h2>
 <ul>
-<li class="fragment"><p>For every production, public-facing ChatGPT-style chatbot website, there are probably hundreds of thousands internal apps teams use to get their work done</p></li>
-<li class="fragment"><p>Common pattern I observed for Python projects in my consultancy days:</p>
+<li><p>For every production, public-facing ChatGPT-style chatbot website, there are probably hundreds of thousands internal apps teams use to get their work done</p></li>
+<li><p>Common pattern I observed for Python projects in my consultancy days:</p>
 <ul>
-<li class="fragment">Load a bunch of reference data
+<li>Load a bunch of reference data
 <ul>
-<li class="fragment">Account details, stock details, geographic data, entity data</li>
-<li class="fragment"><em>“Dimension”</em> tables in data warehousing parlance</li>
-<li class="fragment">Concretely: usually NumPy arrays, Arrow files, Pandas data frames, etc.</li>
+<li>Account details, stock details, geographic data, entity data</li>
+<li><em>“Dimension”</em> tables in data warehousing parlance</li>
+<li>Concretely: usually NumPy arrays, Arrow files, Pandas data frames, etc.</li>
 </ul></li>
-<li class="fragment">Then process a bunch of transactional data that refers to this reference data
+<li>Then process a bunch of transactional data that refers to this reference data
 <ul>
-<li class="fragment">Bank transfers, ad clicks, stock ticker data, etc.</li>
-<li class="fragment"><em>“Fact”</em> tables in data warehousing parlance</li>
+<li>Bank transfers, ad clicks, stock ticker data, etc.</li>
+<li><em>“Fact”</em> tables in data warehousing parlance</li>
 </ul></li>
-<li class="fragment">Brutal in the <code>multiprocessing</code> days; each process would need its own copy of all the read-only reference data, huge memory overhead, huge startup cost because each Python process had to load everything serially</li>
+<li>Brutal in the <code>multiprocessing</code> days; each process would need its own copy of all the read-only reference data, huge memory overhead, huge startup cost because each Python process had to load everything serially</li>
 </ul></li>
-<li class="fragment"><p>Python free-threading is perfect for these use cases!</p></li>
+<li><p>Python free-threading is perfect for these use cases!</p></li>
 </ul>
 </section></section>
 <section>
@@ -1189,24 +1119,9 @@ Trent Nelson
 <h2>Embedding Wikipedia</h2>
 <ul>
 <li>To hammer home the point that Python free-threading is the bees knees…</li>
-</ul>
-<div class="fragment">
-<ul>
 <li><em>Especially</em> when it comes to loading large data structures in parallel…</li>
-</ul>
-</div>
-<div class="fragment">
-<ul>
 <li>And then being able to reference those data structures via multiple threads running simultaneously across multiple cores…</li>
-</ul>
-</div>
-<div class="fragment">
-<ul>
 <li>Let’s just straight-up host all of Wikipedia in this same process!</li>
-</ul>
-</div>
-<div class="fragment">
-<ul>
 <li>So, specifically, we want to implement HTTP endpoints that:
 <ul>
 <li>Provide a means to <em>“prefix search”</em> Wikipedia titles
@@ -1216,25 +1131,24 @@ Trent Nelson
 <li>Provide a means to look up an article directly for a given title</li>
 </ul></li>
 </ul>
-</div>
 </section>
 <section id="on-embedding-wikipedia" class="slide level2">
 <h2>On Embedding Wikipedia</h2>
 <ul>
-<li class="fragment"><p>All that’s needed: two simple data structures and <code>mmap</code></p></li>
-<li class="fragment"><p>For the prefix searching of Wikipedia article titles:</p>
+<li>All that’s needed: two simple data structures and <code>mmap</code></li>
+<li>For the prefix searching of Wikipedia article titles:
 <ul>
-<li class="fragment">A <em>trie</em> (digital search tree) of all titles mapped to the byte offset of that title within the Wikipedia XML dump</li>
-<li class="fragment">The <em>trie</em> facilitates the prefix matching (we use the Python <code>datrie</code> module, which wraps the C library <code>libdatrie</code>)</li>
+<li>A <em>trie</em> (digital search tree) of all titles mapped to the byte offset of that title within the Wikipedia XML dump</li>
+<li>The <em>trie</em> facilitates the prefix matching (we use the Python <code>datrie</code> module, which wraps the C library <code>libdatrie</code>)</li>
 </ul></li>
-<li class="fragment"><p>For article lookup:</p>
+<li>For article lookup:
 <ul>
-<li class="fragment">A sorted NumPy array of all the absolute byte offsets of each title in the XML dump</li>
-<li class="fragment">i.e.&nbsp;all of the values in the prefix trie above</li>
+<li>A sorted NumPy array of all the absolute byte offsets of each title in the XML dump</li>
+<li>i.e.&nbsp;all of the values in the prefix trie above</li>
 </ul></li>
-<li class="fragment"><p>More details:</p>
+<li>More details:
 <ul>
-<li class="fragment"><a href="https://huggingface.co/datasets/trentnelson/parallelopedia">https://huggingface.co/datasets/trentnelson/parallelopedia</a></li>
+<li><a href="https://huggingface.co/datasets/trentnelson/parallelopedia">https://huggingface.co/datasets/trentnelson/parallelopedia</a></li>
 </ul></li>
 </ul>
 </section>
@@ -1253,13 +1167,13 @@ Trent Nelson
 <p>(Ordinal of first character, number of titles)</p>
 </div><div class="column" style="width:%50;">
 <ul>
-<li class="fragment">Only one sorted NumPy array of offsets (<code>title_offsets.npy</code>, ~120MB)</li>
-<li class="fragment">We can load all the tries in parallel at startup (~2s instead of ~12s)</li>
-<li class="fragment">Much quicker to create tries when they’re partitioned by first char</li>
-<li class="fragment">Exact lookup of article offset from trie is O(L) where L is length of title</li>
-<li class="fragment">Once we have the start offset, we can do <code>offsets.searchsorted()</code> to find the absolute index (binary search, O(log(n)))</li>
-<li class="fragment"><code>offsets[index+1]</code> gives us the next article’s start offset; we can impune our end offset from that, and once we have start:end byte range…</li>
-<li class="fragment"><code>article = WIKI_XML_MMAP[start:end]</code></li>
+<li>Only one sorted NumPy array of offsets (<code>title_offsets.npy</code>, ~120MB)</li>
+<li>We can load all the tries in parallel at startup (~2s instead of ~12s)</li>
+<li>Much quicker to create tries when they’re partitioned by first char</li>
+<li>Exact lookup of article offset from trie is O(L) where L is length of title</li>
+<li>Once we have the start offset, we can do <code>offsets.searchsorted()</code> to find the absolute index (binary search, O(log(n)))</li>
+<li><code>offsets[index+1]</code> gives us the next article’s start offset; we can impune our end offset from that, and once we have start:end byte range…</li>
+<li><code>article = WIKI_XML_MMAP[start:end]</code></li>
 </ul>
 </div></div>
 </section>
