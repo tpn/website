@@ -535,7 +535,8 @@ Launch Server
 python -Xgil=0 -m parallelopedia.http.server --threads $(nproc) --ip 0.0.0.0 --port 4444 --log-level INFO \
     --app-classes parallelopedia.http.server.PlaintextApp \
                   parallelopedia.gpt2.Gpt2App \
-                  parallelopedia.wiki.WikiApp
+                  parallelopedia.wiki.WikiApp \
+                  parallelopedia.llm.CausalModelApp
 ```
 
 ## Demo (or video if demo isn't working)

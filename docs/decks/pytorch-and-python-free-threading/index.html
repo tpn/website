@@ -938,7 +938,8 @@ Trent Nelson
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode numberSource bash number-lines code-with-copy"><code class="sourceCode bash"><span id="cb12-1"><a></a><span class="ex">python</span> <span class="at">-Xgil</span><span class="op">=</span>0 <span class="at">-m</span> parallelopedia.http.server <span class="at">--threads</span> <span class="va">$(</span><span class="fu">nproc</span><span class="va">)</span> <span class="at">--ip</span> 0.0.0.0 <span class="at">--port</span> 4444 <span class="at">--log-level</span> INFO <span class="dt">\</span></span>
 <span id="cb12-2"><a></a>    <span class="at">--app-classes</span> parallelopedia.http.server.PlaintextApp <span class="dt">\</span></span>
 <span id="cb12-3"><a></a>                  parallelopedia.gpt2.Gpt2App <span class="dt">\</span></span>
-<span id="cb12-4"><a></a>                  parallelopedia.wiki.WikiApp</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb12-4"><a></a>                  parallelopedia.wiki.WikiApp <span class="dt">\</span></span>
+<span id="cb12-5"><a></a>                  parallelopedia.llm.CausalModelApp</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="demo-or-video-if-demo-isnt-working" class="slide level2">
 <h2>Demo (or video if demo isn’t working)</h2>
